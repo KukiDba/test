@@ -1,0 +1,20 @@
+SQL> begin
+mgmt_admin.delete_target('P741','oracle_database');
+end;
+/  2    3    4
+begin
+*
+ERROR at line 1:
+ORA-20238: Target P741:oracle_database is currently in the process of being deleted
+ORA-06512: at "SYSMAN.MGMT_ADMIN", line 456
+ORA-06512: at "SYSMAN.MGMT_ADMIN", line 629
+ORA-06512: at line 2
+
+
+SQL> begin
+mgmt_admin.delete_target_internal('P741','oracle_database');
+end;
+/  2    3    4
+
+SQL> SQL>
+SQL>

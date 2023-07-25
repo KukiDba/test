@@ -1,0 +1,79 @@
+alter system kill session 'sid, serial#' immediate; 
+
+The sid (session ID) and serial# above can be obtained from the v$session view.  
+There are a couple of reasons a DBA might use orakill instead of the alter system kill session command. 
+
+select sid, serial#, program, logon_time FROM V$SESSION where program like 'sqlplus.exe';
+
+
+
+
+
+select program, sid, to_char(logon_time, 'dd/mm/yy hh:mi:ss AM') from v$session;
+
+col program for a30
+select program, sid, serial#, to_char(logon_time, 'dd/mm/yy hh:mi:ss AM') from v$session order by logon_time;
+
+
+
+set line 500
+col program for a30
+col TO_CHAR(LOGON_TIME,'DD/MM/YYH for a40
+
+select program, sid, to_char(logon_time, 'dd/mm/yy hh:mi:ss AM'), status, last_call_et from v$session where program  like 'JDBC%' order by last_call_et;
+
+col query for a50
+select 'alter system kill session '''||sid||',' ||serial#||''' immediate;' query from v$session where program like 'sqlplus.exe';
+
+
+
+col query for a50
+select 'alter system kill session '''||sid||',' ||serial#||''' immediate;' query from v$session where program like 'dllhost.exe' AND username='TEAMS' and status='ACTIVE';
+
+
+select 'alter system kill session '''||sid||',' ||serial#||''' immediate;' query from v$session where machine='st-db111';
+
+set pages 500
+col query for a70
+select 'alter system kill session '''||sid||',' ||serial#||''' immediate;' query from v$session where program like 'MirAdm10.exe' AND machine like '%STATOIL-NET%SLA-W05%';
+
+
+
+
+
+
+col "SID/SERIAL" format a10
+col username format a15
+col osuser format a15
+col program format a40
+select     s.sid || ',' || s.serial# "SID/SERIAL"
+,     s.username
+,     s.osuser
+,     p.spid "OS PID"
+,     s.program
+from     v$session s
+,     v$process p
+Where     s.paddr = p.addr
+order      by to_number(p.spid)
+/
+
+
+SELECT
+    	s.sid           sid, 
+	s.serial# 		serial_id,
+ 	s.status        session_status,
+  	s.username      oracle_username,	
+	s.osuser        os_username,
+	s.machine		machine_name,
+  	p.spid          os_pid,
+  	s.program       session_program,
+	to_char(s.logon_time,'DD-MON-YYYY HH24:MI:SS') logon_time
+FROM 
+    v$process p, 
+    v$session s
+WHERE
+    p.addr (+) = s.paddr
+          and s.program= 'dllhost.exe'
+          and s.username='TEAMS'
+	ORDER BY
+    logon_time desc;

@@ -1,0 +1,22 @@
+ORA-00604: error occurred at recursive SQL level 1
+ORA-00904: "OBJ$EDITION": invalid identifier
+============================================================================================================================
+
+
+alter table aud$ add (OBJ$EDITION VARCHAR2(30));
+
+
+Run cataudit.sql (to ensure all the views based on AUD$ are in place). /u01/app/oracle/product/11.2.0/dbhome_1/rdbms/admin
+
+@?/rdbms/admin/cataudit.sql 
+
+select OWNER,TABLE_NAME,COLUMN_NAME from dba_tab_columns where COLUMN_NAME='OBJ$EDITION';
+
+OWNER TABLE_NAME COLUMN_NAME
+
+
+
+            
+         
+
+

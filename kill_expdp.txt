@@ -1,0 +1,64 @@
+set line 300
+col job_mode for a20
+col state for a20
+col owner_name for a20
+col operation for a20
+select * from dba_datapump_jobs;
+
+
+expdp system/NAV_HUCM0_KA attach=SYS_EXPORT_FULL_02
+
+
+Export> KILL_JOB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

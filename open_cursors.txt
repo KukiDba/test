@@ -1,0 +1,1 @@
+SELECT  SID,user_name,COUNT(*) Open_Cursor FROM v$open_cursor GROUP BY SID, user_name ORDER BY 3 DESC;

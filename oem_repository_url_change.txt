@@ -1,0 +1,33 @@
+searching with string
+============================
+
+grep -R 'st-lindba02.statoil.no' /dbprog/oracle/Middleware/agent11g
+
+
+search for st-lindba02  AND CHANGE IT TO st-lindba03
+======================================================
+
+login as: oracle
+oracle@st-vtdb22's password:
+Last login: Sat Sep 21 04:05:30 2013 from pc-800465.client.statoil.net
+oracle@st-vtdb22 41% vi /dbprog/oracle/Middleware/agent11g/sysman/config/emd.properties
+oracle@st-vtdb22 42% vi /dbprog/oracle/Middleware/agent11g/sysman/config/emd.properties
+oracle@st-vtdb22 43% vi /dbprog/oracle/Middleware/agent11g/sysman/config/emd.properties.tzbak
+oracle@st-vtdb22 44% vi /dbprog/oracle/Middleware/agent11g/sysman/config/emd.properties.tzbak
+oracle@st-vtdb22 45% vi /dbprog/oracle/Middleware/agent11g/sysman/dump/emagent_1968_20130714152457.diagtrc
+oracle@st-vtdb22 46% vi /dbprog/oracle/Middleware/agent11g/install/chainedInstall/globalcontext.xml
+oracle@st-vtdb22 47% vi /dbprog/oracle/Middleware/agent11g/inventory/Clone/clone.xml
+oracle@st-vtdb22 48% vi /dbprog/oracle/Middleware/agent11g/inventory/Components21/oracle.sysman.top.agent/11.1.0.1.0/context.xml
+oracle@st-vtdb22 49% vi /dbprog/oracle/Middleware/agent11g/inventory/Components21/oracle.sysman.agent/11.1.0.1.0/context.xml
+oracle@st-vtdb22 50% vi /dbprog/oracle/Middleware/agent11g/inventory/Components21/oracle.sysman.top.agent/11.1.0.1.0/context.xml
+
+
+
+
+
+
+oracle@st-vtdb33 610% grep -R 'st-vtdb33.st.statoil.no:18' /dbprog/oracle/Middleware/agent12c | grep -v log
+/dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties.2014_04_02_01_41_21:EMD_URL=http://st-vtdb33.st.statoil.no:1830/emd/main/
+/dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties.bak:EMD_URL=https://st-vtdb33.st.statoil.no:1830/emd/main/
+/dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties.2014-04-02-13-41-17:EMD_URL=http://st-vtdb33.st.statoil.no:1830/emd/main/
+

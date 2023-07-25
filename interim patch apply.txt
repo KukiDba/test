@@ -1,0 +1,83 @@
+To check applied patch on ORACLE HOME
++++++++++++++++++++++++++++++++++++++++
+
+$ORACLE_HOME/OPatch/opatch lsinventory
+
+Prerequisites to check
+++++++++++++++++++++++++++
+
+cd /prog/oracle/product/12.1.0.2.8P/OPatch/21047218
+
+/prog/oracle/product/12.1.0.2.8P/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+=======================================================================================================
+
+oracle@st-db121.st.statoil.no 85% cd 13477790/
+
+oracle@st-db121.st.statoil.no 86% $ORACLE_HOME/OPatch/opatch apply -invPtrLoc /dbprog97/oracle/product/11.2.0.3.7R/oraInst.loc
+Oracle Interim Patch Installer version 11.2.0.3.3
+Copyright (c) 2012, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /dbprog97/oracle/product/11.2.0.3.7R
+Central Inventory : /dbprog97/oracle/oraInventory
+   from           : /dbprog97/oracle/product/11.2.0.3.7R/oraInst.loc
+OPatch version    : 11.2.0.3.3
+OUI version       : 11.2.0.3.0
+Log file location : /dbprog97/oracle/product/11.2.0.3.7R/cfgtoollogs/opatch/13477790_Dec_11_2013_16_46_38/apply2013-12-11_16-46-38PM_1.log
+
+Applying interim patch '13477790' to OH '/dbprog97/oracle/product/11.2.0.3.7R'
+Verifying environment and performing prerequisite checks...
+All checks passed.
+Provide your email address to be informed of security issues, install and
+initiate Oracle Configuration Manager. Easier for you if you use your My
+Oracle Support Email address/User Name.
+Visit http://www.oracle.com/support/policies.html for details.
+Email address/User Name:
+
+You have not provided an email address for notification of security issues.
+Do you wish to remain uninformed of security issues ([Y]es, [N]o) [N]:  Y
+
+
+
+Please shutdown Oracle instances running out of this ORACLE_HOME on the local system.
+(Oracle Home = '/dbprog97/oracle/product/11.2.0.3.7R')
+
+
+Is the local system ready for patching? [y|n]
+y
+User Responded with: Y
+Backing up files...
+
+Patching component oracle.rdbms, 11.2.0.3.0...
+
+Verifying the update...
+Patch 13477790 successfully applied
+Log file location: /dbprog97/oracle/product/11.2.0.3.7R/cfgtoollogs/opatch/13477790_Dec_11_2013_16_46_38/apply2013-12-11_16-46-38PM_1.log
+
+OPatch succeeded.
+oracle@st-db121.st.statoil.no 87%
+
+
+oracle@st-db121.st.statoil.no 87% $ORACLE_HOME/OPatch/opatch lsinventory -detail -invPtrLoc /dbprog97/oracle/product/11.2.0.3.7R/oraInst.loc |grep 13477790
+Patch  13477790     : applied on Wed Dec 11 16:47:21 CET 2013
+     13477790
+     /dbprog97/oracle/product/11.2.0.3.7R/inventory/oneoffs/13477790
+     /dbprog97/oracle/product/11.2.0.3.7R/.patch_storage/13477790_Jan_19_2012_13_10_57
+
+
+
+
+=============================================================================================================================================================================
+
+oracle@st-db121.st.statoil.no 85% cd 13477790/
+
+oracle@st-db121.st.statoil.no 86% $ORACLE_HOME/OPatch/opatch apply -invPtrLoc /dbprog97/oracle/product/11.2.0.3.7R/oraInst.loc
+
+oracle@st-db121.st.statoil.no 87% $ORACLE_HOME/OPatch/opatch lsinventory -detail -invPtrLoc /dbprog97/oracle/product/11.2.0.3.7R/oraInst.loc |grep 13477790
+
+OR
+
+$ORACLE_HOME/OPatch/opatch lsinventory -detail |grep 13477790
+
+$ORACLE_HOME/OPatch/opatch lsinventory

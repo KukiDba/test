@@ -1,0 +1,21 @@
+ORA-06553: PLS-801: internal error [56319]
+
+
+
+@?/rdbms/admin/utlirp.sql
+
+@?/rdbms/admin/utlrp.sql
+
+
+
+restore a 32 bit database on a 64 bit system.
+
+1) startup migrate
+2) @?/rdbms/admin/utlirp.sql
+3) shutdown immediate
+4) startup
+ 
+
+
+spool utlu112i.lst
+@/prog51/oracle/product/11.2.0.3/rdbms/admin/utlu112i.sql

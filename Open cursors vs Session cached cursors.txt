@@ -1,0 +1,157 @@
+Open cursors
+=====================================================
+
+Open cursors take up space in the shared pool, in the library cache. To keep a renegade session from filling up the library cache, or clogging the CPU with millions of parse requests, we set the parameter OPEN_CURSORS. 
+
+OPEN_CURSORS sets the maximum number of cursors each session can have open, per session. 
+
+For example, if OPEN_CURSORS is set to 1000, then each session can have up to 1000 cursors open at one time. If a single session has OPEN_CURSORS # of cursors open, it will get an ora-1000 error when it tries to open one more cursor.
+
+The default is value for OPEN_CURSORS is 50, but Oracle recommends that you set this to at least 500 for most applications. Some applications may need more, eg. web applications that have dozens to hundreds of users sharing a pool of sessions. 
+
+Tom Kyte recommends setting it around 1000. 
+
+
+Session cached cursors
+=====================================================
+
+There are two main initialization parameters that affect cursors, and many folks get them confused. One is OPEN_CURSORS, and the other is SESSION_CACHED_CURSORS.
+
+SESSION_CACHED_CURSORS sets the number of cached closed cursors each session can have. You can set SESSION_CACHED_CURSORS to higher than OPEN_CURSORS, lower than OPEN_CURSORS, or anywhere in between. This parameter has no effect on ora-1000's or on the number of cursors a session will have open. Conversely, OPEN_CURSORS has no effect on the number of cursors cached. There's no relationship between the two parameters.
+
+If SESSION_CACHED_CURSORS is not set, it defaults to 0 and no cursors will be cached for your session. (Your cursors will still be cached in the shared pool, but your session will have to find them there.) If it is set, then when a parse request is issued, Oracle checks the library cache to see whether more than 3 parse requests have been issued for that statement. If so, Oracle moves the session cursor associated with that statement into the session cursor cache. Subsequent parse requests for that statement by the same session are then filled from the session cursor cache, thus avoiding even a soft parse. (Technically, a parse can't be completely avoided; a "softer" soft parse is done that's faster and requires less CPU.)
+
+In the session cursor cache, Oracle manages the cached cursors using a LRU list. Once more than SESSION_CACHED_CURSORS closed cursors are cached, Oracle starts dropping cached cursors off the LRU end of the list whenever it needs to make room to cache a new cursor.
+
+
+Why cache cursors?
+=====================================================
+
+The obvious advantage to caching cursors by session is reduced parse times, which leads to faster overall execution times. This is especially so for applications like Oracle Forms applications, where switching from one form to another will close all the session cursors opened for the first form. Switching back then opens identical cursors. So caching cursors by session really cuts down on reparsing.
+
+There's another advantage, though. Since a session doesn't have to go looking in the library cache for previously parsed SQL, caching cursors by session results in less use of the library cache and shared pool latches. These are often points of contention for busy OLTP systems. Cutting down on latch use cuts down on latch waits, providing not only an increase in speed but an increase in scalability.
+
+
+Monitoring open cursors
+=====================================================
+
+I believe a lot of the confusion about open cursors vs. cached cursors comes from the names of the Oracle dynamic performance views used to monitor them. v$open_cursor shows cached cursors, not currently open cursors, by session. If you're wondering how many cursors a session has open, don't look in v$open_cursor. It shows the cursors in the session cursor cache for each session, not cursors that are actually open.
+
+To monitor open cursors, query v$sesstat where name='opened cursors current'. This will give the number of currently opened cursors, by session:
+
+
+--total cursors open, by session
+
+select a.value, s.username, s.sid, s.serial#
+from v$sesstat a, v$statname b, v$session s
+where a.statistic# = b.statistic#  and s.sid=a.sid
+and b.name = 'opened cursors current';
+
+If you're running several N-tiered applications with multiple webservers, you may find it useful to monitor open cursors by username and machine:
+
+
+--total cursors open, by username & machine
+
+select sum(a.value) total_cur, avg(a.value) avg_cur, max(a.value) max_cur, s.username, s.machine
+from v$sesstat a, v$statname b, v$session s 
+where a.statistic# = b.statistic#  and s.sid=a.sid
+and b.name = 'opened cursors current' 
+group by s.username, s.machine
+order by 1 desc;
+
+
+Tuning OPEN_CURSORS
+=====================================================
+
+The best advice for tuning OPEN_CURSORS is not to tune it. Set it high enough that you won't have to worry about it. If your sessions are running close to the limit you've set for OPEN_CURSORS, raise it. Your goal in tuning this parameter is to set it high enough that you never get an ora-1000 during normal operations.
+
+If you set OPEN_CURSORS to a high value, this doesn't mean that every session will have that number of cursors open. Cursors are opened on an as-needed basis. And if one of your applications has a cursor leak, it will eventually show up even with OPEN_CURSORS set high.
+
+To see if you've set OPEN_CURSORS high enough, monitor v$sesstat for the maximum opened cursors current. If your sessions are running close to the limit, up the value of OPEN_CURSORS.
+
+
+select max(a.value) as highest_open_cur, p.value as max_open_cur
+from v$sesstat a, v$statname b, v$parameter p
+where a.statistic# = b.statistic# 
+and b.name = 'opened cursors current'
+and p.name= 'open_cursors'
+group by p.value;
+
+HIGHEST_OPEN_CUR MAX_OPEN_CUR
+---------------- ------------
+            1953         2500
+
+
+After you've increased the value of OPEN_CURSORS, keep an eye on v$sesstat to see if opened cursors current keeps increasing for any of your sessions. If you have an application session whose opened cursors current always increases to catch up with OPEN_CURSORS, then you've likely got a cursor leak in your application code: your application is opening cursors and not closing them when it's done. 
+
+There is nothing you, as a DBA, can do to fix a cursor leak. The application developers need to go through the code, find the cursors that are being left open, and close them. As a stopgap, the most you can do is raise OPEN_CURSORS very high and schedule times when all the application sessions will be closed and reopened (eg. by kicking the webserver).
+
+
+How not to tell if you're closing all your cursors
+=====================================================
+
+Frustratingly for developers, the session statistic 'currently open cursors' can include some cursors that the application has closed. When application code calls for a cursor to be closed, Oracle actually marks the cursor as "closeable". The cursor may not actually be closed until Oracle needs the space for another cursor.
+
+So it's not possible to test to see if a complex application is closing all its cursors by starting a session, running a test, and then checking to see if currently open cursors has gone down to 1. Even if the application is closing all its cursors properly, currently open cursors may report that some "closeable" cursors are still open.
+
+One way for application developers to tell if an application is closing all its cursors is to do a single test run, on a dedicated development box, while monitoring "opened cursors cumulative" in v$sesstat for the session that's running the test. Then set OPEN_CURSORS to a value a little bit higher than the peak cursors open during your test run, start a new session, and run through multiple iterations of the same test run. If your application still has a cursor leak, you will see the value of OPEN_CURSORS going up, and you may hit an ORA-1000 after a reasonable number of iterations. (Don't set OPEN_CURSORS too low or it may be used up by recursive SQL; if your single test run opens very few cursors, consider making your test run longer rather than setting OPEN_CURSORS unreasonably low.)
+
+
+Monitoring the session cursor cache
+=====================================================
+
+v$sesstat also provides a statistic to monitor the number of cursors each session has in its session cursor cache.
+
+
+--session cached cursors, by session
+
+select a.value, s.username, s.sid, s.serial#
+from v$sesstat a, v$statname b, v$session s
+where a.statistic# = b.statistic#  and s.sid=a.sid
+and b.name = 'session cursor cache count' ;
+You can also see directly what is in the session cursor cache by querying v$open_cursor. v$open_cursor lists session cached cursors by SID, and includes the first few characters of the statement and the sql_id, so you can actually tell what the cursors are for.
+
+
+select c.user_name, c.sid, sql.sql_text
+from v$open_cursor c, v$sql sql
+where c.sql_id=sql.sql_id  -- for 9i and earlier use: c.address=sql.address
+and c.sid=&sid
+;
+
+
+Tuning SESSION_CACHED_CURSORS
+=====================================================
+
+If you choose to use SESSION_CACHED_CURSORS to help out an application that is continually closing and reopening cursors, you can monitor its effectiveness via two more statistics in v$sesstat. The statistic "session cursor cache hits" reflects the number of times that a statement the session sent for parsing was found in the session cursor cache, meaning it didn't have to be reparsed and your session didn't have to search through the library cache for it. You can compare this to the statistic "parse count (total)"; subtract "session cursor cache hits" from "parse count (total)" to see the number of parses that actually occurred.
+
+
+select cach.value cache_hits, prs.value all_parses, 
+prs.value-cach.value sess_cur_cache_not_used
+from v$sesstat cach, v$sesstat prs, v$statname nm1, v$statname nm2
+where cach.statistic# = nm1.statistic#  
+and nm1.name = 'session cursor cache hits' 
+and prs.statistic#=nm2.statistic#
+and nm2.name= 'parse count (total)'
+and cach.sid= &sid and prs.sid= cach.sid ;
+
+Enter value for sid: 947
+old   8: and cach.sid= &sid and prs.sid= cach.sid
+new   8: and cach.sid= 947 and prs.sid= cach.sid
+
+CACHE_HITS ALL_PARSES SESS_CUR_CACHE_NOT_USED
+---------- ---------- -----------------------
+       106        210                     104
+
+
+Monitor this in concurrence with the session cursor cache count.
+
+--session cached cursors, for a given SID, compared to max
+
+select a.value curr_cached, p.value max_cached, s.username, s.sid, s.serial#
+from v$sesstat a, v$statname b, v$session s, v$parameter2 p
+where a.statistic# = b.statistic#  and s.sid=a.sid and a.sid=&sid
+and p.name='session_cached_cursors'
+and b.name = 'session cursor cache count' ;
+
+
+If the session cursor cache count is maxed out, session_cursor_cache_hits is low compared to all parses, and you suspect that the application is re-submitting the same queries for parsing repeatedly, then increasing SESSION_CURSOR_CACHE_COUNT may help with latch contention and give a slight boost to performance. Note that if your application is not resubmitting the same queries for parsing repeatedly, then session_cursor_cache_hits will be low and the session cursor cache count may be maxed out, but caching cursors by session won't help at all. For example, if your application is using a lot of unsharable SQL, raising this parameter won't get you anything.

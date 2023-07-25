@@ -1,0 +1,14 @@
+drop user sysman cascade; 
+
+drop role MGMT_USER; 
+
+drop PUBLIC SYNONYM MGMT_TARGET_BLACKOUTS; 
+
+drop public synonym SETEMVIEWUSERCONTEXT; 
+
+drop user MGMT_VIEW cascade;
+
+
+$ emca -repos create
+$ emca -config dbcontrol db 
+

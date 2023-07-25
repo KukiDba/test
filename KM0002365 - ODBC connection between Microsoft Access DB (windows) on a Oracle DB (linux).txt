@@ -1,0 +1,24 @@
+How to setup a ODBC connection between Microsoft Access DB (windows) on a Oracle DB (linux) 
+  
+
+To define a new odbc-link against an oracle database do the following on the client computer:
+
+1: Start Control Panel-->Administrative Tools-->Data Sources (ODBC)
+
+2: Hit the tag "System DSN" and the ADD button
+
+3: Select the preferred version of the Oracle ODBC driver.
+
+4: Enter the specified information in the Oracle ODBC Driver Configuration screen.
+
+Data Source Name: A descriptive name, usually the name of the database you want to access
+
+Description: Description of the data source/odbc name
+
+TNS Service Name: The TNSName of the database, PXXX.statoil.no
+
+Userid: The id of the database user for accessing the database
+
+5: Hit the button Test Connection and enter the user password
+
+6: When connection is successfull, hit the ok button

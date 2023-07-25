@@ -1,0 +1,61 @@
+Hi Team
+
+While doing cleanup or any other activity someone has deleted a datafile which was used by a user as temp tablespace on P115.
+
+Anamika caught this alert and informed me.  Good job by Anamika.
+
+Solution :
+
+1)	Find tablespace name using datafile from alert log.
+2)	Searched in database to which user this temp tablespace is assigned by below query :
+select username, TEMPORARY_TABLESPACE from dba_users where TEMPORARY_TABLESPACE='RBVTEMP';
+
+USERNAME                                        TEMPORARY_TABLESPACE
+------------------------------              ------------------------------
+CCADMIN                                            RBVTEMP
+
+3)	SYS at P115 >alter user CCADMIN temporary tablespace temp;
+User altered.
+
+4)	SYS at P115 >select username, TEMPORARY_TABLESPACE from dba_users where TEMPORARY_TABLESPACE='RBVTEMP';
+no rows selected
+
+5)	SYS at P115 >drop tablespace RBVTEMP;
+Tablespace dropped.
+
+6)	SYS at P115 >CREATE TEMPORARY TABLESPACE RBVTEMP TEMPFILE '/db/ORACLE/P115/rbvtemp01_01.dbf' SIZE 100M AUTOEXTEND ON NEXT 50M MAXSIZE 2048M EXTENT MANAGEMENT LOCAL;
+Tablespace created.
+
+7)	SYS at P115 >alter user CCADMIN temporary tablespace RBVTEMP;
+User altered.
+
+8)	                      SYS at P115 >!osmossad -u P115
+
+
+                *** REPORT 09 - TABLESPACE SIZE ***
+                    DATABASE: ST-DB82.STATOIL.NO:P115
+
+Tablespace_Name     Tot_Mb  Tot_Used Pct_Used  Max_Mb    PctOfMax
+--------------------------------------------------------------------------------
+BPC                 100     0        0         4000      0
+EM                  150     89       59        4000      2
+EVENT21             2500    1682     67        12000     14
+INDX                50      0        0         4000      0
+NJORDAAE            7800    7774     100       20000     39
+NJORDAAEIDX         19000   18941    100       32000     59
+NJORDAAEPK          2000    1983     99        20000     10
+NJORDAAETEMP        3180    3173     100       32767     10
+PRODANDINJ          10      4        43        2000      0
+PRODANDINJTMP       10      1        10        2000      0
+RBV                 10      2        18        2000      0
+RTVHISTORY          10      0        1         2000      0
+SIEMENS_TS          35920   35646    99        63744     56
+SIEMENS_TS_TEMP     33279   32768    98        65534     50
+SYSAUDIT            300     272      91        20000     1
+SYSAUX              400     286      72        10000     3
+SYSTEM              500     395      79        5000      8
+TEMP                350     336      96        32000     1
+TOOLS               50      0        0         2000      0
+UNDO                2500    14       1         2500      1
+USERS               6000    4912     82        30000     16
+

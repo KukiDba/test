@@ -1,0 +1,4 @@
+SELECT value$ FROM sys.props$ WHERE name = 'NLS_CHARACTERSET' ;
+
+
+trcasst trace.trc >trace.out

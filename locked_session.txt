@@ -1,0 +1,102 @@
+SYS at T578 >select count(object_name), owner from dba_objects where status='INVALID' group by owner;
+
+COUNT(OBJECT_NAME) OWNER
+------------------ ------------------------------
+                 1 PUBLIC
+                 3 OWBSYS
+                19 OFM
+
+
+set lines 100 pages 999
+col username 	format a20
+col sess_id 	format a10
+col object	format a25
+col mode_held	format a10
+select	oracle_username || ' (' || s.osuser || ')' username
+,	s.sid || ',' || s.serial# sess_id
+,	owner || '.' ||	object_name object
+,	object_type
+,	decode(	l.block
+	,	0, 'Not Blocking'
+	,	1, 'Blocking'
+	,	2, 'Global') status
+,	decode(v.locked_mode
+	,	0, 'None'
+	,	1, 'Null'
+	,	2, 'Row-S (SS)'
+	,	3, 'Row-X (SX)'
+	,	4, 'Share'
+	,	5, 'S/Row-X (SSX)'
+	,	6, 'Exclusive', TO_CHAR(lmode)) mode_held
+from	v$locked_object v
+,	dba_objects d
+,	v$lock l
+,	v$session s
+where 	v.object_id = d.object_id
+and 	v.object_id = l.id1
+and 	v.session_id = s.sid
+order by oracle_username
+,	session_id
+/
+
+USERNAME             SESS_ID    OBJECT                    OBJECT_TYPE         STATUS       MODE_HELD
+-------------------- ---------- ------------------------- ------------------- ------------ ----------
+OFM (oracle)         133,36725  OFM.T_DAILY_PROD          TABLE               Not Blocking Exclusive
+
+
+
+SYS at T578 >select nvl(S.USERNAME,'Internal') username, nvl(S.TERMINAL,'None') terminal,L.SID||','||S.SERIAL# sid_serial, 
+U1.NAME||'.'||substr(T1.NAME,1,20) tab,
+decode(L.LMODE,1,'No Lock',2,'Row Share', 3,'Row Exclusive', 4,'Share',5,'Share Row Exclusive',6,'Exclusive',null) lmode,
+decode(L.REQUEST,1,'No Lock',2,'Row Share',3,'Row Exclusive',4, 'Share',5,'Share Row Exclusive',6,'Exclusive',null) request,
+s.Logon_time from v$LOCK L,v$SESSION S,SYS.USER$ U1,SYS.OBJ$ T1 
+where L.SID = S.SID and T1.OBJ# = decode(L.ID2,0,L.ID1,L.ID2) and 
+U1.USER# = T1.OWNER# and S.TYPE != 'BACKGROUND' order by 1,2,5 ; 
+ 
+
+USERNAME             TERMINAL      SID_SERIAL    TAB                          LMODE	     REQUEST            LOGON_TIME		
+-------------------- ------------- -----------   -----------------------      ------------   -----------	------------------------
+DBSNMP               None          496,7515      SYS.ORA$BASE                 Share				03/11/2012 21:15:39
+DBSNMP               None          106,6433      SYS.ORA$BASE                 Share				03/11/2012 21:10:57
+DBSNMP               None          264,59235     SYS.ORA$BASE                 Share				03/11/2012 21:15:21
+OFM                  UNKNOWN       418,8797      SYS.I_LOB1                   Exclusive				07/11/2012 18:00:03
+OFM                  UNKNOWN       133,36725     SYS.OBJAUTH$                 Exclusive				07/11/2012 12:16:49
+OFM                  UNKNOWN       133,36725     OFM.T_DAILY_PROD_S           Exclusive				07/11/2012 12:16:49
+OFM                  UNKNOWN       133,36725     SYS.ORA$BASE                 Share				07/11/2012 12:16:49
+OFM                  UNKNOWN       418,8797      SYS.ORA$BASE                 Share				07/11/2012 18:00:03
+OFMREAD_ALL          PC-730933     2,957         SYS.ORA$BASE                 Share				05/11/2012 16:53:18
+OFMREAD_ALL          PC-737361     523,2029      SYS.ORA$BASE                 Share				06/11/2012 09:07:08
+OWBSYS               unknown       236,1         SYS.ORA$BASE                 Share				13/09/2012 16:27:17
+PGOM@STATOIL.NET     LT-758822     56,697        SYS.ORA$BASE                 Share				06/11/2012 10:30:34
+PGOM@STATOIL.NET     LT-758822     341,17879     SYS.ORA$BASE                 Share				07/11/2012 09:59:44
+RCOL@STATOIL.NET     PC-730933     314,35257     SYS.ORA$BASE                 Share				06/11/2012 10:58:31
+RCOL@STATOIL.NET     PC-730933     471,4029      SYS.ORA$BASE                 Share				07/11/2012 10:42:27
+RCOL@STATOIL.NET     PC-730933     81,597        SYS.ORA$BASE                 Share				07/11/2012 12:15:00
+SYS                  pts/7         366,10573     SYS.I_PROXY_ROLE_DATA$_1     Exclusive				07/11/2012 15:18:08
+SYS                  pts/7         366,10573     PUBLIC.REPORT_FORMATS        Exclusive				07/11/2012 15:18:08
+SYS                  pts/7         366,10573     SYS.ORA$BASE                 Share				07/11/2012 15:18:08
+SYS                  pts/7         393,32629     SYS.ORA$BASE                 Share				07/11/2012 17:50:52
+SYSTEM               ST-TS309      498,11663     SYS._NEXT_OBJECT             Share				07/11/2012 18:20:18
+SYSTEM               ST-TS309      498,11663     SYS.ORA$BASE                 Share				07/11/2012 18:20:18
+
+22 rows selected.
+
+
+
+SYS at T578 >select count(object_name), owner from dba_objects where status='INVALID' group by owner;
+
+COUNT(OBJECT_NAME) OWNER
+------------------ ----------
+                 1 PUBLIC
+                 3 OWBSYS
+                 4 OFM
+
+SYS at T578 >
+SYS at T578 >
+SYS at T578 >
+SYS at T578 >select sysdate from dual;
+
+SYSDATE
+-------------------
+07/11/2012 19:32:51
+

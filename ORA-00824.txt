@@ -1,0 +1,15 @@
+ORA-00824: cannot set sga_target due to existing internal settings, see alert log for more information
+ORA-01078: failure in processing system parameters
+
+
+
+
+SQL> startup
+ORA-00824: cannot set sga_target due to existing internal settings, see alert log for more information
+
+in alert log you can find this
+
+Cannot set sga_target with statistics_level=BASIC
+
+solution:-
+change either one of these value of statistics_level to TYPICAL or SGA_TARGET =0 

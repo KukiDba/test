@@ -1,0 +1,6 @@
+SQL >   show parameter open_cursor;
+
+SQL > alter system set open_cursors = 2000;
+
+SQL>   show parameter open_cursor;
+

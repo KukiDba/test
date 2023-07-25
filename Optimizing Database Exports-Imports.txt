@@ -1,0 +1,79 @@
+http://www.informit.com/articles/article.aspx?p=19711&seqNum=3
+---------------------------------------------------------------
+
+
+Export/Import can be used to move information as follows:
+
+•Between databases on the same version of Oracle
+
+•Between databases on different versions of Oracle
+
+•Between databases on different operating system platforms
+
+•From one schema to another schema
+
+•From one tablespace to another tablespace
+
+•In the entire database
+
+Exports can be performed at three levels of data collection:
+
+•An incremental export backs up data that has changed since the last incremental backup.
+
+•A cumulative export backs up data that has changed since the last cumulative backup. It can be used to condense incremental backups.
+
+•A complete export backs up the entire database.
+
+Optimizing Database Exports
+=============================
+=============================
+
+Follow these guidelines to optimize your exports:
+
+•Minimize I/O contention by placing the export dump file on a disk separate from the disk containing the data files.
+
+•Break the export into smaller exports, and then run each export in parallel.
+
+•Export only the information needed during recovery. For example, don't export indexes if they can be easily re-created. If roles, profiles, and security information don't change after the initial setup, you don't need to export them every time.
+
+•Export to a high-speed disk rather than to a tape.
+
+•Determine whether incremental and cumulative exports will be really useful. Suppose that many changes are happening in the database and that about 80 percent or more must be backed up every time. In this case, you're better off using a full database export and thereby dealing with only one file instead of many files.
+
+•Use a large buffer size. The BUFFER parameter determines the number of rows in the array to be exported. The larger the buffer size, the better the performance. The setting for BUFFER is influenced by the amount of memory on your system; be careful not to introduce paging (by setting it too high).
+
+•Don't back up read-only tablespaces. Also, make sure that the read-only tablespace wasn't read-write during the last export and has switched to read-only since that time.
+
+•Schedule the export during periods of the least database activity.
+
+•Make sure that the frequency of performing an export is proper. In other words, if not much activity is going on in the database, you're better off exporting less frequently.
+
+
+Optimizing Database Imports
+=============================
+=============================
+
+Follow these guidelines to optimize your imports:
+
+•Use a large buffer size. The BUFFER parameter determines the number of rows in the array to be inserted by the import. The larger the buffer size, the better the performance. The setting for BUFFER is influenced by the amount of memory on your system, so be careful not to introduce paging (by setting it too high).
+
+•Don't use COMMIT=Y. When COMMIT=N, the commit takes place after each object load instead of each array insert. This improves performance but requires that you use large rollback segments.
+
+•Use a large rollback segment, and put other rollback segments offline to ensure that the import uses a large rollback segment. Using a large rollback segment and about 20 extents minimizes dynamic space management.
+
+•Do a backup and disable archiving. Putting the database in NOARCHIVELOG mode is a good idea because Import generates a lot of redo that doesn't need to be recorded. A backup also should be done at this point because you aren't planning to use ARCHIVELOG mode.
+
+•Use large online redo logs, and reduce the checkpoint frequency. This can be done by increasing the value of the LOG_CHECKPOINT_INTERVAL parameter. This will help in conserving system resources.
+
+•Pre-create the tables without the indexes and constraints, load the data, and then create the indexes and constraints. Use the INDEXFILE parameter to help in index creation.
+
+•Minimize I/O contention by placing the export file on a disk other than the data files.
+
+•Schedule the import during periods of the least database activity.
+
+•Import from a disk rather than directly from a tape.
+
+•Use a large value for the SORT_AREA_SIZE parameter to speed up the index creation process.
+
+Export/Import may be an important part of your overall strategy for transfer and protection of data from or to Oracle databases. This article has discussed several techniques that can be used for speeding up the entire process.
+ 

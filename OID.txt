@@ -1,0 +1,8 @@
+$ORACLE_HOME/ldap/admin 
+
+oidpasswd connect=P200.statoil.no unlock_su_acct=true
+
+$ORACLE_HOME/bin/ldapbind -p 389 -D cn=orcladmin -w <ODS user password>
+
+
+

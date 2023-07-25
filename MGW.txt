@@ -1,0 +1,183 @@
+/opt/mqm/bin/dspmqver
+
+
+oracle@st-db111 41% /opt/mqm/bin/dspmqver
+Name:        WebSphere MQ
+Version:     6.0.2.1
+CMVC level:  p600-201-070307
+BuildType:   IKAP - (Production)
+
+
+
+
+oracle@st-db111 42%
+
+To check number of nodes/physical server on cluster
+========================================================
+sudo /opt/VRTSvcs/bin/hasys –list
+
+
+
+SYS at T276S >select agent_status from mgw_gateway;
+
+AGENT_STATUS
+---------------
+NOT_STARTED
+
+begin
+dbms_mgwadm.db_connect_info('AQADMIN', 'ADMINAQ07', 'GAZS.STATOIL.NO');
+end;
+/
+
+begin
+dbms_mgwadm.db_connect_info('AQADMIN', 'magg46aq', 'P479.STATOIL.NO');
+end;
+/ 
+
+begin
+dbms_mgwadm.db_connect_info('AQADMIN', 'aqsyre21oct', 'DISP.STATOIL.NO');
+end;
+/
+ 
+
+PL/SQL procedure successfully completed.
+
+
+SYS at T276S >exec dbms_mgwadm.startup;
+
+PL/SQL procedure successfully completed.
+
+SYS at T276S >select agent_status from mgw_gateway;
+
+AGENT_STATUS
+---------------
+START_SCHEDULED
+
+SYS at T276S >select agent_status from mgw_gateway;
+
+AGENT_STATUS
+---------------
+STARTING
+
+SYS at T276S >select agent_status from mgw_gateway;
+
+AGENT_STATUS
+---------------
+RUNNING
+
+
+exec dbms_mgwadm.startup;
+
+exec dbms_mgwadm.shutdown;
+
+
+
+
+
+
+copy script from GAZH "RemoveMGW.sql"
+in cdcreate
+after that ask AQADMIN user password from requestor
+then run this command
+
+begin
+dbms_mgwadm.db_connect_info('AQADMIN', 'adminaq07', 'GAZH.STATOIL.NO');
+end;
+/
+
+
+GRANT RESOURCE TO AQADMIN;
+GRANT CONNECT TO AQADMIN;
+
+lsreg TE276S
+======================================
+
+ID        Component                                Status     Version
+
+T276S      Oracle Database Catalog Views            VALID      11.2.0.3.0
+T276S      Oracle Database Packages and Types       VALID      11.2.0.3.0
+T276S      Messaging Gateway                        VALID      11.2.0.3.0
+
+
+SYS at T276S >select agent_status from mgw_gateway;
+
+AGENT_STATUS
+---------------
+NOT_STARTED
+
+exec dbms_mgwadm.startup;
+
+
+exec dbms_mgwadm.shutdown;
+
+
+select LAST_ERROR_MSG from  mgw_gateway;
+
+
+
+set line 300
+col comments for a100
+col initfile for a20
+col comments for a20
+col SERVICE for a20
+select subscriber_id, queue_name, propagated_msgs, exceptionq_msgs from mgw_subscribers;
+
+SUBSCRIBER_ID                  QUEUE_NAME                                                    PROPAGATED_MSGS EXCEPTIONQ_MSGS
+------------------------------ ------------------------------------------------------------- --------------- ---------------
+SAP_BW_SUBSCRIBER              AQADMIN.SAP_BW_QUEUE                                                        0               0
+EBOSS_SUBSCRIBER               AQADMIN.EBOSS_QUEUE                                                         0               0
+ENDUR_PATH_SUBSCRIBER          AQADMIN.ENDUR_PATH_QUEUE                                                    0               0
+ENDUR_US_SUBSCRIBER            AQADMIN.ENDUR_US_QUEUE                                                      0               0
+POMS_SUBSCRIBER                AQADMIN.POMS_QUEUE                                                          0               0
+GLAS_SUBSCRIBER                AQADMIN.GLAS_QUEUE                                                          0               0
+ENDUR_SUBSCRIBER               AQADMIN.ENDUR_QUEUE                                                         0               0
+SING_SUBSCRIBER                AQADMIN.SING_QUEUE                                                          1               0
+
+
+SYS at T461A >col queue_name for a40
+SYS at T461A >col last_error_msg for a70
+SYS at T461A >select queue_name, failures, last_error_msg from mgw_subscribers where subscriber_id = 'SING_SUBSCRIBER';
+
+QUEUE_NAME                                 FAILURES LAST_ERROR_MSG
+---------------------------------------- ---------- ----------------------------------------------------------------------
+AQADMIN.SING_QUEUE                                0
+
+
+
+
+
+USE_PLUG_AND_PLAY_LIST_DB51_MGW = OFF
+INBOUND_CONNECT_TIMEOUT_LIST_DB51_MGW = 120
+USE_CKPFILE_LIST_DB51_MGW = OFF
+LIST_DB51_MGW =
+  (ADDRESS_LIST =
+        (ADDRESS=
+          (PROTOCOL=IPC)
+          (KEY= DB51_MGW)
+        )
+        (ADDRESS =
+          (COMMUNITY = TCPCOM)
+          (PROTOCOL = TCP)
+          (Host = db51.statoil.no)
+          (Port = 10995)
+        )
+  )
+
+STARTUP_WAIT_TIME_LIST_DB51_MGW = 0
+CONNECT_TIMEOUT_LIST_DB51_MGW = 10
+LOG_DIRECTORY_LIST_DB51_MGW = /prog51/oracle/network/log
+LOG_FILE_LIST_DB51_MGW = /dev/null
+TRACE_LEVEL_LIST_DB51_MGW = 0
+TRACE_DIRECTORY_LIST_DB51_MGW = /prog51/oracle/network/log
+TRACE_FILE_LIST_DB51_MGW = /dev/null
+SID_LIST_LIST_DB51_MGW =
+  (SID_LIST =
+   (SID_DESC =
+      (SID_NAME = mgwextproc)
+      (ORACLE_HOME = /prog51/oracle/product/11.2.0.3)
+      (ENVS="EXTPROC_DLLS=/prog51/oracle/product/11.2.0.3/lib/libmgwagent.so,LD_LIBRARY_PATH=/prog51/oracle/product/11.2.0.3/lib:/prog51/oracle/product/11.2.0.3/jdk/jre/lib/amd64/server")
+      (PROGRAM = extproc)
+   )
+ )
+
+#

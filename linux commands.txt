@@ -1,0 +1,106 @@
+linux command to know hard disk details
+=======================================
+=======================================
+
+hdparm -I /dev/hda
+
+
+This will recursively traverse the /path/to/folder directory and list only the symbolic links:
+================================================================================================
+find . -type l -exec ls -l {} \;
+
+
+
+list all extensions
+====================================================================
+find . -type f | perl -ne 'print $1 if m/\.([^.\/]+)$/' | sort -u
+
+
+Save a file with another name if opened in VI
+====================================================================
+:w <filename>
+
+then this file will same with that name
+
+then you can use wq! to exit
+
+
+
+http://vim.wikia.com/wiki/Search_and_replace
+=====================================================
+:%s/\<foo\>/bar/gc Change only whole words exactly matching 'foo' to 'bar'; ask for confirmation. 
+
+
+=============================================================================================================
+Used Port on server
+=============================================================================================================
+netstat -lntup
+
+lsof -i
+
+
+scp -r oracle@st-db108.st.statoil.no:/dbfra/oracle/admin/P311/arch .
+
+scp oracle@st-db108.st.statoil.no:/db/ORACLE/P311/\{control_01.ctl,data_01.dbf\} .
+
+tar -cvf 11.2.0.4.6.tar.gz 11.2.0.4.6
+
+
+single line command to create trust
+========================================
+cat /home/oracle/.ssh/id_dsa.pub | ssh oracle@<Destination Server Name> 'cat >> .ssh/authorized_keys'
+
+ps -e -o pcpu,pid,user,tty,args | sort -n -k 1 -r | head
+
+ps -ef | grep -i bppm | grep -v grep
+
+ls | sort | ls -l
+
+
+find a file in a particular moint point with particular extension
+==================================================================
+find /opt -type f -name "*.log"
+
+
+Change a string in multiple files at same path
+==================================================================
+cd /path/to/your/folder
+sed -i 's/foo/bar/g' *
+
+or different common path
+
+sed -i 's/st-vtdb22/ST-VTDB22/g' /dbprog/oracle/admin/*/rman/tdpo.opt
+
+
+How to know from which home pmon process running
+==================================================
+/proc/<process id>
+
+It will give detail
+
+
+****************************
+Extract cpio.gz file
+============================
+
+gzip -d file name.cpio.gz
+
+cpio -idmv < [file name.cpio]
+
+example
+=========
+cpio -idmv < amd64_db_9204_Disk1.cpio
+
+
+command to check veritas cluster status
+==========================================
+sudo /opt/VRTSvcs/bin/hastatus -summary 
+
+or
+
+sudo hastatus -summary
+
+
+
+
+

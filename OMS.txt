@@ -1,0 +1,72 @@
+st-lindba02
+12C OMS
+==========================================================================
+
+/dbprog/oracle/em12cr5/Middleware/oms/bin
+
+emctl status oms
+
+==========================================================================
+
+oracle@st-lindba02.st.statoil.no 53% cd /prog/oracle/Middleware/oms11g/bin
+oracle@st-lindba02.st.statoil.no 54% ./emctl stop oms
+Oracle Enterprise Manager 11g Release 1 Grid Control  
+Copyright (c) 1996, 2010 Oracle Corporation.  All rights reserved.
+Stopping WebTier...
+WebTier Successfully Stopped
+Stopping Oracle Management Server...
+Oracle Management Server Failed to be Stopped
+Oracle Management Server is not functioning because of the following reason:
+Unexpected error occurred. Check error and log files.
+Please check /prog/oracle/gc_inst/em/EMGC_OMS1/sysman/log/emctl.log for error details
+
+Stop  WebLogic
+kill 7906
+kill 8029
+kill 8030
+kill 8031
+kill 8033
+kill 11540
+kill 11656
+kill 11658
+kill 11700
+kill 12762
+kill 12763
+kill 12818
+kill 29842
+kill 30098
+kill 30162
+kill 30282
+kill 30474
+kill 30569
+kill -9 7906
+kill -9 11540
+kill -9 11658
+kill -9 11700
+kill -9 12763
+kill -9 12818
+kill -9 29842
+kill -9 30098
+kill -9 30162
+kill -9 30282
+kill -9 30474
+kill -9 30569
+oracle@st-lindba02.st.statoil.no 55%
+
+oracle@st-lindba02.st.statoil.no 56% ./emctl status oms
+Oracle Enterprise Manager 11g Release 1 Grid Control  
+Copyright (c) 1996, 2010 Oracle Corporation.  All rights reserved.
+WebTier is Down
+Oracle Management Server is Down
+oracle@st-lindba02.st.statoil.no 56% ./emctl start oms
+
+
+
+
+
+
+oracle@st-lindba02.st.statoil.no 57% ps -ef | grep oms
+oracle    7684     1  1 02:27 pts/0    00:00:04 /prog/oracle/Middleware/jdk1.6.0_18/jre/bin/java -classpath /prog/oracle/Middleware/jdk1.6.0_18/jre/lib/rt.jar:/prog/oracle/Middleware/jdk1.6.0_18/jre/lib/i18n.jar:/prog/oracle/Middleware/patch_wls1032/profiles/default/sys_manifest_classpath/weblogic_patch.jar:/prog/oracle/Middleware/jdk1.6.0_18/lib/tools.jar:/prog/oracle/Middleware/utils/config/10.3/config-launch.jar:/prog/oracle/Middleware/wlserver_10.3/server/lib/weblogic_sp.jar:/prog/oracle/Middleware/wlserver_10.3/server/lib/weblogic.jar:/prog/oracle/Middleware/modules/features/weblogic.server.modules_10.3.2.0.jar:/prog/oracle/Middleware/wlserver_10.3/server/lib/webservices.jar:/prog/oracle/Middleware/modules/org.apache.ant_1.7.0/lib/ant-all.jar:/prog/oracle/Middleware/modules/net.sf.antcontrib_1.0.0.0_1-0b2/lib/ant-contrib.jar:/prog/oracle/Middleware/oms11g/sysman/jlib/emagentSDK.jar:/prog/oracle/Middleware/oms11g/sysman/jlib/emCORE.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.http_client_11.1.1.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.pki_11.1.1/oraclepki.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.osdt_11.1.1/osdt_cert.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.osdt_11.1.1/osdt_core.jar:/prog/oracle/Middleware/modules/com.bea.core.apache.log4j_1.2.13.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.jrf_11.1.1/jrf-api.jar:/prog/oracle/Middleware/oracle_common/common/wlst/resources/jrf-wlst.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.odl_11.1.1/ojdl.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.odl_11.1.1/ojdl2.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.dms_11.1.1/dms.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.dconfig-infra_11.1.1.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.fabriccommon_11.1.1/fabric-common.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.xdk_11.1.0/xmlparserv2.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.xdk_11.1.0/xml.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.wsm.common_11.1.1/wsm-pmlib.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.wsm.common_11.1.1/wsm-policy-core.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.wsm.common_11.1.1/wsm-secpol.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.wsm.common_11.1.1/wsm-dependencies.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.wsm.policies_11.1.1/wsm-seed-policies.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.webservices_11.1.1/orawsdl.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.webservices_11.1.1/mdds.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.webservices_11.1.1/ws_confmbeans.jar:/prog/oracle/Middleware/oracle_common/modules/org.apache.commons.digester_1.7.jar:/prog/oracle/Middleware/oracle_common/../modules/javax.xml.bind_2.1.1.jar:/prog/oracle/Middleware/oracle_common/../modules/javax.activation_1.1.jar:/prog/oracle/Middleware/oracle_common/../modules/javax.xml.stream_1.1.1.0.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.http_client_11.1.1.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.jmx_11.1.1/jmxframework.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.jmx_11.1.1/jmxspi.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.dconfigbeans_11.1.1.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share.ca_11.1.1/adf-share-base.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share.ca_11.1.1/adf-share-ca.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share_11.1.1/adflogginghandler.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share_11.1.1/adfsharembean.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share_11.1.1/commons-el.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share_11.1.1/jsp-el-api.jar:/prog/oracle/Middleware/oracle_common/modules/oracle.adf.share_11.1.1/oracle-el.jar:/prog/oracle/Middleware/oracle_common/common/wlst/resources/auditwlst.jar:/prog/oracle/Middleware/oracle_common/common/wlst/resources/sslconfigwlst.jar:/prog/oracle/Middleware/ora
+oracle    7923  7881 99 02:28 ?        00:09:09 /prog/oracle/Middleware/jdk1.6.0_18/bin/java -client -Xms256m -Xmx512m -XX:CompileThreshold=8000 -XX:PermSize=128m -XX:MaxPermSize=512m -Dweblogic.Name=EMGC_OMS1 -Djava.security.policy=/prog/oracle/Middleware/wlserver_10.3/server/lib/weblogic.policy -Dweblogic.system.BootIdentityFile=/prog/oracle/gc_inst/user_projects/domains/GCDomain/servers/EMGC_OMS1/data/nodemanager/boot.properties -Dweblogic.nodemanager.ServiceEnabled=true -Dweblogic.security.SSL.ignoreHostnameVerification=true -Dweblogic.ReverseDNSAllowed=false -DINSTANCE_HOME=/prog/oracle/gc_inst/em/EMGC_OMS1 -DORACLE_HOME=/prog/oracle/Middleware/oms11g -Ddomain.home=/prog/oracle/gc_inst/user_projects/domains/GCDomain -Djava.awt.headless=true -Ddomain.name=GCDomain -Docm.repeater.home=/prog/oracle/Middleware/oms11g -Djava.security.egd=file:///dev/urandom -Xverify:none -da -Dplatform.home=/prog/oracle/Middleware/wlserver_10.3 -Dwls.home=/prog/oracle/Middleware/wlserver_10.3/server -Dweblogic.home=/prog/oracle/Middleware/wlserver_10.3/server -Ddomain.home=/prog/oracle/gc_inst/user_projects/domains/GCDomain -Dcommon.components.home=/prog/oracle/Middleware/oracle_common -Djrf.version=11.1.1 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger -Djrockit.optfile=/prog/oracle/Middleware/oracle_common/modules/oracle.jrf_11.1.1/jrocket_optfile.txt -Doracle.domain.config.dir=/prog/oracle/gc_inst/user_projects/domains/GCDomain/config/fmwconfig -Doracle.server.config.dir=/prog/oracle/gc_inst/user_projects/domains/GCDomain/config/fmwconfig/servers/EMGC_OMS1 -Doracle.security.jps.config=/prog/oracle/gc_inst/user_projects/domains/GCDomain/config/fmwconfig/jps-config.xml -Djava.protocol.handler.pkgs=oracle.mds.net.protocol -Digf.arisidbeans.carmlloc=/prog/oracle/gc_inst/user_projects/domains/GCDomain/config/fmwconfig/carml -Digf.arisidstack.home=/prog/oracle/gc_inst/user_projects/domains/GCDomain/config/fmwconfig/arisidprovider -Dweblogic.alternateTypesDirectory=/prog/oracle/Middleware/oracle_common/modules/oracle.ossoiap_11.1.1,/prog/oracle/Middleware/oracle_common/modules/oracle.oamprovider_11.1.1 -Dweblogic.jdbc.remoteEnabled=false -Dweblogic.management.discover=false -Dweblogic.management.server=https://st-lindba02.statoil.no:7101 -Dwlw.iterativeDev= -Dwlw.testConsole= -Dwlw.logErrorsToConsole= -Dweblogic.ext.dirs=/prog/oracle/Middleware/patch_wls1032/profiles/default/sysext_manifest_classpath weblogic.Server
+oracle    9077  7256  0 02:35 pts/2    00:00:00 grep oms
+oracle@st-lindba02.st.statoil.no 58% 

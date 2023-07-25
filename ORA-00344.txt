@@ -1,0 +1,48 @@
+SYS at U014R >ALTER DATABASE OPEN RESETLOGS;
+ALTER DATABASE OPEN RESETLOGS
+*
+ERROR at line 1:
+ORA-00344: unable to re-create online log '/dbfra_a/ORACLE/U014R/redo_01.log'
+ORA-27040: file create error, unable to create file
+Linux-x86_64 Error: 2: No such file or directory
+Additional information: 1
+
+
+SYS at U014R >alter database open resetlogs;
+alter database open resetlogs
+*
+ERROR at line 1:
+ORA-00392: log 4 of thread 1 is being cleared, operation not allowed
+ORA-00312: online log 4 thread 1: '/dblog_a/ORACLE/U014R/redo_04.log'
+ORA-00312: online log 4 thread 1: '/dbfra_a/ORACLE/U014R/redo_04.log'
+
+ SQL> select status from v$log where GROUP#=4;
+STATUS 
+----------------
+CLEARING_CURRENT
+
+SYS at U014R >alter database clear unarchived logfile group 4;
+
+Database altered.
+
+SYS at U014R >alter database open resetlogs;
+
+Database altered.
+
+SYS at U014R >set line 200
+col member for a50
+select a.group#, b.member, a.bytes/1024/1024 "size in mb", a.status from v$log a, v$logfile b where a.group#=b.group# order by group#;
+SYS at U014R >SYS at U014R >
+    GROUP# MEMBER                                             size in mb STATUS
+---------- -------------------------------------------------- ---------- ----------------
+         1 /dblog_a/ORACLE/U014R/redo_01.log                         500 CURRENT
+         1 /dbfra_a/ORACLE/U014R/redo_01.log                         500 CURRENT
+         2 /dblog_a/ORACLE/U014R/redo_02.log                         500 UNUSED
+         2 /dbfra_a/ORACLE/U014R/redo_02.log                         500 UNUSED
+         3 /dblog_a/ORACLE/U014R/redo_03.log                         500 UNUSED
+         3 /dbfra_a/ORACLE/U014R/redo_03.log                         500 UNUSED
+         4 /dblog_a/ORACLE/U014R/redo_04.log                         500 UNUSED
+         4 /dbfra_a/ORACLE/U014R/redo_04.log                         500 UNUSED
+
+8 rows selected.
+

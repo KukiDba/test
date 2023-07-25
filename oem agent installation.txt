@@ -1,0 +1,136 @@
+curl "https://oem.statoil.no/em/install/getAgentImage" --insecure -o /tmp/AgentPull.sh
+
+chmod +x /tmp/AgentPull.sh
+
+/tmp/AgentPull.sh -showPlatforms
+
+
+vi /home/oracle/AgentResponseFile
+                
+LOGIN_USER=sysman
+LOGIN_PASSWORD=pw12Cl0ud
+PLATFORM="Linux x86-64"
+AGENT_REGISTRATION_PASSWORD=O3M12cl0ud
+
+
+Create oraInst.loc file in /home/oracle/oraInst.loc
+
+
+inventory_loc=/home/oracle/oraInventory
+inst_group=dba
+
+AGENT_BASE_DIR= should be on /home/oracle on a server in a cluster
+                On a standalone server/VMware the AGENT_BASE_DIR should point to /prog or /dbprog
+
+
+
+
+/tmp/AgentPull.sh RSPFILE_LOC=/home/oracle/AgentResponseFile AGENT_BASE_DIR=/dbprog/oracle/Middleware/agent12c -invPtrLoc /home/oracle/oraInst.loc
+
+cp /dbprog/oracle/Middleware/agent12c/core/12.1.0.3.0/root.sh /tmp/ora.sh
+
+chmod +x /tmp/ora.sh
+
+sudo /tmp/ora.sh
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl start agent
+
+
+TROUBLESHOOT 
+==================
+
+oracle@mo-vdb01.mo.statoil.no 48% /tmp/AgentPull.sh RSPFILE_LOC=/home/oracle/AgentResponseFile AGENT_BASE_DIR=/dbprog/oracle/Middleware/agent12c -invPtrLoc /home/oracle/oraInst.loc
+-invPtrLoc /home/oracle/oraInst.loc
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   773  100   755  100    18   2328     55 --:--:-- --:--:-- --:--:--  2330
+        zip warning: missing end signature--probably not a zip file (did you
+        zip warning: remember to use binary mode when you transferred it?)
+        zip warning: (if you are trying to read a damaged archive try -F)
+
+zip error: Zip file structure invalid (/dbprog/oracle/Middleware/agent12c//agent.zip)
+ERROR: curl command:/usr/bin/curl  https://oem.statoil.no:4903/em/install/getAgentImage?user=sysman&platform=Linux x86-64&version=0&script=download&host=movdb01mostatoilno&type=agtimage --insecure -o /dbprog/oracle/Middleware/agent12c//agent.zip -S --stderr /dbprog/oracle/Middleware/agent12c//error.txt failed.
+
+<HTML><HEAD>
+<TITLE>Access Denied</TITLE>
+</HEAD>
+<BODY>
+<FONT face="Helvetica">
+<big><strong></strong></big><BR>
+</FONT>
+<blockquote>
+<TABLE border=0 cellPadding=1 width="80%">
+<TR><TD>
+<FONT face="Helvetica">
+<big>Access Denied (policy_denied)</big>
+<BR>
+<BR>
+</FONT>
+</TD></TR>
+<TR><TD>
+<FONT face="Helvetica">
+You are attempting to use a non-standard HTTPS port. Such ports are not allowed by default in Statoil. If you have a business need for this port please contact IT Support.
+</FONT>
+</TD></TR>
+<TR><TD>
+<FONT face="Helvetica">
+
+</FONT>
+</TD></TR>
+<TR><TD>
+<FONT face="Helvetica" SIZE=2>
+<BR>
+For assistance, contact your network support team.
+</FONT>
+</TD></TR>
+</TABLE>
+</blockquote>
+</FONT>
+</BODY></HTML>
+
+oracle@mo-vdb01.mo.statoil.no 49% vi /tmp/AgentPull.sh
+
+oracle@mo-vdb01.mo.statoil.no 50% env | grep proxy
+http_proxy=http://www-proxy.statoil.no:80/
+HTTPS_PROXY=http://www-proxy.statoil.no:80/
+https_proxy=http://www-proxy.statoil.no:80/
+HTTP_PROXY=http://www-proxy.statoil.no:80/
+
+oracle@mo-vdb01.mo.statoil.no 51% unsetenv http_proxy
+
+oracle@mo-vdb01.mo.statoil.no 52% unsetenv HTTPS_PROXY
+
+oracle@mo-vdb01.mo.statoil.no 53% unsetenv  https_proxy
+
+oracle@mo-vdb01.mo.statoil.no 54% unsetenv HTTP_PROXY
+
+
+
+emcli installtion
+=========================================================
+
+
+scp -r emcli stjohn-vdb01.stjohn.statoil.no:/home/oracle/
+
+./emcli setup -url=https://oem.statoil.no/em -username=sysman -autologin -trustall
+
+password - pw12Cl0ud
+
+oracle@stjohn-vdb01 46% emcli status
+Oracle Enterprise Manager 12c EMCLI12.1.0.3.0.
+Copyright (c) 1996, 2013 Oracle Corporation and/or its affiliates. All rights reserved.
+
+Instance Home          : /home/oracle/.emcli
+Verb Jars Home         : /home/oracle/emcli/./bindings/12.1.0.5.0/.emcli
+Status                 : Configured
+EMCLI Home             : /home/oracle/emcli/.
+EMCLI Version          : 12.1.0.3.0
+Java Home              : /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.95.x86_64/jre
+Java Version           : 1.7.0_95
+Log file               : /home/oracle/.emcli/.emcli.log
+EM URL                 : https://oem.statoil.no/em
+EM user                : sysman
+Auto login             : true
+Trust all certificates : true
+oracle@stjohn-vdb01 47%

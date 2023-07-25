@@ -1,0 +1,19 @@
+oracle@st-db122.st.statoil.no 41% /usr/kerberos/sbin/ktutil
+ktutil: read_kt /etc/oracle/krb5/keytab
+ktutil: list
+slot KVNO Principal
+---- ---- ---------------------------------------------------------------------
+1 7 oracle/st-db122.st.statoil.no@STATOIL.NET
+ktutil:quit
+
+
+
+
+
+
+
+oracle@hou-db01 43% /usr/kerberos/bin/klist -K -e -t -k /etc/oracle/krb5/keytab
+Keytab name: FILE:/etc/oracle/krb5/keytab
+KVNO Timestamp         Principal
+---- ----------------- --------------------------------------------------------
+  18 12/31/69 18:00:00 oracle/hou-db01.hou.statoil.no@STATOIL.NET (AES-256 CTS mode with 96-bit SHA-1 HMAC)  (0x50ba1b7d9ff551598072d87486623b8b1bf88c7c2bb6568c09c1e58486ee6be0)

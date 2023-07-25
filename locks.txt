@@ -1,0 +1,86 @@
+SET LINESIZE 300
+SET PAGESIZE 1000
+COLUMN username FORMAT A30
+COLUMN osuser FORMAT A20
+COLUMN machine FORMAT A25
+COLUMN program FORMAT A30
+COLUMN logon_time FORMAT A38
+COLUMN module FORMAT A40
+column osuser for a30
+column logon_time for a25
+
+SELECT NVL(s.username, '(oracle)') AS username,
+       s.osuser,
+       s.sid,
+       s.serial#,
+       s.lockwait,
+       s.status,
+       s.module,
+       s.machine,
+       s.program,
+       TO_CHAR(s.logon_Time,'DD-MON-YYYY HH24:MI:SS') AS logon_time
+FROM   v$session s 
+CONNECT BY PRIOR s.sid = s.blocking_session
+START WITH s.blocking_session IS NULL
+and type <> 'BACKGROUND'
+order by logon_time;
+
+
+and status = 'ACTIVE'
+
+
+
+USERNAME             OSUSER                  	SID       STATUS   	MODULE		MACHINE                   PROGRAM          LOGON_TIME
+-------------------- -----------------   ----------  	---------	---------	----------------------	  ----------	--------------------
+RIMIS@STATOIL.NET    RIMIS@STATOIL.NET      	222     INACTIVE 	CSD.exe		STATOIL-NET\LT-768817     CSD.exe	08-JUN-2012 13:52:31
+
+
+
+
+
+
+Number of blocked sessions by other session
+==============================================
+
+SELECT SUM(num_blocked) 
+  FROM (SELECT id1, id2, MAX(DECODE(block, 1, sid, 0)) blocking_sid, 
+     SUM(DECODE(request, 0, 0, 1)) num_blocked 
+     FROM v$lock 
+        WHERE block = 1 OR request>0 
+        GROUP BY id1, id2) 
+  GROUP BY blocking_SID;
+
+
+Session id which is blocking the session
+==============================================
+
+select sid from v$lock where block=1;
+
+
+find the sql text for this sessions
+==============================================
+select sql_text from v$sqltext where hash_value=(select prev_hash_value from v$session where sid=190);
+
+
+
+
+SYS at P033 >select * from v$lock where type='TX' and request>0;
+
+Instance  SID / Serial#   Locking Oracle User  Mode Held       Mode Requested  Lock Type       Object                                     Lock Time (min)
+--------- --------------- -------------------- --------------- --------------- --------------- ------------------------------------------ ---------------
+P356      188 / 31604     WINSDBA              Row Exclusive   None            DML             WINSDBA.SPIDER_TRACKING                                179
+P356      190 / 4         WINSDBA              Row Exclusive   None            DML             WINSDBA.SPIDER_TRACKING                                117
+P356      194 / 64928     WINSDBA              Row Exclusive   None            DML             WINSDBA.SPIDER_TRACKING                                116
+
+
+SYS at P033 >select * from v$lock where type='TX' and lmode>0;
+
+ADDR             KADDR                   SID TY        ID1        ID2      LMODE    REQUEST      CTIME      BLOCK
+---------------- ---------------- ---------- -- ---------- ---------- ---------- ---------- ---------- ----------
+000000007D795150 000000007D795188        188 TX      65542    5879317          6          0      10863          1
+
+ select sid from v$lock where block=1;
+
+
+
+

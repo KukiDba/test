@@ -1,0 +1,9 @@
+SELECT  a.owner, a.object_name FROM dba_objects a, v$locked_object b 
+WHERE a.object_id = b.object_id
+ AND UPPER(a.object_name) IN ( UPPER('be_igm_process'),
+ UPPER('target_intervention_be'),
+ UPPER('riskarea_be'),
+ UPPER('riskspike') , 									 UPPER('OUTPUTCTHINSTRUCTIONS'),
+ UPPER('OUTPUTNOTININSTRUCTIONS'),
+ UPPER('OUTPUT_DOV_RULES') )
+AND UPPER(a.owner)=(SELECT UPPER(USER) FROM dual)
