@@ -1,0 +1,37 @@
+How to Manually Remove the Agent
+=======================================================================
+
+
+http://www.gokhanatil.com/2013/02/how-to-manually-remove-the-enterprise-manager-gridcloud-control-agent.html
+
+
+
+$AGENT_HOME/bin/emctl stop agent
+
+$AGENT_HOME/bin/emctl status agent
+
+cd /dbprog/oracle/emcli
+
+./emcli login -username=sysman -password=pw12Cl0ud
+
+./emcli sync
+
+./emcli delete_target -name="cal-vtdb02.cal.statoil.no:3872" -type="oracle_emd" -delete_monitored_targets
+
+
+OUTPUT ::
+==========
+oracle@cal-vtdb02 311%./emcli delete_target -name="cal-vtdb02.cal.statoil.no:3872" -type="oracle_emd" -delete_monitored_targets
+Target "cal-vtdb02.cal.statoil.no:3872:oracle_emd" deleted successfully
+oracle@cal-vtdb02 312%
+
+
+
+
+
+
+
+
+
+
+

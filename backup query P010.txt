@@ -1,0 +1,62 @@
+select * From oracle_adm.backup_info where sid='P289' order by backup_start DESC;
+
+
+pso
+oraback onl adsm archmc=ARC-5Y P629
+
+oraback onl adsm archmc=oracle-1aar P779     --> db62
+
+oraback onl adsm archmc=standard-5aar P883   --> db62
+
+oraback off adsm archmc=ARCH-10Y P336
+
+oraback off adsm archmc=ARCH-5Y T227
+
+oraback onl disk archmc=ARCH-1Y P452E
+
+osexport a=5y P247
+osexport a=5y P248
+osexport a=5y P247
+
+RmanBackup -F T422 off
+RmanBackup -F T422 onl 
+RmanBackup -D T422 off
+
+parminc.pl   -------->   oraback onl adsm archmc=oracle-1aar P793H
+
+
+
+oraback off adsm archmc=ARC-D-5Y T227    ----> be-db02.be.statoil.no
+
+
+setenv DSM_CONFIG /opt/tivoli/tsm/client/ba/bin/dsm.opt
+
+
+
+
+
+active_cpSID.log
+
+active_oraback.log
+
+
+
+
+Database move to server hou-vtdb05:RITM0888643:29-05-17:DEKU
+
+Database move to server hou-vtdb05:RITM0888643:29-05-17:DEKU i.e SCTASK0238434
+
+
+
+ nohup RmanBackup -F P116 onl log=rmanfullbackup.log &
+
+
+
+
+
+RmanBackup -F P025 onl
+
+
+select * from oracle_log.oracle_tnsnames where service_name = 'T219TSP' or sid = 'T219TSP' or lower(service_name)=lower('T219TSP') or lower(sid)=lower('T219TSP')  
+
+

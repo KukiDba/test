@@ -1,0 +1,53 @@
+set line 300
+set pages 200
+col tablespace_name for a30
+col file_name for a60
+select file_name, tablespace_name, bytes/1024/1024 "Bytes_in_MB", status, round(maxbytes/1024/1024/1024,2) "maxbytes_in_GB", autoextensible from dba_temp_files;
+
+
+
+CREATE TEMPORARY TABLESPACE TEMP1 TEMPFILE '/orahome/app/oracle/oradata/sssdev/temp_01.dbf' SIZE 100M AUTOEXTEND ON NEXT 50M MAXSIZE 2048M EXTENT MANAGEMENT LOCAL UNIFORM SIZE 50M;
+
+ALTER DATABASE DEFAULT TEMPORARY TABLESPACE temp1;
+
+drop tablespace temp INCLUDING CONTENTS AND DATAFILES;
+
+
+
+
+
+
+Steps for offline drop [Must bring temp datafiles offline]
+===========================================================
+
+ALTER DATABASE TEMPFILE '/db/ORACLE/P716/temp_03.dbf' ONLINE;
+
+ALTER DATABASE TEMPFILE '/db/ORACLE/P716/temp_03.dbf' DROP INCLUDING DATAFILES;
+
+or 
+
+ALTER DATABASE TEMPFILE '/db/ORACLE/T014/temp02.dbf' OFFLINE drop;
+
+ALTER DATABASE TEMPFILE '/db/ORACLE/T014/temp02.dbf' OFFLINE drop INCLUDING DATAFILES;
+
+
+
+Example
+==============
+
+SYS at P716 >ALTER DATABASE TEMPFILE '/db/ORACLE/P716/temp_03.dbf' OFFLINE;
+
+Database altered.
+
+SYS at P716 >ALTER DATABASE TEMPFILE '/db/ORACLE/P716/temp_03.dbf' DROP INCLUDING DATAFILES;
+ALTER DATABASE TEMPFILE '/db/ORACLE/P716/temp_03.dbf' DROP INCLUDING DATAFILES
+*
+ERROR at line 1:
+ORA-25152: TEMPFILE cannot be dropped at this time
+
+
+SYS at P716 >ALTER DATABASE TEMPFILE '/db/ORACLE/P716/temp_03.dbf' ONLINE;
+
+Database altered.
+
+

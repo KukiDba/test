@@ -1,0 +1,22 @@
+
+
+
+https://orahow.com/how-to-find-and-remove-table-fragmentation-in-oracle-database/
+
+https://ittutorial.org/oracle-move-tables-partitions-and-subpartitions-another-tablespace-alter-table-move-tablespace-ora-14257-index-rebuild/
+
+
+
+
+alter table FORMULADEPENDSON move;
+
+alter table <table_name> enable row movement;
+
+alter table FOCALPOINT.FORMULADEPENDSON move tablespace USERS;
+
+alter index FOCALPOINT.FORMULADEPENDSON_IDX_F_ATTR rebuild online;
+
+ALTER INDEX index_name REBUILD;
+
+EXEC dbms_stats.gather_table_stats(ownname => 'FOCALPOINT', tabname => 'FORMULADEPENDSON', method_opt=> 'for all indexed columns size skewonly', granularity => 'ALL', degree => 8 ,cascade => true,estimate_percent => 15);
+

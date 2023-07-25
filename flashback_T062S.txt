@@ -1,0 +1,147 @@
+oracle@st-db76 43% flashback T062S after_new_script
+ORACLE instance started.
+
+Total System Global Area 1570009088 bytes
+Fixed Size                  2228704 bytes
+Variable Size             973082144 bytes
+Database Buffers          587202560 bytes
+Redo Buffers                7495680 bytes
+Database mounted.
+flashback database to restore point AFTER_NEW_SCRIPT
+*
+ERROR at line 1:
+ORA-38754: FLASHBACK DATABASE not started; required redo log is not available
+ORA-38762: redo logs needed for SCN 10835325793063 to SCN 10835325918850
+ORA-38761: redo log sequence 265 in thread 1, incarnation 2 could not be
+accessed
+
+
+alter database open resetlogs
+*
+ERROR at line 1:
+ORA-01139: RESETLOGS option only valid after an incomplete database recovery
+
+
+
+Restore point dropped.
+
+
+Restore point created.
+
+delete old logs from /dbbck49/oracle/adminT062S/flashback
+remove old directories from /dbbck49/oracle/adminT062S/archivelog
+oracle@st-db76 44% crontab -l
+
+
+
+set line 300
+col name for a25
+col scn for 99999999999999999
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE, STORAGE_SIZE FROM V$RESTORE_POINT WHERE GUARANTEE_FLASHBACK_DATABASE='YES';
+
+
+set line 300
+col name for a35
+col time for a35
+col scn for 99999999999999999
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE, STORAGE_SIZE FROM V$RESTORE_POINT;
+
+
+set line 300
+col checkpoint_change# for 9999999999999999999
+col unrecoverable_change# for 9999999999999999999
+select CHECKPOINT_CHANGE#,CHECKPOINT_TIME,UNRECOVERABLE_CHANGE#,UNRECOVERABLE_TIME from v$datafile;
+
+  CHECKPOINT_CHANGE# CHECKPOIN UNRECOVERABLE_CHANGE# UNRECOVER
+-------------------- --------- --------------------- ---------
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13        10835325583095 22-FEB-13
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13        10835325583098 22-FEB-13
+      10835411588343 01-MAR-13                     0
+      10835411588343 01-MAR-13        10835325583101 22-FEB-13
+      10835411588343 01-MAR-13        10835325583103 22-FEB-13
+      10835411588343 01-MAR-13        10835325583104 22-FEB-13
+
+12 rows selected.
+
+
+
+LIST BACKUP OF ARCHIVELOG FROM SEQUENCE 265;
+
+
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE, STORAGE_SIZE FROM V$RESTORE_POINT WHERE GUARANTEE_FLASHBACK_DATABASE='YES';
+
+SYS at T364 >SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE,STORAGE_SIZE FROM V$RESTORE_POINT;
+
+NAME                      SCN 		TIME      				DATABASE_INCARNATION# 		GUARANTEE_FLASHBACK_DATABASE		STORAGE_SIZE
+------------------------- ---------- 	----------------------------------	----------------------		----------------------------		---------------
+AFTER_NEW_SCRIPT          1.0837E+13 	03-APR-13 10.03.35.000000000 PM          14 				NO             				0
+
+
+
+Creating Restore points [CREATE RESTORE POINT]
+==========================================================================================================================================================
+
+CREATE RESTORE POINT before_upgrade; 
+
+#Create guaranteed restore points
+CREATE RESTORE POINT before_upgrade GUARANTEE FLASHBACK DATABASE;
+
+
+
+Listing restore points [V$RESTORE_POINT]
+==========================================================================================================================================================
+# To see a list of the currently defined restore points 
+
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE,STORAGE_SIZE FROM V$RESTORE_POINT; 
+
+#To view only the guaranteed restore points: 
+
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE, STORAGE_SIZE FROM V$RESTORE_POINT WHERE GUARANTEE_FLASHBACK_DATABASE='YES';  
+
+
+ALTER SYSTEM SET DB_RECOVERY_FILE_DEST_SIZE =50G;
+
+ALTER SYSTEM SET db_recovery_file_dest='/dbfra/oracle/fra';
+
+alter system set log_archive_dest_10='' scope=both;
+
+To check flashback enabled or not
+==========================================================================================================================================================
+SYS at U362 >grant flashback any table to dispatch;
+
+Grant succeeded.
+
+SYS at U362 >select flashback_on from v$database;
+
+FLASHBACK_ON
+------------------
+YES
+
+IF FLASHBACK NOT ENABLED :
+==========================================================================================================================================================
+
+SYS at U363 >select flashback_on from v$database;
+
+FLASHBACK_ON
+------------------
+NO
+
+
+SYS at U363 >startup mount
+SYS at U363 >ALTER DATABASE FLASHBACK ON;
+SYS at U363 >alter database open;
+
+
+set line 200
+col name for a40
+SELECT NAME, ROUND(SPACE_LIMIT / 1048576) SPACE_LIMIT_MB, ROUND(SPACE_USED / 1048576) SPACE_USED_MB, ROUND(((SPACE_USED / 1048576) * 100) / (SPACE_LIMIT / 1048576), 2) PRC_USED FROM V$RECOVERY_FILE_DEST;
+
+
+
+

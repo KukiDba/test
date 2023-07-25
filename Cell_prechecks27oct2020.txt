@@ -1,0 +1,686 @@
+
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# ./patchmgr -cells /root/cell_group -cleanup
+
+2020-10-26 20:10:02 +0200        :Working: DO: Cleanup
+2020-10-26 20:10:04 +0200        :SUCCESS: DONE: Cleanup
+2020-10-26 20:10:05 +0200        :SUCCESS: Completed run of command: ./patchmgr -cells /root/cell_group -cleanup
+2020-10-26 20:10:05 +0200        :INFO   : Cleanup attempted on nodes in file /root/cell_group: [fih3ex2celadm03.emea.nsn-net.net fih3ex2celadm02.emea.nsn-net.net fih3ex2celadm01.emea.nsn-net.net]
+2020-10-26 20:10:05 +0200        :INFO   : Current image version on cell(s) is:
+2020-10-26 20:10:05 +0200        :INFO   : fih3ex2celadm03.emea.nsn-net.net: 18.1.7.0.0.180821
+2020-10-26 20:10:05 +0200        :INFO   : fih3ex2celadm02.emea.nsn-net.net: 18.1.7.0.0.180821
+2020-10-26 20:10:05 +0200        :INFO   : fih3ex2celadm01.emea.nsn-net.net: 18.1.7.0.0.180821
+2020-10-26 20:10:05 +0200        :INFO   : For details, check the following files in /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905:
+2020-10-26 20:10:05 +0200        :INFO   :  - <cell_name>.log
+2020-10-26 20:10:05 +0200        :INFO   :  - patchmgr.stdout
+2020-10-26 20:10:05 +0200        :INFO   :  - patchmgr.stderr
+2020-10-26 20:10:05 +0200        :INFO   :  - patchmgr.log
+2020-10-26 20:10:05 +0200        :INFO   :  - patchmgr.trc
+2020-10-26 20:10:05 +0200        :INFO   : Exit status:0
+2020-10-26 20:10:05 +0200        :INFO   : Exiting.
+
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# pwd
+/migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# ./patchmgr -cells ~/cell_group -patch_check_prereq -rolling
+
+2020-10-26 20:11:21 +0200        :Working: DO: Check cells have ssh equivalence for root user. Up to 10 seconds per cell ...
+2020-10-26 20:11:22 +0200        :SUCCESS: DONE: Check cells have ssh equivalence for root user.
+2020-10-26 20:11:27 +0200        :Working: DO: Initialize files. Up to 1 minute ...
+2020-10-26 20:11:28 +0200        :Working: DO: Setup work directory
+2020-10-26 20:11:30 +0200        :SUCCESS: DONE: Setup work directory
+2020-10-26 20:11:32 +0200        :SUCCESS: DONE: Initialize files.
+2020-10-26 20:11:32 +0200        :Working: DO: Copy, extract prerequisite check archive to cells. If required start md11 mismatched partner size correction. Up to 40 minutes ...
+2020-10-26 20:11:46 +0200        :INFO   : Wait correction of degraded md11 due to md partner size mismatch. Up to 30 minutes.
+2020-10-26 20:11:47 +0200        :SUCCESS: DONE: Copy, extract prerequisite check archive to cells. If required start md11 mismatched partner size correction.
+2020-10-26 20:11:47 +0200        :Working: DO: Check space and state of cell services. Up to 20 minutes ...
+FAILED for following cells
+
+fih3ex2celadm03.emea.nsn-net.net:  fih3ex2celadm03 10.174.103.104 2020-10-26 20:12:38 +0200: Detected open alerts in the alert history for the Exadata cell. Check fih3ex2celadm03.log for details. Correct this before retrying the patch.
+2020-10-26 20:12:45 +0200        :FAILED : DONE: Check space and state of cell services.
+/////
+|||||
+2020-10-26 20:17:16 +0200        :Working: DO: Check prerequisites on all cells. Up to 2 minutes ...
+2020-10-26 20:17:20 +0200        :SUCCESS: DONE: Check prerequisites on all cells.
+2020-10-26 20:17:20 +0200        :Working: DO: Execute plugin check for Patch Check Prereq ...
+2020-10-26 20:17:20 +0200        :INFO   : Patchmgr plugin start: Prereq check for exposure to bug 22909764 v1.0.
+2020-10-26 20:17:20 +0200        :INFO   : Details in logfile /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905/patchmgr.stdout.
+2020-10-26 20:17:20 +0200        :INFO   : Patchmgr plugin start: Prereq check for exposure to bug 17854520 v1.3.
+2020-10-26 20:17:20 +0200        :INFO   : Details in logfile /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905/patchmgr.stdout.
+2020-10-26 20:17:21 +0200        :SUCCESS: All cells pass version check - no exposure to bug 17854520
+2020-10-26 20:17:21 +0200        :INFO   : Patchmgr plugin start: Prereq check for exposure to bug 22468216 v1.0.
+2020-10-26 20:17:21 +0200        :INFO   : Details in logfile /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905/patchmgr.stdout.
+2020-10-26 20:17:22 +0200        :SUCCESS: Patchmgr plugin complete: Prereq check passed for the bug 22468216
+2020-10-26 20:17:22 +0200        :INFO   : Patchmgr plugin start: Prereq check for exposure to bug 24625612 v1.0.
+2020-10-26 20:17:22 +0200        :INFO   : Details in logfile /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905/patchmgr.stdout.
+2020-10-26 20:17:22 +0200        :SUCCESS: Patchmgr plugin complete: Prereq check passed for the bug 24625612
+2020-10-26 20:17:22 +0200        :INFO   : Patchmgr plugin start: Prereq check for exposure to bug 22896791 v1.0.
+2020-10-26 20:17:22 +0200        :INFO   : Details in logfile /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905/patchmgr.stdout.
+2020-10-26 20:17:25 +0200        :SUCCESS: Patchmgr plugin complete: Prereq check passed for the bug 22896791
+2020-10-26 20:17:25 +0200        :INFO   : Patchmgr plugin start: Prereq check for exposure to bug 22651315 v1.0.
+2020-10-26 20:17:25 +0200        :INFO   : Details in logfile /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905/patchmgr.stdout.
+2020-10-26 20:17:27 +0200        :SUCCESS: Patchmgr plugin complete: Prereq check passed for the bug 22651315
+2020-10-26 20:17:28 +0200        :SUCCESS: DONE: Execute plugin check for Patch Check Prereq.
+2020-10-26 20:17:28 +0200        :Working: DO: Check ASM deactivation outcome. Up to 1 minute ...
+2020-10-26 20:17:39 +0200        :SUCCESS: DONE: Check ASM deactivation outcome.
+2020-10-26 20:17:39 +0200        :Working: DO: Check resilvering status of griddisks. Up to 1 minute ...
+2020-10-26 20:17:50 +0200        :SUCCESS: DONE: Check resilvering status of griddisks.
+2020-10-26 20:17:50 +0200        :FAILED : Prerequisite checks failed.
+2020-10-26 20:17:50 +0200        :ERROR  : Patch prerequisite checks failed. Please run cleanup before retrying.
+2020-10-26 20:17:51 +0200        :ERROR  : FAILED run of command:./patchmgr -cells /root/cell_group -patch_check_prereq -rolling
+2020-10-26 20:17:51 +0200        :INFO   : patch_prereq attempted on nodes in file /root/cell_group: [fih3ex2celadm03.emea.nsn-net.net fih3ex2celadm02.emea.nsn-net.net fih3ex2celadm01.emea.nsn-net.net]
+2020-10-26 20:17:51 +0200        :INFO   : Current image version on cell(s) is:
+2020-10-26 20:17:51 +0200        :INFO   : fih3ex2celadm03.emea.nsn-net.net: 18.1.7.0.0.180821
+2020-10-26 20:17:51 +0200        :INFO   : fih3ex2celadm02.emea.nsn-net.net: 18.1.7.0.0.180821
+2020-10-26 20:17:51 +0200        :INFO   : fih3ex2celadm01.emea.nsn-net.net: 18.1.7.0.0.180821
+2020-10-26 20:17:51 +0200        :INFO   : For details, check the following files in /migration/QFSD/19c/ESS/patch_19.2.18.0.0.200905:
+2020-10-26 20:17:51 +0200        :INFO   :  - <cell_name>.log
+2020-10-26 20:17:51 +0200        :INFO   :  - patchmgr.stdout
+2020-10-26 20:17:51 +0200        :INFO   :  - patchmgr.stderr
+2020-10-26 20:17:51 +0200        :INFO   :  - patchmgr.log
+2020-10-26 20:17:51 +0200        :INFO   :  - patchmgr.trc
+2020-10-26 20:17:51 +0200        :INFO   : Exit status:1
+2020-10-26 20:17:51 +0200        :INFO   : Exiting.
+
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# dcli -g ~/cell_group -l root cellcli -e list griddisk attributes name,status,asmmodestatus |more
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_00_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_01_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_02_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_03_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_04_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_05_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_06_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_07_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_08_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_09_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_10_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_11_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_02_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_03_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_04_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_05_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_06_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_07_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_08_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_09_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_10_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_11_fih3ex2celadm03  active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_00_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_01_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_02_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_03_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_04_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_05_fih3ex2celadm03   active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_06_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_07_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_08_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_09_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_10_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_11_fih3ex2celadm03     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_00_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_01_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_02_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_03_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_04_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_05_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_06_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_07_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_08_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_09_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_10_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_11_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_02_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_03_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_04_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_05_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_06_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_07_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_08_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_09_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_10_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_11_fih3ex2celadm02  active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_00_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_01_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_02_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_03_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_04_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_05_fih3ex2celadm02   active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_06_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_07_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_08_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_09_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_10_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_11_fih3ex2celadm02     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_00_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_01_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_02_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_03_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_04_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_05_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_06_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_07_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_08_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_09_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_10_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_11_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_02_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_03_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_04_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_05_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_06_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_07_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_08_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_09_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_10_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_11_fih3ex2celadm01  active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_00_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_01_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_02_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_03_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_04_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_05_fih3ex2celadm01   active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_06_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_07_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_08_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_09_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_10_fih3ex2celadm01     active  ONLINE
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_11_fih3ex2celadm01     active  ONLINE
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# ls -lrth
+total 4.6G
+-rwx------ 1 root root 1.4K Sep  6 13:27 cellboot_usb_pci_path
+-r--r--r-- 1 root root  45K Sep  6 14:11 imageLogger
+-r--r----- 1 root root 6.0K Sep  6 14:11 ExaXMLNode.pm
+-r--r----- 1 root root  53K Sep  6 14:11 exadataLogger.pm
+-r-xr-x--- 1 root root  46K Sep  6 14:11 exadata.img.hw
+-r--r--r-- 1 root root 8.8K Sep  6 14:11 exadata.img.env
+-r-xr-xr-x 1 root root  426 Sep  6 14:12 fwverify
+-r-xr-xr-x 1 root root 1.6K Sep  6 14:12 ExadataSendNotification.pm
+-r-xr-xr-x 1 root root  62K Sep  6 14:12 ExadataImageNotification.pl
+-r-xr-xr-x 1 root root  50K Sep  6 14:12 dcli
+-r-xr-xr-x 1 root root  148 Sep  6 14:12 README.txt
+-r-xr-xr-x 1 root root  91K Sep  6 14:12 patchReport.py
+-r-xr-xr-x 1 root root  14K Sep  6 14:12 patchmgr_functions
+-rwxr-xr-x 1 root root  12K Sep  6 14:12 patch_bug_26678971
+-r-xr-xr-x 1 root root  18K Sep  6 14:12 libxcp.so.1
+-r-xr-xr-x 1 root root 4.3K Sep  6 14:12 kernelupgrade_oldbios.sh
+-r-xr-xr-x 1 root root 173K Sep  6 14:12 installfw_exadata_ssh
+-r-xr-xr-x 1 root root 165M Sep  6 14:12 sundcs_36p_repository_2.2.14_1.pkg
+-r-xr-xr-x 1 root root 165M Sep  6 14:12 sundcs_36p_repository_2.2.15_1.pkg
+-rwxr-xr-x 1 root root 165M Sep  6 14:12 sundcs_36p_repository_2.2.7_2.pkg
+-rwxr-xr-x 1 root root 165M Sep  6 14:12 sundcs_36p_repository_2.2.7_2_signed.pkg
+-r-xr-xr-x 1 root root  15K Sep  6 14:12 xcp
+-rwxr-xr-x 1 root root 176M Sep  6 14:12 sundcs_36p_repository_upgrade_2.1_to_2.2.7_2.pkg
+-rw-rw-r-- 1 root root 3.0M Sep  6 14:30 19.2.18.0.0.200905.patch.tar
+-rw-rw-r-- 1 root root 1.4G Sep  6 14:30 19.2.18.0.0.200905.iso
+drwxrwxr-x 2 root root 8.0K Sep  6 14:30 linux.db.rpms
+-r-xr-xr-x 1 root root 165K Sep  6 14:30 upgradeIBSwitch.sh
+drwxr-xr-x 2 root root 8.0K Sep  6 14:30 plugins
+drwxr-xr-x 4 root root 8.0K Sep  6 14:30 ibdiagtools
+drwxrwxr-x 3 root root 8.0K Sep  6 14:30 etc
+-r-xr-xr-x 1 root root 414K Sep  6 14:30 patchmgr
+-r-xr-xr-x 1 root root 152K Sep  6 14:30 dostep.sh.tmpl
+-rw-rw-r-- 1 root root 3.3K Sep  6 14:30 md5sum_files.lst
+-rw-rw-r-- 1 root root 523K Sep 11 08:35 README.html
+-rw-r--r-- 1 root root    1 Oct 26 20:11 g_stdout_log
+-r-xr-xr-x 1 root root 152K Oct 26 20:11 dostep.sh
+-rw-r--r-- 1 root root 905M Oct 26 20:17 fih3ex2celadm01.emea.nsn-net.net_diag_completion_2020-10-26_20_16_50.tbz
+-rw-r--r-- 1 root root 763M Oct 26 20:17 fih3ex2celadm02.emea.nsn-net.net_diag_completion_2020-10-26_20_16_50.tbz
+-rw-r--r-- 1 root root 778M Oct 26 20:17 fih3ex2celadm03.emea.nsn-net.net_diag_completion_2020-10-26_20_16_49.tbz
+-rw-r--r-- 1 root root 1.9K Oct 26 20:17 debug_cell_states.log
+drwxr-xr-x 2 root root 8.0K Oct 26 20:17 tmp
+-rw-r--r-- 1 root root    0 Oct 26 20:17 ExadataImageNotification.pl.lock
+-rw-r--r-- 1 root root  48K Oct 26 20:17 patchmgr.stdout
+-rw-r--r-- 1 root root  356 Oct 26 20:17 patchmgr.stderr
+-rw-r--r-- 1 root root  13K Oct 26 20:17 fih3ex2celadm03.emea.nsn-net.net.log
+-rw-r--r-- 1 root root  12K Oct 26 20:17 fih3ex2celadm02.emea.nsn-net.net.log
+-rw-r--r-- 1 root root  12K Oct 26 20:17 fih3ex2celadm01.emea.nsn-net.net.log
+-rw-r--r-- 1 root root 226K Oct 26 20:17 patchmgr.trc
+-rw-r--r-- 1 root root  31K Oct 26 20:17 patchmgr.log
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# vi fih3ex2celadm03.emea.nsn-net.net.log
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]# vi fih3ex2celadm01.emea.nsn-net.net.log
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+[root@fih3ex2dbadm01 patch_19.2.18.0.0.200905]#
+
+
+ dcli -g ~/cell_group -l root cellcli -e list alerthistory where endTime=null and alertShortName=Hardware and alertType=stateful and severity=critical
+
+https://aniljoshioracle.wordpress.com/2015/08/31/disk-controller-batteries-replacement-on-exadata-storage-servers-3/
+
+
+Ov6*QR?O
+
+
+Connection to fih3ex2celadm03.emea.nsn-net.net closed.
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+[root@fih3ex2dbadm01 ~]# ssh fih3ex2celadm03.emea.nsn-net.net
+Last login: Tue Oct 27 21:26:03 2020 from fih3ex2dbadm01.emea.nsn-net.net
+[root@fih3ex2celadm03 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+[root@fih3ex2celadm03 ~]#
+
+[root@fih3ex2celadm03 ~]# date
+Tue Oct 27 21:41:40 EET 2020
+[root@fih3ex2celadm03 ~]#
+[
+
+
+
+[root@fih3ex2celadm01 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+
+
+
+
+[root@fih3ex2celadm02 ~]#
+[root@fih3ex2celadm02 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+[root@fih3ex2celadm02 ~]#
+
+
+
+
+[root@fih3ex2celadm03 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU
+[root@fih3ex2celadm03 ~]#
+
+
+https://www.oracle.com/technetwork/database/availability/exadata-health-resource-usage-2021227.pdf
+
+https://www.luxoug.org/exadata-using-metrics-to-help-you/
+
+The ILOM must be running and connected to the same network as your terminal. Also, you must know the ILOM's IP address, username, and password.
+
+Establish an SSH connection using the following command, and then enter the default password (changeme) when you are prompted:
+# ssh —l root sp_ip_address
+
+changeme
+
+After you have successfully logged in, the SP displays its default command prompt:
+
+->
+
+To power on the system, type the command: start /SYS.
+You can also power the system on or off using a stylus or button, as described inPowering the Server On and Off in Sun Fire X4800 Server Installation Guide.
+
+To start the system console, type: start /SP/console
+To exit the system console and return to the ILOM CLI, press Esc-Shift-9.
+
+
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -g ~/cell_group -l root cellcli -e list alerthistory where endTime=null and alertShortName=Hardware and alertType=stateful and severity=critical
+fih3ex2celadm03.emea.nsn-net.net: 17_1   2020-11-10T11:28:20+02:00       critical        "InfiniBand port HCA-1:2 is in an invalid state.  State               : Down  Physical Link State : Polling  Data Rate           : 10 Gps  Symbol Errors       : 0  Received Errors     : 0"
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ssh fih3ex2celadm03.emea.nsn-net.net
+Last login: Tue Nov 10 14:40:02 2020 from fih3ex2dbadm01.emea.nsn-net.net
+[ro
+
+
+
+
+Exadata: CELL-02020: InfiniBand Port HCA-1:x does not exist (Doc ID 1919505.1)	
+
+
+    Log in to the Oracle ILOM SP web interface.
+    Click Maintenance --> Snapshot. The Service Snapshot Utility page appears.
+    Select the data set: Normal, FRUID, Full, or Custom.
+
+
+
+
+
+[root@fih3ex2sw-ibb01 ~]# enableswitchport --automatic 4
+Enable connector 16B Switch port 4
+Adminstate:......................Enabled
+LinkWidthEnabled:................1X or 4X
+LinkWidthSupported:..............1X or 4X
+LinkWidthActive:.................4X
+LinkSpeedSupported:..............2.5 Gbps or 5.0 Gbps or 10.0 Gbps
+LinkState:.......................Down
+PhysLinkState:...................Polling
+LinkSpeedActive:.................2.5 Gbps
+LinkSpeedEnabled:................2.5 Gbps or 5.0 Gbps or 10.0 Gbps
+NeighborMTU:.....................2048
+OperVLs:.........................VL0-7
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]# ibdiagnet -c 100
+Loading IBDIAGNET from: /usr/lib/ibdiagnet1.2
+-W- Topology file is not specified.
+    Reports regarding cluster links will use direct routes.
+Loading IBDM from: /usr/lib/ibdm1.2
+-I- Using port 0 as the local port.
+-I- Discovering ... 7 nodes (2 Switches & 5 CA-s) discovered.
+
+
+-I---------------------------------------------------
+-I- Bad Guids/LIDs Info
+-I---------------------------------------------------
+-I- skip option set. no report will be issued
+
+-I---------------------------------------------------
+-I- Links With Logical State = INIT
+-I---------------------------------------------------
+-I- No bad Links (with logical state = INIT) were found
+
+-I---------------------------------------------------
+-I- PM Counters Info
+-I---------------------------------------------------
+-I- No illegal PM counters values were found
+
+-I---------------------------------------------------
+-I- Fabric Partitions Report (see ibdiagnet.pkey for a full hosts list)
+-I---------------------------------------------------
+
+-I---------------------------------------------------
+-I- IPoIB Subnets Check
+-I---------------------------------------------------
+-I- Subnet: IPv4 PKey:0x0001 QKey:0x00000b1b MTU:2048Byte rate:10Gbps SL:0x00
+-W- No members found for group
+-I- Subnet: IPv4 PKey:0x7fff QKey:0x00000b1b MTU:2048Byte rate:10Gbps SL:0x00
+-W- No members found for group
+
+-I---------------------------------------------------
+-I- Bad Links Info
+-I- No bad link were found
+-I---------------------------------------------------
+----------------------------------------------------------------
+-I- Stages Status Report:
+    STAGE                                    Errors Warnings
+    Bad GUIDs/LIDs Check                     0      0
+    Link State Active Check                  0      0
+    Performance Counters Report              0      0
+    Partitions Check                         0      0
+    IPoIB Subnets Check                      0      2
+
+Please see /tmp/ibdiagnet.log for complete log
+----------------------------------------------------------------
+
+-I- Done. Run time was 9 seconds.
+[root@fih3ex2sw-ibb01 ~]# listlinkup
+Connector  0A Not present
+Connector  1A Not present
+Connector  2A Not present
+Connector  3A Not present
+Connector  4A Not present
+Connector  5A Not present
+Connector  6A Not present
+Connector  7A Not present
+Connector  8A Present <-> Switch Port 31 is up (Enabled)
+Connector  9A Present <-> Switch Port 14 is up (Enabled)
+Connector 10A Present <-> Switch Port 16 is up (Enabled)
+Connector 11A Present <-> Switch Port 18 is up (Enabled)
+Connector 12A Not present
+Connector 13A Present <-> Switch Port 09 is down (Enabled)
+Connector 14A Present <-> Switch Port 07 is down (Enabled)
+Connector 15A Present <-> Switch Port 05 is down (Enabled)
+Connector 16A Present <-> Switch Port 03 is down (Enabled)
+Connector 17A Present <-> Switch Port 01 is up (Enabled)
+Connector  0B Not present
+Connector  1B Not present
+Connector  2B Not present
+Connector  3B Not present
+Connector  4B Not present
+Connector  5B Not present
+Connector  6B Not present
+Connector  7B Not present
+Connector  8B Present <-> Switch Port 32 is down (Enabled)
+Connector  9B Present <-> Switch Port 13 is up (Enabled)
+Connector 10B Present <-> Switch Port 15 is up (Enabled)
+Connector 11B Present <-> Switch Port 17 is up (Enabled)
+Connector 12B Present <-> Switch Port 12 is down (Enabled)
+Connector 13B Present <-> Switch Port 10 is up (Enabled)
+Connector 14B Present <-> Switch Port 08 is up (Enabled)
+Connector 15B Present <-> Switch Port 06 is down (Enabled)
+Connector 16B Present <-> Switch Port 04 is up (Enabled)
+Connector 17B Present <-> Switch Port 02 is up (Enabled)
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]#
+[root@fih3ex2sw-ibb01 ~]# exit
+logout
+Connection to fih3ex2sw-ibb01 closed.
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# cat cell
+cell_group            cells_conntest.log    cells_user_equiv.log
+[root@fih3ex2dbadm01 ~]# cat cell_group
+fih3ex2celadm03.emea.nsn-net.net
+fih3ex2celadm02.emea.nsn-net.net
+fih3ex2celadm01.emea.nsn-net.net
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ssh fih3ex2celadm03.emea.nsn-net.net
+Last login: Wed Nov 11 15:38:17 2020 from fih3ex2dbadm01.emea.nsn-net.net
+[root@fih3ex2celadm03 ~]#
+[root@fih3ex2celadm03 ~]#
+[root@fih3ex2celadm03 ~]#
+[root@fih3ex2celadm03 ~]# cellcli
+CellCLI: Release 18.1.7.0.0 - Production on Wed Nov 11 19:07:05 EET 2020
+
+Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
+
+CellCLI> LIST IBPORT DETAIL
+         name:                   HCA-1:1
+         dataRate:               "40 Gbps"
+         hcaFWVersion:           2.35.5538
+         id:                     0x0010e000016743a9
+         lid:                    3
+         linkDowned:             0
+         linkIntegrityErrs:      0
+         linkRecovers:           0
+         physLinkState:          LinkUp
+         portNumber:             1
+         rcvConstraintErrs:      0
+         rcvData:                3587922540766
+         rcvErrs:                0
+         rcvRemotePhysErrs:      0
+         status:                 Active
+         symbolErrs:             0
+         vl15Dropped:            0
+         xmtConstraintErrs:      0
+         xmtData:                19558407131268
+         xmtDiscards:            0
+
+         name:                   HCA-1:2
+         dataRate:               "40 Gbps"
+         hcaFWVersion:           2.35.5538
+         id:                     0x0010e000016743aa
+         lid:                    4
+         linkDowned:             0
+         linkIntegrityErrs:      0
+         linkRecovers:           0
+         physLinkState:          LinkUp
+         portNumber:             2
+         rcvConstraintErrs:      0
+         rcvData:                4837690300
+         rcvErrs:                0
+         rcvRemotePhysErrs:      0
+         status:                 Active
+         symbolErrs:             0
+         vl15Dropped:            0
+         xmtConstraintErrs:      0
+         xmtData:                41173183333
+         xmtDiscards:            0
+
+CellCLI> exit
+quitting
+
+[root@fih3ex2celadm03 ~]#
+[root@fih3ex2celadm03 ~]# exit
+logout
+Connection to fih3ex2celadm03.emea.nsn-net.net closed.
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -g ~/cell_group -l root cellcli -e list alerthistory where endTime=null and alertShortName=Hardware and alertType=stateful and severity=critical
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ssh fih3ex2celadm03.emea.nsn-net.net
+Last login: Wed Nov 11 19:07:01 2020 from fih3ex2dbadm01.emea.nsn-net.net
+[root@fih3ex2celadm03 ~]#
+[root@fih3ex2celadm03 ~]# cellcli
+CellCLI: Release 18.1.7.0.0 - Production on Wed Nov 11 19:08:17 EET 2020
+
+Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
+
+CellCLI> list alerthistory
+         4_1     2018-09-16T13:30:40+03:00       warning         "Diagnostic packages for Service Requests will not be automatically uploaded because ASR Manager on 10.130.132.35 is not accessible or does not support automatic diagnostic package upload or does not have HTTP receiver enabled or SNMP subscribers on fih3ex2celadm03 are not configured properly."
+         14_1    2019-11-06T12:27:44+02:00       info            "All disk drives have been temporarily placed in WriteThrough caching mode because the HDD disk controller battery is performing a learn cycle. Disk write performance may be reduced. The flash drives are not affected. Battery Serial Number : 11801  Battery Type          : cvpm02  Battery Temperature   : 30 C  Pack Energy           : 14330 Joule  Ambient Temperature   : 24 C"
+         14_2    2019-11-06T13:32:44+02:00       critical        "The HDD disk controller battery has failed. All disk drives have been placed in WriteThrough caching mode. Disk write performance may be reduced. The flash drives are not affected. Battery Serial Number : 11801  Battery Type          : cvpm02  Battery Temperature   : 31 C  Pack Energy           : 14330 Joule  Ambient Temperature   : 23 C"
+         14_3    2020-11-10T14:35:51+02:00       info            "The HDD disk controller battery was replaced.  Battery Serial Number : 563  Battery Type          : cvpm02  Battery Temperature   : 27 C  Pack Energy           : 214 Joule  Ambient Temperature   : 22 C"
+         14_4    2020-11-10T14:39:47+02:00       clear           "All disk drives are in WriteBack caching mode.  Battery Serial Number : 563  Battery Type          : cvpm02  Battery Temperature   : 28 C  Pack Energy           : 322 Joule  Ambient Temperature   : 22 C"
+         17_1    2020-11-10T11:28:20+02:00       critical        "InfiniBand port HCA-1:2 is in an invalid state.  State               : Down  Physical Link State : Polling  Data Rate           : 10 Gps  Symbol Errors       : 0  Received Errors     : 0"
+         17_2    2020-11-11T19:05:25+02:00       clear           "InfiniBand port HCA-1:2 status is OK.  State               : Active  Physical Link State : LinkUp  Data Rate           : 40 Gps  Symbol Errors       : 0  Received Errors     : 0"
+         18      2020-11-10T15:08:13+02:00       info            "VD bad block table cleared on Adapter 0 VD Target 2"
+
+CellCLI> exit
+quitting
+
+
+
+
+
+
+./patchmgr -cells /root/cell_group -cleanup
+./patchmgr -cells ~/cell_group -patch_check_prereq -rolling
+
+
+

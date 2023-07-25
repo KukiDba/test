@@ -1,0 +1,22 @@
+
+col GLOBAL_TRAN_ID for a52
+col TRAN_COMMENT for a12
+col OS_USER for a10
+col OS_TERMINAL for a12
+col host for a17
+col state for a15
+col db_user for a8
+col host for a22
+col advice for a6
+col mixed for a5
+SELECT LOCAL_TRAN_ID, GLOBAL_TRAN_ID, STATE, MIXED, ADVICE, FAIL_TIME, FORCE_TIME, RETRY_TIME, OS_USER, OS_TERMINAL, HOST, COMMIT# FROM DBA_2PC_PENDING;
+
+
+
+LOCAL_TRAN_ID          GLOBAL_TRAN_ID                                       STATE     MIX ADVICE TRAN_COMMENT FAIL_TIME           FORCE_TIME RETRY_TIME          OS_USER    OS_TERMINAL  HOST                   DB_USER  COMMIT#
+---------------------- ---------------------------------------------------- --------- --- ------ ------------ ------------------- ---------- ------------------- ---------- ------------ ---------------------- -------- ----------------
+10.4.241325            1145324612.2969CA5323B32C4DB7A623149199E3A900000000  forced ro no                      10/02/2014 12:54:25 11/02/2014 11/02/2014 09:39:15 a_toagj    ST-WTS1000   STATOIL-NET\ST-WTS1000          10861514668309
+                                                                            llback                                                 09:38:42
+
+
+ROLLBACK FORCE '10.4.241325';

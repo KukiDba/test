@@ -1,0 +1,102 @@
+https://oracledbwr.com/oracle-12c-step-by-step-manual-data-guard-switchover/
+
+http://yvrk1973.blogspot.com/2018/12/switchover-and-switchback-between.html
+
+Dataguard Configuration Details:-
+
+Select
+   PROCESS,
+   SEQUENCE#,
+   STATUS
+From
+   V$MANAGED_STANDBY;
+
+20040500551
+
+Step 1:- Check database role and database name
+
+Primary database:-
+
+select name,open_mode,database_role from v$database
+
+
+
+Standby database:-
+
+select name,open_mode,database_role from v$database
+
+
+
+Precheck for Switchover:-
+
+Before performing switchover, kindly verify the state of data guard on both the instances by following SQL queries:
+
+Step 2:-
+ALTER SESSION SET nls_date_format='DD-MON-YYYY HH24:MI:SS';
+SELECT sequence#, first_time, next_time, applied FROM v$archived_log ORDER BY sequence#;
+
+
+
+Step 3:- select switchover_status from v$database;
+
+
+
+Note: This command will give you appropriate message about the data guard current status.
+
+
+
+After getting confirmation on data guard smooth activity, we can instantiate switchover activity by issuing following sort of commands:
+
+The switchover_status column of v$database can have the following values:
+
+Not Allowed:-Either this is a standby database and the primary database has not been switched first, or this is a primary database and there are no standby databases
+Session Active:- Indicates that there are active SQL sessions attached to the primary or standby database that need to be disconnected before the switchover operation is permitted
+Switchover Pending:- This is a standby database and the primary database switchover request has been received but not processed.
+Switchover Latent:- The switchover was in pending mode, but did not complete and went back to the primary database
+To Primary:- This is a standby database, with no active sessions, that is allowed to switch over to a primary database
+To Standby:- This is a primary database, with no active sessions, that is allowed to switch over to a standby database
+Recovery Needed:- This is a standby database that has not received the switchover request
+
+On Primary database:-
+
+Step 4:
+
+SQL> alter database commit to switchover to standby;
+
+
+
+Step 5:-
+
+shutdown immediate
+
+startup nomount
+
+alter database mount standby database;
+
+
+
+Step 6:-select name,open_mode,database_role from v$database;
+
+
+
+alter database recover managed standby database disconnect from session;
+
+
+
+
+
+On Standby database:
+
+Step 7:-alter database commit to switchover to primary with session shutdown;
+
+
+
+Step 8:-select name,open_mode,database_role from v$database;
+
+
+
+Switch over activity have completed successfully, our old primary database has become standby and old standby database has become primary database.
+Note:-To test above switchover activity, generate multiple archive logs on primary database and verify those archive logs being transferred on standby database.
+
+After switchover activity,
+

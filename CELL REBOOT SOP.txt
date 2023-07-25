@@ -1,0 +1,204 @@
+
+
+How to Replace an Exadata X5-2/X6-2 Storage Cell Server RAID HBA Card (Doc ID 1990221.1)
+
+Steps to shut down or reboot an Exadata storage cell without affecting ASM (Doc ID 1188080.1)
+
+https://emilianofusaglia.net/category/oracle-engineered-systems/exadata-machine/
+
+
+
+
+
+Step A. Pre-Steps to shutdown the node for servicing:
+
+select dg.name,a.value from v$asm_attribute a, v$asm_diskgroup dg where a.name = 'disk_repair_time' and a.group_number = dg.group_number;
+
+3. Check if ASM will be OK if the grid disks go OFFLINE.
+
+cellcli -e list griddisk attributes name,asmmodestatus,asmdeactivationoutcome
+
+ellCLI> list griddisk attributes name,status,asmmodestatus,asmdeactivationoutcome
+         CATALOG_CD_09_zdlx5_tvp_a_cel3  inactive        OFFLINE         Yes
+         CATALOG_CD_10_zdlx5_tvp_a_cel3  inactive        OFFLINE         Yes
+         CATALOG_CD_11_zdlx5_tvp_a_cel3  inactive        OFFLINE         Yes
+
+4. Run cellcli command to Inactivate all grid disks on the cell that needs to be powered down for maintenance. (this could take up to 10 minutes or longer)
+
+# cellcli
+CellCLI> ALTER GRIDDISK ALL INACTIVE
+
+
+5. Execute the command below and the output should show asmmodestatus='UNUSED' or 'OFFLINE' and asmdeactivationoutcome=Yes for all griddisks once the disks are offline and inactive in ASM
+
+ellCLI> list griddisk attributes name,status,asmmodestatus,asmdeactivationoutcome
+         CATALOG_CD_09_zdlx5_tvp_a_cel3  inactive        OFFLINE         Yes
+         CATALOG_CD_10_zdlx5_tvp_a_cel3  inactive        OFFLINE         Yes
+         CATALOG_CD_11_zdlx5_tvp_a_cel3  inactive        OFFLINE         Yes
+
+
+6. Revert all the RAID disk volumes to WriteThrough mode to ensure all data in the RAID cache memory is flushed to disk and not lost when replacement of the HBA occurs. As 'root' user, set all logical volumes cache policy to WriteThrough cache mode:
+
+# /opt/MegaRAID/MegaCli/MegaCli64 -ldsetprop wt -lall -a0
+
+Verify the current cache policy for all logical volumes is now WriteThrough :
+
+
+# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+
+7. Once all disks are offline and inactive, the customer may shutdown the Cell using the following command:
+
+# shutdown -hP now
+
+
+
+Start the below service
+
+a. cellcli -e alter griddisk all active
+b. cellcli -e list griddisk
+c. cellcli -e list griddisk attributes name, asmmodestatus
+
+
+. Check below services
+
+CellCLI> list cell detail
+         name:                   fih3ex2celadm03
+         accessLevelPerm:        remoteLoginEnabled
+         bbuStatus:              normal
+         cellVersion:            OSS_18.1.7.0.0AUG_LINUX.X64_180821
+         cpuCount:               32/32
+         diagHistoryDays:        7
+         eighthRack:             FALSE
+         fanCount:               8/8
+         fanStatus:              normal
+         flashCacheMode:         WriteThrough
+         id:                     1509NM70JC
+         interconnectCount:      2
+         interconnect1:          ib0
+         interconnect2:          ib1
+         iormBoost:              0.0
+         ipaddress1:             10.255.31.8/22
+         ipaddress2:             10.255.31.9/22
+         kernelVersion:          4.1.12-94.8.4.el6uek.x86_64
+         locatorLEDStatus:       off
+         makeModel:              Oracle Corporation ORACLE SERVER X5-2L High Capacity
+         memoryGB:               94
+         metricHistoryDays:      7
+         notificationMethod:     snmp
+         notificationPolicy:     critical,warning,clear
+         offloadGroupEvents:
+         powerCount:             2/2
+         powerStatus:            normal
+         ramCacheMaxSize:        0
+         ramCacheMode:           Auto
+         ramCacheSize:           0
+         releaseImageStatus:     success
+         releaseVersion:         18.1.7.0.0.180821
+         rpmVersion:             cell-18.1.7.0.0_LINUX.X64_180821-1.x86_64
+         releaseTrackingBug:     28519942
+         rollbackVersion:        12.1.2.3.5.170418
+         snmpSubscriber:         host=fih3ex2dbadm02.emea.nsn-net.net,port=1830,community=public
+                                 host=fih3ex2dbadm01.emea.nsn-net.net,port=1830,community=public
+                                 host=fih3ex2dbadm01.emea.nsn-net.net,port=3872,community=public
+                                 host=fih3ex2dbadm02.emea.nsn-net.net,port=3872,community=public
+                                 host=10.130.132.35,port=162,community=public,type=ASR,asrmPort=16161
+         status:                 online
+         temperatureReading:     23.0
+         temperatureStatus:      normal
+         upTime:                 0 days, 0:09
+         usbStatus:              normal
+         cellsrvStatus:          running
+         msStatus:               running
+         rsStatus:               running
+
+
+
+9. Check GD status
+
+CellCLI> list griddisk attributes name, asmmodestatus
+         DATAC1_CD_00_fih3ex2celadm03    SYNCING
+         DATAC1_CD_01_fih3ex2celadm03    SYNCING
+         DATAC1_CD_02_fih3ex2celadm03    SYNCING
+         DATAC1_CD_03_fih3ex2celadm03    SYNCING
+         DATAC1_CD_04_fih3ex2celadm03    SYNCING
+         DATAC1_CD_05_fih3ex2celadm03    SYNCING
+         DATA_CD_06_fih3ex2celadm03      SYNCING
+         DATA_CD_07_fih3ex2celadm03      SYNCING
+         DATA_CD_08_fih3ex2celadm03      SYNCING
+         DATA_CD_09_fih3ex2celadm03      SYNCING
+         DATA_CD_10_fih3ex2celadm03      SYNCING
+         DATA_CD_11_fih3ex2celadm03      SYNCING
+         DBFS_DG_CD_02_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_03_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_04_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_05_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_06_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_07_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_08_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_09_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_10_fih3ex2celadm03   ONLINE
+         DBFS_DG_CD_11_fih3ex2celadm03   ONLINE
+         RECOC1_CD_00_fih3ex2celadm03    ONLINE
+         RECOC1_CD_01_fih3ex2celadm03    ONLINE
+         RECOC1_CD_02_fih3ex2celadm03    ONLINE
+         RECOC1_CD_03_fih3ex2celadm03    ONLINE
+         RECOC1_CD_04_fih3ex2celadm03    ONLINE
+         RECOC1_CD_05_fih3ex2celadm03    ONLINE
+         RECO_CD_06_fih3ex2celadm03      ONLINE
+         RECO_CD_07_fih3ex2celadm03      ONLINE
+         RECO_CD_08_fih3ex2celadm03      ONLINE
+         RECO_CD_09_fih3ex2celadm03      ONLINE
+         RECO_CD_10_fih3ex2celadm03      ONLINE
+         RECO_CD_11_fih3ex2celadm03      ONLINE
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         30         30     105224     107206          0           0                                                       0
+           1 REBAL RESILVER  DONE         30         30          0          0          0           0                                                       0
+           1 REBAL REBALANCE EST          30         30          0          0          0           0                                                       0
+           1 REBAL COMPACT   WAIT         30         30          0          0          0           0                                                       0
+           3 REBAL RESYNC    DONE         30                                                                                                               0
+           3 REBAL RESILVER  DONE         30                                                                                                               0
+           3 REBAL REBALANCE WAIT         30                                                                                                               0
+           3 REBAL COMPACT   WAIT         30                                                                                                               0
+
+
+
+
+9. check writeback mode
+
+[root@fih3ex2celadm03 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -ldpdinfo -a0 | grep BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Default Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+Current Cache Policy: WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU
+[root@fih3ex2celadm03 ~]#
+
+
+
+
+
+Please keep in mind that :
+Unlike an Infiniband Switch, you do not have to use the spsh command to jump into the ILOM shell as you are using the dedicated ILOM IP address to connect to
+Note that you have to use this weird ILOM syntax to quit the console : ESC and then "("

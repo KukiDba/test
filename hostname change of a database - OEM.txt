@@ -1,0 +1,137 @@
+
+Run on Old host
+==========================
+
+/home/oracle/emcli/emcli relocate_targets -src_agent=st-db110.st.statoil.no:3872 -dest_agent=st-db109.st.statoil.no:3872 -target_name=P601 -target_type=oracle_database -copy_from_src -force=yes
+
+
+
+Old host name                                                     New hostname                                                     DB Name
+
+
+Output will be like this
+==================================
+
+oracle@st-db129 41% /home/oracle/emcli/emcli relocate_targets -src_agent=st-db129.st.statoil.no:3872 -dest_agent=st-db126.st.statoil.no:3872 -target_name=P668 -target_type=oracle_database -copy_from_src -force=yes
+
+Moved all targets from st-db129.st.statoil.no:3872 to st-db126.st.statoil.no:3872
+
+
+===============================================
+Pre-requisites - Agent must be installed
+
+scp -r emcli stjohn-vdb01.stjohn.statoil.no:/home/oracle/
+
+./emcli setup -url=https://oem.statoil.no/em -username=sysman -autologin -trustall
+
+password - pw12Cl0ud
+
+oracle@stjohn-vdb01 46% emcli status
+Oracle Enterprise Manager 12c EMCLI12.1.0.3.0.
+Copyright (c) 1996, 2013 Oracle Corporation and/or its affiliates. All rights reserved.
+
+Instance Home          : /home/oracle/.emcli
+Verb Jars Home         : /home/oracle/emcli/./bindings/12.1.0.5.0/.emcli
+Status                 : Configured
+EMCLI Home             : /home/oracle/emcli/.
+EMCLI Version          : 12.1.0.3.0
+Java Home              : /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.95.x86_64/jre
+Java Version           : 1.7.0_95
+Log file               : /home/oracle/.emcli/.emcli.log
+EM URL                 : https://oem.statoil.no/em
+EM user                : sysman
+Auto login             : true
+Trust all certificates : true
+oracle@stjohn-vdb01 47%
+
+
+
+
+
+emcli delete_target
+-name="T463X"
+-type="oracle_database"
+
+emcli add_target
+-name="T463X"
+-type="oracle_database"
+-host="myhost.us.oracle.com"
+-credentials="UserName:dbsnmp;password:yTM_V7G_Yj4qZ;Role:Normal"
+-properties="SID:T463X;Port:10001;OracleHome:/dbprog/oracle/product/12.1.0.2.8;MachineName:st-vtdb15.st.statoil.no"
+-groups="Group1:ALL_Test;Group2:SDE_Test"
+
+******************************************************************************************
+The agent can also be resynchronized via EMCLI. The command is as follows:
+
+cd /home/oracle/emcli
+
+emcli resyncAgent -agent="st-db96.statoil.no:3872"
+
+******************************************************************************************
+
+
+cd /home/oracle/emcli
+
+./emcli login -username=sysman -password=pw12Cl0ud
+
+./emcli sync
+
+./emcli get_supported_platforms
+
+./emcli get_agentimage -destination=/tmp/sisant -platform="Linux x86-64" -version=12.1.0.5.0
+
+cd /tmp/sisant/
+
+unzip 12.1.0.5.0_AgentCore_226.zip
+
+./agentDeploy.sh RSPFILE_LOC=/home/oracle/AgentResponseFile AGENT_BASE_DIR=/home/oracle/agent12c -invPtrLoc /home/oracle/oraInst.loc OMS_HOST=oem.statoil.no EM_UPLOAD_PORT=4903
+
+
+
+
+oracle@cal-db04 48% ./emcli get_agentimage -destination=/tmp/sisant -platform="Linux x86-64" -version=12.1.0.5.0
+ === Partition Detail ===
+Space free : 29 GB
+Space required : 1 GB
+Check the logs at /home/oracle/.emcli/get_agentimage_2017-02-26_02-41-30-AM.log
+Downloading /tmp/sisant/12.1.0.5.0_AgentCore_226.zip
+File saved as /tmp/sisant/12.1.0.5.0_AgentCore_226.zip
+Downloading /tmp/sisant/12.1.0.5.0_PluginsOneoffs_226.zip
+File saved as /tmp/sisant/12.1.0.5.0_PluginsOneoffs_226.zip
+Downloading /tmp/sisant/unzip
+File saved as /tmp/sisant/unzip
+Agent Image Download completed successfully.
+
+oracle@cal-db04 49% cd /tmp/sisant/
+/tmp/sisant
+oracle@cal-db04 50% ls -ltr
+total 251332
+-rw-r----- 1 oracle dba 257102519 Feb 26 02:43 12.1.0.5.0_AgentCore_226.zip
+oracle@cal-db04 51% unzip 12.1.0.5.0_AgentCore_226.zip
+Archive:  12.1.0.5.0_AgentCore_226.zip
+  inflating: unzip
+  inflating: agentDeploy.sh
+  inflating: agentimage.properties
+  inflating: agent.rsp
+ extracting: agentcoreimage.zip
+ extracting: 12.1.0.5.0_PluginsOneoffs_226.zip
+oracle@cal-db04 52% ls -ltr
+total 502776
+-rw-rw-r-- 1 oracle dba       178 Jun 10  2015 agentimage.properties
+-rwxr-xr-x 1 oracle dba    145976 Jun 10  2015 unzip*
+-rw-rw-r-- 1 oracle dba 250059880 Jun 10  2015 agentcoreimage.zip
+-rwxrwxr-x 1 oracle dba     29124 Jun 10  2015 agentDeploy.sh*
+-rwxrwxr-x 1 oracle dba      3775 Jun 10  2015 agent.rsp*
+-rw-r----- 1 oracle dba   6961671 Feb 26 02:43 12.1.0.5.0_PluginsOneoffs_226.zip
+-rw-r----- 1 oracle dba 257102519 Feb 26 02:43 12.1.0.5.0_AgentCore_226.zip
+oracle@cal-db04 53%
+
+
+/home/oracle/agent12c/agent_inst/bin/emctl secure agent    --> it will stop running agent and secure it and start it. (password - O3M12cl0ud)
+
+/home/oracle/agent12c/agent_inst/bin/emctl status agent
+
+/home/oracle/agent12c/agent_inst/bin/emctl upload agent
+
+
+

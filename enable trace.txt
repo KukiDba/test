@@ -1,0 +1,9 @@
+select username, sid, serial#, to_char(logon_time,'DD-MON-YYYY HH:MI:SS') from v$session where username='<db username>' order by logon_time;
+
+exec sys.dbms_system.set_sql_trace_in_session(sid,serial#,TRUE);
+
+The trace will be available in udump directory.
+
+To find the name of the trace file we use below query
+
+select spid from v$process where addr=(select paddr from v$session where sid=<enter the SID>);

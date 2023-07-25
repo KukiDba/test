@@ -1,0 +1,506 @@
+
+#daily ASM Monitor
+
+
+$ crontab -l
+#THIS WILL BE THE PROD NODE USED TO RUN CRONJOBS - Victor
+#------------Minute (0-59)
+# +---------Hour (0-23)
+# | +-------Day of the Month (1-31)
+# | | +-----Month (1-12)
+# | | | +---Day of the Week(0-6) (Sun=0)
+# | | | |
+# Daily cleanup old logs
+0 1,6,10,14,18 * * 0 /opt/oracle/admin/scripts/misc/logclear
+
+0 5,12,18 * * * sh /u01/app/oracle/home/prnetdw1_db_clean_arch.sh prnetdw
+#
+# Daily instance monitoring
+#  db_health_check running on node 1
+0 8 * * * /opt/oracle/admin/scripts/misc/db_health_check.sh prnetdw
+#  check tablespace daily and send email if critical or warning threshold is met
+0 8 * * * /opt/oracle/admin/scripts/misc/check_ts_notify.sh prnetdw2
+#
+# Weekly Full Export moved to prnetdw2
+#0 9 * * 0 /opt/oracle/admin/scripts/backup/exportdp prnetdw2
+#0 9 * * 0 /u01/app/oracle/home/expdp_full.sh prnetdw1
+#
+# Schema Export if any
+# VJUAREZ1 Informatica schema every 4 hours - moved to PRD4
+30 0,4,8,12,16,20 * * * /opt/oracle/admin/scripts/backup/exportdp prnetdw2 INFA_REPO_ENGDW
+#
+# Weekly Oracle Metada Export
+#
+# ASM Metadata
+# VJUAREZ1 2010-10-12 enable all script runs
+0 0 * * 0 /opt/oracle/admin/scripts/backup/backup_asm_md.sh /project/engdw/PRNETDW/metadata
+#
+# spfile
+#UNDO WHEN REDY 5 0 * * 0 /opt/oracle/admin/scripts/backup/backup_spfile.sh PRNETDW /project/engdw/PRDW/metadata
+#
+#
+# CRS
+#UNDO WHEN READY 10 0 * * 0 /opt/oracle/admin/scripts/backup/backup_ocr.sh /project/engdw/PRNETDW/metadata
+#   Voting disk
+#UNDO WHEN READY 15 0 * * 0 /opt/oracle/admin/scripts/backup/backup_voting.sh /project/engdw/PRNETDW/metadata
+#
+# Custom schema stats gathering by vjuarez1 2010-10-17 - moved to PRD4
+#30 17 * * 1-6 /opt/oracle/admin/scripts/misc/gather_schema_stats.sh prnetdw
+#0 9 * * 0 /opt/oracle/admin/scripts/misc/gather_all_schema_stats.sh prnetdw
+
+# To check the system swap VJUAREZ1 2010-11-23
+#0,15,30,45 * * * * /project/engdw/PRNETDW/scripts/check_system_swap.sh
+
+# Check FRA running to check space VJUAREZ1 2010-11-24
+#UNDO WHEN READY 0 8,17 * * * /project/engdw/PRNETDW/scripts/check_recovery_area.sh prnetdw2
+#
+# Check rman logs
+#UNDO WHEN READY 0 11 * * * /opt/oracle/admin/scripts/misc/chk_rman_bckup.sh
+
+#daily ASM Monitor
+0 0 * * * sh /u01/app/oracle/home/rman/scripts/PRNETDW_ASM_Monitor.sh
+#Archives every 12 hours
+#0 0,12 * * * sh /u01/app/oracle/home/rman/scripts/PRNETDW_arch_backup.sh prnetdw
+#Incremental mon-sat at 4:30
+#30 4 * * 2 sh /u01/app/oracle/home/rman/scripts/PRNETDW_Inc1_backup.sh prnetdw
+#30 4 * * 4 sh /u01/app/oracle/home/rman/scripts/PRNETDW_Inc1_backup.sh prnetdw
+#30 4 * * 1-6 sh /u01/app/oracle/home/rman/scripts/PRNETDW_Inc1_backup.sh prnetdw
+#FULL Backup sunday at 3:00
+0 3 * * 0 sh /u01/app/oracle/home/rman/scripts/PRNETDW_full_backup.sh prnetdw
+
+
+
+
+
+************************************************************************
+
+
+
+
+
+$ cat /u01/app/oracle/home/rman/scripts/PRNETDW_ASM_Monitor.sh
+cd /u01/app/oracle/home/rman/scripts
+# Declare your ORACLE environment variables
+export ORACLE_SID=prnetdw1
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export DATE=$(date +%Y_%m_%d)
+echo $DATE
+sqlplus -s / as sysdba <<EOF
+@asm_monitor.sql
+EOF
+mv backup.log  /u01/app/oracle/home/rman/logs/backup_new.log
+cat /u01/app/oracle/home/rman/logs/backup_new.log > /tmp/report.log
+rm backup_new.log
+cd /tmp
+    mail -s " ORACLE RAC ASM MONITOR" EC-Nokia-DBA@groups.nokia.com -c krishna.k.bejjanki.ext@nokia.com < report.log
+#done:Q
+
+
+
+
+
+$ cat asm_monitor.sql
+spool backup.log
+
+
+set pages 9999 lines 300
+col OPEN_MODE for a10
+col HOST_NAME for a20
+select name DB_NAME,INSTANCE_NAME,HOST_NAME,DATABASE_ROLE,OPEN_MODE,version DB_VERSION,LOGINS,
+to_char(STARTUP_TIME,'DD-MON-YYYY HH24:MI:SS') "DB UP TIME" from v$database,gv$instance;
+
+
+set wrap off
+set lines 155 pages 9999
+col "Group Name" for a6    Head "Group|Name"
+col "Disk Name"  for a10
+col "State"      for a10
+col "Type"       for a10   Head "Diskgroup|Redundancy"
+col "Total GB"   for 9,990 Head "Total|GB"
+col "Free GB"    for 9,990 Head "Free|GB"
+col "Imbalance"  for 99.9  Head "Percent|Imbalance"
+col "Variance"   for 99.9  Head "Percent|Disk Size|Variance"
+col "MinFree"    for 99.9  Head "Minimum|Percent|Free"
+col "MaxFree"    for 99.9  Head "Maximum|Percent|Free"
+col "DiskCnt"    for 9999  Head "Disk|Count"
+
+prompt
+prompt ASM Disk Groups
+prompt ===============
+
+SELECT g.group_number  "Group"
+,      g.name          "Group Name"
+,      g.state         "State"
+,      g.type          "Type"
+,      g.total_mb/1024 "Total GB"
+,      g.free_mb/1024  "Free GB"
+,      100*(max((d.total_mb-d.free_mb)/d.total_mb)-min((d.total_mb-d.free_mb)/d.total_mb))/max((d.total_mb-d.free_mb)/d.total_mb) "Imbalance"
+,      100*(max(d.total_mb)-min(d.total_mb))/max(d.total_mb) "Variance"
+,      100*(min(d.free_mb/d.total_mb)) "MinFree"
+,      100*(max(d.free_mb/d.total_mb)) "MaxFree"
+,      count(*)        "DiskCnt"
+FROM v$asm_disk d, v$asm_diskgroup g
+WHERE d.group_number = g.group_number and
+d.group_number <> 0 and
+d.state = 'NORMAL' and
+d.mount_status = 'CACHED'
+GROUP BY g.group_number, g.name, g.state, g.type, g.total_mb, g.free_mb
+ORDER BY 1;
+
+
+prompt ASM Disk Space Usage Report In Detail
+prompt =====================================
+
+SET LINESIZE 150
+SET PAGESIZE 9999
+SET VERIFY off
+COLUMN disk_group_name FORMAT a15 HEAD 'Disk Group Name'
+COLUMN disk_file_path FORMAT a50 HEAD 'Path'
+COLUMN disk_file_name FORMAT a20 HEAD 'File Name'
+COLUMN disk_file_fail_group FORMAT a20 HEAD 'Fail Group'
+COLUMN total_mb FORMAT 999,999,999 HEAD 'File Size (MB)'
+COLUMN used_mb FORMAT 999,999,999 HEAD 'Used Size (MB)'
+COLUMN pct_used FORMAT 999.99 HEAD 'Pct. Used'
+break on report on disk_group_name skip 1
+compute sum label 'Disk Group' of total_mb used_mb on disk_group_name
+compute sum label 'ASM Disk Group Total Size in MB' of total_mb used_mb on report
+SELECT
+NVL(a.name, '[CANDIDATE]') disk_group_name
+, b.path disk_file_path
+, b.name disk_file_name
+, b.failgroup disk_file_fail_group
+, b.total_mb total_mb
+, (b.total_mb - b.free_mb) used_mb
+, ROUND((1- (b.free_mb / b.total_mb))*100, 2) pct_used
+FROM v$asm_diskgroup a RIGHT OUTER JOIN v$asm_disk b USING (group_number) where b.header_status = 'MEMBER'
+ORDER BY a.name
+/
+
+prompt ASM Disks In Use
+prompt ================
+
+col "Group"          for 999
+col "Disk"           for 999
+col "Header"         for a9
+col "Mode"           for a8
+col "State"          for a8
+col "Created"        for a10          Head "Added To|Diskgroup"
+--col "Redundancy"     for a10
+--col "Failure Group"  for a10  Head "Failure|Group"
+col "Path"           for a19
+--col "ReadTime"       for 999999990    Head "Read Time|seconds"
+--col "WriteTime"      for 999999990    Head "Write Time|seconds"
+--col "BytesRead"      for 999990.00    Head "GigaBytes|Read"
+--col "BytesWrite"     for 999990.00    Head "GigaBytes|Written"
+col "SecsPerRead"    for 9.000        Head "Seconds|PerRead"
+col "SecsPerWrite"   for 9.000        Head "Seconds|PerWrite"
+
+select group_number  "Group"
+,      disk_number   "Disk"
+,      header_status "Header"
+,      mode_status   "Mode"
+,      state         "State"
+,      create_date   "Created"
+--,      redundancy    "Redundancy"
+,      total_mb/1024 "Total GB"
+,      free_mb/1024  "Free GB"
+,      name          "Disk Name"
+--,      failgroup     "Failure Group"
+,      path          "Path"
+--,      read_time     "ReadTime"
+--,      write_time    "WriteTime"
+--,      bytes_read/1073741824    "BytesRead"
+--,      bytes_written/1073741824 "BytesWrite"
+,      read_time/reads "SecsPerRead"
+,      write_time/writes "SecsPerWrite"
+from   v$asm_disk_stat
+where header_status not in ('FORMER','CANDIDATE')
+order by group_number
+,        disk_number
+/
+
+Prompt File Types in Diskgroups
+Prompt ========================
+col "File Type"      for a16
+col "Block Size"     for a5    Head "Block|Size"
+col "Gb"             for 9990.00
+col "Files"          for 99990
+break on "Group Name" skip 1 nodup
+
+select g.name                                   "Group Name"
+,      f.TYPE                                   "File Type"
+,      f.BLOCK_SIZE/1024||'k'                   "Block Size"
+,      f.STRIPED
+,        count(*)                               "Files"
+,      round(sum(f.BYTES)/(1024*1024*1024),2)   "Gb"
+from   v$asm_file f,v$asm_diskgroup g
+where  f.group_number=g.group_number
+group by g.name,f.TYPE,f.BLOCK_SIZE,f.STRIPED
+order by 1,2;
+clear break
+
+prompt Instances currently accessing these diskgroups
+prompt ==============================================
+col "Instance" form a8
+select c.group_number  "Group"
+,      g.name          "Group Name"
+,      c.instance_name "Instance"
+from   v$asm_client c
+,      v$asm_diskgroup g
+where  g.group_number=c.group_number
+/
+prompt Disk Performance metric
+prompt =======================
+SET ECHO        OFF
+SET FEEDBACK    6
+SET HEADING     ON
+SET LINESIZE    256
+SET PAGESIZE    50000
+SET TERMOUT     ON
+SET TIMING      OFF
+SET TRIMOUT     ON
+SET TRIMSPOOL   ON
+SET VERIFY      OFF
+
+CLEAR COLUMNS
+CLEAR BREAKS
+CLEAR COMPUTES
+
+COLUMN disk_group_name    FORMAT a20                    HEAD 'Disk Group Name'
+COLUMN disk_path          FORMAT a20                    HEAD 'Disk Path'
+COLUMN reads              FORMAT 999,999,999,999        HEAD 'Reads'
+COLUMN writes             FORMAT 999,999,999,999        HEAD 'Writes'
+COLUMN read_errs          FORMAT 999,999,999            HEAD 'Read|Errors'
+COLUMN write_errs         FORMAT 999,999,999            HEAD 'Write|Errors'
+COLUMN read_time          FORMAT 999,999,999,999        HEAD 'Read|Time'
+COLUMN write_time         FORMAT 999,999,999,999        HEAD 'Write|Time'
+COLUMN bytes_read         FORMAT 999,999,999,999,999    HEAD 'Bytes|Read'
+COLUMN bytes_written      FORMAT 999,999,999,999,999    HEAD 'Bytes|Written'
+
+BREAK ON report ON disk_group_name SKIP 2
+
+COMPUTE sum LABEL ""              OF reads writes read_errs write_errs read_time write_time bytes_read bytes_written ON disk_group_name
+COMPUTE sum LABEL "Grand Total: " OF reads writes read_errs write_errs read_time write_time bytes_read bytes_written ON report
+
+SELECT
+    a.name                disk_group_name
+  , b.path                disk_path
+  , b.reads               reads
+  , b.writes              writes
+  , b.read_errs           read_errs
+  , b.write_errs          write_errs
+  , b.read_time           read_time
+  , b.write_time          write_time
+  , b.bytes_read          bytes_read
+  , b.bytes_written       bytes_written
+FROM
+    v$asm_diskgroup a JOIN v$asm_disk b USING (group_number)
+ORDER BY
+    a.name
+/
+prompt Tablespace Utilization including AUTOEXTEND (IN GB)
+prompt ========================================================
+
+set pages 50000 lines 32767
+col tablespace_name format a30
+col TABLESPACE_NAME heading "Tablespace|Name"
+col Allocated_size heading "Allocated|Size(GB)" form 99999999.99
+col Current_size heading "Current|Size(GB)" form 99999999.99
+col Used_size heading "Used|Size(GB)" form 99999999.99
+col Available_size heading "Available|Size(GB)" form 99999999.99
+col Pct_used heading "%Used (vs)|(Allocated)" form 99999999.99
+
+select a.tablespace_name
+        ,a.alloc_size/1024/1024/1024 Allocated_size
+        ,a.cur_size/1024/1024/1024 Current_Size
+        ,(u.used+a.file_count*65536)/1024/1024/1024 Used_size
+        ,(a.alloc_size-(u.used+a.file_count*65536))/1024/1024/1024 Available_size
+        ,((u.used+a.file_count*65536)*100)/a.alloc_size Pct_used
+from     dba_tablespaces t
+        ,(select t1.tablespace_name
+        ,nvl(sum(s.bytes),0) used
+        from  dba_segments s
+        ,dba_tablespaces t1
+         where t1.tablespace_name=s.tablespace_name(+)
+         group by t1.tablespace_name) u
+        ,(select d.tablespace_name
+        ,sum(greatest(d.bytes,nvl(d.maxbytes,0))) alloc_size
+        ,sum(d.bytes) cur_size
+        ,count(*) file_count
+        from dba_data_files d
+        group by d.tablespace_name) a
+where t.tablespace_name=u.tablespace_name
+and t.tablespace_name=a.tablespace_name
+order by t.tablespace_name
+/
+
+spool off;
+
+$
+$
+$
+
+
+
+***********************************************************************************************************************
+
+FULL RMAN BACKUP
+
+*********************
+
+$ cat PRNETDW_full_backup.sh
+# Declare your ORACLE environment variables
+export ORACLE_SID=prnetdw1
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export DATE=$(date +%Y_%m_%d)
+echo $DATE
+#mv /u01/app/oracle/home/rman/logs/oraback_PRNETDW.log /u01/app/oracle/home/rman/logs/oraback_PRNETDW-$DATE.log
+# Start the rman commands
+rman target / nocatalog cmdfile=/u01/app/oracle/home/rman/PRNETDW_full_backup.rcv log=/u01/app/oracle/home/rman/logs/full_PRNETDW-$DATE.log
+mail -s "FULL Backup completed for PRNETDW" EC-Nokia-DBA@groups.nokia.com,nsn-cams-support@wipro.com -c krishna.k.bejjanki.ext@nokia.com </u01/app/oracle/home/rman/logs/full_PRNETDW-$DATE.log
+
+$ cat /u01/app/oracle/home/rman/PRNETDW_full_backup.rcv
+set echo on;
+configure controlfile autobackup on;
+#configure controlfile autobackup format for device type disk to '/backup/cf/cf_%t_%s_p%p';
+configure device type disk backup type to compressed backupset;
+configure retention policy to recovery window of 35 days;
+run
+{
+allocate channel ch1 type DISK;
+allocate channel ch2 type DISK;
+allocate channel ch3 type DISK;
+set command id to 'BackupDbLevel0';
+backup incremental level 0 filesperset 20 tag backup_db_level_0 format '/backup/db/db_%d_%u_%s_%p_%t_%T' ( database tag 'Incremental_0' );
+release channel ch1;
+release channel ch2;
+allocate channel ch1 type DISK;
+allocate channel ch2 type DISK;
+set command id to 'BackupArchiveLog';
+sql 'alter system archive log current';
+backup filesperset 10 format '/backup/al/al_%d_%u_%s_%p' ( archivelog all delete input );
+release channel ch1;
+release channel ch2;
+set command id to 'CurrentControlFile';
+backup current controlfile format '/backup/cf/cf_%t_%s_p%p';
+release channel ch3;
+allocate channel ch1 type DISK;
+allocate channel ch2 type DISK;
+allocate channel ch3 type DISK;
+change backup of controlfile crosscheck;
+delete noprompt backup of controlfile completed before 'sysdate-35';
+change backup of database crosscheck;
+delete noprompt backup of database completed before 'sysdate-35';
+crosscheck archivelog all;
+delete noprompt backup of archivelog all completed before 'sysdate-35';
+release channel ch1;
+release channel ch2;
+release channel ch3;
+}
+exit;
+EOF
+#
+$
+
+
+**********************************************************************************
+
+
+ARCHIVE RMAN Backup
+************************
+
+$ cat /u01/app/oracle/home/rman/scripts/PRNETDW_arch_backup.sh
+#DEclare your ORACLE environment variables
+export ORACLE_SID=prnetdw1
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export DATE=$(date +%Y_%m_%d)
+echo $DATE
+# Start the rman commands
+rman target / nocatalog cmdfile=/u01/app/oracle/home/rman/PRNETDW_arch_backup.rcv log=/u01/app/oracle/home/rman/logs/arch_backup_PRNETDW-$DATE.log
+mail -s "Arch Backup completed for PRNETDW" ee-database@wipro.com,krishna.bejjanki@wipro.com </u01/app/oracle/home/rman/logs/arch_backup_PRNETDW-$DATE.log
+
+$
+$
+$
+$
+$ cat /u01/app/oracle/home/rman/PRNETDW_arch_backup.rcv
+set echo on;
+configure controlfile autobackup on;
+configure device type disk backup type to compressed backupset;
+configure retention policy to recovery window of 35 days;
+run
+{
+allocate channel ch1 type DISK;
+allocate channel ch2 type DISK;
+allocate channel ch3 type DISK;
+set command id to 'BackupArchiveLog';
+sql 'alter system archive log current';
+backup filesperset 20 format '/backup/al/al_%d_%u_%s_%p'( archivelog all delete input);
+release channel ch1;
+release channel ch2;
+set command id to 'CurrentControlFile';
+backup current controlfile format '/backup/cf/cf_%t_%s_p%p';
+release channel ch3;
+DELETE NOPROMPT BACKUP OF ARCHIVELOG ALL COMPLETED BEFORE 'SYSDATE-7';
+}
+exit:
+EOF
+#
+
+$
+$
+
+
+****************************************************************************************************
+
+
+INCREMENTAL RMAN BACKUP
+***************************
+
+$
+$ cat /u01/app/oracle/home/rman/scripts/PRNETDW_Inc1_backup.sh
+# Declare your ORACLE environment variables
+export ORACLE_SID=prnetdw1
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export DATE=$(date +%Y_%m_%d)
+echo $DATE
+# Start the rman commands
+rman target / nocatalog cmdfile=/u01/app/oracle/home/rman/PRNETDW_Inc1_backup.rcv log=/u01/app/oracle/home/rman/logs/incremental_PRNETDW-$DATE.log
+mail -s "INCREMENTAL Backup completed for PRNETDW" ee-database@wipro.com,nsn-cams-support@wipro.com -c krishna.bejjanki@wipro.com </u01/app/oracle/home/rman/logs/incremental_PRNETDW-$DATE.log
+
+
+$
+$
+$ cat /u01/app/oracle/home/rman/PRNETDW_Inc1_backup.rcv
+set echo on;
+configure controlfile autobackup on;
+configure device type disk backup type to compressed backupset;
+configure retention policy to recovery window of 35 days;
+run
+{
+allocate channel ch1 type DISK;
+allocate channel ch2 type DISK;
+allocate channel ch3 type DISK;
+set command id to 'BackupDbLevel1';
+backup incremental level 1 filesperset 20 tag backup_db_level_1 format '/backup/db/db_%d_%u_%s_%p_%t_%T'( database tag 'Incremental_1' );
+set command id to 'BackupArchiveLog';
+sql 'alter system archive log current';
+backup filesperset 20 format '/backup/al/al_%d_%u_%s_%p'( archivelog all delete input );
+set command id to 'CurrentControlFile';
+backup current controlfile format '/backup/cf/cf_%t_%s_p%p';
+release channel ch1;
+release channel ch2;
+release channel ch3;
+}
+exit;
+EOF
+#
+
+
+****************************************************************
+
+

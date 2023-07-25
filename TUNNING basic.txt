@@ -1,0 +1,2917 @@
+
+**********************************************************************
+
+https://dba12c.wordpress.com/2015/07/14/oracle-performance-queries/
+
+
+MONITORING AND TUNNING 
+
+1.SQL traces
+2.Statspack
+3.System statistics
+4.Wait model
+5.Time model
+6.OS staistics
+7.Metrics
+8.Service statistics
+9.Histograms
+10.Optimizer statistics
+11.Sql statistics
+12.AWR
+13.ASH
+14.TKPROF
+15.EXECUTION PLAN
+16.EXPLAIN PLAN
+17.STATSPACK REPORT
+18.Enquque,lock,blocking,latch,mutex.
+
+
+
+DB TIME=WAIT TIME+CPU TIME
+
+ALTER TABLE MININMIZE ROWS PER BLOCK(MINI NO OF BLOCK).
+
+
+*********************************************************************
+
+
+cumulative statistic
+**************************
+
+--wait events with time information
+--Time model
+
+
+---v$statname
+---v$sysstat
+
+Metric(Statistic rates)
+************************
+
+A metric is another type of statistic collected by Oracle Database. 
+A metric is defined as the rate of change in some cumulative statistic. 
+That rate can be measured against a variety of units, including time, transactions, or database calls. 
+For example, the number database calls per second is a metric. Metric values are exposed in some V$ views, where the values are the average over a fairly small time interval, typically 60 seconds. 
+A history of recent metric values is available through V$ views, and some data is also persisted by AWR snapshots.
+
+
+Database Statistics
+Database statistics provide information on the type of load on the database and the internal and external resources used by the database. 
+
+
+1.Wait Events
+
+2.Time Model Statistics
+
+3.Active Session History
+
+4.System and Session Statistics
+
+5.Operating System Statistics
+
+6.CPU Statistics
+
+7.Virtual Memory Statistics
+
+8.Disk I/O Statistics
+
+9.Network Statistics
+
+10.Operating System Data Gathering Tools
+
+
+CPU     == sar, vmstat, mpstat, iostat
+
+Memory  == sar, vmstat
+
+Disk    == sar, iostat
+
+Network == netstat 
+
+
+11.Interpreting Statistics
+
+
+
+***************************************************************************************************************
+
+
+Automatic Workload Repository
+
+The Automatic Workload Repository (AWR) collects, processes, 
+and maintains performance statistics for problem detection and self-tuning purposes. 
+This data is both in memory and stored in the database. 
+The gathered data can be displayed in both reports and views.
+
+The statistics collected and processed by AWR include:
+
+Object statistics that determine both access and usage statistics of database segments
+
+Time model statistics based on time usage for activities, displayed in the V$SYS_TIME_MODEL and V$SESS_TIME_MODEL views
+
+Some of the system and session statistics collected in the V$SYSSTAT and V$SESSTAT views
+
+SQL statements that are producing the highest load on the system, based on criteria such as elapsed time and CPU time
+
+ASH statistics, representing the history of recent sessions activity
+
+
+
+Gathering database statistics using the AWR is enabled by default and is controlled by the STATISTICS_LEVEL initialization parameter.
+The STATISTICS_LEVEL parameter should be set to the TYPICAL or ALL to enable statistics gathering by the AWR. 
+The default setting is TYPICAL. Setting STATISTICS_LEVEL to BASIC disables many Oracle Database features, including the AWR, and is not recommended.
+If STATISTICS_LEVEL is set to BASIC, you can still manually capture AWR statistics using the DBMS_WORKLOAD_REPOSITORY package. 
+However,because in-memory collection of many system statistics—such as segments statistics and memory advisor information—will be disabled, 
+the statistics captured in these snapshots may not be complete. For information about the STATISTICS_LEVEL initialization parameter,
+
+
+STATISTICS_LEVEL
+-----------------
+
+
+Parameter  type				String
+Syntax	                                STATISTICS_LEVEL = { ALL | TYPICAL | BASIC }
+Default value	                        TYPICAL
+Modifiable	                        ALTER SESSION, ALTER SYSTEM
+
+STATISTICS_LEVEL specifies the level of collection for database and operating system statistics. 
+
+The Oracle Database collects these statistics for a variety of purposes, including making self-management decisions.
+
+The default setting of TYPICAL ensures collection of all major statistics required for database self-management functionality 
+and provides best overall performance.The default value should be adequate for most environments.
+
+When the STATISTICS_LEVEL parameter is set to ALL, additional statistics are added to the set of statistics collected with the TYPICAL setting. 
+The additional statistics are timed OS statistics and plan execution statistics.
+
+Setting the STATISTICS_LEVEL parameter to BASIC disables the collection of many of the important statistics required by Oracle Database features and functionality, including:
+
+Automatic Workload Repository (AWR) Snapshots
+Automatic Database Diagnostic Monitor (ADDM)
+All server-generated alerts
+Automatic SGA Memory Management
+Automatic optimizer statistics collection
+Object level statistics
+End to End Application Tracing (V$CLIENT_STATS)
+Database time distribution statistics (V$SESS_TIME_MODEL and V$SYS_TIME_MODEL)
+Service level statistics
+Buffer cache advisory
+MTTR advisory
+Shared pool sizing advisory
+Segment level statistics
+PGA Target advisory
+Timed statistics
+Monitoring of statistics
+
+
+
+When the STATISTICS_LEVEL parameter is modified by ALTER SYSTEM, all advisories or statistics are dynamically turned on or off, 
+depending on the new value of STATISTICS_LEVEL. 
+When modified by ALTER SESSION, the following advisories or statistics are turned on or off in the local session only. 
+Their system-wide state is not changed:
+
+Timed statistics
+Timed OS statistics
+Plan execution statistics
+The V$STATISTICS_LEVEL view displays information about the status of the statistics or advisories controlled by the STATISTICS_LEVEL parameter.
+
+
+TKPROF
+*************
+
+The tkprof tool is a tuning tool used to determine cpu and execution times for SQL statements. 
+You use it by first setting timed_statistics to true in the initialization file and then turning on tracing for either the entire database via the sql_trace parameter or for the session using the ALTER SESSION command. 
+Once the trace file is generated you run the tkprof tool against the trace file and then look at the output from the tkprof tool. This can also be used to generate explain plan output.
+
+
+
+Timed statistics
+**********************
+
+
+The time model is a set of statiics that give an overview of where time is spent inside the oracle database.
+
+--v$sys_time_model
+--v$sess_time_model
+
+
+Displaying statistics
+***************************
+
+Instance Activity Statistics are collected for:
+
+Session
+
+----All sessions v$sesstat
+----Current session V$mystat
+
+Services----v$service_stats
+
+System------v$sysstat
+
+
+
+Wait Events
+**************
+
+A collection of wait events provids information about the sessions that had to wait or must wait
+for different reasons.
+
+
+
+These events are listed in the V$EVENT_NAME view, which has the following columns;
+--Event#
+--Name
+--Parameter1
+--Parameter2
+--Parameter3
+
+
+All wait events are named in the v$event_name view, including;
+
+--Free buffer waits
+--Latch free
+--Buffer busy waits
+--db file sequential read
+--db file scattered read
+--db file paralled write
+--Undo segement tx slot
+--Undo segement extension
+
+
+PROCESS
+***********************
+
+A process is a "thread of control" or a mechanism in an operating system that can run a series of steps. (Some operating systems use the terms job or task.) 
+A process normally has its own private memory area in which it runs.
+
+PROCESSES specifies the maximum number of operating system user processes that can simultaneously connect to Oracle. Its value should allow for all background processes such as locks, job queue processes, and parallel execution processes.
+
+
+**************************************************************************************************************************************************
+
+
+metric,baseline
+
+
+
+                                        How To Create and Evolve a SQL Plan Baseline
+                                      ************************************************
+
+    
+This lab is presented in the OTN Virtual Technology Summit session entitled "Change the Way You Think about SQL Tuning with SQL Plan Management" presented by Bjoern Rost, Oracle ACE Director. 
+It provides an example of how to create a SQL Plan Baseline for a query with auto capture, and it demonstrates how even after adding an index, only the accepted baseline (with the full scan) is actually being used until we review and evolve the new baseline.
+
+
+
+
+Required Elements: Oracle Developer Virtual Machine
+
+Access the Oracle Developer Virtual Box download and instructions here. 
+
+This one virtual box image contains all the software and guides you need for the Hands-on Exercise. The image is around 4.7GB compressed (nee image being posted soon will update size after it is posted), so you should download VirtualBox and import the image before the event starts.
+
+
+
+Lab Instructions
+
+We will use a simple example table with a very simple query. 
+We will run a query against an unindexed column first which will return in a full table scan. 
+Then, we will add an index on the column and see that the full scan will still be executed but a new baseline is added with a status of unaccepted. We will generate an evolve report and eventually evolve the new baseline and remove the old one.
+
+
+
+In the developer VM, run this as pmuser/oracle and gather statistics. You can use sqlplus on the commandline or the SQLDeveloper GUI tool.
+
+
+
+[oracle@localhost ~]$ sqlplus pmuser/oracle
+
+SQL*Plus: Release 12.1.0.1.0 Production on Thu Jun 12 09:48:13 2014
+
+Copyright (c) 1982, 2013, Oracle. All rights reserved.
+
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+
+PDB1@ORCL> create table t as select * from dba_objects;
+
+Table created.
+
+PDB1@ORCL> exec DBMS_STATS.GATHER_SCHEMA_STATS ('PMUSER');
+
+PL/SQL procedure successfully completed.
+
+Step 1: Verify that OPTIMIZER_USE_SQL_BLAN_BASELINES is set to true (the default)
+
+
+
+PDB1@ORCL> show parameter baselines
+
+
+
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+optimizer_capture_sql_plan_baselines boolean     FALSE
+optimizer_use_sql_plan_baselines     boolean     TRUE
+
+
+step 2: enable auto capture for this session, run a statement twice and disable auto capture again.
+
+
+
+
+
+
+PDB1@ORCL> ALTER SESSION SET OPTIMIZER_CAPTURE_SQL_PLAN_BASELINES = TRUE;
+
+Session altered.
+
+PDB1@ORCL> variable var42 varchar2(42);
+PDB1@ORCL> exec :var42 := 'PMUSER';
+
+PL/SQL procedure successfully completed.
+
+PDB1@ORCL> select count(*) from t where owner= :var42;
+
+COUNT(*)
+----------
+      5
+
+PDB1@ORCL> select count(*) from t where owner= :var42;
+
+COUNT(*)
+----------
+      5
+
+PDB1@ORCL> ALTER SESSION SET OPTIMIZER_CAPTURE_SQL_PLAN_BASELINES = FALSE;
+
+Session altered.
+
+
+Now we should have a baseline for this sql:
+
+
+PDB1@ORCL> set linesize 300
+PDB1@ORCL> column sql_handle format a20
+PDB1@ORCL> column plan_name format a42
+PDB1@ORCL> column sql_text format a42
+PDB1@ORCL> select sql_handle, plan_name, sql_text, enabled, accepted, fixed from dba_sql_plan_baselines;
+
+SQL_HANDLE           PLAN_NAME                       SQL_TEXT                                   ENA ACC FIX
+-------------------- ------------------------------  ------------------------------------------ --- --- ---
+SQL_abdfaaa7e926cf0a SQL_PLAN_arrxanznkdmsa3fdbb376  select count(*) from t where owner= :var42 YES YES NO 
+
+
+Notice how there is one baseline for this statement and it is automatically set to ACCEPTED. Now we create an index, re-run the query with auto capture enabled to collect a new baseline with the index scan.
+
+
+
+PDB1@ORCL> CREATE INDEX bharat.t_idx ON bharat.t
+(OWNER,OBJECT_NAME)
+LOGGING
+TABLESPACE PSINDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+
+Index created.
+
+PDB1@ORCL> exec dbms_stats.gather_schema_stats ('PMUSER');
+
+PL/SQL procedure successfully completed.
+
+PDB1@ORCL> alter system flush shared_pool;
+
+System altered.
+
+PDB1@ORCL> ALTER SESSION SET OPTIMIZER_CAPTURE_SQL_PLAN_BASELINES = TRUE;
+
+Session altered.
+
+PDB1@ORCL> select count(*) from t where owner= :var42;
+
+COUNT(*)
+----------
+      5
+
+PDB1@ORCL> select count(*) from t where owner= :var42;
+
+COUNT(*)
+----------
+      5
+
+PDB1@ORCL> ALTER SESSION SET OPTIMIZER_CAPTURE_SQL_PLAN_BASELINES = FALSE;
+
+Session altered.
+
+Check the plan that is used to execute the query and notice how the explain plan mentions the use of a baseline:
+
+PDB1@ORCL> set pagesize 1000
+PDB1@ORCL> select count(*) from t where owner = :var42;
+
+COUNT(*)
+----------
+      5
+
+PDB1@ORCL> select * from table(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+-------------------------------------
+SQL_ID 364z0straymuv, child number 0
+-------------------------------------
+select count(*) from t where owner = :var42
+
+Plan hash value: 2966233522
+
+---------------------------------------------------------------------------
+| Id | Operation        | Name | Rows | Bytes | Cost (%CPU)| Time         |
+---------------------------------------------------------------------------
+| 0 | SELECT STATEMENT  |      |      |       | 426 (100)  |              |
+| 1 | SORT AGGREGATE    |      | 1    | 6     |            |              |
+|* 2 | TABLE ACCESS FULL| T    | 5    | 30    | 426 (1)    | 00:00:01     |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+2 - filter("OWNER"=:VAR42)
+
+Note
+-----
+- SQL plan baseline SQL_PLAN_arrxanznkdmsa3fdbb376 used for this statement
+
+
+23 rows selected.
+
+
+Check the baselines table for the newly created but unaccepted baseline. Notice how the header mentions if the plan is accepted or not.
+
+
+
+PDB1@ORCL> select sql_handle, plan_name, sql_text, enabled, accepted, fixed from dba_sql_plan_baselines;
+
+SQL_HANDLE           PLAN_NAME                       SQL_TEXT                                   ENA ACC FIX
+-------------------- ------------------------------  ------------------------------------------ --- --- ---
+SQL_abdfaaa7e926cf0a SQL_PLAN_arrxanznkdmsa3fdbb376  select count(*) from t where owner= :var42 YES YES NO
+SQL_abdfaaa7e926cf0a SQL_PLAN_arrxanznkdmsaded8ae2f  select count(*) from t where owner= :var42 YES NO  NO
+
+
+Have a look at both execution plans for this sql handle:
+
+
+
+PDB1@ORCL> select * from table(dbms_xplan.display_sql_plan_baseline('SQL_abdfaaa7e926cf0a'));
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+SQL handle: SQL_abdfaaa7e926cf0a
+SQL text: select count(*) from t where owner= :var42
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Plan name: SQL_PLAN_arrxanznkdmsa3fdbb376 Plan id: 1071362934
+Enabled: YES Fixed: NO Accepted: YES Origin: AUTO-CAPTURE
+Plan rows: From dictionary
+--------------------------------------------------------------------------------
+
+Plan hash value: 2966233522
+
+---------------------------------------------------------------------------
+| Id | Operation         | Name     | Rows | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+| 0 | SELECT STATEMENT   |          | 1    | 6     | 426 (1)    | 00:00:01 |
+| 1 | SORT AGGREGATE     |          | 1    | 6     |            |          |
+|* 2 | TABLE ACCESS FULL | T        | 3143 | 18858 | 426 (1)    | 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+2 - filter("OWNER"=:VAR42)
+
+--------------------------------------------------------------------------------
+Plan name: SQL_PLAN_arrxanznkdmsaded8ae2f Plan id: 3738742319
+Enabled: YES Fixed: NO Accepted: NO Origin: AUTO-CAPTURE
+Plan rows: From dictionary
+--------------------------------------------------------------------------------
+
+Plan hash value: 293504097
+
+---------------------------------------------------------------------------
+| Id | Operation       | Name     | Rows | Bytes | Cost (%CPU)| Time      |
+---------------------------------------------------------------------------
+| 0 | SELECT STATEMENT |          | 1    | 6     | 1 (0)      | 00:00:01  |
+| 1 | SORT AGGREGATE   |          | 1    | 6     |            |           |
+|* 2| INDEX RANGE SCAN | T_IDX    | 5    | 30    | 1 (0)      | 00:00:01  |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+2 - access("OWNER"=:VAR42)
+
+47 rows selected.
+
+Create the evolve report but do not actually change the ACCEPTED flag yet by setting commit=>no like this:
+
+
+  set serveroutput on
+  declare evolve_out CLOB;
+  begin
+  evolve_out := DBMS_SPM.EVOLVE_SQL_PLAN_BASELINE ( SQL_HANDLE => 'SQL_abdfaaa7e926cf0a', COMMIT => 'NO' );
+  dbms_output.put_line(evolve_out);
+  end; 
+/
+
+
+This is what the report should look like:
+
+
+GENERAL INFORMATION SECTION
+---------------------------------------------------------------------------------------------
+
+Task Information:
+---------------------------------------------
+Task Name : TASK_21
+Task Owner : PMUSER
+
+Execution Name : EXEC_131
+Execution Type : SPM EVOLVE
+Scope : COMPREHENSIVE
+Status : COMPLETED
+Started : 07/03/2014 10:03:15
+Finished : 07/03/2014 10:03:16
+Last Updated :
+07/03/2014 10:03:16
+Global Time Limit : 2147483646
+Per-Plan Time Limit : UNUSED
+Number of Errors : 0
+---------------------------------------------------------------------------------------------
+
+SUMMARY
+SECTION
+---------------------------------------------------------------------------------------------
+Number of plans processed : 1
+Number of findings : 1
+Number of recommendations : 1
+Number of errors : 0
+
+---------------------------------------------------------------------------------------------
+
+DETAILS SECTION
+---------------------------------------------------------------------------------------------
+Object ID : 2
+Test Plan
+Name : SQL_PLAN_arrxanznkdmsaded8ae2f
+Base Plan Name : SQL_PLAN_arrxanznkdmsa3fdbb376
+SQL Handle : SQL_abdfaaa7e926cf0a
+Parsing Schema : PMUSER
+
+Test Plan Creator : PMUSER
+SQL Text : select count(*) from t where owner= :var42
+
+Bind Variables:
+-----------------------------
+1 - (VARCHAR2(128)): PMUSER
+
+
+Execution Statistics:
+-----------------------------
+                     Base Plan                    Test Plan
+                     ---------------------------- ----------------------------
+Elapsed Time (s):    .00099                       .000002
+CPU Time (s):        .000489                       0
+Buffer Gets:         153                           0
+Optimizer Cost:      426                           1
+Disk Reads:          0                             0
+
+Direct Writes:       0                             0
+Rows Processed:      0                             0
+Executions:          10                            10
+
+
+FINDINGS
+SECTION
+---------------------------------------------------------------------------------------------
+
+Findings (1):
+-----------------------------
+1. The plan was verified in 0.29000 seconds. It passed the benefit criterion
+because its verified performance was 767.74440 times better than that of
+the baseline plan.
+
+Recommendation:
+-----------------------------
+Consider accepting the plan.
+
+
+EXPLAIN PLANS
+SECTION
+---------------------------------------------------------------------------------------------
+
+Baseline Plan
+-----------------------------
+Plan Id :         1
+Plan Hash Value : 1071362934
+
+----------------------------------------------------------------------
+| Id | Operation         | Name | Rows | Bytes | Cost | Time         |
+----------------------------------------------------------------------
+| 0 | SELECT STATEMENT   |      | 1    | 6     | 426  | 00:00:01     |
+| 1 | SORT AGGREGATE     |      | 1    | 6     |      |              |
+| * 2| TABLE ACCESS FULL | T    | 5    | 30    | 426  | 00:00:01     |
+----------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+------------------------------------------
+* 2 - filter("OWNER"=:VAR42)
+
+
+Test Plan
+-----------------------------
+Plan Id : 2
+Plan
+Hash Value : 3738742319
+
+----------------------------------------------------------------------
+| Id | Operation          | Name | Rows | Bytes  | Cost | Time       |
+----------------------------------------------------------------------
+| 0  | SELECT STATEMENT   |       | 1   |  6     | 1    | 00:00:01   |
+| 1 | SORT AGGREGATE      |       | 1   |  6     |      |            |
+| * 2 | INDEX RANGE SCAN  | T_IDX | 5   | 30     | 1    | 00:00:01   |
+----------------------------------------------------------------------
+
+Predicate Information (identified by operation
+id):
+------------------------------------------
+* 2 - access("OWNER"=:VAR42)
+
+---------------------------------------------------------------------------------------------
+
+PL/SQL procedure successfully completed.
+
+
+After the review, run the evolve again but set commit to yes this time to actually evolve the new baseline.
+
+
+set serveroutput on
+declare evolve_out CLOB;
+begin
+evolve_out := DBMS_SPM.EVOLVE_SQL_PLAN_BASELINE ( SQL_HANDLE => 'SQL_abdfaaa7e926cf0a', COMMIT => 'YES' ); 
+dbms_output.put_line(evolve_out); 
+end; 
+/
+
+Check the baseline table again and notice how both plans are now accepted.
+
+PDB1@ORCL> select sql_handle, plan_name, sql_text, enabled, accepted, fixed from dba_sql_plan_baselines;
+
+SQL_HANDLE            PLAN_NAME                       SQL_TEXT                                    ENA ACC FIX
+--------------------  ------------------------------  ------------------------------------------  --- --- ---
+SQL_abdfaaa7e926cf0a  SQL_PLAN_arrxanznkdmsa3fdbb376  select count(*) from t where owner= :var42  YES YES NO
+SQL_abdfaaa7e926cf0a  SQL_PLAN_arrxanznkdmsaded8ae2f  select count(*) from t where owner= :var42  YES YES NO
+
+
+Let's verify that this new plan is used for queries from now on:
+
+PDB1@ORCL> set autotrace on
+PDB1@ORCL> select count(*) from t where owner = :var42;
+
+COUNT(*)
+----------
+      5
+
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 293504097
+
+---------------------------------------------------------------------------
+| Id | Operation          | Name  | Rows | Bytes | Cost (%CPU)| Time      |
+---------------------------------------------------------------------------
+| 0  | SELECT STATEMENT   |       | 1    | 6     | 8 (0)      | 00:00:01  |
+| 1  | SORT AGGREGATE     |       | 1    | 6     |            |           |
+|* 2 | INDEX RANGE SCAN   |T_IDX  | 3143 | 18858 | 8 (0)      | 00:00:01  |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+2 - access("OWNER"=:VAR42)
+
+Note
+-----
+- SQL plan baseline "SQL_PLAN_arrxanznkdmsaded8ae2f" used for this statement
+
+
+The last step would be to think about what to do with the original baseline. 
+Since both plans are accepted now, both are eligible for execution which could be helpful in situations where a adaptive cursor sharing kicks in and the full scan would actually be the better plan.
+ In this case though I decided to delete the old baseline:
+
+
+ declare 
+ drop_result pls_integer;
+ begin 
+ drop_result := DBMS_SPM.DROP_SQL_PLAN_BASELINE( 
+ sql_handle => 'SQL_abdfaaa7e926cf0a',  
+ plan_name => 'SQL_PLAN_arrxanznkdmsa3fdbb376'); 
+ dbms_output.put_line(drop_result);    
+ end; 
+/
+
+
+This lab showed how to create a SQL Plan Baseline for a query with auto capture. It demonstrated how even after adding an index, 
+only the accepted baseline (with the full scan) was actually being used until we reviewed and evolved the new baseline.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+http://www.dba-oracle.com/art_builder_bbw.htm
+
+http://www.dba-oracle.com/m_enqueue_deadlocks_per_txn.htm
+
+http://www.dba-oracle.com/t_deadlock.htm
+
+
+BASELINE
+
+EXECTUION PLAN
+
+Configure explain plan
+
+optimizer gather statisics
+
+beffer gets per execution
+
+child no
+
+sql baseline procative approach
+
+sql profile reactive approach  .......some time it may stale 
+
+
+In 10g oracle as introduced ASMM by introducing the parameter SGA_TARGET. If you have sufficient amount of memory allocate 40% of SGA.
+If we enable ASMM , 'MMON' background gets enabled and it's dynamically Srinks and expands the subcomponents' depending on the workload.
+
+In 11g oracle as introduced AMM by introducing the parameter MEMORY_TARGET.
+If we enable AMM 60 % memory will be allocated SGA & 40% will be allocated PGA.
+
+AMM--11GR2
+
+
+ASMM-10G
+
+select * from v$memory_target_advice order by memory size;
+
+if AMM is enable then this show value.
+
+for enabling AMM we set following parameter.
+
+sga_target=0
+sga_max_size=0
+
+
+enable AMM
+
+alter sytem set sga_target=0 scope=spfile;
+
+alter sytem set sga_max_size=0 scope=spfile;
+
+alter system set memory_target=1G scope=spfile;
+
+alter system set memory_max_target=2G scope=spfile;-------oracle ram  dont give memory beyond this
+
+alter system set pga_aggregate_target=0 scope=spfile;
+
+
+
+sql>shu immediate
+
+
+sql>startup
+
+
+show parameter sga_target=0
+show parameter sga_max_size=0
+show parameter memory_targer=1G
+show parameter memory_max_target=2G
+
+select * from v$memory_target_advice order by memory size;
+
+now shows value beacuse we enable AMM.
+
+show parameter statistics_level=TYPICAL
+
+this help gather statics db,schema,users,objects for automatic tunning process.
+
+
+CURSOR
+***********
+Cursor: It is a memory area in library cache where various information about the SQL satement being executed are stored.The info stored is
+--text of sql statment
+--its execution plan
+--its execution statistics
+--Environment
+
+
+Each SQL statement has
+- One Parent cursor
+- One or more child cursors
+
+PARENT CURSOR
+***************
+- It stores the sql text of the cursor. When two statements are identical textually, they will share the same parent Cursor.
+- Externalised by V$SQLAREA: Contains one row for each parent cursor
+
+
+CHILD CURSOR
+****************
+- Each parent requires at least one child cursor but can have more than one child cursors
+- The Child Cursor holds other required information, like: the identity of the objects referenced by the SQL Cursor; the names, type and length of the bind variables   used..etc.
+
+- Child cursor contains
+***********************
+  . Environment
+  . Statistics
+  . Execution Plan
+  . Bind variables
+- Externalised by V$SQL : Contains one row for each child cursor
+
+
+
+CURSOR_SHARING
+******************
+IS a int.ora parameter which decides whether a SQL send from user is a candidate for fresh parshing or will use an existing plan.
+
+
+Sharing Cursors
+In the context of SQL parsing, an identical statement is a SQL statement whose text is identical to another statement, character for character, including spaces, case, and comments.
+A similar statement is identical except for the values of some literals.
+
+The parse phase compares the statement text with statements in the shared pool to determine if the statement can be shared. 
+If the value of the CURSOR_SHARING initialization parameter is set to EXACT (the default value), 
+and if a statement in the shared pool is not identical, then the database does not share the SQL area. 
+Instead, each SQL statement has its own parent cursor and its own execution plan based on the literal in the statement.
+
+This section describes how cursors can be shared and contains the following topics:
+
+About Cursor Sharing
+Forcing Cursor Sharing
+About Cursor Sharing
+When SQL statements use literals rather than bind variables, setting the value of the CURSOR_SHARING initialization parameter to FORCE enables the database to replace literals with system-generated bind variables. Using this technique, the database may reduce the number of parent cursors in the shared SQL area.
+
+When the value of the CURSOR_SHARING parameter is set to FORCE, the database performs the following steps during the parse phase:
+
+Searches for an identical statement in the shared pool.
+
+If an identical statement is found, then the database skips the next step and proceeds to step 3. Otherwise, the database proceeds to the next step.
+
+Searches for a similar statement in the shared pool.
+
+If a similar statement is not found, then the database performs a hard parse. If a similar statement is found, then the database proceeds to the next step.
+
+Proceeds through the remaining steps of the parse phase to ensure that the execution plan of the existing statement is applicable to the new statement.
+
+If the plan is not applicable, then the database performs a hard parse. If the plan is applicable, then the database proceeds to the next step.
+
+Shares the SQL area of the statement.
+
+For details about the various checks performed by the database, see "SQL Sharing Criteria".
+
+Forcing Cursor Sharing
+The best practice is to write sharable SQL and use the default value of EXACT for the CURSOR_SHARING initialization parameter. By default, Oracle Database uses adaptive cursor sharing to enable a single SQL statement that contains bind variables to use multiple execution plans. However, for applications with many similar statements that use literals instead of bind variables, setting the value of the CURSOR_SHARING parameter to FORCE may improve cursor sharing, resulting in reduced memory usage, faster parses, and reduced latch contention. Consider this approach when statements in the shared pool differ only in the values of literals, and when response time is poor because of a high number of library cache misses. In this case, setting the value of the CURSOR_SHARING parameter to FORCE maximizes cursor sharing and leverages adaptive cursor sharing to generate multiple execution plans based on different literal value ranges.
+
+If stored outlines are generated with the value of the CURSOR_SHARING parameter set to EXACT, then the database does not use stored outlines generated with literals. To avoid this problem, generate outlines with CURSOR_SHARING set to FORCE and use the CREATE_STORED_OUTLINES parameter.
+
+Setting the value of the CURSOR_SHARING parameter to FORCE has the following drawbacks:
+
+The database must perform extra work during the soft parse to find a similar statement in the shared pool.
+
+There is an increase in the maximum lengths (as returned by DESCRIBE) of any selected expressions that contain literals in a SELECT statement. However, the actual length of the data returned does not change.
+
+Star transformation is not supported.
+
+When the value of the CURSOR_SHARING parameter is set to FORCE, the database uses one parent cursor and one child cursor for each distinct SQL statement. The same plan is used for each execution of the same statement. For example, consider the following SQL statement:
+
+SELECT *
+  FROM hr.employees
+ WHERE employee_id = 101;
+If the value of the CURSOR_SHARING parameter is set to FORCE, then the database optimizes this statement as if it contained a bind variable and uses bind peeking to estimate cardinality. Statements that differ only in the bind variable share the same execution plan.
+
+
+
+Histograms
+*************
+
+The cost-based optimiser uses data value histograms to get accurate estimates of the distribution of column data. Histograms provide improved selectivity estimates in the presence of data skew, resulting in optimal execution plans with non-uniform data distributions.
+
+Histograms can affect performance and should be used only when they substantially improve query plans. They are useful only when they reflect the current data distribution of a given column. If the data distribution of a column changes frequently, you must re-compute its histogram frequently.
+
+Number of Histograms
+
+The number of Histograms to used is specified with the SIZE parameter in method_opt:
+
+method_opt  => 'for all indexed columns size 254',
+
+What are Histograms
+
+Histograms are bands of column values, so that each band contains approximately the same number of rows. The useful information that the histogram provides is where in the range of values the endpoints fall.
+
+Consider the following table column with values between 1 and 100 and a histogram with 10 buckets. If the data in the column is uniformly distributed, then the histogram looks as follows, where the numbers are the endpoint values.
+
+Types of histograms
+************************
+
+ Height-Balanced Histograms
+*******************************
+In a height-balanced histogram, the column values are divided into buckets so that each bucket contains
+approximately the same number of rows. The histogram shows where the endpoints fall in the range of
+values.
+
+You can view height-balanced histograms using the DBA_TAB_HISTOGRAMS table
+
+
+ Frequency Histograms
+***********************
+In a frequency histogram, each value of the column corresponds to a single bucket of the histogram. Each bucket contains the number of occurrences of this single value. For example, suppose that 36 rows contain the value 1 for column warehouse_id. The endpoint value 1 has an endpoint number 36.
+The database automatically creates frequency histograms instead of height-balanced histograms under the following conditions:
+
+You can view Frequency-balanced histograms using the USER_TAB_COL_STATISTICS
+
+
+--The number of distinct values is less than or equal to the number of histogram buckets specified (up to 254).
+--It is not true that each column value repeats only once.
+
+
+Purpose of Histograms
+**********************
+By default the optimizer assumes a uniform distribution of rows across the distinct values in a column. For columns that contain data skew (a nonuniform distribution of data within the column), a histogram enables the optimizer to generate accurate cardinality estimates for filter and join predicates that involve these columns.
+
+
+
+
+1.SQL PROFILE
+
+*************************
+
+Conceptually, a SQL profile is to a SQL statement what statistics are to a table or index. 
+The database can use the auxiliary information to improve execution plans. 
+A SQL profile contains corrections for poor optimizer estimates discovered by the SQL Tuning advisor.
+
+A SQL profile is a collection of auxiliary statistics on a query. The profile stores these supplemental statistics in the data dictionary.
+The optimizer uses SQL profiles during optimization to determine the most optimal plan
+
+
+A SQL profile contains, among other statistics, a set of cardinality adjustments. 
+The cardinality measure is based on sampling the WHERE clause rather than on statistical projection. 
+A profile uses parts of the query to determine whether the estimated cardinalities are close to the actual cardinalities 
+and, if a mismatch exists, uses the corrected cardinalities. For example, if a SQL profile exists for SELECT * FROM t WHERE x=5 AND y=10, then the profile stores the actual number of rows returned.
+
+SQL Profiles - A SQL Profile is a bundle of improved optimizer statistics that is stored in the data dictionary.  SQL Profiles are create by running Automatic SQL Tuning.  The SQL Profile approach first appeared in Oracle 10g.  Allowed to run in tuning mode, the optimizer can gather additional information for making tuning recommendations on specific SQL statements.  Tuning mode also allows the optimizer to recommend the gathering of statistics on objects with stale or missing statistics.  These additional statistics are stored in an SQL Profile.  A SQL tuning Set (STS) could be tested as a workload, and Oracle would allow the DBA to implement changes to execution plans. 
+
+
+
+Listing SQL Profiles
+************************
+The data dictionary view DBA_SQL_PROFILES stores SQL profiles persistently in the database. 
+The statistics are in an Oracle internal format, so you cannot query profiles directly. However, you can list profiles.
+
+
+
+
+
+
+2.SQL Plan Baselines
+
+**************************
+
+
+SQL plan management is a preventative mechanism that enables the optimizer to automatically manage execution plans, ensuring that the database uses only known or verified plans. In this context, a plan includes all plan-related information (for example, SQL plan identifier, set of hints, bind values, and optimizer environment) that the optimizer needs to reproduce an execution plan.
+
+SQL plan management uses a mechanism called a SQL plan baseline. A plan baseline is a set of accepted plans that the optimizer is allowed to use for a SQL statement. 
+In the typical use case, the database accepts a plan into the plan baseline only after verifying that the plan performs well.
+
+Purpose of SQL Plan Management
+***********************************
+The primary goal of SQL plan management is to prevent performance regressions caused by plan changes. A secondary goal is to gracefully adapt to changes such as new optimizer statistics or indexes by verifying and accepting only plan changes that improve performance.
+
+
+
+Benefits of SQL Plan Management
+**************************************
+Typical scenarios in which SQL plan management can improve or preserve SQL performance include:
+
+A database upgrade that installs a new optimizer version usually results in plan changes for a small percentage of SQL statements.
+
+Most plan changes result in either improvement or no performance change. However, some plan changes may cause performance regressions. 
+SQL plan baselines significantly minimize potential regressions resulting from an upgrade.
+
+When you upgrade, the database only uses plans from the plan baseline. The database puts new plans that are not in the current baseline into a holding area, and later evaluates them to determine whether they use fewer resources than the current plan in the baseline. If the plans perform better, then the database promotes them into the baseline; otherwise, the database does not promote them.
+
+Ongoing system and data changes can affect plans for some SQL statements, potentially causing performance regressions.
+
+SQL plan baselines help minimize performance regressions and stabilize SQL performance.
+
+Deployment of new application modules introduces new SQL statements into the database.
+
+The application software may use appropriate SQL execution plans developed in a standard test configuration for the new statements. If the system configuration is significantly different from the test configuration, then the database can evolve SQL plan baselines over time to produce better performance.
+
+
+
+Configuring the Capture and Use of SQL Plan Baselines
+**********************************************************
+
+
+You control SQL plan management with initialization parameters. The default values are as follows:
+
+OPTIMIZER_CAPTURE_SQL_PLAN_BASELINES=false
+
+
+
+OPTIMIZER_USE_SQL_PLAN_BASELINES=true
+
+For any SQL statement that has an existing SQL plan baseline, the database automatically adds new plans to the SQL plan baseline as nonaccepted plans. See "Plan Selection".
+
+
+
+
+ORACLE CPU script
+
+**************************************************************
+
+
+with AASSTAT as (
+           select
+                 decode(n.wait_class,'User I/O','User I/O',
+                                     'Commit','Commit',
+                                     'Wait')                               CLASS,
+                 sum(round(m.time_waited/m.INTSIZE_CSEC,3))                AAS
+           from  v$waitclassmetric  m,
+                 v$system_wait_class n
+           where m.wait_class_id=n.wait_class_id
+             and n.wait_class != 'Idle'
+           group by  decode(n.wait_class,'User I/O','User I/O', 'Commit','Commit', 'Wait')
+          union
+             select 'CPU_ORA_CONSUMED'                                     CLASS,
+                    round(value/100,3)                                     AAS
+             from v$sysmetric
+             where metric_name='CPU Usage Per Sec'
+               and group_id=2
+          union
+            select 'CPU_OS'                                                CLASS ,
+                    round((prcnt.busy*parameter.cpu_count)/100,3)          AAS
+            from
+              ( select value busy from v$sysmetric where metric_name='Host CPU Utilization (%)' and group_id=2 ) prcnt,
+              ( select value cpu_count from v$parameter where name='cpu_count' )  parameter
+          union
+             select
+               'CPU_ORA_DEMAND'                                            CLASS,
+               nvl(round( sum(decode(session_state,'ON CPU',1,0))/60,2),0) AAS
+             from v$active_session_history ash
+             where SAMPLE_TIME > sysdate - (60/(24*60*60))
+)
+select
+       ( decode(sign(CPU_OS-CPU_ORA_CONSUMED), -1, 0, (CPU_OS - CPU_ORA_CONSUMED )) +
+       CPU_ORA_CONSUMED +
+        decode(sign(CPU_ORA_DEMAND-CPU_ORA_CONSUMED), -1, 0, (CPU_ORA_DEMAND - CPU_ORA_CONSUMED ))) CPU_TOTAL,
+       decode(sign(CPU_OS-CPU_ORA_CONSUMED), -1, 0, (CPU_OS - CPU_ORA_CONSUMED )) CPU_OS,
+       CPU_ORA_CONSUMED CPU_ORA,
+       decode(sign(CPU_ORA_DEMAND-CPU_ORA_CONSUMED), -1, 0, (CPU_ORA_DEMAND - CPU_ORA_CONSUMED )) CPU_ORA_WAIT,
+       COMMIT,
+       READIO,
+       WAIT
+from (
+select
+       sum(decode(CLASS,'CPU_ORA_CONSUMED',AAS,0)) CPU_ORA_CONSUMED,
+       sum(decode(CLASS,'CPU_ORA_DEMAND'  ,AAS,0)) CPU_ORA_DEMAND,
+       sum(decode(CLASS,'CPU_OS'          ,AAS,0)) CPU_OS,
+       sum(decode(CLASS,'Commit'          ,AAS,0)) COMMIT,
+       sum(decode(CLASS,'User I/O'        ,AAS,0)) READIO,
+       sum(decode(CLASS,'Wait'            ,AAS,0)) WAIT
+from AASSTAT)
+/
+
+***********************************************************************************************************
+
+
+Using the V$LIBRARYCACHE View
+
+Use the V$LIBRARYCACHE view to monitor statistics that reflect library cache activity. These statistics reflect all library cache activity after the most recent database instance startup.
+
+Each row in this view contains statistics for one type of item kept in the library cache. The item described by each row is identified by the value of the NAMESPACE column. Rows with the following NAMESPACE values reflect library cache activity for SQL statements and PL/SQL blocks:
+
+SQL AREA
+TABLE/PROCEDURE
+BODY
+TRIGGER
+Rows with other NAMESPACE values reflect library cache activity for object definitions that Oracle Database uses for dependency maintHRenance.
+
+*************************************************************************************************************
+
+
+
+   TKPROF
+******************
+
+Using TKPROF you can generate a report from trace file which is easier to interpret.
+
+cmd> tkprof <trace file name> <output file name>
+then enter
+
+
+1. ALTER SESSION SET tracefile_identifier=ORSKL
+2. alter session set timer_statistics=true;
+
+Note:-if you r not enable this parameter it will not capture vital information like CPU time,sql elaspsed time, like other time statistics value.
+
+3. EXECUTE DBMS_SESSION.SESSION_TRACE_ENABLE(session id,serial #,waits=>TRUE,binds=>TRUE);
+
+or
+
+EXECUTE DBMS_MONITOR.SESSION_TRACE_ENABLE(session_id => 27, serial_num => 60,
+waits => TRUE, binds => FALSE);
+
+
+trcsess myreport  [session=<session ID>] [clientid=<clientid>]
+        [service=<service name>] [action=<action name>] [module=<module name>] <trace file names>
+
+
+scenerio:
+**********
+
+INSERT /*+APPEND */ INTO HR.EMP_DEPT
+SELECT DEPARTMENT_NAME,EMPLOYEE_ID,FIRST_NAME,LAST_NAME,HIRE_DATE,E.MANAGER_ID
+FROM HR.EMPL E,HR.DEPARTMENTS D
+WHERE E.DEPARTMENT_ID=D.DEPARTMENT_ID
+AND D.DEPARTMENT_ID<60;
+
+COMMIT;
+
+SELECT * FROM HR.EMPL
+where employee_id<300
+order by employee_id,department_id;
+
+
+Disable the tracing
+********************
+
+
+EXECUTE DBMS_MONITOR.SESSION_TRACE_DISABLE;
+
+TKPROF output includes the following information:
+
+1.The text of the SQL statement
+2.The SQL Trace statistics in tabular form
+3.The number of library cache misses for the parsing and execution of the statement.
+4.The user initially parsing the statement.
+5.The execution plan generated by EXPLAIN PLAN.
+6.Wait events.
+
+
+AUTOTRACE
+********************
+
+The SQL*Plus AUTOTRACE option can generate execution plans and execution statistics for each SQL statement executed. 
+The output is not as definitive or extensive as that provided by SQL Trace but provides a good high level view of SQL performance. 
+When AUTOTRACE is in effect, an explain plan and/or execution statistics will be printed after every SQL statement execution.
+
+Tracing Statements
+------------------
+
+You can automatically get a report on the execution path used by the SQL 
+optimizer and the statement execution statistics.  The report is generated
+after successful SQL DML (Data Manipulation Language - that is, SELECT, DELETE,
+UPDATE and INSERT) statements.  It is useful for monitoring and tuning the 
+performance of these statements. 
+
+
+Controlling the Report 
+----------------------
+ 
+You can control the report by setting the AUTOTRACE system variable.  
+ 
+SET AUTOTRACE OFF           - No AUTOTRACE report is generated. This is the
+                              default.  
+SET AUTOTRACE ON EXPLAIN    - The AUTOTRACE report shows only the optimizer
+                              execution path. 
+SET AUTOTRACE ON STATISTICS - The AUTOTRACE report shows only the SQL
+                              statement execution statistics.  
+SET AUTOTRACE ON            - The AUTOTRACE report includes both the
+                              optimizer execution path and the SQL
+                              statement execution statistics.  
+SET AUTOTRACE TRACEONLY     - Like SET AUTOTRACE ON, but suppresses the
+                              printing of the user's query output, if any. 
+ 
+To use this feature, you must have the PLUSTRACE role granted to you and a 
+PLAN_TABLE table created in your schema.  For more information on the PLUSTRACE
+role and PLAN_TABLE table, see the AUTOTRACE variable of the SET command in 
+Chapter 6 of the SQL*Plus Guide.
+
+
+Execution Plan 
+--------------
+ 
+The Execution Plan shows the SQL optimizer's query execution path. 
+Each line of the Execution Plan has a sequential line number. SQL*Plus also
+displays the line number of the parent operation. 
+The Execution Plan consists of four columns displayed in the following order:  
+ 
+Column Name              Description
+------------------------------------------------------------------------
+   
+ID_PLUS_EXP              Shows the line number of each execution step. 
+PARENT_ID_PLUS_EXP       Shows the relationship between each step and its 
+                         parent.  This column is useful for large reports. 
+PLAN_PLUS_EXP            Shows each step of the report.
+OBJECT_NODE_PLUS_EXP     Shows the database links or parallel query servers
+                         used.  
+ 
+The format of the columns may be altered with the COLUMN command.  For example, to stop the PARENT_ID_PLUS_EXP 
+column being displayed, enter:
+ 
+SQL> COLUMN PARENT_ID_PLUS_EXP NOPRINT 
+ 
+The default formats can be found in the site profile (for example, glogin.sql). 
+ 
+The Execution Plan output is generated using the EXPLAIN PLAN command. For 
+information about interpreting the output of EXPLAIN PLAN, see the 
+Oracle7 Server Tuning guide.
+ 
+The following is an example of tracing statements for performance statistics and 
+query execution path.  
+ 
+If the SQL buffer contains the following statement: 
+ 
+SQL> SELECT D.DNAME, E.ENAME, E.SAL, E.JOB 
+2 FROM EMP E, DEPT D 
+3 WHERE E.DEPTNO = D.DEPTNO 
+ 
+The statement can be automatically traced when it is run: 
+ 
+SQL> SET AUTOTRACE ON 
+SQL> / 
+ 
+DNAME          ENAME             SAL JOB
+-------------- ---------- ---------- ---------
+ACCOUNTING     CLARK            2450 MANAGER 
+ACCOUNTING     KING             5000 PRESIDENT 
+ACCOUNTING     MILLER           1300 CLERK 
+RESEARCH       SMITH             800 CLERK 
+RESEARCH       ADAMS            1100 CLERK 
+RESEARCH       FORD             3000 ANALYST 
+RESEARCH       SCOTT            3000 ANALYST 
+RESEARCH       JONES            2975 MANAGER 
+SALES          ALLEN            1600 SALESMAN 
+SALES          BLAKE            2850 MANAGER 
+SALES          MARTIN           1250 SALESMAN 
+SALES          JAMES             950 CLERK 
+SALES          TURNER           1500 SALESMAN 
+SALES          WARD             1250 SALESMAN 
+ 
+14 rows selected. 
+
+Execution Plan 
+----------------------------------------------------------- 
+0      SELECT STATEMENT Optimizer=CHOOSE 
+1    0   MERGE JOIN 
+2    1     SORT (JOIN) 
+3    2       TABLE ACCESS (FULL) OF 'DEPT' 
+4    1     SORT (JOIN) 
+5    4       TABLE ACCESS (FULL) OF 'EMP' 
+ 
+Statistics 
+---------------------------------------------------------- 
+148  recursive calls 
+  4  db block gets 
+ 24  consistent gets 
+  6  physical reads 
+ 43  redo size 
+591  bytes sent via SQL*Net to client 
+256  bytes received via SQL*Net from client 
+ 33  SQL*Net roundtrips to/from client 
+  2  sorts (memory) 
+  0  sorts (disk) 
+ 14  rows processed 
+ 
+Note: The output may vary depending on the version of the server to
+      which you are connected and the configuration of the server.
+
+
+*********************************************************
+
+
+1. What is a latch?
+
+Latches are low level serialization mechanisms used to protect shared
+data structures in the SGA. The implementation of latches is operating
+system dependent, particularly in regard to whether a process will wait
+for a latch and for how long.A latch is a type  of a lock that can be very quickly acquired and freed.
+Latches are typically used to prevent more than one process from
+executing the same  piece of  code at  a given time. Associated with each
+latch is a cleanup procedure that will be called if a process  dies while
+holding  the latch.  Latches  have an  associated level  that  is used to
+prevent deadlocks.  Once a process acquires a latch at a certain level it
+cannot subsequently acquire a latch at a  level that is equal to  or less
+than that level (unless it acquires it nowait).
+
+
+2. Latches vs Enqueues
+
+Enqueues are another type of locking mechanism used in Oracle.
+An enqueue is a more sophisticated mechanism which permits several concurrent
+processes to have varying degree of sharing of “known” resources. Any object
+which can be concurrently used, can be protected with enqueues. A good example
+is of locks on tables. We allow varying levels of sharing on tables e.g.
+two processes can lock a table in share mode or in share update mode etc.
+One difference is that the enqueue is obtained using an OS specific
+locking mechanism. An enqueue allows the user to store a value in the lock,
+i.e the mode in which we are requesting it. The OS lock manager keeps track
+of the resources locked. If a process cannot be granted the lock because it
+is incompatible with the mode requested and the lock is requested with wait,
+the OS puts the requesting process on a wait queue which is serviced in FIFO.
+Another difference between latches and enqueues is that
+in latches there is no ordered queue of waiters like in enqueues. Latch
+waiters may either use timers to wakeup and retry or spin (only in
+multiprocessors). Since all waiters are concurrently retrying (depending on
+the scheduler), anyone might get the latch and conceivably the first one to
+try might be the last one to get.
+
+
+3. When do we need to obtain a latch?
+
+A process acquires a latch when working with a structure in the SGA
+(System Global Area). It continues to hold the latch for the period
+of time it works with the structure. The latch is dropped when the
+process is finished with the structure. Each latch protects a different
+set of data, identified by the name of the latch.Oracle uses atomic instructions like “test and set” for operating on latches.
+Processes waiting to execute a part of code for which a latch has
+already been obtained by some other process will wait until the
+latch is released. Examples are redo allocation latches, copy
+latches, archive control latch etc. The basic idea is to block concurrent
+access to shared data structures. Since the instructions to
+set and free latches are atomic, the OS guarantees that only one process gets
+it. Since it is only one instruction, it is quite fast. Latches are held
+for short periods of time and provide a mechanism for cleanup in case
+a holder dies abnormally while holding it. This cleaning is done using
+the services of PMON.
+
+
+
+
+4. Latches request modes?
+
+Latches request can be made in two modes: “willing-to-wait” or “no wait”. Normally,
+latches will be requested in “willing-to-wait” mode. A request in “willing-to-wait”  mode
+will loop, wait, and request again until the latch is obtained.  In “no wait” mode the process
+request the latch. If one is not available, instead of waiting, another one is requested. Only
+when all fail does the server process have to wait.Examples of “willing-to-wait” latches are: shared pool and library cache latches
+A example of “no wait” latches is the redo copy latch.
+5. What causes latch contention?
+
+If a required latch is busy, the process requesting it spins, tries again
+and if still not available, spins again. The loop is repeated up to a maximum
+number of times determined by the initialization parameter _SPIN_COUNT.
+If after this entire loop, the latch is still not available, the process must yield
+the CPU and go to sleep. Initially is sleeps for one centisecond. This time is
+doubled in every subsequent sleep.This causes a slowdown to occur and results in additional CPU usage,
+until a latch is available. The CPU usage is a consequence of the
+“spinning” of the process. “Spinning” means that the process continues to
+look for the availability of the latch after certain intervals of time,
+during which it sleeps.
+6. How to identify contention for internal latches?
+
+Relevant data dictionary views to query
+———————————————
+
+V$LATCH
+V$LATCHHOLDER
+V$LATCHNAMEEach row in the V$LATCH table contains statistics for a different type
+of latch. The columns of the table reflect activity for different types
+of latch requests. The distinction between these types of requests is
+whether the requesting process continues to request a latch if it
+is unavailable:
+willing-to-wait        If the latch requested with a willing-to-wait
+request is not available, the requesting process
+waits a short time and requests the latch again.
+The process continues waiting and requesting until
+the latch is available.
+no wait                    If the latch requested with an immediate request is
+not available, the requesting process does not
+wait, but continues processing.
+V$LATCHNAME key information:
+—————————————
+GETS                      Number of successful willing-to-wait requests for
+a latch.
+MISSES                  Number of times an initial willing-to-wait request
+was unsuccessful.
+SLEEPS                  Number of times a process waited a requested a latch
+after an initial wiling-to-wait request.
+IMMEDIATE_GETS              Number of successful immediate requests for each latch.
+IMMEDIATE_MISSES          Number of unsuccessful immediate requests for each latch.
+Calculating latch hit ratio
+—————————-
+To get the Hit ratio for  latches apply the following formula:
+“willing-to-wait” Hit Ratio=(GETS-MISSES)/GETS
+“no wait” Hit Ratio=(IMMEDIATE_GETS-IMMEDIATE_MISSES)/IMMEDIATE_GETS
+This number should be close to 1. If not, tune according to the latch name
+7. Useful SQL scripts to get latch information
+
+/*
+** Display System-wide latch statistics.
+*/
+column name format A32 truncate heading “LATCH NAME”
+column pid heading “HOLDER PID”
+select c.name,a.addr,a.gets,a.misses,a.sleeps,
+a.immediate_gets,a.immediate_misses,b.pid
+from v$latch a, v$latchholder b, v$latchname c
+where a.addr = b.laddr(+)
+and a.latch# = c.latch#
+order by a.latch#;/*
+** Given a latch address, find out the latch name.
+*/
+column name format a64 heading ‘Name’
+select a.name from v$latchname a, v$latch b
+where b.addr = ‘&addr’
+and b.latch#=a.latch#;
+/*
+** Display latch statistics by latch name.
+*/
+column name format a32 heading ‘LATCH NAME’
+column pid heading ‘HOLDER PID’
+select c.name,a.addr,a.gets,a.misses,a.sleeps,
+a.immediate_gets,a.immediate_misses,b.pid
+from v$latch a, v$latchholder b, v$latchname c
+where a.addr   = b.laddr(+) and a.latch# = c.latch#
+and c.name like ‘&latch_name%’ order by a.latch#;
+8. List of all the latches
+
+Oracle versions might differ in the latch# assigned to the existing latches.
+The following query will help you to identify all latches and the number assigned.column name format a40 heading ‘LATCH NAME’
+select latch#, name from v$latchname;
+9. List of latches that are of most concern to a DBA
+
+BUFFER CACHE LATCHES: There are two main latches which protect data blocks in the buffer cache. Contention for these two latches is usually seen when a database has high I/O rates. We can reduce contention for these latches and tune them by adjusting certain init.ora parameters.
+Cache buffers chains latch:
+This latch is acquired whenever a block in the buffer cache is accessed (pinned).
+
+Reducing contention for the cache buffer chains latch will usually require reducing logical I/O rates by tuning and minimizing the I/O requirements of the SQL involved. High I/O rates could be a sign of a hot block (meaning a block highly accessed).
+
+See NOTE:163424.1 How To Identify a Hot Block Within The Database to correctly identify this issue
+Cache buffers LRU chain latch:
+The cache buffer lru chain latch is acquired in order to introduce a new block into the buffer cache and when writing a buffer back to disk, specifically when trying  to scan
+the LRU (least recently used) chain containing all the dirty blocks in the buffer cache.
+Its possible to reduce contention for the cache buffer lru chain latch by increasing the size of the buffer cache and thereby reducing the rate at which new blocks are introduced into the buffer cache. Two parameters dictate the size of the buffer cache, DB_BLOCK_SIZE and DB_BLOCK_BUFFERS. In actuality, only the DB_BLOCK_BUFFERS can be changed without recreating the database. Caution, when tuning the buffer pool, avoid the use of additional buffers that contribute little or nothing to the cache hit ratio. A common mistake is to continue increasing the value of DB_BLOCK_BUFFERS. Such increases have no effect if you are doing full table scans or other operations that do not use the buffer cache. Multiple buffer pools can help reduce contention on this latch.You can create additional cache buffer lru chain latches by adjusting the configuration parameter DB_BLOCK_LRU_LATCHES. You may be able to reduce the load on the cache buffer chain latches by increasing the configuration parameter _DB_BLOCK_HASH_BUCKETS
+REDOLOG BUFFER LATCHES: There are two Redo buffer latches, the redo allocation latch and the redo copy latch. The redo allocation latch must be acquired in order to allocate space within the buffer. If the redo log entry to be made is greater than the configuration parameter LOG_SMALL_ENTRY_MAX_SIZE, the session which acquires the redo allocation latch may copy the entry into the redo buffer immediately while holding the allocation latch. If the log entry is greater than LOG_SMALL_ENTRY_MAX_SIZE, then the session will release the redo allocation latch and will acquire the redo copy latch in order to copy the entry. There is only one redo allocation latch, but there may be up to LOG_SIMULTANEOUS_COPIES allocation latches.
+Redo allocation latch:
+This latch controls the allocation of space for redo entries in the redo log buffer. There is one redo allocation latch per instance.
+
+Contention for this latch in Oracle7 can be reduced by decreasing the value of  LOG_SMALL_ENTRY_MAX_SIZE on multi-cpu systems to force the use of the
+redo copy latch. In Oracle8i this parameter is obsolete, so you need to consider   to increase the size of the LOG_BUFFER or reduce the load of the log buffer using
+NOLOGGING features when possible.
+Redo copy latch:
+This latch is used to write redo records into the redolog buffer. This latch is waited for on both single and multi-cpu systems.
+
+On multi-cpu systems, contention can be reduced by increasing the  value of LOG_SIMULTANEOUS_COPIES (Hidden in Oracle8i)   and/or increasing LOG_ENTRY_PREBUILD_THRESHOLD (undocumented in Oracle7).
+
+LIBRARY CACHE
+Library cache latch:
+The library cache latches protect the cached SQL statements and objects definitions held in the library cache within the shared pool. The library cache latch must be acquired in order to
+add a new statement to the library cache. During a parse, Oracle searches the library cache for a matching statement. If one is not found, then Oracle will parse the SQL statement, obtain
+the library cache latch and insert the new SQL.
+
+The first resource to reduce contention on this latch is to ensure that the application is reusing as much as possible SQL statement representation. Use bind variables whenever possible in the application. Misses on this latch may also be a sign that the application is parsing SQL at a high rate and may be suffering from too much parse CPU overhead.If the application is already  tuned the SHARED_POOL_SIZE can be increased. Be aware that if the application is not  using the library cache appropriately, the contention might be worse with a larger structure to be handled.
+
+The _KGL_LATCH_COUNT parameter controls the number of library cache latches. The default value should be adequate, but if contention for the library cache latch cant be resolved, it may be advisable to increase this value. The default value for _KGL_LATCH_COUNT is the next prime number after CPU_COUNT. This value cannot exceed 66 (See: <<Bbug 1381824>>).
+
+Library cache pin latch:
+The library cache pin latch must be acquired when a statement in the library cache is reexecuted. Misses on this latch occur when there is very high rates SQL execution.
+
+There is little that can be done to reduce the load on the library cache pin latch, although using private rather than public synonyms or direct object references such as OWNER.TABLE may help.
+SHARED POOL RELATED LATCHES
+Shared pool latch:
+While the library cache latch protects operations withing the library cache, the shared pool latchis used to protect critical operations when allocating and freeing memory in the shared pool.
+If an application makes use of literal (unshared) SQL then this can severely limit scalability and throughput. The cost of parsing a new SQL statement is expensive both in terms of
+CPU requirements and the number of times the library cache and shared pool latches may need to be acquired and released. Before Oracle9, there use to be just one such latch to the entire database to protects the allocation of memory in the library cache.  In Oracle9 multiple childs were introduced to relieve contention on this resource.
+Ways to reduce the shared pool latch are, avoid hard parses when possible, parse once, execute many. Eliminating literal SQL is also useful to avoid the shared pool latch. The size of the shared_pool and use of MTS (shared server option) also greatly influences the shared pool latch. Note 62143.1 explains how to identify and correct problems with the shared pool, and shared pool latch.
+Row cache objects latch:
+This latch comes into play when user processes are attempting to  access the cached data dictionary values.
+It is not common to have contention in this latch and the only way to reduce contention for this latch is by increasing the size of the shared pool (SHARED_POOL_SIZE).
+10. Tuning _SPIN_COUNT (_LATCH_SPIN_COUNT in Oracle7)
+
+SPIN_COUNT controls how many times the process will re-try to obtain   the latch before backing off and going to sleep. This basically means the process is in a tight CPU loop continually trying to get   the latch for SPIN_COUNT attempts. On a single CPU system if an Oracle process tries to acquire a latch but it is held by someone else the process will release the CPU and go to sleep for a short period before trying again. However, on a multi processor system (SMP) it is possible that the process holding the latch is running on one of the other CPUs and so will potentially release the latch in the next few instructions  (latches are usually held for only very short periods of time).
+
+Performance can be adjusted by changing the value of SPIN_COUNT. If a high value is used, the latch will be attained sooner than if  you use a low value. However, you may use more CPU time spinning to get the latch if you use a high value for SPIN_COUNT. You can decrease this probability of session sleeps by increasing the value of the configuration parameters _LATCH_SPIN_COUNT or SPIN_COUNT.  This parameter controls the number of attempts the session will make to obtain the latch before sleeping. Spinning on the latch consumes CPU, so if you increase this parameter,  you may see an increase in your systems overall CPU utilization. If your computer is near 100% CPU and your application is throughput rather than response time driven, you could consider decreasing SPIN_COUNT in order to conserve CPU. Adjusting SPIN_COUNT is trial and error.  In general, only increase SPIN_COUNT if there are enough free CPU resources available on the system, and decrease it only if there is no spare CPU capacity.
+
+To summarize latch sleeps and spin count, if you encounter latch contention and have spare CPU capacity, consider increasing the value of SPIN_COUNT. If CPU resources are at full capacity, consider decreasing the value of SPIN_COUNT.
+
+
+****************************************************************************************************************
+
+
+Real time issue
+******************
+Swap Space
+
+Oracle Linux uses swap space when your system does not have enough physical memory to store the text (code) and data pages that the processes are currently using. When your system needs more memory, it writes inactive pages to swap space on disk, freeing up physical memory. However, writing to swap space has a negative impact on system performance, so increasing swap space is not an effective solution to shortage of memory. Swap space is located on disk drives, which have much slower access times than physical memory. If your system often resorts to swapping, you should add more physical memory, not more swap space.
+
+You can configure swap space on a swap file in a file system or on a separate swap partition. A dedicated swap partition is faster, but changing the size of a swap file is easier. Configure a swap partition if you know how much swap space your system requires. Otherwise, start with a swap file and create a swap partition when you know what your system requires.
+
+
+High CPU.
+
+Monitors first
+
+1. Os cpu consumption
+2. os memory consuption
+3. os swap usage consuption
+4. Os load average consuption
+
+
+
+cpu+memory+storage=should be good
+
+
+*****************************************************************************************************************
+
+explain plan
+
+execution plan
+
+dbms_xplain.display
+
+Disadvantage.
+1.Not showing wait events
+
+
+
+You can check top 10 SQL statements ordered by elapsed time by using the following query.
+
+SELECT sql_id,child_number,sql_text, elapsed_time
+FROM (SELECT sql_id, child_number, sql_text, elapsed_time,
+cpu_time,disk_reads,
+RANK () OVER (ORDER BY elapsed_time DESC) AS elapsed_rank
+FROM v$sql)
+WHERE elapsed_rank <= 10;
+
+
+
+AWR Report intrepting
+
+******************************
+
+
+1.Load Profile:
+*********************
+
+Here are few important stats for a DBA to look into. Fist is "DB CPU(s)" per second. 
+Before that let's understand how DB CUP's work. Suppose you have 12 cores into the system. So, per wall clock second you have 12 seconds to work on CPU. 
+
+ So, if "DB CPU(s)" per second in this report > cores in (Host Configuration (#2)).
+
+means env is CPU bound and either need more CPU's or need to further check is this happening all the time or just for a fraction of time. As per my experience there are very few cases, when system is CPU bound.
+
+In this case, machine has 12 cores and DB CPU(s) per second is 6.8. So, this is not a CPU bound case. 
+
+Next stat to look at are Parses and Hard parses. If the ratio of hard parse to parse is high, this means Database is performing more hard parse. So, needs to look at parameters like cursor_sharing and application level for bind variables etc.
+
+
+
+2.Instance Efficiency Percentages:
+**************************************
+In these statistics, you have to look at "% Non-Parse CPU". 
+If this value is near 100% means most of the CPU resources are used into operations other than parsing, which is good for database health.
+
+
+
+3.Top 5 Timed Foreground Events:
+**************************************
+
+This is another most important stats to consider while looking at AWR Report for any database performance related issue. This has a list of top 5 foreground wait events.
+
+Here, first of all check for wait class if wait class is  User I/O , System I/O,  Others etc this could be fine but if wait class has value "Concurrency" then there could be some serious problem. 
+Next to look at is Time (s) which show how many times DB was waiting in this class and then Avg Wait (ms). 
+If Time(s) are high but  Avg Wait (ms) is low then you can ignore this. If both are high or Avg Wait (ms) is high then this has to further investigate.
+
+In the above screen shot, most of the resource are taken by DB CPU = 64% DB time. Taking resource by DB CUP is a normal situation.
+
+Let's take an example,  In which event is "log file switch (checkpoint incomplete) " which has high waits, huge Time (s) and large values in Avg Wait (ms) and wait class is configuration. So, here you have to investigate and resolve log file switch (checkpoint incomplete). 
+
+Host CPU, Instance CPU and Memory Statistics are self explanatory.  Next is RAC Statistics, I did not find any issue in these stats most of the time.
+
+
+
+4.Time Model Statistics:
+*************************************
+This is a detailed explanations of system resource consumptions. Stats are order by Time (s) and % of DB Time.
+ 
+A noticeable result Sum of all  % of DB time is > 100%. why is this ?
+
+Because this is cumulative time i.e. In this case SQL execute elapsed time is taking 89% of DB time, which includes it sub parts like parse time elapsed, hard parse elapsed time etc. So, if you find Hard parse time elapsed is taking more %. So investigate further so on and so forth.
+
+DBA has to look for stat which is taking abnormal % of DB time.  
+
+
+
+
+5.Operating System Statistics - Detail:
+*********************************************
+
+This is the information related to OS, what is the load status on System shown here.
+
+This report shows, system is 62 and 70% idle at time of report taken, So, there is no resource crunch at system level. But if, you found very high busy, user or sys % and indeed this will led to low idle %. Investigate what is causing this. OS Watcher is the tool which can help in this direction.
+
+Next, very crucial part of AWR report for a DBA is SQL Statistics. Which has all sql query details executed during report time interval. 
+
+
+
+6.SQL Ordered by Elapsed Time:
+***********************************************
+
+As explained by name itself, this lists SQL queries ordered by Elapsed time into reported time interval.
+In this report, look for query has low executions and high Elapsed time per Exec (s) and this query could be a candidate for troubleshooting or optimizations. In above report, you can see first query has maximum Elapsed time but no execution. So you have to investigate this.
+
+In Important point, if executions is 0, it doesn't means query is not executing, this might be the case when query was still executing and you took AWR report. That's why query completion was not covered in Report. 
+
+
+7.SQL Ordered by CPU Time:
+*********************************************
+
+In this report, SQL queries are listed on the basis of CPU taken by the query i.e. queries causing high load on the system. The top few queries could be the candidate query for optimization.
+
+From above stat, look for queries using highest CPU Times, If a query shows executions 0, this doesn't means query is not executing. It might be same case as in SQL queries ordered by Elapsed time. The query is still executing and you have taken the snapshot.
+
+However, There are so many other stats in AWR Report which a DBA needs to consider, I have listed only ten of them but these are the most commonly used stats for any performance related information.
+
+
+********************************************************************************************************************
+
+
+Hints:
+**********
+Hints will force to choose whatever in optimizer
+
+Hints are basically to advice  optimizer to choose best access path i,e index scan,indez rowid
+
+A hint is an instruction to the optimizer. When writing SQL, you may know information about the data unknown to the optimizer.
+Hints enable you to make decisions normally made by the optimizer, sometimes causing the optimizer to select a plan that it sees as higher cost.
+
+
+Example:
+
+select /*+ INDEX (b tab1_num_rows_ind)*/ table_name,tablespace_name,status from tab1 b where b.num_rows>1000;
+
+
+Automatic Segment Space Management (ASSM)
+***********************************************
+
+Automatic Segment Space anagement (ASSM) is a simpler and more efficient way of managing space within a segment. 
+It completely eliminates any need to specify and tune the pctused, freelists, and freelist groups storage parameters for schema objects created in the tablespace.
+If any of these attributes are specified, they are ignored.
+
+If you have space issues on a tablespace you can shrink tables and move indexes while online. 
+MMON will send the alert for any tablespace if thresholds have been exceeded. To shrink table segments you can use the below commands,
+cascade will shrink both table and indexes(only these objects are affected), compact will stop before moving the High Water Mark (HWM) thus not reclaiming space back. , this may be useful as moving the HWM locks the table thus this may impact users.
+
+The benefits of a shrink operation are:
+
+Full table scans will take less time (a table scan will always scan upto the HWM even if space is not used)
+Better index access takes place because of a smaller b-tree
+Space is freed up for other database objects
+Space below the HWM is released and the HWM is moved down
+
+*******************************************************************************************************
+
+
+Hi Guys, I am getting performance issue in my one database.I checked cpu utilization is 100% and many sql/plsql statement are running . How I can findout most cpu consuming sql/plsql statement.
+LikeComment324
+2w
+View previous comments
+Manjeet Kumar
+Manjeet Kumar About 2tb.
+Like
+2d
+Nazzareno Maria Rezzini
+Nazzareno Maria Rezzini ./ Generate three or four AWR reports (one each 2 mins) while you are getting this problem, 
+see the note 748642.1 for more details ----> here you can elaborate the statements.
+./ Once identified the statement(s), make a 10046 trace file to figure out the potential causes, i.e.:
+
+spool script.out
+set timing on
+ALTER SESSION SET tracefile_identifier='10046_MYTRACE';
+ALTER SESSION SET MAX_DUMP_FILE_SIZE = unlimited;
+ALTER SESSION SET events '10046 TRACE NAME CONTEXT FOREVER, LEVEL 12';
+-- Run the problematic query --
+col statistic format a30
+select * from v$pq_sesstat;
+ALTER SESSION SET events '10046 TRACE NAME CONTEXT OFF';
+spool off
+
+Find and trace %10046_MYTRACE.trc file.Show less
+Like1
+2d
+Saleem Javid
+Saleem Javid if you calling views in your procedure then check that view may cause 
+Like
+13h
+Dag Harald Matland
+Dag Harald Matland If linux, use the top command in OS to see the most cpu intensive processes. Then in another window from sql you can use a sql like this to identify which sql_id that is currently running in those processes;
+SELECT s.sid,
+s.serial#,
+p.spid,
+s.username,
+s.program,
+s.SQL_ID
+FROM gv$session s
+JOIN gv$process p ON p.addr = s.paddr AND p.inst_id = s.inst_id
+WHERE p.spid = <os process number>;
+
+(if wanted you can also join in v$sql to show the sql text.)
+
+This combined with statspack or AWR (if diagnostics pack license is on place) would give you a good overview.
+Show less
+Like
+11h
+Sanjeeb Kumar
+Sanjeeb Kumar As suggested above by many try to find pid from top command and then use v$Process n v$session dpv to find database session.Try to see what that session is doing . You can see what query or process consuming CPUs n can take further action . But before that check if any changes happed to database or Os?
+Like
+8h
+Syed Samiullah
+Syed Samiullah From how long this is happening? Is there any change in source code recently since this problem started? i. And verify OEM top query. ii. Check how many jobs are running through scheduler also.
+Like
+5h
+Ali AlAli
+Ali AlAli try to investigate starting from AWR report
+Like
+4h
+Krishna Kiran Siddabattula
+Krishna Kiran Siddabattula You can find the problematic session either from unix process addr or checking sqls with top cpu time in gv$sql and last active time in last 30 min or so based on your issues. Then check the top wait events and time waited in for respective session. based on your database version 11g/12c try to fix execution plan issues if this congestion is sourced from sql. If it is other Db activity like RAC related latch wait events or logfile switch or commits count, take appropriate DB action by adjusting DB parameters accordingly.Show less
+Like
+3h
+Emeldah Lingwati
+Emeldah Lingwati I agree, the TOP command is a quick way to check, even better if you are on Solaris 10 or below to see more details of the session by pressing C while you still in the TOP command.
+Like
+2h
+Peter Ramm
+Peter Ramm If you are running Enterprise Edition you can evaluate Active Session History to detect the SQLs causing your CPU consumption down to the single line of execution plan.
+
+If you run Standard Edition you can use V$SQL to compare CPU-Usage of SQLs or DBA_Hist_SQLStat for similar AWR-data.
+
+For easy going in evaluating such problems you can use the tool Panorama available via 
+http://rammpeter.github.io/index.html?target=panorama
+
+See menu "Analyses/Statistics" / "Session waits" / "Historic" for evaluation of Active Session History.
+See menu "Analyses/Statistics" / "SGA/PGA details" / "SQL-area" / "Current" for evaluation of V$SQL, V$SQLArea and DBA_Hist_SQLStat.
+
+
+*******************************************************************************
+
+
+V$SESSION_BLOCKERS 
+******************
+
+Displays the blocker sessions for each blocked session. Each row represents a blocked and blocker session pair. If a session is blocked by multiple sessions there will be multiple rows for that blocked session. The maximum number of blocker sessions displayed for a single blocked session is 30. If a session is not blocked by other sessions, then there will be no row in this view for that session.
+
+
+Sql plan management:
+************************
+
+hash table
+
+
+
+Lock Mechanchism level
+***********************
+1.Block level
+2.row level
+3.object level
+
+
+
+Cursor= is a memory compents running when a sql statement executed.
+
+to record sql statement(colomns)
+
+
+*Should have extensively worked on Explain Plan ,
+SQL Trace Utility , 
+Indexes, 
+Hints, 
+FOR ALL , 
+Bulk Collect , 
+Bulk Fetching from Cursor, 
+profiling & Tracing Pl/SQL Programs
+
+
+
+
+
+    
+SEP
+12
+Performing Database health checks
+Performing Database health checks, when there is an issue reported by Application users.
+
+1. Check the Database details
+2. Monitor the consumption of resources
+3. Check the Alert Log
+4. Check Listener log
+5. Check Filesystem space Usage
+6. Generate AWR Report
+7. Generate ADDM Report
+8. Finding Locks,Blocker Session and Waiting sessions in a oracle database
+9. Check for alerts in OEM
+
+1. Check the Database details :-
+=============================
+set pages 9999 lines 300
+col OPEN_MODE for a10
+col HOST_NAME for a30
+select name DB_NAME,HOST_NAME,DATABASE_ROLE,OPEN_MODE,version DB_VERSION,LOGINS,to_char(STARTUP_TIME,'DD-MON-YYYY HH24:MI:SS') "DB UP TIME" from v$database,gv$instance;
+
+For RAC:
+-------
+set pages 9999 lines 300
+col OPEN_MODE for a10
+col HOST_NAME for a30
+select INST_ID,INSTANCE_NAME, name DB_NAME,HOST_NAME,DATABASE_ROLE,OPEN_MODE,version DB_VERSION,LOGINS,to_char(STARTUP_TIME,'DD-MON-YYYY HH24:MI:SS') "DB UP TIME" from v$database,gv$instance;
+
+
+2. Monitor the consumption of resources :-
+=======================================
+select * from v$resource_limit where resource_name in ('processes','sessions');
+
+The v$session views shows current sessions (which change rapidly),
+while the v$resource_limit shows the current and maximum global resource utilization for some system resources.
+
+
+3. Check the Alert Log :-
+======================
+$locate alert_<ORACLE_SID>
+
+--- OR ---
+
+UNIX/Linux command to locate the alert log file
+-----------------------------------------------
+
+$ find / -name 'alert_*.log' 2> /dev/null
+
+vi <alert_log_location_of_the_above_output>
+shift+g
+?ORA-   ---> press enter key
+press 'n' to check backwards/up side and 'N' for forward/down side search.
+
+:q! --and press enter, for exiting vi editor
+
+
+--- OR ---
+
+11G
+===
+$ sqlplus "/as sysdba"
+set pages 9999 lines 300
+col NAME for a15
+col VALUE for a60
+select name, value from v$diag_info where name = 'Diag Trace';
+
+On a server with multiple instances, each instance will have it's own background_dump_dest in $ORACLE_HOME/diag/$ORACLE_SID/trace directory
+
+Before 11G
+==========
+$ sqlplus "/as sysdba"
+set pages 9999 lines 300
+show parameter BACKGROUND_DUMP_DEST;
+
+On a server with multiple instances, each instance will have it's own background_dump_dest in $ORACLE_HOME/admin/$ORACLE_SID/bdump directory
+
+
+4. Check Listener log :-
+=====================
+$locate listener.log
+
+--- OR ---
+
+UNIX/Linux command to locate the listener log file
+--------------------------------------------------
+$ find / -name 'listener.log' 2> /dev/null
+vi <listener.log>
+shift+g
+?TNS-    ---> press enter key
+press 'n' to check backwords and 'N' for forword search.
+
+AND
+
+shift+g
+?error   ---> press enter key
+press 'n' to check backwords and 'N' for forword search.
+
+:q! --and press enter, for exiting vi editor
+
+--- OR ---
+
+$lsnrctl status
+
+from the output you can get the listener log location (see the value for "Listener Log File" in the output).
+
+
+5. Check Filesystem space Usage :-
+===============================
+df -h (Linux / UNIX)
+
+df -g (AIX)
+
+6. Generate AWR Report :-
+======================
+Generate AWR report for current and before to compare
+
+SQL> @?/rdbms/admin/awrrpt.sql        (For RAC,  @?/rdbms/admin/awrrpti.sql - for each instance)
+
+If Required,
+SQL> @?/rdbms/admin/awrddrpt.sql ---->   Produces Workload Repository Compare Periods Report
+
+
+7. Generate ADDM Report :-
+=======================
+Generate ADDM report for current and before to compare.
+
+ADDM report provides Findings and Recommendations to fix the issue.
+
+SQL> @?/rdbms/admin/addmrpt.sql     (For RAC,  @?/rdbms/admin/addmrpti.sql - for each instance)
+
+
+8. Finding Locks,Blocker Session and Waiting sessions in a oracle database :-
+========================================================================
+Select * from v$lock;
+
+Select * from gv_$lock;  (For RAC)
+
+A fast way to check blocking/waiting situations
+-----------------------------------------------
+SELECT * FROM v$lock WHERE block > 0 OR request > 0;
+
+set pages 50000 lines 32767
+select object_name,s.inst_id,s.sid,s.serial#,p.spid,s.osuser,s.program,s.server,s.machine,s.status from gv$locked_object l,gv$session s,gv$process p,dba_objects o where l.object_id=o.object_id and l.session_id=s.sid and s.paddr=p.addr;
+
+set pages 50000 lines 32767
+col OBJECT_NAME for a40
+col USERNAME for a10
+col LOCKED_MODE for a15
+col OBJECT_OWNER for a15
+col OS_USER_NAME for a12
+SELECT b.inst_id,b.session_id AS sid,NVL(b.oracle_username, '(oracle)') AS username,a.owner AS object_owner,a.object_name,
+Decode(b.locked_mode, 0, 'None',1, 'Null (NULL)',2, 'Row-S (SS)',3, 'Row-X (SX)',4, 'Share (S)',5, 'S/Row-X (SSX)',6, 'Exclusive (X)',
+b.locked_mode) locked_mode,b.os_user_name FROM dba_objects a, gv$locked_object b WHERE a.object_id = b.object_id ORDER BY 1, 2, 3, 4;
+
+Blocker Session and Waiting sessions
+====================================
+column Username format A15 column Sid format 9990 heading SID
+column Type format A4 column Lmode format 990 heading 'HELD'
+column Request format 990 heading 'REQ' column Id1 format 9999990
+column Id2 format 9999990 break on Id1 skip 1 dup
+SELECT SN.Username, M.Sid, M.Type,
+DECODE(M.Lmode, 0, 'None', 1, 'Null', 2, 'Row Share', 3, 'Row
+Excl.', 4, 'Share', 5, 'S/Row Excl.', 6, 'Exclusive',
+LTRIM(TO_CHAR(Lmode,'990'))) Lmode,
+DECODE(M.Request, 0, 'None', 1, 'Null', 2, 'Row Share', 3, 'Row
+Excl.', 4, 'Share', 5, 'S/Row Excl.', 6, 'Exclusive',
+LTRIM(TO_CHAR(M.Request, '990'))) Request,
+M.Id1, M.Id2
+FROM V$SESSION SN, V$LOCK M
+WHERE (SN.Sid = M.Sid and M.Request ! = 0)
+or (SN.Sid = M.Sid and M.Request = 0 and Lmode != 4 and (id1, id2)
+in (select S.Id1, S.Id2 from V$LOCK S where Request != 0 and S.Id1
+= M.Id1 and S.Id2 = M.Id2) ) order by Id1, Id2, M.Request;
+
+
+
+
+To find waiters:
+---------------
+set pages 50000 lines 32767
+col LOCK_TYPE for a10
+col MODE_HELD for a10
+col MODE_REQUESTED for a10
+
+select * from dba_waiters;
+
+WAITING_SESSION HOLDING_SESSION LOCK_TYPE MODE_HELD MODE_REQUESTED LOCK_ID1 LOCK_ID2
+--------------- --------------- --------- --------- -------------- -------- --------
+                            
+Blocking details:
+----------------
+set pages 50000 lines 32767
+select distinct s1.username || '@' || s1.machine || ' ( INST=' || s1.inst_id || ' SID=' || s1.sid || ' ) is blocking ' || s2.username || '@' || s2.machine || ' ( INST=' || s1.inst_id || ' SID=' || s2.sid || ' ) ' as blocking_status from gv$lock l1, gv$session s1, gv$lock l2, gv$session s2 where s1.sid=l1.sid and s2.sid=l2.sid and l1.BLOCK=1 and l2.request > 0 and l1.id1 = l2.id1 and l2.id2 = l2.id2 and l1.inst_id = s1.inst_id;
+
+set pages 50000 lines 32767
+col BLOCKER for a20
+col BLOCKEE for a20
+select (select username from v$session where sid = a.sid ) blocker,a.sid, 'is blocking ',(select username from v$session where sid =b.sid) blockee,b.sid from v$lock a, v$lock b where a.block =1 and b.request > 0 and a.id1 = b.id1 and a.id2 = b.id2; 
+
+BLOCKER SID       'ISBLOCKING' BLOCKEE SID
+------- ---------- ----------  ------- --------
+
+
+set pages 50000 lines 32767
+select blocking_session, sid, serial#, wait_class,seconds_in_wait, username, osuser, program, logon_time from v$session where blocking_session is not NULL order by 1;
+
+9. Check for alerts in OEM :-
+============================
+Login to Oracle Enterprise Manager with valid username and password
+click on "Alerts" tab
+then select the below tabs one by one to see the alerts generated
+Targets Down/Critical/Warning/Errors/
+Posted 12th September 2015 by RAJ
+    
+
+
+*********************************************************************************************
+
+
+
+
+    
+MAR
+2
+Blockers on the database and user sessions
+session details
+
+
+set linesize 200
+col MACHINE format a30
+col OSUSER format a10
+col SCHEMANAME format a10
+col MODULE format a20
+
+Select to_char(logon_time,'dd/mm/yyyy hh24:mi:ss'),osuser,status,schemaname,machine,SID,module, INST_ID from gv$session where type !='BACKGROUND' and USERNAME='&a' order by logon_time asc;
+
+
+
+
+
+Select to_char(logon_time,'dd/mm/yyyy hh24:mi:ss'),osuser,status,schemaname,machine,SID,module, INST_ID from gv$session where type !='BACKGROUND'  order by logon_time asc;
+
+
+
+
+
+Select to_char(logon_time,'dd/mm/yyyy hh24:mi:ss'),osuser,status,schemaname,machine,SID,module,INST_ID from gv$session where type !='BACKGROUND' and module like '%Developer' order by logon_time asc;
+
+
+
+
+
+
+Blockers on the database
+----------------------------
+column sess format A20
+SELECT substr(DECODE(request,0,'Holder: ','Waiter: ')||sid,1,12) sess, id1, id2, lmode, request, type, inst_id
+ FROM GV$LOCK
+WHERE (id1, id2, type) IN
+   (SELECT id1, id2, type FROM GV$LOCK WHERE request>0)
+     ORDER BY id1, request;
+
+
+select s1.username || '@' || s1.machine  || ' ( SID=' || s1.sid || ' ) is blocking '  || s2.username || '@' || s2.machine || ' ( SID=' || s2.sid || ' ) ' AS blocking_status
+from gv$lock l1, gv$session s1, gv$lock l2, gv$session s2
+where s1.sid=l1.sid and s2.sid=l2.sid
+and l1.BLOCK=1 and l2.request > 0
+and l1.id1 = l2.id1
+and l2.id2 = l2.id2 ;
+---------------------------------------------
+select b.session_id ,a.SERIAL#, a.username "Blocker Details"
+from gv$session a,dba_lock b
+where b.session_id = a.sid
+and b.blocking_others = 'Blocking';
+--------------------------------
+
+
+select s.sid, s.sql_id, q.sql_text from gv$sqltext q, gv$session s
+where q.address = s.sql_address
+and s.sid = &sid
+order by piece;
+
+---------------------------------------------------
+
+
+set lines 200
+set pages 1000
+select inst_id,sid,serial#,sql_id,prev_sql_id,sql_hash_value,status,osuser,username,program,machine,last_call_et,to_char(logon_time,'DD/MON/YYYY hh24:mi') logon_time
+from gv$session
+where sid in (&sid)
+order by inst_id;
+
+
+---------------------------------------------------
+
+LOCK on the database 
+
+
+SELECT O.OBJECT_NAME, S.SID, S.SERIAL#,P.SPID, S.PROGRAM,SQ.SQL_FULLTEXT,S.LOGON_TIME FROM V$LOCKED_OBJECT L, DBA_OBJECTS O, V$SESSION S, V$PROCESS P, V$SQL SQ WHERE L.OBJECT_ID = O.OBJECT_ID AND L.SESSION_ID = S.SID AND S.PADDR = P.ADDR AND S.SQL_ADDRESS = SQ.ADDRESS;
+
+
+
+
+select sql_id,sql_text from gv$sqlarea where sql_id='&sql_id' ;
+
+
+----------------------------------------------
+
+
+Query: select * from v$lock where request!=0;
+
+select * from v$lock where type='TX' and id1='&1' and id2='&2'
+                
+where &1 and &2 are the ID for the lock we are waiting on from above.
+
+V$LOCKED_OBJECT: This view lists all locks acquired by every transaction on the system.
+In order to see locked object query,
+
+
+--------------------------------------------------------
+
+SQL> set linesize 130
+SQL> set pages 100
+SQL> col username       format a20
+SQL> col sess_id        format a10
+SQL> col object format a25
+SQL> col mode_held      format a10
+SQL> select     oracle_username || ' (' || s.osuser || ')' username
+,  s.sid || ',' || s.serial# sess_id
+,  owner || '.' || object_name object
+,  object_type
+,  decode( l.block
+,       0, 'Not Blocking'
+,       1, 'Blocking'
+,       2, 'Global') status
+,  decode(v.locked_mode
+,       0, 'None'
+,       1, 'Null'
+,       2, 'Row-S (SS)'
+,       3, 'Row-X (SX)'
+,       4, 'Share'
+,       5, 'S/Row-X (SSX)'
+,       6, 'Exclusive', TO_CHAR(lmode)) mode_held
+from       v$locked_object v
+,  dba_objects d
+,  v$lock l
+,  v$session s
+where      v.object_id = d.object_id
+and        v.object_id = l.id1
+and        v.session_id = s.sid
+order by oracle_username
+,  session_id
+/
+
+
+
+
+You can also query v$access and v$locked_object to see specific locks: 
+
+
+select s.sid, s.serial#, p.spid from v$session s,v$process p where s.paddr = p.addr and s.sid in (select SESSION_ID from v$locked_object);
+
+
+
+
+
+Blocking session for last 3 hours
+
+SELECT  distinct a.sql_id ,a.inst_id,a.blocking_session,a.blocking_session_serial#,a.user_id,s.sql_text,a.module
+FROM  GV$ACTIVE_SESSION_HISTORY a  ,gv$sql s
+where a.sql_id=s.sql_id
+and blocking_session is not null
+and a.user_id <> 0 
+and a.sample_time > sysdate - 3/24
+
+Blocking session for last 7 days
+
+select * from (
+SELECT a.sql_id ,
+COUNT(*) OVER (PARTITION BY a.blocking_session,a.user_id ,a.program) cpt,
+ROW_NUMBER() OVER (PARTITION BY a.blocking_session,a.user_id ,a.program
+order by blocking_session,a.user_id ,a.program ) rn,
+a.blocking_session,a.user_id ,a.program, s.sql_text
+FROM sys.WRH$_ACTIVE_SESSION_HISTORY a ,sys.wrh$_sqltext s
+where a.sql_id=s.sql_id
+and blocking_session_serial# <> 0
+and a.user_id <> 0
+and a.sample_time > sysdate -1
+) where rn = 1
+
+
+
+ession details associated with Oracle SID
+-------------------------------------------
+set head off
+set verify off
+set echo off
+set pages 1500
+set linesize 100
+set lines 120
+prompt
+prompt Details of SID / SPID / Client PID
+prompt ==================================
+select /*+ CHOOSE*/
+'Session  Id.............................................: '||s.sid,
+'Serial Num..............................................: '||s.serial#,
+'User Name ..............................................: '||s.username,
+'Session Status .........................................: '||s.status,
+'Client Process Id on Client Machine ....................: '||'*'||s.process||'*'  Client,
+'Server Process ID ......................................: '||p.spid Server,
+'Sql_Address ............................................: '||s.sql_address,
+'Sql_hash_value .........................................: '||s.sql_hash_value,
+'Schema Name ..... ......................................: '||s.SCHEMANAME,
+'Program  ...............................................: '||s.program,
+'Module .................................................: '|| s.module,
+'Action .................................................: '||s.action,
+'Terminal ...............................................: '||s.terminal,
+'Client Machine .........................................: '||s.machine,
+'LAST_CALL_ET ...........................................: '||s.last_call_et,
+'S.LAST_CALL_ET/3600 ....................................: '||s.last_call_et/3600
+from v$session s, v$process p
+where p.addr=s.paddr and
+s.sid=nvl('&sid',s.sid) 
+/
+
+Find more details
+
+SELECT 'Oracle Session with username'|| blocker.username  || ' and session ID '||blocker.sid
+        ||' is blocking ' || blocked.username ||' with session ID '|| blocked.sid block_description
+    FROM gv$lock locker, gv$session blocker, gv$lock locked, gv$session blocked
+    WHERE blocker.sid=locker.sid AND blocked.sid=locked.sid
+    AND locker.block=1  
+    AND locker.id1 = locked.id1
+    AND locker.id2 = locked.id2
+    AND locker.inst_id = blocker.inst_id
+    AND locked.inst_id = blocked.inst_id
+ 
+ 
+SELECT inst_id,  blocking_session, sid, serial#
+FROM gv$session s
+WHERE blocking_session IS NOT NULL;
+
+
+SELECT   s.inst_id instance_id, s.SID, s.serial#, p.username os_process_owner, p.pid, p.spid os_process_id,
+         l.session_id, l.oracle_username,  l.os_user_name, l.process,
+         DECODE (locked_mode,
+                 0, 'None',
+                 1, 'NULL',
+                 2, 'Row-Share',
+                 3, 'Row-Exclusive.',
+                 4, 'Share',
+                 5, 'S/Row-Exclusive',
+                 6, 'Exclusive'
+                ) AS lock_type,
+         o.owner, o.object_name, o.object_type, s.program, s.logon_time, s.status session_status,
+         o.status object_status
+    FROM gv$locked_object l, dba_objects o, gv$session s, gv$process p
+   WHERE (l.object_id = o.object_id AND l.session_id = s.SID)
+     AND s.paddr = p.addr
+     AND l.inst_id = p.inst_id
+     AND s.inst_id = p.inst_id
+ORDER BY object_name;
+
+
+
+
+Complete Details of blocking sessions:
+
+select distinct
+a.sid "waiting sid"
+, d.sql_text "waiting SQL"
+, a.ROW_WAIT_OBJ# "locked object"
+, a.BLOCKING_SESSION "blocking sid"
+, c.sql_text "SQL from blocking session"
+from v$session a, v$active_session_history b, v$sql c, v$sql d
+where a.event='enq: TX - row lock contention'
+and a.sql_id=d.sql_id
+and a.blocking_session=b.session_id
+and c.sql_id=b.sql_id
+and b.CURRENT_OBJ#=a.ROW_WAIT_OBJ#
+and b.CURRENT_FILE#= a.ROW_WAIT_FILE#
+and b.CURRENT_BLOCK#= a.ROW_WAIT_BLOCK#
+
+
+user sessions
+
+SET LINESIZE 500
+SET PAGESIZE 1000
+COLUMN username FORMAT A15
+COLUMN osuser FORMAT A15
+COLUMN spid FORMAT A10
+COLUMN service_name FORMAT A15
+COLUMN module FORMAT A30
+COLUMN machine FORMAT A20
+COLUMN logon_time FORMAT A40
+SELECT NVL(s.username, '(oracle)') AS username,
+        s.osuser,
+        s.sid,
+        s.serial#,
+        p.spid,
+        s.status,
+        s.module,
+        s.machine,
+        s.program,
+        TO_CHAR(s.logon_Time,'DD-MON-YYYY HH24:MI:SS') AS logon_time
+ FROM   gv$session s,
+        gv$process p
+ WHERE  s.paddr = p.addr  and type !='BACKGROUND' and MODULE like 'SQL%'
+ ORDER BY s.username, s.osuser;
+ 
+
+The Below Query will help to get the details on Blocking sessions in RAC. Also one can get the OBJECT_NAME in next query.
+
+SELECT DISTINCT S1.USERNAME || '@' || S1.MACHINE
+|| ' ( INST=' || S1.INST_ID || ' SID=' || S1.SID || ' ) IS BLOCKING '
+|| S2.USERNAME || '@' || S2.MACHINE || ' ( INST=' || S1.INST_ID || ' SID=' || S2.SID || ' ) ' AS BLOCKING_STATUS
+FROM GV$LOCK L1, GV$SESSION S1, GV$LOCK L2, GV$SESSION S2
+WHERE S1.SID=L1.SID AND S2.SID=L2.SID
+AND S1.INST_ID=L1.INST_ID AND S2.INST_ID=L2.INST_ID
+AND L1.BLOCK > 0 AND L2.REQUEST > 0
+AND L1.ID1 = L2.ID1 AND L1.ID2 = L2.ID2;
+
+DETAILS ON BLOCKED OBJECTS:
+
+SELECT DISTINCT S1.USERNAME || '@' || S1.MACHINE
+|| ' ( INST=' || S1.INST_ID || ' SID=' || S1.SID || ' ) IS BLOCKING '
+|| S2.USERNAME || '@' || S2.MACHINE || ' ( INST=' || S1.INST_ID || ' SID=' || S2.SID || ' ) OBJ_ID:' ||L1.ID1||' OBJ_NAME:'||O.OBJECT_NAME
+AS BLOCKING_STATUS
+FROM GV$LOCK L1, GV$SESSION S1, GV$LOCK L2, GV$SESSION S2,DBA_OBJECTS O
+WHERE S1.SID=L1.SID AND S2.SID=L2.SID
+AND S1.INST_ID=L1.INST_ID AND S2.INST_ID=L2.INST_ID
+AND L1.ID1=OBJECT_ID from above query
+AND L1.ID1=O.OBJECT_ID
+AND L1.BLOCK > 0 AND L2.REQUEST > 0
+AND L1.ID1 = L2.ID1 AND L1.ID2 = L2.ID2;
+
+Incase, User is requesting to check whether a particular TABLE is locked by any Session?, then you can use the object_id (SELECT OBJECT_ID FROM DBA_OBJECTS WHERE OWNER=’ABC’ AND OBJECT_NAME=’XYZ’) in below query.
+
+SELECT DISTINCT S1.USERNAME || '@' || S1.MACHINE
+|| ' ( INST=' || S1.INST_ID || ' SID=' || S1.SID || ' ) IS BLOCKING '
+|| S2.USERNAME || '@' || S2.MACHINE || ' ( INST=' || S1.INST_ID || ' SID=' || S2.SID || ' ) OBJ_ID:' ||L1.ID1||' OBJ_NAME:'||O.OBJECT_NAME
+AS BLOCKING_STATUS
+FROM GV$LOCK L1, GV$SESSION S1, GV$LOCK L2, GV$SESSION S2,DBA_OBJECTS O
+WHERE S1.SID=L1.SID AND S2.SID=L2.SID
+AND S1.INST_ID=L1.INST_ID AND S2.INST_ID=L2.INST_ID
+AND L1.ID1=
+AND L1.ID1=O.OBJECT_ID
+AND L1.BLOCK > 0 AND L2.REQUEST > 0
+
+AND L1.ID1 = L2.ID1 AND L1.ID2 = L2.ID2;
+
+
+
+************************************************************************************************
+
+
+
+11g New Background process:
+
+************************************
+
+1. MMAN(Memory Manager Process)
+************************************
+
+Serves as the instance memory manager.
+This process performs the resizing of memory components on the instance.
+(Database and ASM instances)
+
+MMAN – This process is responsible for ASMM in 10g and AMM in 11g  which manages memory allocation to SGA and PGA.
+
+2.MMNL(Manageability Monitor Lite Process)
+*******************************************
+
+Performs tasks relating to manageability, including active session history sampling and metrics computation
+MMNL performs many tasks relating to manageability, including session history capture and metrics computation.
+The manageability monitor lite process (MMNL) writes statistics from the Active Session History (ASH) buffer in the SGA to disk.
+MMNL writes to disk when the ASH buffer is full.
+
+
+3.MMON(Manageability Monitor Process)
+******************************************
+
+Performs or schedules many manageability tasks.
+MMON performs many tasks related to manageability, including taking Automatic Workload Repository snapshots and performing Automatic Database Diagnostic Monitor analysis.
+
+The manageability monitor process (MMON) performs many tasks related to the Automatic Workload Repository (AWR). For example, MMON writes when a metric violates its threshold value, taking snapshots, and capturing statistics value for recently modified SQL objects.
+
+
+4.CTWR(Change Tracking Writer Process)
+********************************************
+
+Tracks changed data blocks as part of the Recovery Manager block change tracking feature.
+CTWR tracks changed blocks as redo is generated at a primary database and as redo is applied at a standby database. 
+The process is slightly different depending on the type of database.
+
+
+
+5. RCBG(Result Cache Background Process)
+******************************************
+
+This background process is responsible for processing data into server result cache.
+
+This process is used for handling invalidation and other messages generated by server processes attached to other instances in Oracle RAC.
+
+
+CHECKING ADVISORS RECOMMENDATIONS:
+#          - SQL TUNING ADVISOR
+#          - SGA ADVISOR
+#          - PGA ADVISOR
+#          - BUFFER CACHE ADVISOR
+#          - SHARED POOL ADVISOR
+#          - SEGMENT ADVISOR
+#          - SQL Access Advisor
+
+
+- SQL TUNING ADVISOR
+************************
+
+SQL Tuning Advisor takes one or more SQL statements as an input and invokes the Automatic Tuning Optimizer to perform SQL tuning on the statements. The output takes the form of advice or recommendations, along with a rationale for each recommendation and its expected benefit. The recommendation relates to a collection of statistics on objects, creation of new indexes, restructuring of the SQL statement, or creation of a SQL profile. You can choose to accept the recommendation to complete the tuning of the SQL statements.
+
+The database can automatically tune SQL statements by identifying problematic statements and implementing recommendations using SQL Tuning Advisor during system maintenance windows. When run automatically, SQL Tuning Advisor is known as the Automatic SQL Tuning Advisor
+
+
+Identify the SQL_ID of the above SQL which was considered as BAD SQL.
+select sql_id,sql_text from v$sql where sql_text like '%Dina%order by%';
+
+Now run SQL Tuning advisor for this query and match your findings:
+@?/rdbms/admin/sqltrpt.sql
+
+
+
+SQL Access Advisor
+
+************************
+
+
+
+The SQL Access Advisor helps define appropriate access structures such as indexes and materialized views to optimize SQL queries. The advisor takes a SQL workload as an input and recommends which indexes, materialized views, or logs to create, drop, or retain for faster performance. You can select your workload from different sources including current and recent SQL activity, a SQL repository, or a user-defined workload such as from a development environment.
+
+The recommendations that this advisor makes include possible indexes, materialized views, or materialized view logs that can improve your query performance for the given workload.
+
+Note that both SQL Tuning and Access advisor provide index creation recommendations. The SQL Tuning advisor recommends creation of indexes only when it anticipates exceptional performance gains for the SQL statement being tuned. However, creation of new indexes may adversely impact the performance of DML (inserts, updates, and deletes) operations. The SQL Tuning advisor does not take this into account while generating new index recommendations.
+
+***************************************************************************************************************************************************
+
+In this part of the series, we will be looking into , how to identify the Problematic Sessions or Queries.
+
+Before beginning, one should distinguish the question here. You may face questions like, and the answer for both is to identify either loaded sessions for a database.
+
+1. Database is/was slow.
+
+
+
+Performance Troubleshooting Series : Identifying Problematic Sessions or Queries (Method 1)
+In the Previous Posts , to troubleshoot the problematic queries/long running session issues, we have sorted out two approaches, Here we discuss the Method 1
+
+Method 1. Session Wait Event Approach:- In this approach we will try to identify from the problematic session what its waiting for , why its waiting, what can be done to resolve the problem.
+
+The most common causes are explained here, however there may be many cases. The events classified here are can impact the instance level hence database performance can be degraded.
+
+SQL> select sid,username,event,blocking_session,sql_id,prev_sql_id from v$session where username='username';
+
+or
+
+SQL> select sid,username,event,blocking_session,sql_id,prev_sql_id from v$session where sid='sid';
+
+or
+
+SQL> select session_id,username,event,blocking_session,sql_id,prev_sql_id from v$active_session_history where session_id='';
+
+Concentrate on the Event column and the following events can represent you the problem. Events are mainly classified as Administration, I/O, Concurrency etc. And these notifies what the database is experiencing in terms of waits. As such the waits more the problem in that particular area is more.
+
+For Example, you may have see the following output with above queries
+
+<Screenshot>
+
+As you see above the event column shows most of the times the following events and sessions are waiting for that event. Each wait event represents the issue it has and followed by solution.
+
+1. Latch Cache Buffer chains:-
+
+Problem:- As such more buffers (headers) are been read and trying to modify and have a long list of chain for each buffer and repeatable reads (more nested loops), the session get waited on doing latch cache buffer chains.
+
+Solution:- Check the sql_id and generate execution plan, compare the execution plan with previous plan from history, and you may see more nested loops.
+
+This is due to in correct statistics which lead to more nested loops instead of hash joins.
+
+Collect the statistics and you rerun the statement, flush the buffer pool will help.
+
+Read more about Join methods Read here.
+
+2. Library Cache Lock/Pin (Cursor mutex s/x):-
+
+Problem 1:- More locks in shared pool for the objects and reread by multiple sessions and lot of invalidations. Every time any execution happen shared pool structure should be locked and pinned until the execution completed again you do execution you have repin and lock, rather between many executions you can do only one time lock/pin that will help to reduce this issue.
+
+Problem 2:- Invalidations (statistics collection can invalidate objects in shared pool and hence to repin and relock again, so it can one time issue but if its do more often then its a problem)
+
+ Solution:- 1. flush the shared pool,
+
+                2. kill the session that hold Lock/Pin X in event column.
+
+                3. Where the long term you can reduce this issue by setting session_cached_cursors to a reasonable number
+
+                     and cursor_space_for_time to true.
+
+3. Shared Pool Latch/Latch free:-
+
+Problem: Inadequate shared pool size or no dynamic resize operations happening (v$sga_resize_ops), although the automatic memory management is set, sometime you will need to do a manual resizes since MMAN is busy or hanged sometimes. (from my experience I did a lot of times this stuff)
+
+Solution:- Flush shared pool and adjust pools
+
+1. alter system flush shared pool;
+2. select name,value from v$sgastat where name like 'free%'; Observe free memory for shared pool;
+3. If you do not get much free memory, give a try to resize/adjust the pools.
+4. Reduce the buffer a bit and increase the shared pool a bit. to allow some resize operations.
+5.  show parameter db_cache_size
+            db_cache_size         10010000
+6. Alter system set db_cache_size=9000000 (reduce a bit);
+
+7. show parameter shared_pool_size
+         shared_pool_size   9809000
+
+8. Alter system set shared_pool_size=10000000; (increased a bit which reduce from buffer pool)
+                         
+
+Long Terms if you see this is frequently happening:
+Possible increase of shared pool
+if permits Set cursor_sharing to similar or force (see here)
+
+4. Res: mgr quantum:-
+
+Problem 1:- Sessions burning CPU or consuming more cpu or load increased, which the other sessions are waiting for CPU.
+
+                      Solution:- Read here and and identify the CPU consuming processes and take appropriate actions.
+
+5. DB File Sequential Read:-  An index reads usually faster but due to index stale statistics, wrong index sessions can be doing more index scans.
+
+Problems:- Use of an unselective index , Fragmented Indexes , High I/O on a particular disk or mount point, Bad application design, Index reads performance can be affected by slow I/O subsystem and/or poor database files layout, which result in a higher waits on this wait event.
+
+Solutions:-
+
+Picked Wrong Index:- It may be the case that table column is involved in two indexes and optimizer has picked the wrong index in this case.
+
+1. SQL> select sid,username,event,sql_id,row_wait_obj# from v$session where sid='';
+
+Note:- the row_wait_obj# tell which object_id that session is wait on , with this we know which index by checking in dba_objects with object_id and get name of index the session is waiting.
+
+2. Identify the Plan for the query,
+
+    SQL> select * from table(dbms_xplan.display_cursor('sql_id'));
+
+3. Identify (if any previous run history of the query)
+
+    SQL> select * from table(dbms_xplan.display_awr('sql_id'));
+
+4. Compare the Both Plans and observer change in the index name in highlighted sections.
+
+5. The reason would be , the statistics of index/table would have picked up wrong index (index clustering factor)
+
+    SQL> exec dbms_stats.gather_table_stats('OWNER','TABLE_NAME',CASCADE=>TRUE,no_invalidate=>false);
+
+6. Rebuild the index that you want (probably the index that has picked up earlier) or collect statistics of the table with cascade true option would correct the issue.
+
+    SQL>  alter index indexname rebuild online;
+
+Picked Right Index only, but still slow:- It may be the case that is has picked up right index but still running slow  
+
+1. Identify the current plan and identify which index is it
+
+     SQL> select sid,username,event,sql_id,row_wait_obj# from v$session where sid='';
+
+      Note:- the row_wait_obj# tell which object_id that session is wait on , with this we know which index by checking in dba_objects with object_id and get name of index              the session is waiting.
+
+2. Identify the Plan for the query, and check the index in the plan 
+
+      SQL> select * from table(dbms_xplan.display_cursor('sql_id'));
+
+3. Identify (if any previous run history of the query)
+
+       SQL> select * from table(dbms_xplan.display_awr('sql_id'));
+
+4. Compare the Both Plans and observe that it is same index that picked all times but this time slow.
+
+5. The reason would be , the statistics of index/table would have picked up wrong index (index clustering factor)
+
+        SQL> exec dbms_stats.gather_table_stats('OWNER','TABLE_NAME',CASCADE=>TRUE,no_invalidate=>false);
+
+6. Rebuild the index that you want (probably the index that has picked up earlier) or collect statistics of the table with cascade true option would correct the issue.
+
+        SQL>  alter index indexname rebuild online;
+
+6. DB File Scattered Read:- Usually full tablescans
+
+Problem: May be that no index there for the table, a Index is present but optimizer thinks that scanning via index is costly and hence do a full tablescan. But why then optimizer decide and how it decides, it decides by means of statistics available for the table and indexes . If statistics were stale and volume of data that is retrieving by query is close to number of rows in table lead to full table scans.
+
+7. Direct Path Reads
+
+8. Log File Sync/Log File Parallel Write
+
+9. Log Buffer Space
+
+10. Buffer Free Waits
+
+11. Buffer Busy Waits
+
+12. Enq: Tx Row Lock Contention
+
+13. Enq: TM Contention
+
+
+
+
+-------------------------------------------------------database is slow part 2-------------------------------------------------------
+
+
+
+
+Performance Troubleshooting Series : Understanding your database load from Metrics – Part 2
+Hello,
+
+This is the second part of the series of Performance Troubleshooting, Whilst the first one is from AWR/Statspack tables.
+
+And what if , if you don't have both in your environment, That made me to write up this second post.
+
+Those who does not know about the metrics tables a short notes here, After that I will continue this post,
+
+From 10g onwards, we have metrics collected as like v$sysstat and I believe this is the basis of AWR related stuff.
+
+v$sysstat - RAW Live metrics (Contains 679 database performance metrics)
+
+v$sysmetric-RAW Live metrics (Contains 205 metrics derived from sysstat or somewhere else)
+
+v$sysmetric_history- Last one hour (Contains 10249 metrics for each metric in v$sysmetric for about 15sec or 60 sec interval)
+
+v$sysmetric_summary-Last one hour (contains 158 metrics with aggregated values of history of one hour for each metric, i.e max,min,avg)
+
+dba_hist* - Last seven days collection.
+
+Note: the counts are as of 11gr2
+
+Well, the question is what this metrics provides us?
+
+Wonderful wealthy information, like How many reads per sec, CPU per sec, service times, network volume per sec, almost all information how your database is performing.
+
+I hope the above information is enough for now, lets get back to post, This metrics are collected irrespective you are in standard edition/enterprise edition and also and your statistics level set to typical.  I have myself verified the dba_hist* view which points to WRH* tables and derived from v$sysmetric views, and how many times I query those tables dba_features_usage does not reflect the same. I hope you also test to use this before using the following when you don't have AWR license.
+
+For Previous & Historical : db_load_by_metrics.sql
+
+Update: 10-Oct-2015 for rac instances (thanks to venkat) -  db_load_by_metrics_rac.sql
+
+For Current & Running Instance:-  db_load_by_metrics_current.sql
+
+ 
+
+The screenshot of the report and the explanation of each column and how to interpret the report. (Click to enlarge)
+
+http://db.geeksinsight.com/wp-content/uploads/2015/10/db_load_by_metrics.jpg
+
+Now lets interpret the report,
+
+Question	
+Column
+
+to Verify
+
+Additional
+
+Related Columns
+
+to Verify
+
+Description or notes while troubleshooting
+check DB load
+
+at so and so time
+
+AAS	
+DB Time,
+
+Redo,
+
+PReads,
+
+PWrites,
+
+Sessions
+
+As you see AAS is high on certain period that is where the database is loaded, average active sessions
+
+should be compared with your CPU_Count for the database and if its higher than that, then your database is loaded
+
+Evidently, you can find additional information why the DB is loaded, is it excessive
+
+Commits, DB Block Changes i.e DML, Reads, Writes, Locks, Wait in other columns which can easily spotted
+
+Sessions/Process
+
+Reached max limit
+
+Sess/Logon	 	
+By looking at this columns you can identify the sessions/process spike in database and can suggest whether there is
+
+logon spike during that snap
+
+DB is slow	
+AAS
+
+SQL Resp Time
+
+CPU, DB Time,
+
+Reads/Writes/
+
+PGA/Temp
+
+SharedPool/HParses
+
+Commits/DB BlockChanges
+
+As told AAS is the basic metric you can see really the DB is slow or not, if under control below than your CPU count then it may else impacting your DB (i.e Single Statement but the DB is okay)
+
+CPU , DB Time high numbers than other snapshot tells it is loaded
+
+PReads/Writes tells whether any I/O issue at that snap
+
+SPoolfree%/HParse/Execs , tells during that snap is there any excessive executions than before, or any excessive hard parses than before, If so any you may see the spoolfree% is drop down and that is evident.
+
+Further, excessive commits and many db block changes can also hamper the performance with sessions waiting high log file sync which can be seen by the respective columns
+
+I/O Spikes	
+PReads
+
+PWrites
+
+Total Preads/Writes
+
+Executions
+
+User Calls
+
+Ftablescans
+
+When you receive any I/O Spikes issue, check the columns to determine any I/O Spike during that snap period,
+
+and the contributing factors can be many executions, many calls or Ftable scans
+
+If its more calls/executions than before that means application is doing some nasty or running more load
+
+If its ftablescans more than earlier, could be statistics issues, or again someone running full counts(*) or sorts or doing nasty
+
+Check DB response time	
+SQL Resp
+
+Time
+
+User Calls	
+This question is commonly asked by Application/Business teams always, DB response
+
+To derive DB response time , simple metric can be SQL Service Response time per user call.
+
+As you see above sometime the SQL Service Response time is 3 i.e in centiseconds and apparently there are many user calls
+
+So you can clearly state that many user calls are degrading the sql service response time.
+
+If not there may other factors like CPU waiting, More I/O etc, other columns may help to understand who is contributing to it.
+
+unable to allocate temp	Temp Used	PGA	You can check during the period how much temp is used for each snap, if PGA is exhausting then it may use over temp so may be its worth to check the pga column is PGA is normally used. However, although PGA is undercontrol excessive sorts may be cause of it. But this column provides you the temp utilisation
+Out of Process Memory	PGA	 	
+Every hour snap of PGA utilisation by sessions which gives a glance of total pga allocation to database.
+
+If you see more utilisation worth while to consider the pga advisory
+
+Log File Sync	commits	
+redo mb per sec
+
+db block changes
+
+When you see sessions waiting for high log file sync, you may check any excessive commits during period and relavant db block changes and redo generated MB per sec, which gives you clue about the same
+Check Locks during that time	Lock Waits	
+Db block changes
+
+commits
+
+When you have been asked to verify any locks during that time, the lock waits columns tells how many waits for locks during that snap is happening and if you see more yes, there is contention for lock , you need to go further troubleshoot with ASH to identify which sessions causing locks etc.
+Network Spikes	NWorkMB	 	Is the database or user experiencing delays due to more network utilisation, that way also you can check in network utilized mb per sec.
+So, after reading this, the best possible questions and answers are derived from single query above rather generating multiple reports etc.
+
+Again this report was derived from metric tables.
+
+
+
+*****************************************************************************************************
+
+
+
+ Session / Query Running Slow
+
+
+ As you identify the session which causing issue, now look at those sessions top events.
+
+There are two Methods and a systematic approach.
+
+Method 1. Session Wait Event Approach:- In this approach we will try to identify from the problematic session what its waiting for , why its waiting, what can be done to resolve the problem.
+
+Method 2. Session SQL ID Run History Approach:- In this approach we shall need to check , if the query for the session that running long has been ran before, if so ran, what is the plan before and what is the plan currently and is there any change, if so any change why it changed what caused to be changed etc.
+
+SQL> select sid,username,status,event,sql_id,prev_sql_id,blocking_session,row_wait_obj# from v$session where sid='';
+
+(you can replace any condition like username, machine in where clause with the information you have got from application teams)
+
+Alternatively, you can find the series of information from v$active_session_history of every second sample for the same session using below query
+
+ 
+
+SQL> select sample_time,session_id,username,event,sql_id,sql_id,prev_sql_id,blocking_session,blocking_instance,plan_hash_value from v$active_session_history where session_id='' or username='';
+
+
+
+***********************************************************************************************************
+
+
+What is the SQL Tuning Health-Check Script (SQLHC)?
+
+The SQL Tuning Health-Check Script is a tool developed by the Oracle Server Technologies Center of Expertise. The tool, also known as SQLHC, is used to check the environment in which a single SQL Statement runs, checking Cost-based Optimizer (CBO) statistics, schema object metadata, configuration parameters and other elements that may influence the performance of the one SQL being analyzed.
+
+
+Health-checks are performed over:
+
+CBO Statistics for schema objects accessed by the one SQL statement being analyzed
+CBO Parameters
+CBO System Statistics
+CBO Data Dictionary Statistics
+CBO Fixed-objects Statistics
+
+
+************************************************************************************************************
+
+
+
+
+Selectivity is important because it helps us to determine whether to use a Balanced Tree (B*Tree) Index versus a Bitmap index. In general you have to follow these golden rules:
+
+If Selectivity > 4%, use B*Tree index
+If Selectivity < 4%, use Bitmap index
+
+
+Selectivity =             Cardinality
+                      --------------------
+                      Total number of Rows
+
+
+
+Cardinality refers to a number of unique values in a row. You can find the cardinally of any column using the SQL keyword DISTINCT.
+
+Example:
+
+
+Cardinality: select count(distinct (deptno)) from employee;
+
+
+Cardinality is the number of distinct values you have in a field.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,326 @@
+[root@fih3ex2celadm03 ~]# /opt/MegaRAID/MegaCli/MegaCli64 -PdList -a0 | egrep -i "Slot |Count*|Firmware*|S.M.A.R.T|Inquiry|Media|state|Temp*"
+Slot Number: 0
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EG9TPX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 1
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEUKMX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGXMAX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 3
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGZG5X
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 4
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EG9BUX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :30C (86.00 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 5
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEXGLX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :30C (86.00 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 6
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEYXZX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 7
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEYX0X
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :30C (86.00 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 8
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEYWZX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 9
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEU70X
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 10
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEZ1HX
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :31C (87.80 F)
+Drive has flagged a S.M.A.R.T alert : No
+Slot Number: 11
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Firmware state: Online, Spun Up
+Device Firmware Level: A3A0
+Shield Counter: 0
+Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEU87X
+Foreign State: None
+Media Type: Hard Disk Device
+Drive Temperature :30C (86.00 F)
+Drive has flagged a S.M.A.R.T alert : No
+[root@fih3ex2celadm03 ~]#  /opt/MegaRAID/MegaCli/MegaCli64 -ShowSummary -aALL
+System
+        Operating System:  Linux version 4.1.12-94.8.4.el6uek.x86_64
+        Driver Version: 06.812.07.00-rc1
+        CLI Version: 0.0.0
+
+Hardware
+        Controller
+                 ProductName       : LSI MegaRAID 9361-8i(Bus 0, Dev 0)
+                 SAS Address       : 500605b000b29610
+                 FW Package Version: 24.21.0-0070
+                 Status            : Optimal
+        BBU
+                 BBU Type          :
+                 Status            : Healthy        PD
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 7
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 11
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 4
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 6
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 0
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 10
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 8
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 1
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 5
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 9
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 2
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+                Connector          : Port 0 - 3<Internal><Encl Pos 0 >: Slot 3
+                Vendor Id          : HGST
+                Product Id         : H7240AS60SUN4.0T
+                State              : Online
+                Disk Type          : SAS,Hard Disk Device
+                Capacity           : 3.637 TB
+                Power State        : Active
+
+Storage
+
+       Virtual Drives
+                Virtual drive      : Target Id 0 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 1 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 2 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 4 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 5 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 6 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 7 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 8 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 9 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 10 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 11 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+                Virtual drive      : Target Id 3 ,VD name
+                Size               : 3.637 TB
+                State              : Optimal
+                RAID Level         : 0
+
+
+Exit Code: 0x00
+[root@fih3ex2celadm03 ~]# /opt/MegaRAID/MegaCl/MegaCli64 -LDPDInfo -aALL |
+>
+> ^C
+[root@fih3ex2celadm03 ~]#
+[root@fih3ex2celadm03 ~]# /opt/MegaRAID/MegaCl/MegaCli64 -LDPDInfo -aALL

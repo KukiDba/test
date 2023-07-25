@@ -1,0 +1,220 @@
+Select ACL from dba_network_acls;
+
+set pages 30
+set line 500
+col host for a30
+col acl for a70
+col acl_owner for a20
+Select * from dba_network_acls;
+
+
+set line 300
+col ACL for a50
+col ACLID for a40
+col PRINCIPAL for a20
+col START_DATE for a30
+col END_DATE for a30
+col PRIVILEGE for a30
+col ACL_OWNER for a30
+select * from dba_network_acl_privileges;
+
+
+select * from dba_network_acl_privileges where acl='NETWORK_ACL_18A59A614B431776E0534812618FC917';
+
+
+Drop ACL
+==========================================================
+BEGIN
+   DBMS_NETWORK_ACL_ADMIN.DROP_ACL(
+      acl => '/sys/acls/ECKERNEL_STATOIL_EC_HTTP.xml');
+END;
+/
+
+
+==========================================================
+
+begin
+  dbms_network_acl_admin.create_acl (
+    acl             => '/sys/acls/SPORT_HTTP_ACCESS.xml',
+    description     => 'same as P025',
+    principal       => 'SPORT',
+    is_grant        => TRUE,
+    privilege       => 'connect',
+    start_date      => null,
+    end_date        => null);
+end;
+/
+
+==========================================================
+
+begin
+dbms_network_acl_admin.assign_acl (
+    acl        => '/sys/acls/SPORT_HTTP_ACCESS.xml',
+    host       => 'sis3.com',
+    lower_port => 80,
+    upper_port => 80);
+commit;
+end;
+/
+
+==========================================================
+
+begin
+DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(
+        acl         => '/sys/acls/SPORT_HTTP_ACCESS.xml',
+         principal   => 'RAF',
+         is_grant  => true,
+         privilege => 'connect');
+commit;
+end;
+/
+
+begin
+DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(
+        acl         => '/sys/acls/SPORT_HTTP_ACCESS.xml',
+         principal   => 'RAF',
+         is_grant  => true,
+         privilege => 'resolve');
+commit;
+end;
+/
+
+==========================================================
+
+SYS at P576 >exec utl_http.set_wallet('file:/prog88/oracle/wallet','dsdf47rpt58');
+
+PL/SQL procedure successfully completed.
+SYS at P576 >set serveroutput on
+SYS at P576 >DECLARE
+  2  l_url VARCHAR2(200) := '&link';
+  3  l_http_request UTL_HTTP.req;
+  4  l_http_response UTL_HTTP.resp;
+  5  BEGIN
+  6  -- Make a HTTP request and get the response.
+  7  l_http_request := UTL_HTTP.begin_request(l_url);
+  8  l_http_response := UTL_HTTP.get_response(l_http_request);
+  9  UTL_HTTP.end_response(l_http_response);
+ 10  dbms_output.put_line(utl_http.request(l_url)) ;
+ 11  END;
+ 12  /
+Enter value for link: http://st-w1960.statoil.net
+
+
+
+===========================================================================================
+
+
+DECLARE
+  c UTL_SMTP.CONNECTION;
+
+  PROCEDURE send_header(name IN VARCHAR2, header IN VARCHAR2) AS
+  BEGIN
+    UTL_SMTP.WRITE_DATA(c, name || ': ' || header || UTL_TCP.CRLF);
+  END;
+
+BEGIN
+  c := UTL_SMTP.OPEN_CONNECTION('mailhost.statoil.no');
+  UTL_SMTP.HELO(c, 'mailhost.statoil.no');
+  UTL_SMTP.MAIL(c, 'oracle@st-tdb02.statoil.com');
+  UTL_SMTP.RCPT(c, 'sisant@statoil.com');
+  UTL_SMTP.OPEN_DATA(c);
+  send_header('From',    '"Sender" <no-relpy@statoil.com>');
+  send_header('To',      '"Recipient" <sisant@statoil.com>');
+  send_header('Subject', 'Hello');
+  UTL_SMTP.WRITE_DATA(c, UTL_TCP.CRLF || 'Hello, world!');
+  UTL_SMTP.CLOSE_DATA(c);
+  UTL_SMTP.QUIT(c);
+EXCEPTION
+  WHEN utl_smtp.transient_error OR utl_smtp.permanent_error THEN
+    BEGIN
+      UTL_SMTP.QUIT(c);
+    EXCEPTION
+      WHEN UTL_SMTP.TRANSIENT_ERROR OR UTL_SMTP.PERMANENT_ERROR THEN
+        NULL; 
+    END;
+    raise_application_error(-20000,
+      'Failed to send mail due to the following error: ' || sqlerrm);
+END;
+/
+
+
+
+
+
+
+
+SYS at P576 >set serveroutput on
+SYS at P576 >DECLARE
+  2  l_url VARCHAR2(200) := '&link';
+  3  l_http_request UTL_HTTP.req;
+  4  l_http_response UTL_HTTP.resp;
+  5  BEGIN
+  6  -- Make a HTTP request and get the response.
+  7  l_http_request := UTL_HTTP.begin_request(l_url);
+  8  l_http_response := UTL_HTTP.get_response(l_http_request);
+  9  UTL_HTTP.end_response(l_http_response);
+ 10  dbms_output.put_line(utl_http.request(l_url)) ;
+ 11  END;
+ 12  /
+
+
+
+
+
+DECLARE
+l_url            VARCHAR2(400) := 'https://dispatch-go.statoil.net/gts/operationalAccountablePos';
+l_http_request   UTL_HTTP.req;
+l_http_response  UTL_HTTP.resp;
+BEGIN
+-- Make a HTTP request and get the response.
+l_http_request  := UTL_HTTP.begin_request(l_url);
+l_http_response := UTL_HTTP.get_response(l_http_request);
+UTL_HTTP.end_response(l_http_response);
+END;
+/
+
+echo "output for https://dispatch-go.statoil.net/gts/operationalAccountablePos"
+SELECT utl_http.request('https://dispatch-go.statoil.net/gts/operationalAccountablePos') from dual;
+/
+
+
+
+
+SYS at U793A >begin
+  2    dbms_network_acl_admin.create_acl (
+  3      acl             => 'send_mail.xml',
+  4      description     => 'RITM0657580E',
+  5      principal       => 'SDE_IT',
+  6      is_grant        => TRUE,
+  7      privilege       => 'connect',
+  8      start_date      => null,
+  9      end_date        => null);
+ 10  end;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SYS at U793A >begin
+dbms_network_acl_admin.assign_acl (
+    acl        => 'send_mail.xml',
+    host       => 'mailhost.statoil.no',
+    lower_port => 25,
+    upper_port => 25);
+
+end;
+/
+  2    3    4    5    6    7    8    9
+PL/SQL procedure successfully completed.
+
+SYS at U793A >
+
+
+
+
+
+
+
+
+
+
+

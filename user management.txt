@@ -1,0 +1,975 @@
+
+https://blogs.oracle.com/oraclemagazine/beginning-performance-tuning-active-session-history
+
+
+alter session set nls_date_format='YYYY-MM-DD HH24:MI:SS';
+
+
+
+GRANTING PERMISSIONS ON V$ VIEWS
+••••••••••••••••••••••••••••••••
+
+Example:
+
+grant select on v_$session to PAST1;
+
+The reason for this is v$session is synonym to the view v_$session. so you need to grant select on that main view instead of synonym.
+
+But for data dictionary views, you can directly grant permissions
+
+Example:
+
+grant select on dba_users to PAST1;
+
+
+USER MANAGEMENT
+••••••••••••••••
+
+There are 4 main accounts that are created during install sys, system, sysman and dbmsmp
+
+SYS	Owns all internal tables
+SYSTEM	Has additional tables and views
+SYSMAN	Use by OEM to monitor and gather performance stats, which are stored in the sysaux tablespace
+DBSNMP	Same as sys but for the OEM, owns all internal tables in the sysaux tablespace.
+
+
+CREATE USER 
+•••••••••••
+
+create user vallep identified by password;
+create user vallep identified by password default tablespace users temporary tablespace temp quota 100m on users;
+
+REMOVE USER
+•••••••••••
+	
+drop user vallep;
+drop user vallep cascade;
+
+Note: the cascade option will remove all the users objects as well
+
+ALTER USER
+••••••••••
+
+alter user vallep idenitfied by newpassword;
+ALTER USER CGW IDENTIFIED BY Statoil12 account unlock PASSWORD EXPIRE;
+alter user vallep identified by password;
+alter user vallep identified externally;
+alter user vallep identified globally as extname;
+
+identified by - the password will be kept in the data dicitonary
+identified externally - authenication will be performed by the O/S
+idenitified globally as extname - authenication will be performed by external app i.e radius
+
+a user is only allowed to change is his/her password
+
+QUOTA ON USER
+•••••••••••••
+
+alter user vallep quota 100m on users;
+alter user vallep quota unlimited on users; 
+grant unlimited tablespace to vallep;
+
+USER INFORMATION
+••••••••••••••••
+
+ACCOUNT STATUS
+--------------
+set lines 200
+set pages 200
+col PROFILE for a15
+COL USERNAME FOR A20
+select USERNAME,ACCOUNT_STATUS,LOCK_DATE,EXPIRY_DATE,PROFILE,DEFAULT_TABLESPACE from dba_users where USERNAME Like 'UCS%';
+
+ENCRYPTED PASSWORD,CHANGE DATE, LOCKED DATE AND PASSWORD HAS LAT EXPIRED INFORMATION
+------------------------------------------------------------------------------------
+
+SET LINES 200
+SET PAGES 200
+select a.name,a.password,b.account_status,b.expiry_date,b.lock_date,b.profile from dba_users b, sys.user$ a where a.name=b.username and b.profile='DEFAULT';
+
+
+col NAME for a30
+col PASSWORD for a40
+select NAME,PASSWORD,ptime AS "LAST TIME CHANGED", ctime "CREATION TIME", ltime "LOCKED DATE", LCOUNT "FAILED LOGINS",EXPTIME "PASSWORD HAS LAST EXPIRED" from sys.user$ where NAME like 'SPOTLIGHT%' AND ptime IS NOT NULL ORDER BY ptime DESC;
+
+
+FIND OUT INVALIED ATTEMPT BY ANOTHER USER 
+•••••••••••••••••••••••••••••••••••••••••
+
+set pages 100
+set line 300
+col os_username for a25
+col terminal for a30
+select os_username,username,TERMINAL,action_name,timestamp from dba_audit_session where TIMESTAMP > to_date('2017-05-16 00:00:00', 'YYYY-MM-DD HH24:MI:SS') and RETURNCODE = 1017 AND USERNAME='MIRUSER' order by TIMESTAMP desc;
+
+alter session set nls_date_format='DD-MON-RRRR HH24:MI:SS';
+select TIMESTAMP ,USERNAME,USERHOST from DBA_AUDIT_SESSION where returncode = 1017 and timestamp > (sysdate -1/24) order by 1;
+select TIMESTAMP ,USERNAME,USERHOST,RETURNCODE,ACTION_NAME from DBA_AUDIT_SESSION where timestamp > (sysdate -1/100) order by 1; 
+
+
+select TIMESTAMP ,SUBSTR(USERNAME,1,20) USERNAME,SUBSTR(USERHOST,1,20) USERHOST,RETURNCODE,ACTION_NAME from DBA_AUDIT_SESSION where returncode = 1017 and timestamp > (sysdate -6) and USERNAME='MIRUSER' order by 1;
+
+
+select TIMESTAMP ,SUBSTR(USERNAME,1,20) USERNAME,SUBSTR(USERHOST,1,20) USERHOST,RETURNCODE,ACTION_NAME from DBA_AUDIT_SESSION where returncode > 0 and timestamp > (sysdate -1) order by 1;
+
+
+select * from ( select OS_USERNAME,USERNAME,TERMINAL,TIMESTAMP,RETURNCODE from dba_audit_trail where username='MIRUSER' order by TIMESTAMP desc) where rownum<100;
+select * from ( select OS_USERNAME,USERNAME,TERMINAL,TIMESTAMP,RETURNCODE from dba_audit_trail where username='MIRUSER' order by TIMESTAMP desc;
+
+
+
+col OS_USERNAME for a20
+col USERNAME for a20
+col TERMINAL for a40
+select * from ( select OS_USERNAME,USERNAME,TERMINAL,TIMESTAMP,RETURNCODE from dba_audit_trail where returncode = 1017 and username='ASWSPROD' and TIMESTAMP > to_date('2020-05-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS') order by TIMESTAMP desc) where rownum<100;
+
+
+
+RETURNCODE=0 indicates success
+RETURNCODE=1017 indicates bad password
+RETURNCODE=28000 indicates account is locked out
+
+oracle@hou-vdb01 43% oerr ora 2800
+02800, 00000, "Requests timed out"
+// *Cause:  Some of the requests for asynchronous input or output were not
+//          serviced in the required amount of time.
+// *Action: If the load on the system is high, it is possible that the
+//          timeout limit is too low. Reset it with sfainit(). If the server
+//          processes are dying due to unexpected signals, this is an
+//          internal error, and ORACLE support should be contacted.
+
+
+oracle@hou-vdb01 44% oerr ora 1017
+01017, 00000, "invalid username/password; logon denied"
+// *Cause:
+// *Action:
+
+
+
+FIND WHO LOCKED YOUR ACCOUNT
+----------------------------
+
+set pagesize 1299 
+set lines 299 
+col username for a15 
+col userhost for a13 
+col timestamp for a39 
+col terminal for a23 
+SELECT username,userhost,terminal,timestamp,returncode 
+FROM dba_audit_session 
+WHERE username='&USER_NAME' and returncode in (1017,28000);
+
+
+CHECK PRIVILEGES FOR USER
+•••••••••••••••••••••••••
+
+set lines 200 
+set pages 200
+col PRIV for a30
+col COLNM for a10
+col TYP for a12
+col GRANTEE for a30
+col admin_option  for a5
+col owner for a15
+col tabnm for a11
+select 'ROLE' typ, grantee grantee, granted_role priv, admin_option ad, '--' tabnm, '--' colnm, '--' owner from dba_role_privs where grantee='ARPA' 
+union 
+select 'SYSTEM' typ, grantee grantee, privilege priv, admin_option ad, '--' tabnm, '--' colnm, '--' owner from dba_sys_privs where grantee='ARPA'
+union
+select 'TABLE' typ, grantee grantee, privilege priv, grantable ad, Table_name tabnm, '--' colnm, owner owner from dba_tab_privs where grantee='ARPA'
+union 
+select 'COLUMN' typ, grantee grantee, privilege priv, grantable ad, Table_name tabnm, column_name colnm, owner owner from dba_col_privs where grantee='ARPA' order by 1; 
+
+
+
+SELECT 'GRANT '|| PRIVILEGE ||' ON '||OWNER||'.'||TABLE_NAME || ' TO '|| GRANTEE ||  ';' DD FROM DBA_TAB_PRIVS WHERE GRANTEE IN('WIP');
+SELECT 'GRANT '||PRIVILEGE || ' TO '|| GRANTEE ||  ';' DD FROM DBA_SYS_PRIVS WHERE GRANTEE IN ('WIP');
+SELECT 'GRANT '||GRANTED_ROLE || ' TO '|| GRANTEE ||  ';' DD FROM DBA_ROLE_PRIVS WHERE GRANTEE IN('WIP');
+
+select * from dba_tab_privs where table_name='CONTRACT' and OWNER='RES' and GRANTEE='RES_REPORTER';
+
+CHECK OBJECT PRIVILEGES FOR ANY USER 
+-------------------------------------
+select PRIVILEGE,GRANTEE,GRANTOR from dba_tab_privs where GRANTEE='DRILLREPORTS';
+
+PRIVILEGE                                GRANTEE                        GRANTOR
+---------------------------------------- ------------------------------ ------------
+SELECT                                   DRILLREPORTS                   EDM_SYSMAN
+
+CHECK SYSTEM PRIVILEGES FOR ANY USER 
+-------------------------------------
+select GRANTEE,PRIVILEGE from dba_sys_privs where GRANTEE='GKOSCF';
+
+SELECT 'GRANT '|| PRIVILEGE ||' ON '||OWNER||'.'||TABLE_NAME || ' TO '|| GRANTEE ||  ';' DD FROM DBA_TAB_PRIVS WHERE GRANTEE IN('GKOSCF');
+
+GRANTEE                        PRIVILEGE
+------------------------------ -------------------------------------
+DRILLREPORTS                   ADMINISTER SQL MANAGEMENT OBJECT
+DRILLREPORTS                   ADMINISTER SQL TUNING SET
+DRILLREPORTS                   ADVISOR
+DRILLREPORTS                   CREATE MATERIALIZED VIEW
+DRILLREPORTS                   CREATE RULE
+DRILLREPORTS                   CREATE RULE SET
+DRILLREPORTS                   CREATE EVALUATION CONTEXT
+DRILLREPORTS                   CREATE SESSION
+
+
+- System privileges granted to an user ( scott)
+
+SELECT * FROM DBA_SYS_PRIVS where grantee='SCOTT';
+
+-- Roles granted to an user ( scott)
+
+SELECT * FROM DBA_ROLE_PRIVS where grantee='SCOTT';
+
+-- Object privileges granted to an user ( SCOTT)
+
+SELECT * FROM DBA_TAB_PRIVS WHERE GRANTEE='SCOTT';
+
+-- Column specific privileges granted
+
+SELECT * FROM DBA_COL_PRIVS WHERE WHERE GRANTEE='SCOTT'; 
+
+
+PROFILES
+•••••••• 
+
+FIND INFORMATION ABOUT ANY PROFILE
+-----------------------------------
+
+select * from dba_profileS where profile='PROSOURCE';
+
+PROFILE                        RESOURCE_NAME                    RESOURCE LIMIT
+------------------------------ -------------------------------- -------- -----------
+PROSOURCE                      COMPOSITE_LIMIT                  DEFAULT
+PROSOURCE                      SESSIONS_PER_USER                DEFAULT
+PROSOURCE                      CPU_PER_SESSION                  DEFAULT
+PROSOURCE                      CPU_PER_CALL                     DEFAULT
+PROSOURCE                      LOGICAL_READS_PER_SESSION        DEFAULT
+PROSOURCE                      LOGICAL_READS_PER_CALL           DEFAULT
+PROSOURCE                      IDLE_TIME                        UNLIMITED
+PROSOURCE                      CONNECT_TIME                     DEFAULT
+PROSOURCE                      PRIVATE_SGA                      DEFAULT
+PROSOURCE                      FAILED_LOGIN_ATTEMPTS            PASSWORD DEFAULT
+PROSOURCE                      PASSWORD_LIFE_TIME               PASSWORD DEFAULT
+PROSOURCE                      PASSWORD_REUSE_TIME              PASSWORD DEFAULT
+PROSOURCE                      PASSWORD_REUSE_MAX               PASSWORD DEFAULT
+PROSOURCE                      PASSWORD_VERIFY_FUNCTION         PASSWORD NULL
+PROSOURCE                      PASSWORD_LOCK_TIME               PASSWORD DEFAULT
+PROSOURCE                      PASSWORD_GRACE_TIME              PASSWORD DEFAULT
+
+
+select * from user_resource_limits;
+
+RESOURCE_NAME                    LIMIT
+-------------------------------- ------------------------------
+COMPOSITE_LIMIT                  UNLIMITED
+SESSIONS_PER_USER                UNLIMITED
+CPU_PER_SESSION                  UNLIMITED
+CPU_PER_CALL                     UNLIMITED
+LOGICAL_READS_PER_SESSION        UNLIMITED
+LOGICAL_READS_PER_CALL           UNLIMITED
+IDLE_TIME                        480
+CONNECT_TIME                     UNLIMITED
+PRIVATE_SGA                      UNLIMITED
+
+
+CREATE PROFILE
+--------------
+
+CREATE PROFILE PROSOURCE_TEMP_ENQ1084707 LIMIT
+COMPOSITE_LIMIT                  DEFAULT
+SESSIONS_PER_USER                DEFAULT
+CPU_PER_SESSION                  DEFAULT
+CPU_PER_CALL                     DEFAULT
+LOGICAL_READS_PER_SESSION        DEFAULT
+LOGICAL_READS_PER_CALL           DEFAULT
+IDLE_TIME                        UNLIMITED
+CONNECT_TIME                     DEFAULT
+PRIVATE_SGA                      DEFAULT
+FAILED_LOGIN_ATTEMPTS            DEFAULT
+PASSWORD_LIFE_TIME               DEFAULT
+PASSWORD_REUSE_TIME              DEFAULT
+PASSWORD_REUSE_MAX               UNLIMITED
+PASSWORD_VERIFY_FUNCTION         NULL
+PASSWORD_LOCK_TIME               DEFAULT
+PASSWORD_GRACE_TIME              DEFAULT
+;
+
+OR
+
+CREATE PROFILE PROSOURCE_TEMP_ENQ1084707 LIMIT 
+IDLE_TIME                        UNLIMITED
+PASSWORD_REUSE_MAX               UNLIMITED
+PASSWORD_VERIFY_FUNCTION         NULL
+;
+
+
+HOE TO CHANGE THE PRFILE FOR USER
+•••••••••••••••••••••••••••••••••
+
+ALTER USER CAS PROFILE PROSOURCE_TEMP_ENQ1084707;
+
+FIND PARTICULAR RESOURCE INFORMATION FROM PROFILE
+•••••••••••••••••••••••••••••••••••••••••••••••••
+
+select RESOURCE_NAME,LIMIT from DBA_PROFILES WHERE RESOURCE_NAME IN ('PASSWORD_LIFE_TIME','PASSWORD_GRACE_TIME','PASSWORD_REUSE_MAX') AND PROFILE='DEFAULT';
+
+RESOURCE_NAME                    LIMIT
+-------------------------------- ----------------------------------------
+PASSWORD_LIFE_TIME               UNLIMITED
+PASSWORD_REUSE_MAX               5
+PASSWORD_GRACE_TIME              UNLIMITED
+
+
+FIND THE DDL FOR PROFILE
+••••••••••••••••••••••••
+
+
+set long 20000 longchunksize 20000 pagesize 0 linesize 1000 feedback off verify off trimspool on
+column ddl format a1000
+
+begin
+   dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'SQLTERMINATOR', true);
+   dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'PRETTY', true);
+end;
+/
+
+select dbms_metadata.get_ddl('PROFILE', profile) as profile_ddl
+from   (select distinct profile
+        from   dba_profiles)
+where  profile like upper('%&1%');
+
+set linesize 80 pagesize 14 feedback on verify on
+
+
+
+HOW TO CREATE A PROFILE
+•••••••••••••••••••••••
+
+CREATE PROFILE PROSOURCE_TEMP_ENQ1084707 LIMIT
+COMPOSITE_LIMIT                  DEFAULT
+SESSIONS_PER_USER                DEFAULT
+CPU_PER_SESSION                  DEFAULT
+CPU_PER_CALL                     DEFAULT
+LOGICAL_READS_PER_SESSION        DEFAULT
+LOGICAL_READS_PER_CALL           DEFAULT
+IDLE_TIME                        UNLIMITED
+CONNECT_TIME                     DEFAULT
+PRIVATE_SGA                      DEFAULT
+FAILED_LOGIN_ATTEMPTS            DEFAULT
+PASSWORD_LIFE_TIME               DEFAULT
+PASSWORD_REUSE_TIME              DEFAULT
+PASSWORD_REUSE_MAX               UNLIMITED
+PASSWORD_VERIFY_FUNCTION         NULL
+PASSWORD_LOCK_TIME               DEFAULT
+PASSWORD_GRACE_TIME              DEFAULT
+;
+
+OR
+
+CREATE PROFILE PROSOURCE_TEMP_ENQ1084707 LIMIT 
+IDLE_TIME                        UNLIMITED
+PASSWORD_REUSE_MAX               UNLIMITED
+PASSWORD_VERIFY_FUNCTION         NULL
+;
+
+
+HOW TO REUSE SAME PASSWORD ANY USER
+•••••••••••••••••••••••••••••••••••
+
+col NAME for a15
+col PASSWORD for a40
+set linesize 300
+select name,PASSWORD,CTIME,PTIME,LTIME from user$ where name='TARGETDBA';
+--------------------------------------------------------------------
+
+NAME            PASSWORD                                 CTIME               PTIME               LTIME
+--------------- ---------------------------------------- ------------------- ------------------- -------------------
+SPORT           D9FE06540E7A7B89                         15/11-2008 08:06:06 25/03-2017 14:49:02 25/03-2017 12:53:58
+
+
+SYS at P283 >select USERNAME,ACCOUNT_STATUS,PROFILE,EXPIRY_DATE from dba_users where USERNAME='SPORT';
+
+USERNAME                       ACCOUNT_STATUS                   PROFILE                        EXPIRY_DATE
+------------------------------ -------------------------------- ------------------------------ -------------------
+VGSM                           OPEN                             DEFAULT                        15/12-2016 17:10:37
+
+
+
+CREATE TEST PROFILE WITH PSAAWORD REUSE TIME UNLIMITED
+••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+create profile Test limit password_reuse_time UNLIMITED password_reuse_max unlimited PASSWORD_LOCK_TIME unlimited;
+
+ASSIGN TEST PROFILE TO THE USER 
+••••••••••••••••••••••••••••••••
+
+alter user SPORT profile test;
+
+CHANGE PASSWORD TO THE USER
+•••••••••••••••••••••••••••
+alter user SPORT identified by statoil123;
+alter user SPORT identified by values 'D9FE06540E7A7B89';
+
+AGAIN REASSIGN DEFAULT PROFILE TO THE USER
+••••••••••••••••••••••••••••••••••••••••••
+alter user SPORT profile default;
+
+DROP TEST PROFILE
+•••••••••••••••••
+drop profile test;
+
+select PROFILE,USERNAME from dba_users where USERNAME='DBMHS';
+
+PROFILE                        USERNAME
+------------------------------ ------------------------------
+DEFAULT                        DBMHS
+
+
+DISPALY THE DDL FOR THE SPACEFIED PROFILE
+•••••••••••••••••••••••••••••••••••••••••
+
+set long 20000 longchunksize 20000 pagesize 0 linesize 1000 feedback off verify off trimspool on
+column ddl format a1000
+
+begin
+   dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'SQLTERMINATOR', true);
+   dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'PRETTY', true);
+end;
+/
+
+select dbms_metadata.get_ddl('PROFILE', profile) as profile_ddl
+from   (select distinct profile
+        from   dba_profiles)
+where  profile like upper('%&1%');
+
+set linesize 80 pagesize 14 feedback on verify on
+
+
+OUTPUT:
+
+ ALTER PROFILE "DEFAULT"
+  LIMIT
+       COMPOSITE_LIMIT UNLIMITED
+       SESSIONS_PER_USER UNLIMITED
+       CPU_PER_SESSION UNLIMITED
+       CPU_PER_CALL UNLIMITED
+       LOGICAL_READS_PER_SESSION UNLIMITED
+       LOGICAL_READS_PER_CALL UNLIMITED
+       IDLE_TIME 480
+       CONNECT_TIME UNLIMITED
+       PRIVATE_SGA UNLIMITED
+       FAILED_LOGIN_ATTEMPTS 10
+       PASSWORD_LIFE_TIME 43200000/86400
+       PASSWORD_REUSE_TIME UNLIMITED
+       PASSWORD_REUSE_MAX 5
+       PASSWORD_VERIFY_FUNCTION NULL
+       PASSWORD_LOCK_TIME 86400/86400
+       PASSWORD_GRACE_TIME 10368000/86400 ;
+
+
+ROLES IN ORACLE
+•••••••••••••••
+
+Roles means collection of privileges 
+
+CREATE ROLE
+-----------
+
+Create role select_data_role;
+
+NOW ASSIGN PRIVILEGES 
+
+Grant select on emp to select_data_role;
+Grant select on dept to select_data_role;
+Grant select on bonus to select_data_role;
+
+HOW TO GRANT THE ROLE
+---------------------
+GRANT select_data_role TO Robert;
+
+REVOKE THE ROLE 
+---------------
+REVOKE select_data_role FROM Robert;
+
+FIND OUT INFORAMTION REGARDING ROLE
+•••••••••••••••••••••••••••••••••••
+
+FIND OUT WHICH USER HAS WHICH ROLE
+----------------------------------
+select GRANTED_ROLE,DEFAULT_ROLE from dba_role_privs where GRANTEE='DRILLREPORTS';
+
+FIND OUT HOW MANY ROLES EXIST
+-----------------------------
+SELECT * FROM dba_roles;
+
+GRANTEE is the name, role, or user that was assigned the privilege.(JISKO PRIVILEGES ASSIGN HAI)
+
+SUPPOSE THAT IF YOU WANT TO FIND OUT ROLE "CONNECT" HAS SOW MAY PRIVILEGES 
+--------------------------------------------------------------------------
+
+SELECT PRIVILEGE,GRANTEE FROM DBA_SYS_PRIVS WHERE GRANTEE='CONNECT';
+
+PRIVILEGE                                GRANTEE
+---------------------------------------- --------
+CREATE SESSION                           CONNECT
+
+SUPPOSE THAT IF YOU WANT TO FIND OUT ANY ROLE HOW MANY SYSTEM PRIVILEGES HAVE, USE BELOW QUERY 
+----------------------------------------------------------------------------------------------
+select * from ROLE_SYS_PRIVS where ROLE='SCHEDULER_ADMIN';
+
+ROLE                           PRIVILEGE                                ADM
+------------------------------ ---------------------------------------- ---
+SCHEDULER_ADMIN                CREATE ANY JOB                           YES
+SCHEDULER_ADMIN                EXECUTE ANY PROGRAM                      YES
+SCHEDULER_ADMIN                EXECUTE ANY CLASS                        YES
+SCHEDULER_ADMIN                MANAGE SCHEDULER                         YES
+SCHEDULER_ADMIN                CREATE EXTERNAL JOB                      YES
+SCHEDULER_ADMIN                CREATE JOB                               YES
+
+SUPPOSE THAT IF YOU WANT TO FIND OUT ANY ROLE HOW MANY OBJECT PRIVILEGES HAVE, USE BELOW QUERY 
+----------------------------------------------------------------------------------------------
+select * from ROLE_TAB_PRIVS where ROLE='EXP_FULL_DATABASE';
+
+
+USE BELOW ROLES TO FIND OUT MORE INFORAMTION REGARDING ROLE
+-----------------------------------------------------------
+
+DBA_ROLE_PRIVS - Roles granted to users and roles
+ROLE_ROLE_PRIVS - Roles which are granted to roles
+ROLE_SYS_PRIVS - System privileges granted to roles
+ROLE_TAB_PRIVS - Table privileges granted to roles
+
+
+USER IDLE TIME
+••••••••••••••
+
+SELECT sid, osuser, username, status,
+TO_CHAR(logon_time, 'DAY HH24:MI:SS') LOGON_TIME,
+FLOOR(last_call_et/3600)||':'||
+FLOOR(MOD(last_call_et,3600)/60)||':'||
+MOD(MOD(last_call_et,3600),60) IDLE, program
+FROM v_$session
+WHERE username IS NOT NULL
+ORDER BY last_call_et;
+
+ACTIVE USERS 
+••••••••••••
+SELECT COUNT(*) "ACTIVE USERS" FROM v_$session WHERE username IS NOT NULL;
+
+MEMORY USED BY USER
+•••••••••••••••••••
+SELECT username, VALUE || 'bytes' "Current UGA memory"
+FROM v_$session sess, v_$sesstat sstat, v_$statname sname
+WHERE sess.sid = sstat.sid
+AND sstat.statistic# = sname.statistic#
+AND sname.name = 'session uga memory';
+
+
+col TABLE_NAME for a30
+col COMMENTS for a70
+select * from dict where table_name like '%ROLE%';
+
+OUTPUT:
+
+***************************************************************************************************************************************************************************************
+***************************************************************************************************************************************************************************************
+
+TABLE_NAME                     COMMENTS
+------------------------------ --------------------------------------------------------------------------
+DBA_CODE_ROLE_PRIVS            Roles attached to the program units
+DBA_CONNECT_ROLE_GRANTEES      Information regarding which users are granted CONNECT
+DBA_ROLES                      All Roles which exist in the database
+DBA_ROLE_PRIVS                 Roles granted to users and roles
+DBA_SCHEDULER_JOB_ROLES        All scheduler jobs in the database by database role
+DBA_XS_DYNAMIC_ROLES           All the Real Application Security dynamic roles defined in the database
+DBA_XS_PROXY_ROLES             All the Real Application Security proxy role grants
+DBA_XS_ROLES                   All the Real Application Security roles defined in the database
+DBA_XS_ROLE_GRANTS             All the Real Application Security role grants
+DBA_XS_SESSION_ROLES           Roles enabled in application sessions
+ALL_CODE_ROLE_PRIVS            Roles attached to the program units accessible to the user
+USER_CODE_ROLE_PRIVS           Roles attached to the program units owned by current user
+USER_ROLE_PRIVS                Roles granted to current user
+ROLE_ROLE_PRIVS                Roles which are granted to roles
+ROLE_SYS_PRIVS                 System privileges granted to roles
+ROLE_TAB_PRIVS                 Table privileges granted to roles
+SESSION_ROLES                  Roles which the user currently has enabled.
+V$XS_SESSION_ROLES             Synonym for V_$XS_SESSION_ROLES
+GV$XS_SESSION_ROLES            Synonym for GV_$XS_SESSION_ROLES
+GV$XS_SESSION_ROLE             Synonym for GV_$XS_SESSION_ROLES
+
+***************************************************************************************************************************************************************************************
+***************************************************************************************************************************************************************************************
+
+
+SELECT dbms_metadata.get_granted_ddl('ROLE_GRANT', 'APP_EXECUTE') FROM dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','APP_EXECUTE')
+--------------------------------------------------------------
+
+   GRANT "CONNECT" TO "APP_EXECUTE"
+
+SELECT dbms_metadata.get_granted_ddl('SYSTEM_GRANT','APP_EXECUTE') FROM dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','APP_EXECUTE')
+--------------------------------------------------------------
+
+  GRANT CREATE TABLE TO "APP_EXECUTE"
+
+
+set long 100000
+SELECT dbms_metadata.get_granted_ddl('OBJECT_GRANT','APP_EXECUTE') FROM dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','APP_EXECUTE')
+-------------------------------------------------------------
+
+  GRANT SELECT ON "SYS"."DBA_JOBS_RUNNING" TO "APP_EXECUTE"
+  GRANT SELECT ON "SYS"."DBA_JOBS" TO "APP_EXECUTE"
+  GRANT EXECUTE ON "SYS"."DBMS_CRYPTO" TO "APP_EXECUTE"
+  GRANT SELECT ON "HANDEL_SYS"."H_AOINFO_ID" TO "APP_EXECUTE"
+  GRANT SELECT ON "HANDEL_SYS"."H_AT_ID" TO "APP_EXECUTE"
+  GRANT SELECT ON "HANDEL_SYS"."H_AVTSEKV" TO "APP_EXECUTE"
+  GRANT SELECT ON "HANDEL_SYS"."H_AVT_ID" TO "APP_EXECUTE"
+  GRANT SELECT ON "HANDEL_SYS"."H_EA_ID" TO "APP_EXECUTE"
+
+
+
+sqlplus SYSTEM/GG75SB_POFOT3M9LD3CI@P530E @/tmp/0306_2016.sql
+
+
+
+
+select dbms_metadata.get_ddl('USER', '&USER') || '/' usercreate from dual;
+
+
+
+
+col OWNER for a20
+select OWNER,SELECT 'GRANT select on '||OWNER||'.'||TABLE_NAME || ' TO '|| 'ANKIREDD' || ';' from dba_objects  where OWNER='IPMSI5';
+
+select owner 'GRANT SELECT ON '||ICON_U.OWNER||'.'|| ICON_U.table_name || ' TO EMAIL_ARCHIVE_U'; 
+
+set long 9999999
+SELECT dbms_metadata.get_ddl('USER','&&CONFIG8') FROM dual;
+
+
+GRANT FULL RIGHTS TO ICON_U tables/views - EMAIL_ARCHIVE_U user should see ALL TABLES AND VIEWS for user ICON_U
+
+
+Priviles schema A to schema B
+*******************************
+
+SELECT 'GRANT SELECT ON COSMO.' ||OBJECT_NAME|| ' TO ARPA ; ' FROM DBA_OBJECTS WHERE owner='COSMO';
+
+GRANT UNLIMITED TABLESPACE TO EPRD1;
+GRANT CREATE SESSION GRANT ANY PRIVILEGE TO EPRD1;
+GRANT CONNECT TO EPRD1;
+GRANT CONNECT, RESOURCE, DBA TO books_admin;
+
+ select 'drop '||object_type||' '||OWNER||'.'|| object_name || ';' from dba_objects where object_type not in ('SCHEDULE','DATABASE LINK','TABLE','JOB') and  owner in ('HERA','HERA_NC','OCT_AMD_COMMON','OCT_ODS_COMMON');
+
+********************************************************************
+
+
+set ti on timi on echo on feed on lines 1000 pages 1000
+
+spool index_non_partition_1.sql
+select 'alter index '|| owner||'.'||index_name||' rebuild parallel 8 nologging;'
+||CHR(10)||'alter index '||owner||'.'||index_name||' noparallel logging;' 
+from dba_indexes where partitioned='NO' and owner='MRP_3_PROD' order by table_name;
+
+spool off
+
+spool mrp3.sql
+select 'exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'''||owner||''',tabname=>'''||table_name||''',granularity => ''ALL'', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);'
+from dba_tables where owner='MRP_3_PROD';
+
+
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $ cat stats_gather.sh
+sqlplus /nolog <<EOF
+conn / as sysdba
+set echo on time on timing on
+spool /usr1/data1_backup/stats_gather.log
+exec dbms_stats.gather_schema_stats(ownname => 'HWS_CAT_SSE_DW',estimate_percent=>DBMS_STATS.AUTO_SAMPLE_SIZE,granularity=>'ALL',CASCADE=>TRUE,method_opt=>'FOR ALL COLUMNS size 1',no_invalidate=>TRUE,DEGREE => 8);
+spool off
+EOF
+
+chmod 755 stats_gather.sh
+nohup sh stats_gather.sh>stats_gather.out 2>&1 &
+
+
+
+SELECT 'exec dbms_stats.ggather_schema_stats('''||username ||''', granularity =>ALL,  cascade => TRUE, estimate_percent =>dbms_stats.auto_sample_size, method_opt=>FOR ALL COLUMNS SIZE 1,no_invalidate=>TRUE, DEGREE => 8);' 
+from dba_users
+where username not in ('SYS','SYSTEM','OUTLN','PERFSTAT','DBSNMP','SYSMAN');
+
+
+
+
+
+select 'alter index '||owner||'.'||index_name ||' rebuild online nologging;'
+from dba_indexes where owner=upper('COSMO');
+
+
+For table level indexing
+**************************
+
+
+select 'alter index '||owner||'.'||index_name ||' rebuild online nologging;'
+from dba_indexes where TABLE_NAME=upper('T_IRCRFR_ENCL');
+
+
+To monitor executing jobs using dba_datapump_jobs view:
+*******************************************************
+
+set linesize 200
+set pagesize 200
+col owner_name format a12
+col job_name format a20
+col operation format a12
+col job_mode format a20
+SELECT 
+owner_name, 
+job_name, 
+operation, 
+job_mode, 
+state 
+FROM 
+dba_datapump_jobs
+where 
+state='EXECUTING';
+
+****************************************
+
+To get the detail information like SID, Serial#, and % of completion:
+
+SELECT 
+OPNAME, 
+SID, 
+SERIAL#, 
+CONTEXT, 
+SOFAR, 
+TOTALWORK,
+    ROUND(SOFAR/TOTALWORK*100,2) "%_COMPLETE"
+FROM 
+V$SESSION_LONGOPS
+WHERE 
+OPNAME in
+(
+select 
+d.job_name
+from 
+v$session s, 
+v$process p, 
+dba_datapump_sessions d
+where 
+p.addr=s.paddr 
+and 
+s.saddr=d.saddr
+)
+AND 
+OPNAME NOT LIKE '%aggregate%'
+AND 
+TOTALWORK != 0
+AND 
+SOFAR <> TOTALWORK;
+
+********************************************************************
+
+Script: session_waits.sql
+
+SET LINESIZE 200
+SET PAGESIZE 1000
+COLUMN username FORMAT A20
+COLUMN event FORMAT A30
+SELECT NVL(s.username, '(TNG)') AS username,
+       s.sid,
+       s.serial#,
+       sw.event,
+       sw.wait_time,
+       sw.seconds_in_wait,
+       sw.state
+FROM   v$session_wait sw,
+       v$session s
+WHERE  s.sid = sw.sid
+
+
+**************************************************************************************
+
+
+SQL> select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='DMA_OMT';
+
+Size in GB
+----------
+587.265259
+
+
+How To Find When A Table Was Last Modified In Oracle
+
+*******************************************************
+
+
+exec DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO;
+select INSERTS,UPDATES,DELETES,TRUNCATED,TIMESTAMP from dba_tab_modifications where TABLE_NAME='TEST' and TABLE_OWNER='SCOTT';
+
+********************************************************
+
+
+
+ERROR at line 1:
+ORA-02266: unique/primary keys in table referenced by enabled foreign keys
+ 
+set lines 2999
+COL CHILD_TABLE FOR A20
+col CONSTRAINT_NAME for a26
+col owner form a10
+col FK_column form a15
+col table_name form a30
+select b.owner, b.table_name child_table,
+c.column_name FK_column, b.constraint_name
+from dba_constraints a, dba_constraints b, dba_cons_columns c
+where a.owner=b.r_owner
+and b.owner=c.owner
+and b.table_name=c.table_name
+and b.constraint_name=c.constraint_name
+and a.constraint_name=b.r_constraint_name
+and b.constraint_type='R'
+and a.owner='&owner'
+and a.table_name='&TABLE_NAME'
+and a.CONSTRAINT_TYPE='P';
+
+
+OWNER      CHILD_TABLE          FK_COLUMN       CONSTRAINT_NAME
+---------- -------------------- --------------- --------------------------
+MQT        MQT_QUOTE_TOTAL      QUOTE_ID        QUOTE_TOTALS_ID
+
+
+
+SQL> alter table MQT.MQT_QUOTE_TOTAL disable constraint QUOTE_TOTALS_ID;
+ 
+Table altered.
+ 
+SQL> truncate table dbaclass.AAF_USER;
+ 
+Table truncated.
+ 
+
+ OWNER      CHILD_TABLE          FK_COLUMN       CONSTRAINT_NAME
+---------- -------------------- --------------- --------------------------
+MQT        MQT_QUOTE_TOTAL      QUOTE_ID        QUOTE_TOTALS_ID
+
+SQL>
+SQL>
+SQL> alter table MQT.MQT_QUOTE_TOTAL disable constraint QUOTE_TOTALS_ID;
+
+Table altered.
+
+SQL>
+SQL>
+SQL> truncate table MQT.MQT_QUOTE_INFO;
+
+Table truncated.
+
+
+
+select 'Grant select on PEGARULES.'||OBJECT_NAME||' to DMS_USR;' from dba_objects where OWNER='PEGARULES' and object_type='TABLE'; select 'Grant select on PEGADATA.'||OBJECT_NAME||' to DMS_USR;' from dba_objects where OWNER='PEGADATA' and object_type='TABLE';
+
+PDB
+*****
+
+Recvoering the pdbs
+
+https://www.datavail.com/blog/how-to-do-a-point-in-time-restore-of-one-pluggable-database-with-multiples/
+
+
+
+show pdbs
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         4 NSNITPDB                       READ WRITE NO
+
+show con_name
+
+alter session set container='NSNITPDB;
+
+select owner,OBJECT_NAME,object_type,count(*),status 
+from dba_objects where owner='WIP' group by owner,object_type,status;
+
+
+
+
+set lines 200
+col name for a35
+col value for a25
+Select name,VALUE,ISDEFAULT,ISSES_MODIFIABLE,ISSYS_MODIFIABLE from v$parameter where name like '%sga';
+
+
+NAME                                VALUE                     ISDEFAULT ISSES ISSYS_MOD
+----------------------------------- ------------------------- --------- ----- ---------
+streams_pool_size                   0                         TRUE      FALSE IMMEDIATE
+
+
+
+Select name,VALUE,ISDEFAULT,ISSES_MODIFIABLE,ISSYS_MODIFIABLE from v$parameter where name like '%sga';
+
+SQL> SQL> SQL>
+
+NAME                                VALUE                     ISDEFAULT ISSES ISSYS_MOD
+----------------------------------- ------------------------- --------- ----- ---------
+pre_page_sga                        FALSE                     TRUE      FALSE FALSE
+lock_sga                            FALSE                     TRUE      FALSE FALSE
+
+https://ittutorial.org/dbms_metadata-get_ddl-get-ddl-create-script-of-any-object-in-oracle/
+
+set linesize 250
+col NAME for a15
+col OPEN_MODE for a15
+col LOGINS for a10
+col STATUS for a10
+col HOST_NAME for a25
+col DATABASE_ROLE for a20
+col STARTUP for a30
+select name,open_mode,logins,status,DATABASE_ROLE,HOST_NAME,to_char(startup_time,'DD/MM/YYYY HH24:MI:SS') as STARTUP from v$database,v$instance;
+
+
+
+set time on;
+set timing on;
+select name,open_mode from v$database;
+select systimestamp from dual;
+select distinct sid from v$mystat;
+show user;
+exec HERA.HERA_CUST_MVIEW.REFRESH('HERA_MVIEW', 'DWH_X20_RCV_VBAP', NULL, 'C');
+commit;
+select systimestamp from dual;
+exit;
+
+
+
+nohup sqlplus "/ as sysdba" @RITM2797493.sql >> RITM2797493.sql.out6 &
+
+select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='ERM_D_TR_PROFC_NAME';
+														
+select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS,LAST_ANALYZED from dba_indexes where TABLE_NAME='ERM_D_TR_PROFC_NAME';
+
+col OWNER for a15
+col DB_LINK for a31
+col HOST for a45
+select * from dba_db_links;
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,358 @@
+On st-lindba05
+••••••••••••••
+
+https://dbaclass.com/article/cloning-oracle-home-from-one-server-to-another-server/
+
+cd /prog/oracle/stage/linux_x64/11.2.0/11.2.0.3
+
+On Server where you want to install the ORACLE_HOME (on db70)
+••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+mkdir /prog70/oracle/product/11.2.0.3.6
+
+Copy the clone from st-lindba05
+•••••••••••••••••••••••••••••••
+
+scp clone_11.2.0.3.6.tar.gz st-tdb10:/prog70/oracle/product/11.2.0.3.6
+
+Unzip the clone file on db70
+••••••••••••••••••••••••••••
+tar -xvzf clone_12.1.0.2.9.tar.gz
+
+Run following command
+•••••••••••••••••••••
+./oui/bin/runInstaller -clone -silent -defaultHomeName ORACLE_HOME=/prog70/oracle/product/12.1.0.2.10 ORACLE_BASE=/prog70/oracle -invPtrLoc /prog70/oracle/oraInst.loc
+
+[oraz11@muvmndb039 bin]$
+[oraz11@muvmndb039 bin]$ ./runInstaller.sh -clone -silent -defaultHomeName ORACLE_HOME=/oracle/I25/920_64 ORACLE_HOME_NAME=dbhome920 ORACLE_BASE=/oracle/I25 -invPtrLoc /oracle/I25/oraInventory/oraInst.loc
+Starting Oracle Universal Installer...
+
+No pre-requisite checks found in oraparam.ini, no system pre-requisite checks will be executed.
+Preparing to launch Oracle Universal Installer from /tmp/OraInstall2020-11-03_05-38-25PM. Please wait ...[oraz11@muvmndb039 bin]$ Oracle Universal Installer, Version 10.2.0.4.0 Production
+Copyright (C) 1999, 2008, Oracle. All rights reserved.
+
+You can find a log of this install session at:
+ /oracle/Z11/oraInventory/logs/cloneActions2020-11-03_05-38-25PM.log
+.................................................................................................... 100% Done.
+
+
+
+perl clone.pl ORACLE_HOME=/oracle/I25/920_64 ORACLE_HOME_NAME=dbhome920
+
+An Example Of How To Clone An Existing Oracle9i Release 2 (9.2.0.x) RDBMS Installation (Doc ID 559863.1)
+
+./runInstaller -clone -silent -ignorePreReq ORACLE_HOME=/oracle/I25/920_64 ORACLE_HOME_NAME=dbhome920	
+
+
+
+I
+
+
+
+After then run root.sh file , output of root.sh file is 
+
+
+[root@hou-vtdb01 ~]# cat /dbprog/oracle/product/12.1.0.2.8/install/root_hou-vtdb01_2016-10-05_21-52-44.log
+Performing root user operation.
+
+The following environment variables are set as:
+    ORACLE_OWNER= oracle
+    ORACLE_HOME=  /dbprog/oracle/product/12.1.0.2.8
+   Copying dbhome to /usr/local/bin ...
+   Copying oraenv to /usr/local/bin ...
+   Copying coraenv to /usr/local/bin ...
+
+Entries will be added to the /etc/oratab file as needed by
+Database Configuration Assistant when a database is created
+Finished running generic part of root script.
+Now product-specific root actions will be performed.
+
+
+rm clone_11.2.0.3.6.tar.gz
+
+And then copy following file
+•••••••••••••••••••••••••••
+
+cp sqlnet.ora tnsnames.ora ldap.ora /dbprog/oracle/product/11.2.0.3.7/network/admin
+
+
+REMOVE ORACLE HOME FROM ANY SERVER 
+••••••••••••••••••••••••••••••••••
+••••••••••••••••••••••••••••••••••
+
+CHECK ORACLE HOMES AVAILABILITY
+•••••••••••••••••••••••••••••••
+
+OUTPUT LOOKS LIKE
+=================
+
+oracle@st-db115 48% pwd
+/prog92/oracle/product
+oracle@st-db115 49% ls -lrt
+total 104
+drwxr-x--- 76 oracle dba  8192 Jun  9  2013 11.2.0.3.6/
+drwxr-x--- 77 oracle dba  8192 Aug 14  2015 11.2.0.4.6/
+drwxr-x--- 71 oracle dba  8192 Oct 25 06:59 12.1.0.2.3/
+drwxr-x--- 76 oracle dba  8192 Dec  4 00:50 11.2.0.3.7/
+drwxr-x--- 77 oracle dba  8192 Dec  4 00:51 11.2.0.4.5/
+drwxr-x--- 74 oracle dba  8192 Dec 16 21:09 11.2.0.4.0/
+drwxr-x--- 78 oracle dba  8192 Dec 22 13:27 11.2.0.4.8P/
+drwxr-x--- 71 oracle dba  8192 Mar 22 01:08 12.1.0.2.4/
+drwxrwxrwx  2 root   root 8192 Mar 22 04:08 home_archive/
+drwxr-x--- 71 oracle dba  8192 Mar 22 10:41 12.1.0.2.5V/
+drwxr-x--- 71 oracle dba  8192 Mar 22 10:43 12.1.0.2.5/
+drwxr-x--- 78 oracle dba  8192 Mar 22 10:43 11.2.0.4.8/
+drwxr-x--- 78 oracle dba  8192 Mar 22 12:57 11.2.0.4.7/
+
+=======================================================
+
+CHECK IF HOME IS NOT USED BY OWB 
+••••••••••••••••••••••••••••••••
+
+select * From owbsys.owbrtps;
+
+KEY                VALUE
+---------------    --------------------------------
+11.2.0.3.0[1]     /dbprog/oracle/product/11.2.0.3.6
+
+
+vi /tmp/owbsys.sql
+spool /tmp/owbsys.log append
+col KEY for a15
+col VALUE for a45
+select name from v$database;
+select * From owbsys.owbrtps;
+spool off
+
+RunAsSys all /tmp/owbsys.sql
+
+CHECK ORACLE HOME MAY BE USED IN LISTENER.ORA FILE  
+•••••••••••••••••••••••••••••••••••••••••••••••••••
+
+ALSO CHECK FOR AGENT
+••••••••••••••••••••
+
+CHECK IF THE ORACLE_HOME HAS BEEN DETACH FROM INVENTORY
+•••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+
+oracle@st-db115 85% pwd
+/prog92/oracle/oraInventory/ContentsXML
+oracle@st-db115 86% ls -lrt
+total 24
+-rw-rw---- 1 oracle dba 1632 Mar 21 14:55 inventory.xml
+-rw-rw---- 1 oracle dba  307 Mar 21 14:55 comps.xml
+-rw-rw---- 1 oracle dba  270 Mar 21 14:55 libs.xml
+
+OUTPUT:
+======
+
+****************************************************************************************
+
+oracle@st-db115 87% cat inventory.xml
+<?xml version="1.0" standalone="yes" ?>
+<!-- Copyright (c) 1999, 2010, Oracle. All rights reserved. -->
+<!-- Do not modify the contents of this file by hand. -->
+<INVENTORY>
+<COMPOSITEHOME_LIST>
+</COMPOSITEHOME_LIST>
+<VERSION_INFO>
+   <SAVED_WITH>10.2.0.5.0</SAVED_WITH>
+   <MINIMUM_VER>2.1.0.6.0</MINIMUM_VER>
+</VERSION_INFO>
+<HOME_LIST>
+<HOME NAME="OraHome1" LOC="/prog92/oracle/product/11.2.0.3.6" TYPE="O" IDX="4"/>
+<HOME NAME="OraHome2" LOC="/prog92/oracle/product/11.2.0.3.7" TYPE="O" IDX="5"/>
+<HOME NAME="OraHome3" LOC="/prog92/oracle/product/11.2.0.4.0" TYPE="O" IDX="6"/>
+<HOME NAME="OraHome4" LOC="/prog92/oracle/product/11.2.0.4.5" TYPE="O" IDX="7"/>
+<HOME NAME="OraHome5" LOC="/prog92/oracle/product/11.2.0.4.6" TYPE="O" IDX="8"/>
+<HOME NAME="OraHome6" LOC="/prog92/oracle/product/12.1.0.2.3" TYPE="O" IDX="9"/>
+<HOME NAME="OraHome7" LOC="/prog92/oracle/product/12.1.0.2.4" TYPE="O" IDX="10"/>
+<HOME NAME="OraHome8" LOC="/prog92/oracle/product/11.2.0.4.7" TYPE="O" IDX="11"/>
+<HOME NAME="OraHome9" LOC="/prog92/oracle/product/12.1.0.2.5V" TYPE="O" IDX="12"/>
+<HOME NAME="OraHome10" LOC="/prog92/oracle/product/11.2.0.4.8" TYPE="O" IDX="13"/>
+<HOME NAME="OraHome11" LOC="/prog92/oracle/product/12.1.0.2.5" TYPE="O" IDX="14"/>
+<HOME NAME="OraHome12" LOC="/prog92/oracle/product/11.2.0.4.8P" TYPE="O" IDX="15"/>
+<HOME NAME="agent11g1" LOC="/prog92/oracle/Middleware/agent11g" TYPE="O" IDX="3" REMOVED="T"/>
+<HOME NAME="OraDb11g_home1" LOC="/prog92/oracle/product/11.2.0.3" TYPE="O" IDX="1" REMOVED="T"/>
+<HOME NAME="Home10_db92" LOC="/prog92/oracle/product/10.2.0" TYPE="O" IDX="2" REMOVED="T"/>
+</HOME_LIST>
+</INVENTORY>
+
+****************************************************************************************************
+
+Run detachHome.sh 
+•••••••••••••••••
+
+oracle@st-db115 99% pwd
+/prog92/oracle/product/11.2.0.4.7/oui/bin
+oracle@st-db115 100% ls -lrt
+total 336
+-rwxr-x--- 1 oracle dba  21788 Jul 10  2013 runSSHSetup.sh*
+-rwxr-x--- 1 oracle dba 164048 Jul 10  2013 runInstaller*
+-rwxr-xr-x 1 oracle dba    837 Jul 10  2013 filesList.sh*
+-rwxr-xr-x 1 oracle dba    201 Jul 10  2013 filesList.properties*
+-rwxr-xr-x 1 oracle dba    658 Jul 10  2013 filesList.bat*
+-rwxr-x--- 1 oracle dba  60809 Aug 24  2013 lsnodes*
+drwxr-x--- 2 oracle dba   8192 Oct 17  2013 resource/
+-rwxr-x--- 1 oracle dba     73 Oct 28 10:06 runInstaller.sh*
+-rwxr-x--- 1 oracle dba   1302 Oct 28 10:06 runConfig.sh*
+-rwxr-x--- 1 oracle dba    191 Oct 28 10:06 detachHome.sh*
+-rwxr-x--- 1 oracle dba    285 Oct 28 10:06 attachHome.sh*
+-rwxr-x--- 1 oracle dba    639 Oct 28 10:06 addNode.sh*
+-rwxr-x--- 1 oracle dba    215 Oct 28 10:06 addLangs.sh*
+
+
+oracle@st-db115 107% ./detachHome.sh -invPtrLoc /prog68/oracle/oraInst.loc
+Starting Oracle Universal Installer...
+
+Checking swap space: must be greater than 500 MB.   Actual 32764 MB    Passed
+The inventory pointer is located at /prog92/oracle/oraInst.loc
+The inventory is located at /prog92/oracle/oraInventory
+'DetachHome' was successful.
+
+
+CHECK AGAIN IF THE ORACLE_HOME HAS BEEN DETACH FROM INVENTORY
+•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+oracle@st-db115 108% cd /prog92/oracle/oraInventory/ContentsXML
+/prog92/oracle/oraInventory/ContentsXML
+oracle@st-db115 109% ls -lrt
+total 24
+-rw-rw---- 1 oracle dba 1666 Mar 22 21:17 inventory.xml
+-rw-rw---- 1 oracle dba  329 Mar 22 21:17 comps.xml
+-rw-rw---- 1 oracle dba  292 Mar 22 21:17 libs.xml
+oracle@st-db115 110%
+oracle@st-db115 110% cat /prog68/oracle/oraInventory/ContentsXML/inventory.xml
+<?xml version="1.0" standalone="yes" ?>
+<!-- Copyright (c) 1999, 2013, Oracle and/or its affiliates.
+All rights reserved. -->
+<!-- Do not modify the contents of this file by hand. -->
+<INVENTORY>
+<VERSION_INFO>
+   <SAVED_WITH>11.2.0.4.0</SAVED_WITH>
+   <MINIMUM_VER>2.1.0.6.0</MINIMUM_VER>
+</VERSION_INFO>
+<HOME_LIST>
+<HOME NAME="OraHome1" LOC="/prog92/oracle/product/11.2.0.3.6" TYPE="O" IDX="4"/>
+<HOME NAME="OraHome2" LOC="/prog92/oracle/product/11.2.0.3.7" TYPE="O" IDX="5"/>
+<HOME NAME="OraHome3" LOC="/prog92/oracle/product/11.2.0.4.0" TYPE="O" IDX="6"/>
+<HOME NAME="OraHome4" LOC="/prog92/oracle/product/11.2.0.4.5" TYPE="O" IDX="7"/>
+<HOME NAME="OraHome5" LOC="/prog92/oracle/product/11.2.0.4.6" TYPE="O" IDX="8"/>
+<HOME NAME="OraHome6" LOC="/prog92/oracle/product/12.1.0.2.3" TYPE="O" IDX="9"/>
+<HOME NAME="OraHome7" LOC="/prog92/oracle/product/12.1.0.2.4" TYPE="O" IDX="10"/>
+<HOME NAME="OraHome9" LOC="/prog92/oracle/product/12.1.0.2.5V" TYPE="O" IDX="12"/>
+<HOME NAME="OraHome10" LOC="/prog92/oracle/product/11.2.0.4.8" TYPE="O" IDX="13"/>
+<HOME NAME="OraHome11" LOC="/prog92/oracle/product/12.1.0.2.5" TYPE="O" IDX="14"/>
+<HOME NAME="OraHome12" LOC="/prog92/oracle/product/11.2.0.4.8P" TYPE="O" IDX="15"/>
+<HOME NAME="agent11g1" LOC="/prog92/oracle/Middleware/agent11g" TYPE="O" IDX="3" REMOVED="T"/>
+<HOME NAME="OraDb11g_home1" LOC="/prog92/oracle/product/11.2.0.3" TYPE="O" IDX="1" REMOVED="T"/>
+<HOME NAME="Home10_db92" LOC="/prog92/oracle/product/10.2.0" TYPE="O" IDX="2" REMOVED="T"/>
+<HOME NAME="OraHome8" LOC="/prog92/oracle/product/11.2.0.4.7" TYPE="O" IDX="11" REMOVED="T"/>
+</HOME_LIST>
+<COMPOSITEHOME_LIST>
+</COMPOSITEHOME_LIST>
+</INVENTORY>
+
+
+INSTALLATION OF ORACLE HOME IN EXTERANET SERVER
+-----------------------------------------------
+
+with root user
+===============
+vi <ORACLE_HOME>/rdbms/admin/externaljob.ora
+
+run_user  oracle 
+
+run_group dba
+
+With Oracle user
+=================
+cd <ORACLE_HOME>/bin 
+
+ls -ltr | grep extjob
+
+chmod 755 extjobo
+
+
+listener start/stop with oraoper user
+========================================
+
+su – oraoper (temporary password - india@1234
+  
+[oraoper@st-db96 bin]$ ./oslsnrctl stop LIST_DB70_03
+
+oslsnrctl 1.5
+Starter|Stopper SQL*Net V2 Listeners
+
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 23-MAR-2017 12:29:00
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (ADDRESS=(COMMUNITY=TCPCOM)(PROTOCOL=TCP)(Host=db70.statoil.no)(Port=10003))
+The command completed successfully
+
+oracle@st-db96 12% cd /prog70/oracle/product/11.2.0.4.11T/network/admin
+/prog70/oracle/product/11.2.0.4.11T/network/admin
+
+
+oracle@st-db96 16% ls
+ldap.ora  listener.ora*  samples/  shrept.lst  sqlnet.ora  tnsnames.ora
+
+oracle@st-db96 17% cp *  /prog70/oracle/product/12.1.0.2.10T/network/admin
+
+
+oracle@st-db96 14% mv listener.ora listener.ora_23032017
+
+
+oracle@st-db96 19% chmod o+xr -R /prog70/oracle/product/12.1.0.2.10
+chmod: changing permissions of `/prog70/oracle/product/12.1.0.2.10/bin/oradism': Operation not permitted
+chmod: changing permissions of `/prog70/oracle/product/12.1.0.2.10/bin/extjob': Operation not permitted
+chmod: changing permissions of `/prog70/oracle/product/12.1.0.2.10/bin/jssu': Operation not permitted
+chmod: changing permissions of `/prog70/oracle/product/12.1.0.2.10/rdbms/admin/externaljob.ora': Operation not permitted
+
+
+[oraoper@st-db96 bin]$ ./oslsnrctl start LIST_DB70_03
+
+oslsnrctl 1.5
+Starter|Stopper SQL*Net V2 Listeners
+
+
+LSNRCTL for Linux: Version 12.1.0.2.0 - Production on 23-MAR-2017 12:32:21
+
+Copyright (c) 1991, 2014, Oracle.  All rights reserved.
+
+Starting /prog70/oracle/product/12.1.0.2.10T/bin/tnslsnr: please wait...
+
+TNSLSNR for Linux: Version 12.1.0.2.0 - Production
+System parameter file is /prog70/oracle/product/12.1.0.2.10T/network/admin/listener.ora
+Log messages written to /prog70/oracle/diag/tnslsnr/st-db96/list_db70_03/alert/log.xml
+Listening on: (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=143.97.128.201)(PORT=10003)))
+
+Connecting to (ADDRESS=(COMMUNITY=TCPCOM)(PROTOCOL=TCP)(Host=db70.statoil.no)(Port=10003))
+STATUS of the LISTENER
+------------------------
+Alias                     LIST_DB70_03
+Version                   TNSLSNR for Linux: Version 12.1.0.2.0 - Production
+Start Date                23-MAR-2017 12:32:21
+Uptime                    0 days 0 hr. 0 min. 0 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /prog70/oracle/product/12.1.0.2.10T/network/admin/listener.ora
+Listener Log File         /prog70/oracle/diag/tnslsnr/st-db96/list_db70_03/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=143.97.128.201)(PORT=10003)))
+The listener supports no services
+The command completed successfully
+
+*********************************
+
+cd $ORACLE_HOME
+
+tar -cvf /ovmdbdata/rman_backup/ora92_bkp.tar .
+
+
+
+

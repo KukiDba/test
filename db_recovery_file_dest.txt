@@ -1,0 +1,65 @@
+show parameter db_recovery_file_dest
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+db_recovery_file_dest                string      /dbfra78/oracle/fra
+db_recovery_file_dest_size           big integer 600G
+
+
+set line 200
+SYS at P450 >SELECT * FROM V$FLASH_RECOVERY_AREA_USAGE;
+
+FILE_TYPE    PERCENT_SPACE_USED PERCENT_SPACE_RECLAIMABLE NUMBER_OF_FILES
+------------ ------------------ ------------------------- ---------------
+CONTROLFILE                   0                         0               0
+ONLINELOG                     0                         0               0
+ARCHIVELOG                85.65                         0            1394
+BACKUPPIECE                   0                         0               0
+IMAGECOPY                     0                         0               0
+FLASHBACKLOG                  0                         0               0
+
+
+set line 200
+col name for a50
+select name, space_limit/1024/1024/1024 SPACE_LIMIT_IN_GB, space_used/1024/1024/1024 SPACE_USED_IN_GB, ((space_limit/1024/1024/1024)-(space_used/1024/1024/1024)) free_space_in_GB, 
+space_reclaimable/1024/1024/1024 RECLAIM, number_of_files from v$recovery_file_dest;
+
+
+
+NAME                                               SPACE_LIMIT_IN_GB SPACE_USED_IN_GB FREE_SPACE_IN_GB    RECLAIM NUMBER_OF_FILES
+-------------------------------------------------- ----------------- ---------------- ---------------- ---------- ---------------
+/dbfra78/oracle/fra                                              600       514.257651       85.7423487          0            1395
+
+
+alter system set db_recovery_file_dest_size=<size> scope=both;
+
+connect to rman target /
+
+oracle@st-vtdb17 86% rman target /
+
+Recovery Manager: Release 12.1.0.2.0 - Production on Sun Jun 11 07:01:42 2017
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: T248AM (DBID=3759883114)
+
+RMAN>
+
+RMAN>
+
+RMAN> crosscheck archivelog all;
+
+
+RMAN > DELETE EXPIRED ARCHIVELOG ALL;
+
+
+
+
+
+select node, name, round(total/1024/1024, 2) "total (in GB)", round(free /1024/1024, 2) "free (in GB)", percent, mount, updated from oracle_adm.db_filesystems where PERCENT > 70 AND (mount like '%arch%' or mount like '%dbfra%' or mount like '%prog%' or mount like '%db%')  order by percent desc;
+
+
+
+
+
+

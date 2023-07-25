@@ -1,0 +1,284 @@
+oracle@st-db52 45% sid P703
+/prog29/oracle/admin/P703
+oracle@st-db52 46% dsid
+SID=P703
+oracle@st-db52 47% sqldba
+
+SQL*Plus: Release 10.2.0.5.0 - Production on Sat Jun 23 02:45:16 2012
+
+Copyright (c) 1982, 2010, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 10g Enterprise Edition Release 10.2.0.5.0 - 64bit Production
+With the Partitioning, Data Mining and Real Application Testing options
+
+SQL> select os_username,username,TERMINAL,action_name,timestamp from dba_audit_session where trunc(TIMESTAMP) > trunc(sysdate) - 365 and RETURN
+CODE = 0 AND USERNAME not in ('SYS','SYSTEM','DBSNMP','PUBLIC','XDB','OUTLN') order by TIMESTAMP desc;
+
+no rows selected
+
+SQL> exit
+Disconnected from Oracle Database 10g Enterprise Edition Release 10.2.0.5.0 - 64bit Production
+With the Partitioning, Data Mining and Real Application Testing options
+oracle@st-db52 48% dpexport
+Usage: dpexport a={0|10d|60d|1y|5y|10y|15y} [[stay] restrict] {all [package] |sid|sid1 sid2 ...sidn}
+                a= must be specified.
+                a= option is how long time the archived dpexportfile is kept in adsm,d=days,y=years
+                a=0 no archive of dpexportfile to adsm
+oracle@st-db52 49% dpexport a=10y P703
+
+Export: Release 10.2.0.5.0 - 64bit Production on Saturday, 23 June, 2012 2:49:25
+
+Copyright (c) 2003, 2007, Oracle.  All rights reserved.
+
+Connected to: Oracle Database 10g Enterprise Edition Release 10.2.0.5.0 - 64bit Production
+With the Partitioning, Data Mining and Real Application Testing options
+Starting "SYSTEM"."SYS_EXPORT_FULL_01":  system/******** logfile=EXPDP_LOG_DIR:P703_dpexport.log full=y parallel=3 dumpfile=EXPDP_DATA_DIR:P70320120623.dmp%U 
+Estimate in progress using BLOCKS method...
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/TABLE_DATA
+Total estimation using BLOCKS method: 80 KB
+. . exported "SYSTEM"."REPCAT$_AUDIT_ATTRIBUTE"          5.953 KB       2 rows
+. . exported "SYSTEM"."REPCAT$_OBJECT_TYPES"             6.507 KB      28 rows
+. . exported "SYSTEM"."REPCAT$_RESOLUTION_METHOD"        5.648 KB      19 rows
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_STATUS"          5.296 KB       3 rows
+Processing object type DATABASE_EXPORT/TABLESPACE
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_TYPES"           5.914 KB       2 rows
+. . exported "OUTLN"."OL$"                                   0 KB       0 rows
+. . exported "OUTLN"."OL$HINTS"                              0 KB       0 rows
+. . exported "OUTLN"."OL$NODES"                              0 KB       0 rows
+. . exported "SYSTEM"."DEF$_AQCALL"                          0 KB       0 rows
+. . exported "SYSTEM"."DEF$_AQERROR"                         0 KB       0 rows
+. . exported "SYSTEM"."DEF$_CALLDEST"                        0 KB       0 rows
+. . exported "SYSTEM"."DEF$_DEFAULTDEST"                     0 KB       0 rows
+. . exported "SYSTEM"."DEF$_DESTINATION"                     0 KB       0 rows
+. . exported "SYSTEM"."DEF$_ERROR"                           0 KB       0 rows
+. . exported "SYSTEM"."DEF$_LOB"                             0 KB       0 rows
+. . exported "SYSTEM"."DEF$_ORIGIN"                          0 KB       0 rows
+. . exported "SYSTEM"."DEF$_PROPAGATOR"                      0 KB       0 rows
+. . exported "SYSTEM"."DEF$_PUSHED_TRANSACTIONS"             0 KB       0 rows
+. . exported "SYSTEM"."DEF$_TEMP$LOB"                        0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$APPLY_MILESTONE"             0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$APPLY_PROGRESS":"P0"         0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$EVENTS"                      0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$HISTORY"                     0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$PARAMETERS"                  0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$PLSQL"                       0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$SCN"                         0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$SKIP"                        0 KB       0 rows
+. . exported "SYSTEM"."LOGSTDBY$SKIP_TRANSACTION"            0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_AUDIT_COLUMN"                 0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_COLUMN_GROUP"                 0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_CONFLICT"                     0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_DDL"                          0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_EXCEPTIONS"                   0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_EXTENSION"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_FLAVORS"                      0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_FLAVOR_OBJECTS"               0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_GENERATED"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_GROUPED_COLUMN"               0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_INSTANTIATION_DDL"            0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_KEY_COLUMNS"                  0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_OBJECT_PARMS"                 0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_PARAMETER_COLUMN"             0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_PRIORITY"                     0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_PRIORITY_GROUP"               0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REFRESH_TEMPLATES"            0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPCAT"                       0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPCATLOG"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPCOLUMN"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPGROUP_PRIVS"               0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPOBJECT"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPPROP"                      0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_REPSCHEMA"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_RESOLUTION"                   0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_RESOLUTION_STATISTICS"        0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_RESOL_STATS_CONTROL"          0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_RUNTIME_PARMS"                0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_SITES_NEW"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_SITE_OBJECTS"                 0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_SNAPGROUP"                    0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_OBJECTS"             0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_PARMS"               0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_REFGROUPS"           0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_SITES"               0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_TEMPLATE_TARGETS"             0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_USER_AUTHORIZATIONS"          0 KB       0 rows
+. . exported "SYSTEM"."REPCAT$_USER_PARM_VALUES"             0 KB       0 rows
+. . exported "SYSTEM"."SQLPLUS_PRODUCT_PROFILE"              0 KB       0 rows
+. . exported "TSMSYS"."SRS$"                                 0 KB       0 rows
+Processing object type DATABASE_EXPORT/SYS_USER/USER
+Processing object type DATABASE_EXPORT/SCHEMA/USER
+Processing object type DATABASE_EXPORT/ROLE
+Processing object type DATABASE_EXPORT/GRANT/SYSTEM_GRANT/PROC_SYSTEM_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/GRANT/SYSTEM_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/ROLE_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/DEFAULT_ROLE
+Processing object type DATABASE_EXPORT/RESOURCE_COST
+Processing object type DATABASE_EXPORT/SCHEMA/DB_LINK
+Processing object type DATABASE_EXPORT/TRUSTED_DB_LINK
+Processing object type DATABASE_EXPORT/SCHEMA/SEQUENCE/SEQUENCE
+Processing object type DATABASE_EXPORT/DIRECTORY/DIRECTORY
+Processing object type DATABASE_EXPORT/DIRECTORY/GRANT/OWNER_GRANT/OBJECT_GRANT
+Processing object type DATABASE_EXPORT/CONTEXT
+Processing object type DATABASE_EXPORT/SCHEMA/PUBLIC_SYNONYM/SYNONYM
+Processing object type DATABASE_EXPORT/SCHEMA/SYNONYM
+Processing object type DATABASE_EXPORT/SCHEMA/TYPE/TYPE_SPEC
+Processing object type DATABASE_EXPORT/SYSTEM_PROCOBJACT/PRE_SYSTEM_ACTIONS/PROCACT_SYSTEM
+Processing object type DATABASE_EXPORT/SYSTEM_PROCOBJACT/PROCOBJ
+Processing object type DATABASE_EXPORT/SYSTEM_PROCOBJACT/POST_SYSTEM_ACTIONS/PROCACT_SYSTEM
+Processing object type DATABASE_EXPORT/SCHEMA/PROCACT_SCHEMA
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/TABLE
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/PRE_TABLE_ACTION
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/GRANT/CROSS_SCHEMA/OBJECT_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/INDEX/INDEX
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/COMMENT
+Processing object type DATABASE_EXPORT/SCHEMA/PACKAGE/PACKAGE_SPEC
+Processing object type DATABASE_EXPORT/SCHEMA/PROCEDURE/PROCEDURE
+Processing object type DATABASE_EXPORT/SCHEMA/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
+Processing object type DATABASE_EXPORT/SCHEMA/PROCEDURE/ALTER_PROCEDURE
+Processing object type DATABASE_EXPORT/SCHEMA/VIEW/VIEW
+Processing object type DATABASE_EXPORT/SCHEMA/VIEW/GRANT/OWNER_GRANT/OBJECT_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/VIEW/GRANT/CROSS_SCHEMA/OBJECT_GRANT
+Processing object type DATABASE_EXPORT/SCHEMA/VIEW/COMMENT
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type DATABASE_EXPORT/SCHEMA/PACKAGE_BODIES/PACKAGE/PACKAGE_BODY
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/POST_TABLE_ACTION
+Processing object type DATABASE_EXPORT/SCHEMA/TABLE/TRIGGER
+Processing object type DATABASE_EXPORT/SCHEMA/POST_SCHEMA/PROCACT_SCHEMA
+Processing object type DATABASE_EXPORT/SCHEMA/PASSWORD_HISTORY
+Processing object type DATABASE_EXPORT/AUDIT
+Master table "SYSTEM"."SYS_EXPORT_FULL_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYSTEM.SYS_EXPORT_FULL_01 is:
+  /prog29/oracle/admin/P703/exp/P70320120623.dmp01
+  /prog29/oracle/admin/P703/exp/P70320120623.dmp02
+  /prog29/oracle/admin/P703/exp/P70320120623.dmp03
+Job "SYSTEM"."SYS_EXPORT_FULL_01" successfully completed at 02:50:09
+
+dpexport:   - 23.06.2012 02.49  Archive dpexportfiles
+
+======================================================================================================================================
+======================================================================================================================================
+
+oracle@st-db52 50% oraback off adsm archmc= ARCH-5Y P703
+Kan ikke lese ORACLE_HOME /prog30/oracle/product/10.2.0_64 for SID ARCH-5Y
+oracle@st-db52 51% 
+
+
+======================================================================================================================================
+oracle@st-db52 45% more Off.20120623.0252.log
+BCK001I-ORABACK 2.2A
+BCK003I-Start Offline database backup 23-Jun-2012 at: 02.52
+BCK004I-Database P703
+BCK045I-Backup medium adsm
+
+BCK010I-Database file /db29/ORACLE/P703/system_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/undo_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/sysaux01.dbf
+BCK010I-Database file /db29/ORACLE/P703/data_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/index01_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/tools_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/users_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/sysaudit_01.dbf
+BCK010I-Database file /db29/ORACLE/P703/temp_01.dbf
+BCK010I-Database file /prog29/ORACLE/P703/redo_01.log
+BCK010I-Database file /prog29/ORACLE/P703/redo_02.log
+BCK010I-Database file /prog29/ORACLE/P703/redo_03.log
+BCK010I-Database file /db29/ORACLE/P703/control_01.ctl
+BCK010I-Database file /prog29/ORACLE/P703/control_02.ctl
+BCK012I-Shutdown P703 database in progress 23-Jun-2012 at: 02.52
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+BCK016I-Start backup in progress 23-Jun-2012 at: 02.53
+
+IBM Tivoli Storage Manager
+Command Line Backup/Archive Client Interface
+  Client Version 5, Release 5, Level 1.0  
+  Client date/time: 23-06-2012 02:53:04
+(c) Copyright by IBM Corporation and other(s) 1990, 2008. All Rights Reserved.
+
+Node Name: DB29
+Session established with server STBCK20: AIX-RS/6000
+  Server Version 5, Release 5, Level 3.0
+  Server date/time: 23-06-2012 02:53:04  Last access: 23-06-2012 02:50:14
+
+
+Total number of objects inspected:       27
+Total number of objects archived:        27
+Total number of objects updated:          0
+Total number of objects rebound:          0
+Total number of objects deleted:          0
+Total number of objects expired:          0
+Total number of objects failed:           0
+Total number of bytes transferred:    1,94 GB
+Data transfer time:                   20,47 sec
+Network data transfer rate:        99.633,72 KB/sec
+Aggregate data transfer rate:      45.989,08 KB/sec
+Objects compressed by:                    0%
+Elapsed processing time:           00:00:44
+
+BCK019I-End backup 23-Jun-2012 at: 02.53
+
+BCK014I-Startup P703 database in progress 23-Jun-2012 at: 02.53
+ORACLE instance started.
+
+Total System Global Area  314572800 bytes
+Fixed Size                  2095928 bytes
+Variable Size             104858824 bytes
+Database Buffers          201326592 bytes
+Redo Buffers                6291456 bytes
+Database mounted.
+Database opened.
+
+Session altered.
+
+
+Session altered.
+
+
+BCK011I-End Offline database backup 23-Jun-2012 at: 02.54
+======================================================================================================================================
+
+oracle@st-db52 51%  vi /etc/oratab
+oracle@st-db52 52% vi /etc/oratab
+oracle@st-db52 53% cpOratab
+
+/etc/oratab copied to host st-db44
+
+/etc/oratab copied to host st-db45
+
+/etc/oratab copied to host st-db46
+
+/etc/oratab copied to host st-db47
+
+/etc/oratab copied to host st-db51
+
+/etc/oratab copied to host st-db53
+
+/etc/oratab copied to host st-db54
+oracle@st-db52 54% 
+oracle@st-db52 54% dsid
+SID=P703
+oracle@st-db52 55% sqldba
+
+SQL*Plus: Release 10.2.0.5.0 - Production on Sat Jun 23 03:03:00 2012
+
+Copyright (c) 1982, 2010, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 10g Enterprise Edition Release 10.2.0.5.0 - 64bit Production
+With the Partitioning, Data Mining and Real Application Testing options
+
+SQL> shut immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> 

@@ -1,0 +1,559 @@
+===========================================================================================================================================================================================================================================
+SOURCE
+===========================================================================================================================================================================================================================================
+
+oracle@st-db45 41% sid GPSTX
+/prog20/oracle/admin/GPSTX
+oracle@st-db45 42% sqldba
+
+SQL*Plus: Release 11.2.0.3.0 Production on Thu Jun 14 21:51:30 2012
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SYS at GPSTX >archive log list
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            /prog20/oracle/admin/GPSTX/arch/archGPSTX.log
+Oldest online log sequence     94
+Current log sequence           96
+SYS at GPSTX >
+SYS at GPSTX >select version from v$instance;
+
+VERSION
+-----------------
+11.2.0.3.0
+
+SYS at GPSTX >
+SYS at GPSTX >set line 200
+SYS at GPSTX >set pages 200
+SYS at GPSTX >col tablespace_name for a20
+SYS at GPSTX >col file_name for a40
+SYS at GPSTX >select file_name, tablespace_name, bytes/1024/1024 "Bytes_in_MB", status, round(maxbytes/1024/1024/1024,2) "maxbytes_in_GB", autoextensible from dba_data_files order by 2;
+
+FILE_NAME                                TABLESPACE_NAME      Bytes_in_MB STATUS    maxbytes_in_GB AUT
+---------------------------------------- -------------------- ----------- --------- -------------- ---
+/db20/ORACLE/GPSTX/data01_01.dbf         DATA01                     28400 AVAILABLE          31.25 YES
+/db20/ORACLE/GPSTX/data01_02.dbf         DATA01                      1000 AVAILABLE          31.25 YES
+/db20/ORACLE/GPSTX/index01_01.dbf        INDEX01                    25000 AVAILABLE          31.25 YES
+/db20/ORACLE/GPSTX/sysaudit_01.dbf       SYSAUDIT                     350 AVAILABLE          19.53 YES
+/db20/ORACLE/GPSTX/sysaux_01.dbf         SYSAUX                       500 AVAILABLE           4.88 YES
+/db20/ORACLE/GPSTX/system_01.dbf         SYSTEM                       300 AVAILABLE           1.95 YES
+/db20/ORACLE/GPSTX/undo_01.dbf           UNDO                         200 AVAILABLE          15.53 YES
+
+7 rows selected.
+
+SYS at GPSTX >select file_name, tablespace_name, bytes/1024/1024 "Bytes_in_MB", status, round(maxbytes/1024/1024/1024,2) "maxbytes_in_GB", autoextensible from dba_temp_files;
+
+FILE_NAME                                TABLESPACE_NAME      Bytes_in_MB STATUS  maxbytes_in_GB AUT
+---------------------------------------- -------------------- ----------- ------- -------------- ---
+/db20/ORACLE/GPSTX/temp01.dbf            TEMP                         100 ONLINE            9.77 YES
+
+SYS at GPSTX >col member for a40
+SYS at GPSTX >select a.group#, b.member, a.bytes/1024/1024 "size in mb", a.status from v$log a, v$logfile b where a.group#=b.group# order by group#;
+
+    GROUP# MEMBER                                   size in mb STATUS
+---------- ---------------------------------------- ---------- ----------------
+         1 /prog20/ORACLE/GPSTX/redo_01.log                100 INACTIVE
+         2 /prog20/ORACLE/GPSTX/redo_02.log                100 INACTIVE
+         3 /prog20/ORACLE/GPSTX/redo_03.log                100 CURRENT
+
+SYS at GPSTX >select sum(bytes/1024/1024/1024) "SIZE_IN_GB" from v$datafile;
+
+SIZE_IN_GB
+----------
+54.4433594
+
+SYS at GPSTX >select sum(bytes/1024/1024/1024) "SIZE_IN_GB" from dba_segments;
+
+SIZE_IN_GB
+----------
+ 51.432045
+
+SYS at GPSTX >shut immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SYS at GPSTX >exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@st-db45 43% 
+
+===========================================================================================================================================================================================================================================
+TARGET
+===========================================================================================================================================================================================================================================
+oracle@st-tdb04 44% vi /etc/oratab
+
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third filed indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+#
+INIT:/prog/oracle/product/11.2.0.3:N
+RMAN:/prog/oracle/product/11.2.0.3:N
+T017DAG:/prog/oracle/product/11.2.0.3:Y
+T146:/prog/oracle/product/11.2.0.3:N
+U146:/prog/oracle/product/11.2.0.3:N
+U153:/prog/oracle/product/11.2.0.3:Y
+U527:/prog/oracle/product/11.2.0.3:Y
+# Moved T422 to st-tdb02 and down graded to 10g
+T422:/prog/oracle/product/11.2.0.3:D
+U619:/prog/oracle/product/11.2.0.3:Y
+U010:/prog/oracle/product/11.2.0.3:Y
+T017X:/prog/oracle/product/11.2.0.3:Y
+T527T:/prog/oracle/product/11.2.0.3:Y
+GPSTX:/prog/oracle/product/11.2.0.3:Y
+
+oracle@st-tdb04 45% osofa GPSTX
+The Oracle base remains unchanged with value /prog/oracle
+oracle@st-tdb04 46% 
+oracle@st-tdb04 46% cd /prog/oracle
+/prog/oracle
+oracle@st-tdb04 47% ls -ltr
+total 40
+drwxr-xr-x  3 oracle dba 4096 Mar  8 13:38 stage/
+drwxrwxr-x 11 oracle dba 4096 Mar  8 14:15 diag/
+-rwxr-xr-x  1 oracle dba   54 Mar  8 14:18 oraInst.loc*
+drwxr-xr-x  3 oracle dba 4096 Mar  8 14:37 product/
+drwxr-xr-x  2 oracle dba 4096 Mar  9 12:34 checkpoints/
+drwxr-xr-x  2 oracle dba 4096 Mar  9 14:04 rman/
+drwxrwx---  6 oracle dba 4096 Apr 25 12:39 oraInventory/
+drwxr-x---  4 oracle dba 4096 Apr 25 12:39 Middleware/
+drwxr-x---  2 oracle dba 4096 Jun 14 21:15 adsm/
+drwxr-x--- 13 oracle dba 4096 Jun 14 22:11 admin/
+oracle@st-tdb04 48% cd admin
+/prog/oracle/admin
+oracle@st-tdb04 49% ls -ltr
+total 44
+drwxr-x--- 7 oracle dba 4096 Mar  9 18:35 RMAN/
+drwxr-x--- 8 oracle dba 4096 Mar 16 18:05 U619/
+drwxr-x--- 8 oracle dba 4096 Apr  4 18:05 T017DAG/
+drwxr-x--- 8 oracle dba 4096 Apr 18 12:24 U010/
+drwxr-x--- 8 oracle dba 4096 May  3 10:50 U153/
+drwxr-x--- 8 oracle dba 4096 May 24 13:38 T527T/
+drwxr-x--- 8 oracle dba 4096 May 25 13:57 U527/
+drwxr-x--- 8 oracle dba 4096 Jun  5 18:52 T017X/
+drwxr-x--- 8 oracle dba 4096 Jun 13 16:28 T146/
+drwxr-x--- 8 oracle dba 4096 Jun 13 17:56 U146/
+drwxr-x--- 8 oracle dba 4096 Jun 14 22:11 GPSTX/
+oracle@st-tdb04 50% 
+oracle@st-tdb04 51% cd /prog/oracle/admin/GPSTX
+/prog/oracle/admin/GPSTX
+oracle@st-tdb04 52% ls -ltr
+total 24
+lrwxrwxrwx 1 oracle dba   41 Jun 14 22:11 udump -> /prog/oracle/diag/rdbms/gpstx/GPSTX/trace
+lrwxrwxrwx 1 oracle dba   41 Jun 14 22:11 trace -> /prog/oracle/diag/rdbms/gpstx/GPSTX/trace
+drwxrwx--- 2 oracle dba 4096 Jun 14 22:11 rman/
+drwxrwx--- 2 oracle dba 4096 Jun 14 22:11 pfile/
+drwxrwx--- 2 oracle dba 4096 Jun 14 22:11 log/
+lrwxrwxrwx 1 oracle dba   29 Jun 14 22:11 exp -> /dbfra/oracle/admin/GPSTX/exp/
+drwxrwx--- 2 oracle dba 4096 Jun 14 22:11 dbs/
+drwxrwx--- 2 oracle dba 4096 Jun 14 22:11 create/
+lrwxrwxrwx 1 oracle dba   41 Jun 14 22:11 cdump -> /prog/oracle/diag/rdbms/gpstx/GPSTX/cdump
+lrwxrwxrwx 1 oracle dba   41 Jun 14 22:11 bdump -> /prog/oracle/diag/rdbms/gpstx/GPSTX/trace
+lrwxrwxrwx 1 oracle dba   29 Jun 14 22:11 bck -> /dbfra/oracle/admin/GPSTX/bck/
+lrwxrwxrwx 1 oracle dba   30 Jun 14 22:11 arch -> /dbfra/oracle/admin/GPSTX/arch/
+drwxrwx--- 2 oracle dba 4096 Jun 14 22:11 adhoc/
+oracle@st-tdb04 53% 
+
+oracle@st-tdb04 54% cd /db/ORACLE/
+/db/ORACLE
+oracle@st-tdb04 55% ls -ltr
+total 48
+drwxr-x--- 2 oracle dba 4096 Mar  9 18:35 RMAN/
+drwxr-x--- 2 oracle dba 4096 Mar 16 18:05 U619/
+drwxr-x--- 2 oracle dba 4096 Mar 22 15:45 P533Exp/
+drwxr-x--- 2 oracle dba 4096 Apr 18 11:55 U010/
+drwxr-x--- 2 oracle dba 4096 Apr 18 18:05 T017DAG/
+drwxr-x--- 2 oracle dba 4096 May  5 01:01 U153/
+drwxr-x--- 2 oracle dba 4096 May  7 16:21 T017X/
+drwxr-x--- 2 oracle dba 4096 May 26 01:04 U527/
+drwxr-x--- 2 oracle dba 4096 May 26 01:43 T527T/
+drwxr-x--- 2 oracle dba 4096 Jun 13 17:06 T146/
+drwxr-x--- 2 oracle dba 4096 Jun 13 18:22 U146/
+drwxr-x--- 2 oracle dba 4096 Jun 14 22:11 GPSTX/
+oracle@st-tdb04 56% cd GPSTX/
+/db/ORACLE/GPSTX
+oracle@st-tdb04 57% ls -ltr
+total 0
+
+===========================================================================================================================================================================================================================================
+SOURCE
+===========================================================================================================================================================================================================================================
+oracle@st-db45 48% cd GPSTX
+/db20/ORACLE/GPSTX
+oracle@st-db45 49% ls -ltr
+total 57137112
+-rw-rw----  1 oracle dba   104865792 Jun 14 01:58 temp01.dbf
+-rw-r-----  1 oracle dba   314580992 Jun 14 22:32 system_01.dbf
+-rw-r-----  1 oracle dba   209723392 Jun 14 22:32 undo_01.dbf
+-rw-r-----  1 oracle dba 29779566592 Jun 14 22:32 data01_01.dbf
+-rw-r-----  1 oracle dba 26214408192 Jun 14 22:32 index01_01.dbf
+-rw-rw----  1 oracle dba   524296192 Jun 14 22:32 sysaux_01.dbf
+-rw-r-----  1 oracle dba   367009792 Jun 14 22:32 sysaudit_01.dbf
+-rw-r-----  1 oracle dba  1048584192 Jun 14 22:32 data01_02.dbf
+-rw-rw----  1 oracle dba    11600384 Jun 14 22:32 change_tracking.f
+-rw-rw----  1 oracle dba     8142848 Jun 14 22:33 control_01.ctl
+oracle@st-db45 50% scp * st-tdb04:/db/ORACLE/GPSTX/
+The authenticity of host 'st-tdb04 (143.97.18.23)' can't be established.
+RSA key fingerprint is 34:51:76:c7:d0:2c:af:ab:98:1b:47:63:d1:72:b9:81.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'st-tdb04,143.97.18.23' (RSA) to the list of known hosts.
+oracle@st-tdb04's password: 
+change_tracking.f                       100%   11MB  11.1MB/s   00:01    
+control_01.ctl                          100% 7952KB   7.8MB/s   00:00    
+data01_01.dbf                           100%   28GB  26.2MB/s   18:06    
+data01_02.dbf                           100% 1000MB  28.6MB/s   00:35    
+index01_01.dbf                          100%   24GB  29.8MB/s   13:58    
+sysaudit_01.dbf                         100%  350MB  31.8MB/s   00:11    
+sysaux_01.dbf                           100%  500MB  31.3MB/s   00:16    
+system_01.dbf                           100%  300MB  37.5MB/s   00:08    
+temp01.dbf                              100%  100MB  33.3MB/s   00:03    
+undo_01.dbf                             100%  200MB  33.3MB/s   00:06    
+oracle@st-db45 66% pwd
+/prog20/ORACLE/GPSTX
+oracle@st-db45 67% scp * st-tdb04:/prog/ORACLE/GPSTX/
+oracle@st-tdb04's password: 
+control_02.ctl                          100% 7952KB   7.8MB/s   00:00    
+redo_01.log                             100%  100MB  16.7MB/s   00:06    
+redo_02.log                             100%  100MB  20.0MB/s   00:05    
+redo_03.log                             100%  100MB  25.0MB/s   00:04    
+oracle@st-db45 108% cd pfile
+/prog20/oracle/admin/GPSTX/pfile
+oracle@st-db45 109% ls -ltr
+total 72
+-rw-r-----  1 oracle dba   313 Mar 24  2011 config.ora.bkp
+-rw-rw----  1 oracle dba   362 Mar 24  2011 initGPSTX.ora.bak
+-rw-r-----  1 oracle dba   447 Mar 24  2011 initGPSTX.ora.bkp1
+-rw-rw----  1 oracle dba    85 Oct 12  2011 alter.sql
+-rw-r-----  1 oracle dba   558 Oct 14  2011 initGPSTX.ora
+-rw-r-----  1 oracle dba   313 Oct 14  2011 config.ora
+-rw-rw----  1 oracle dba 10240 Jan 27 17:45 GPSTX-pf.tar
+-rw-rw----  1 oracle dba  2560 Jun 13 17:58 spfileGPSTX.ora
+oracle@st-db45 110% scp * st-tdb04:/prog/oracle/admin/GPSTX/pfile/
+oracle@st-tdb04's password: 
+GPSTX-pf.tar                            100%   10KB  10.0KB/s   00:00    
+alter.sql                               100%   85     0.1KB/s   00:00    
+config.ora                              100%  313     0.3KB/s   00:00    
+config.ora.bkp                          100%  313     0.3KB/s   00:00    
+initGPSTX.ora                           100%  558     0.5KB/s   00:00    
+initGPSTX.ora.bak                       100%  362     0.4KB/s   00:00    
+initGPSTX.ora.bkp1                      100%  447     0.4KB/s   00:00    
+spfileGPSTX.ora                         100% 2560     2.5KB/s   00:00    
+oracle@st-db45 111% cd ../create
+/prog20/oracle/admin/GPSTX/create
+oracle@st-db45 112% ls -ltr
+total 11248
+-rw-r-----  1 oracle dba     2093 Oct 14  2011 creGPSTX.sql
+-rw-r-----  1 oracle dba     1010 Oct 17  2011 cre_audit.sql
+-rw-r-----  1 oracle dba 11476119 Apr 19 10:59 creGPSTX.log
+-rw-rw----  1 oracle dba      659 Apr 19 11:04 cre_cntrl.sql
+-rw-rw----  1 oracle dba      126 Apr 19 11:04 add_temp.sql
+-rw-rw----  1 oracle dba       73 Apr 19 11:47 command.sql
+oracle@st-db45 113% scp * st-tdb04:/prog/oracle/admin/GPSTX/create/
+oracle@st-tdb04's password: 
+add_temp.sql                            100%  126     0.1KB/s   00:00    
+command.sql                             100%   73     0.1KB/s   00:00    
+creGPSTX.log                            100%   11MB  10.9MB/s   00:01    
+creGPSTX.sql                            100% 2093     2.0KB/s   00:00    
+cre_audit.sql                           100% 1010     1.0KB/s   00:00    
+cre_cntrl.sql                           100%  659     0.6KB/s   00:00    
+oracle@st-db45 114% 
+
+===========================================================================================================================================================================================================================================
+TARGET
+===========================================================================================================================================================================================================================================
+oracle@st-tdb04 97% vi initGPSTX.ora
+oracle@st-tdb04 98% vi config.ora
+oracle@st-tdb04 99% psog tns
+oracle   11193 31527  0 23:49 pts/0    00:00:00 grep tns
+oracle   12226     1  0 May25 ?        00:03:43 /prog/oracle/product/11.2.0.3/bin/tnslsnr listener_1 -inherit
+oracle@st-tdb04 100% vi config.ora
+oracle@st-tdb04 101% dsid
+SID=GPSTX
+oracle@st-tdb04 102% sqldba
+
+SQL*Plus: Release 11.2.0.3.0 Production on Thu Jun 14 23:50:45 2012
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SYS at GPSTX >startup mount
+ORACLE instance started.
+
+Total System Global Area  521936896 bytes
+Fixed Size                  2229944 bytes
+Variable Size             159385928 bytes
+Database Buffers          352321536 bytes
+Redo Buffers                7999488 bytes
+Database mounted.
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/data01_01.dbf' TO '/db/ORACLE/GPSTX/data01_01.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/data01_02.dbf' TO '/db/ORACLE/GPSTX/data01_02.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/index01_01.dbf' TO '/db/ORACLE/GPSTX/index01_01.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/sysaudit_01.dbf' TO '/db/ORACLE/GPSTX/sysaudit_01.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/sysaux_01.dbf' TO '/db/ORACLE/GPSTX/sysaux_01.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/system_01.dbf' TO '/db/ORACLE/GPSTX/system_01.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/undo_01.dbf' TO '/db/ORACLE/GPSTX/undo_01.dbf';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/db20/ORACLE/GPSTX/change_tracking.f' TO '/db/ORACLE/GPSTX/change_tracking.f';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/prog20/ORACLE/GPSTX/redo_01.log' TO '/prog/ORACLE/GPSTX/redo_01.log';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/prog20/ORACLE/GPSTX/redo_02.log' TO '/prog/ORACLE/GPSTX/redo_02.log';
+
+Database altered.
+
+SYS at GPSTX >ALTER DATABASE RENAME FILE '/prog20/ORACLE/GPSTX/redo_03.log' TO '/prog/ORACLE/GPSTX/redo_03.log';
+
+Database altered.
+
+SYS at GPSTX >alter database open;
+
+Database altered.
+
+SYS at GPSTX >archive log list
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            /prog/oracle/admin/GPSTX/arch/archGPSTX.log
+Oldest online log sequence     94
+Current log sequence           96
+SYS at GPSTX >
+
+SYS at GPSTX >alter database tempfile '/db20/ORACLE/GPSTX/temp01.dbf' drop including datafiles;
+
+Database altered.
+
+SYS at GPSTX >alter tablespace temp add tempfile '/db/ORACLE/GPSTX/temp_01.dbf' size 2000M;
+
+Tablespace altered.
+
+SYS at GPSTX >ALTER DATABASE TEMPFILE '/db/ORACLE/GPSTX/temp_01.dbf' AUTOEXTEND ON MAXSIZE 10000M;
+
+Database altered.
+
+SYS at GPSTX >set line 200
+SYS at GPSTX >set pages 200
+SYS at GPSTX >col tablespace_name for a20
+SYS at GPSTX >col file_name for a40
+SYS at GPSTX >select file_name, tablespace_name, bytes/1024/1024 "Bytes_in_MB", status, round(maxbytes/1024/1024/1024,2) "maxbytes_in_GB", autoextensible from dba_data_files order by 2;
+
+FILE_NAME                                TABLESPACE_NAME      Bytes_in_MB STATUS    maxbytes_in_GB AUT
+---------------------------------------- -------------------- ----------- --------- -------------- ---
+/db/ORACLE/GPSTX/data01_01.dbf           DATA01                     28400 AVAILABLE          31.25 YES
+/db/ORACLE/GPSTX/data01_02.dbf           DATA01                      1000 AVAILABLE          31.25 YES
+/db/ORACLE/GPSTX/index01_01.dbf          INDEX01                    25000 AVAILABLE          31.25 YES
+/db/ORACLE/GPSTX/sysaudit_01.dbf         SYSAUDIT                     350 AVAILABLE          19.53 YES
+/db/ORACLE/GPSTX/sysaux_01.dbf           SYSAUX                       500 AVAILABLE           4.88 YES
+/db/ORACLE/GPSTX/system_01.dbf           SYSTEM                       300 AVAILABLE           1.95 YES
+/db/ORACLE/GPSTX/undo_01.dbf             UNDO                         200 AVAILABLE          15.53 YES
+
+7 rows selected.
+
+
+SYS at GPSTX >select file_name, tablespace_name, bytes/1024/1024 "Bytes_in_MB", status, round(maxbytes/1024/1024/1024,2) "maxbytes_in_GB", autoextensible from dba_temp_files;
+
+FILE_NAME                                TABLESPACE_NAME      Bytes_in_MB STATUS  maxbytes_in_GB AUT
+---------------------------------------- -------------------- ----------- ------- -------------- ---
+/db/ORACLE/GPSTX/temp_01.dbf             TEMP                        2000 ONLINE               0 NO
+
+SYS at GPSTX >col member for a40
+SYS at GPSTX >select a.group#, b.member, a.bytes/1024/1024 "size in mb", a.status from v$log a, v$logfile b where a.group#=b.group# order by group#;
+
+    GROUP# MEMBER                                   size in mb STATUS
+---------- ---------------------------------------- ---------- ----------------
+         1 /prog/ORACLE/GPSTX/redo_01.log                  100 INACTIVE
+         2 /prog/ORACLE/GPSTX/redo_02.log                  100 INACTIVE
+         3 /prog/ORACLE/GPSTX/redo_03.log                  100 CURRENT
+
+SYS at GPSTX >
+
+SYS at GPSTX >select sum(bytes/1024/1024/1024) "SIZE_IN_GB" from v$datafile;
+
+SIZE_IN_GB
+----------
+54.4433594
+
+SYS at GPSTX >select sum(bytes/1024/1024/1024) "SIZE_IN_GB" from dba_segments;
+
+SIZE_IN_GB
+----------
+51.4335098
+
+SYS at GPSTX >exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+
+
+oracle@st-tdb04 83% orasids -u GPSTX
+
+Hmmm, I found an entry for GPSTX. The information will be updated.
+
+Enter values for GPSTX:
+
+        host name [DB20.STATOIL.NO]: ST-TDB04.STATOIL.NO
+        password to SYSTEM user [BRR0_TEST_OUM]: 
+        password to SYS user [BRR0_TEST_OUM]: 
+        Utv, Test or Prod (U|T|P) [T]: 
+        Application Name [GPS]: 
+
+
+Thank you!
+The values for GPSTX are:
+
+        DB sid ...........................: GPSTX
+        Host name ........................: ST-TDB04.STATOIL.NO
+        SYSTEM user password .............: BRR0_TEST_OUM
+        SYS user password ................: BRR0_TEST_OUM
+        Status (Utv,Test,Prod) ...........: T
+        Application Name .................: GPS
+
+Do you want to Save, Reenter, Quit (s|r|q): s
+The values for GPSTX is updated in P010.statoil.no!
+oracle@st-tdb04 84% 
+
+oracle@st-tdb04 87% tnsping T017X
+
+TNS Ping Utility for Linux: Version 11.2.0.3.0 - Production on 15-JUN-2012 02:23:53
+
+Copyright (c) 1997, 2011, Oracle.  All rights reserved.
+
+Used parameter files:
+/prog/oracle/product/11.2.0.3/network/admin/sqlnet.ora
+
+Used LDAP adapter to resolve the alias
+Attempting to contact (DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=st-tdb04.statoil.no)(PORT=10001)))(CONNECT_DATA=(SERVICE_NAME=T017X)))
+OK (0 msec)
+
+
+
+
+
+
+
+oracle@st-db45 42% vi /etc/oratab
+oracle@st-db45 43% cpOratab
+
+/etc/oratab copied to host st-db44
+
+/etc/oratab copied to host st-db46
+
+/etc/oratab copied to host st-db47
+
+/etc/oratab copied to host st-db51
+
+/etc/oratab copied to host st-db52
+
+/etc/oratab copied to host st-db53
+
+/etc/oratab copied to host st-db54
+oracle@st-db45 44% 
+
+
+
+SYS at GPSTX >EXECUTE SYS.DBMS_BACKUP_RESTORE.CFILESETSNAPSHOTNAME('/prog/oracle/admin/GPSTX/rman/snapcf_GPSTX.f');
+
+PL/SQL procedure successfully completed.
+
+SYS at GPSTX >exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+oracle@st-tdb04 49% rman target /
+
+Recovery Manager: Release 11.2.0.3.0 - Production on Sat Jun 16 04:21:08 2012
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: GPSTX (DBID=7631461)
+
+RMAN> connect catalog rman/brr0_rman_oum@P010RMAN.statoil.no;
+
+connected to recovery catalog database
+
+RMAN> show all;
+
+starting full resync of recovery catalog
+full resync complete
+RMAN configuration parameters for database with db_unique_name GPSTX are:
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 60 DAYS;
+CONFIGURE BACKUP OPTIMIZATION OFF; # default
+CONFIGURE DEFAULT DEVICE TYPE TO 'SBT_TAPE';
+CONFIGURE CONTROLFILE AUTOBACKUP OFF;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE SBT_TAPE TO '%F'; # default
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default
+CONFIGURE DEVICE TYPE SBT_TAPE PARALLELISM 1 BACKUP TYPE TO BACKUPSET; # default
+CONFIGURE DEVICE TYPE DISK PARALLELISM 1 BACKUP TYPE TO BACKUPSET; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE SBT_TAPE TO 1; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE SBT_TAPE TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog20/oracle/admin/GPSTX/rman/tdpo.opt)';
+CONFIGURE MAXSETSIZE TO 100 G;
+CONFIGURE ENCRYPTION FOR DATABASE OFF; # default
+CONFIGURE ENCRYPTION ALGORITHM 'AES128'; # default
+CONFIGURE COMPRESSION ALGORITHM 'BASIC' AS OF RELEASE 'DEFAULT' OPTIMIZE FOR LOAD TRUE ; # default
+CONFIGURE ARCHIVELOG DELETION POLICY TO NONE; # default
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/prog/oracle/admin/GPSTX/rman/snapcf_GPSTX.f';
+
+RMAN> CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog/oracle/admin/GPSTX/rman/tdpo.opt)';
+
+old RMAN configuration parameters:
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog20/oracle/admin/GPSTX/rman/tdpo.opt)';
+new RMAN configuration parameters:
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog/oracle/admin/GPSTX/rman/tdpo.opt)';
+new RMAN configuration parameters are successfully stored
+starting full resync of recovery catalog
+full resync complete
+
+RMAN> 
+
+
+
+========================================================================================================================================
+http://pavelermakov.wordpress.com/2011/11/08/ora-01580-error-creating-control-backup-file/     
+========================================================================================================================================
+
+

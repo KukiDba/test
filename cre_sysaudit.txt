@@ -1,0 +1,75 @@
+SELECT comp_name, version, status FROM dba_registry;
+
+
+
+cre_sysaudit.sql
+
+
+CREATE TABLESPACE SYSAUDIT DATAFILE 
+  '/db/ORACLE/T748/sysaudit_01.dbf' SIZE 1024M AUTOEXTEND ON NEXT 100M MAXSIZE 20000M
+LOGGING
+ONLINE
+PERMANENT
+EXTENT MANAGEMENT LOCAL AUTOALLOCATE
+SEGMENT SPACE MANAGEMENT AUTO;
+
+
+==========================================================================================================================
+
+create table audx tablespace SYSAUDIT storage (initial 1M next 1M pctincrease 0) as select * from aud$ where 1 = 2;
+
+rename AUD$ to AUD$$;
+
+rename audx to aud$;
+
+create index i_aud2 on aud$(sessionid, ses$tid) tablespace SYSAUDIT storage(initial 1M next 1M pctincrease 0);
+
+alter VIEW "SYS"."DBA_AUDIT_EXISTS" compile;
+alter VIEW "SYS"."DBA_AUDIT_OBJECT" compile;
+alter VIEW "SYS"."DBA_AUDIT_SESSION" compile;
+alter VIEW "SYS"."DBA_AUDIT_STATEMENT" compile;
+alter VIEW "SYS"."DBA_AUDIT_TRAIL" compile;
+alter VIEW "SYS"."USER_AUDIT_OBJECT" compile;
+alter VIEW "SYS"."USER_AUDIT_SESSION" compile;
+alter VIEW "SYS"."USER_AUDIT_STATEMENT" compile;
+alter VIEW "SYS"."USER_AUDIT_TRAIL" compile;
+alter PACKAGE "SYS"."DBMS_INTERNAL_LOGSTDBY" compile BODY;
+
+==========================================================================================================================
+
+
+
+Checking :-
+
+select table_name, tablespace_name from dba_tables where table_name='AUD$';
+
+
+SELECT table_name, tablespace_name FROM dba_tables WHERE table_name IN ('AUD$', 'FGA_LOG$') ORDER BY table_name;
+
+
+
+BEGIN
+DBMS_AUDIT_MGMT.SET_AUDIT_TRAIL_LOCATION(
+AUDIT_TRAIL_TYPE => DBMS_AUDIT_MGMT.AUDIT_TRAIL_AUD_STD,
+AUDIT_TRAIL_LOCATION_VALUE => 'SYSAUX');
+END;
+/
+BEGIN
+  DBMS_AUDIT_MGMT.set_audit_trail_location(
+    audit_trail_type           => DBMS_AUDIT_MGMT.AUDIT_TRAIL_FGA_STD,
+    audit_trail_location_value => 'SYSTEM');
+END;
+/
+
+begin
+ dbms_audit_mgmt.init_cleanup(
+ audit_trail_type => 2,
+ default_cleanup_interval => 12);
+end;
+/
+Deinit:
+begin
+ dbms_audit_mgmt.deinit_cleanup (
+ audit_trail_type => 2);
+end;
+/

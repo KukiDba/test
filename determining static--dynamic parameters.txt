@@ -1,0 +1,41 @@
+In v$parameter we can find one column ie. ISSYS_MODIFIABLE. This column contains three phases 1) Immediate 2) DEFERRED 3) False 
+
+1. Immediate : We can change the parameter in fly database ie Dynamic.
+2. DEFERRED : We can change the parameter in fly database but this will effect after restart the database only.
+3. False : Compulsory we need to down the database ie Static. 
+
+Example: 
+
+select name, ISSYS_MODIFIABLE from v$parameter;
+
+Changing static parameters requires the SPFILE option for the SCOPE parameter with ALTER SYSTEM. These parameters cannot be changed for the presently active instance, i.e., with scope set to MEMORY/BOTH. All parameter that have the column ISSYS_MODIFIABLE column set to FALSE in the V$PARAMETER view, fall in this category. The scope should be SPFILE so that the parameters take effect on the next restart.
+
+
+Change Static Parameters Through the SPFILE 
+--------------------------------------------------------------------------------
+
+
+Oracle9i introduced the ability to dynamically set certain instance parameters thorugh the use of an SPFILE. Although, not every parameter can be set dynamically, for example, audit_trail. These are known as static parameters. Here is an example of what happens and the errors received when you try to change a static parameter within Oracle: 
+
+  SQL> alter system set audit_trail=DB scope=both;
+  alter system set audit_trail=DB scope=both
+                 *
+  ERROR at line 1:
+  ORA-02095: specified initialization parameter cannot be modified
+
+The problem - You need to change a static parameter value in the SPFILE to be used at instance startup. 
+
+To apply the parameter change, SCOPE=BOTH applies the modification at the instance level and in the spfile used at startup. 
+Use the value that applies the modification in the spfile only, provided that the spfile was used at startup: 
+
+  SQL> alter system set audit_trail=DB scope=spfile;
+
+  System altered.
+
+If no spfile was used at startup, you would get another error message such as: 
+  SQL> alter system set audit_trail=DB scope=spfile;
+  alter system set audit_trail=DB scope=spfile
+  *
+  ERROR at line 1:
+  ORA-32001: write to SPFILE requested but no SPFILE specified at startup
+According to the definition of a static parameter, it cannot be modified during instance life, but only in the init or spfile parameter file. 

@@ -1,0 +1,118 @@
+select DBID, NAME, DBINC_KEY, RESETLOGS_CHANGE#, RESETLOGS_TIME from rc_database_incarnation where dbid=2719050438;
+
+oracle@st-db58 41% sid U419
+/prog40/oracle/admin/U419
+
+oracle@st-db58 45% rman
+
+Recovery Manager: Release 9.2.0.8.0 - 64bit Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> connect target /;
+
+connected to target database: U419 (DBID=2719050438)
+
+RMAN> connect catalog rman/n0r_rman_vegia@P010RMAN.statoil.no;
+
+connected to recovery catalog database
+
+
+RMAN> list incarnation of database U419;
+
+
+List of Database Incarnations
+DB Key  	Inc Key 	DB Name  DB ID            CUR 	Reset SCN  		Reset Time
+------- 	------- 	-------- ---------------- --- 	---------- 		----------
+12034554 	12034602 	U419     215689729        NO  	10794135469398 		06/02/2012 12:37:55
+12034554 	12034555 	U419     215689729        YES 	10794135469589 		06/02/2012 12:38:37
+1186067 	169164582 	U419     2719050438       NO  	10804844812609 		24/08/2012 05:21:26
+
+
+RMAN> RESET DATABASE TO INCARNATION 169164582;
+
+database reset to incarnation 169164582 in recovery catalog
+
+
+RMAN> register database;
+
+starting full resync of recovery catalog
+full resync complete
+
+RMAN> show all;
+
+RMAN configuration parameters are:
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 60 DAYS;
+CONFIGURE BACKUP OPTIMIZATION OFF; # default
+CONFIGURE DEFAULT DEVICE TYPE TO 'SBT_TAPE';
+CONFIGURE CONTROLFILE AUTOBACKUP OFF;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE SBT_TAPE TO '%F'; # default
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default
+CONFIGURE DEVICE TYPE SBT_TAPE PARALLELISM 1; # default
+CONFIGURE DEVICE TYPE DISK PARALLELISM 1; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE SBT_TAPE TO 1; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE SBT_TAPE TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog49/oracle/admin/T419/rman/tdpo.opt)';
+CONFIGURE MAXSETSIZE TO 100 G;
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/prog40/oracle/product/9.2.0_64/dbs/snapcf_U419.f'; # default
+
+
+
+RMAN> CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog40/oracle/admin/T419/rman/tdpo.opt)';
+
+old RMAN configuration parameters:
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog49/oracle/admin/T419/rman/tdpo.opt)';
+new RMAN configuration parameters:
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog65/oracle/admin/T450T/rman/tdpo.opt)';
+new RMAN configuration parameters are successfully stored
+starting full resync of recovery catalog
+full resync complete
+
+RMAN> 
+
+
+
+
+
+
+EXECUTE SYS.DBMS_BACKUP_RESTORE.CFILESETSNAPSHOTNAME('/prog/oracle/admin/T762/rman/snapcf_T762.f');
+
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/prog/oracle/admin/T762/rman/snapcf_T762.f';
+
+
+
+
+
+RMAN> list incarnation of database T450T;
+
+new incarnation of database registered in recovery catalog
+starting full resync of recovery catalog
+full resync complete
+
+List of Database Incarnations
+DB Key  Inc Key DB Name  DB ID            STATUS  Reset SCN  Reset Time
+------- ------- -------- ---------------- --- ---------- ----------
+111835967 111836029 T450T    203586027        PARENT  10808504323155 19-JUN-12
+111835967 111835968 T450T    203586027        CURRENT 10808504423798 19-JUN-12
+159437830 159437918 T450T    2977458878       PARENT  10779131445794 09-APR-11
+159437830 176234898 T450T    2977458878       CURRENT 10821868883667 09-SEP-12
+
+
+nid TARGET=SYS/n0r_test_vegia@t450t DBNAME=t450t SETNAME=YES
+
+RESET DATABASE TO INCARNATION 169164582;
+
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/prog78/oracle/admin/P450/rman/snapcf_P450.f';
+
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS  'ENV=(TDPO_OPTFILE=/prog78/oracle/admin/P450/rman/tdpo.opt)';
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,131 @@
+alter profile default limit PASSWORD_LIFE_TIME 500 PASSWORD_GRACE_TIME 120; 
+
+
+
+SET LINE 500
+
+COL PROFILE FOR A20
+
+COL LIMIT FOR A30
+
+
+
+SET PAGES 50
+SELECT * FROM DBA_PROFILES where profile='NEED_DISPEN';
+
+
+
+
+PROFILE              RESOURCE_NAME                    RESOURCE 		LIMIT
+
+-------------------- -------------------------------- -------- 		----------
+
+DEFAULT              COMPOSITE_LIMIT                  KERNEL   		UNLIMITED
+
+DEFAULT              SESSIONS_PER_USER                KERNEL   		UNLIMITED
+
+DEFAULT              CPU_PER_SESSION                  KERNEL   		UNLIMITED
+
+DEFAULT              CPU_PER_CALL                     KERNEL   		UNLIMITED
+
+DEFAULT              LOGICAL_READS_PER_SESSION        KERNEL   		UNLIMITED
+
+DEFAULT              LOGICAL_READS_PER_CALL           KERNEL   		UNLIMITED
+
+DEFAULT              IDLE_TIME                        KERNEL   		UNLIMITED
+
+DEFAULT              CONNECT_TIME                     KERNEL   		UNLIMITED
+
+DEFAULT              PRIVATE_SGA                      KERNEL   		UNLIMITED
+
+DEFAULT              FAILED_LOGIN_ATTEMPTS            PASSWORD 		10
+
+DEFAULT              PASSWORD_LIFE_TIME               PASSWORD 		UNLIMITED
+
+DEFAULT              PASSWORD_REUSE_TIME              PASSWORD 		UNLIMITED
+
+DEFAULT              PASSWORD_REUSE_MAX               PASSWORD 		UNLIMITED
+
+DEFAULT              PASSWORD_VERIFY_FUNCTION         PASSWORD 		NULL
+
+DEFAULT              PASSWORD_LOCK_TIME               PASSWORD 		UNLIMITED
+
+DEFAULT              PASSWORD_GRACE_TIME              PASSWORD 		UNLIMITED
+
+MONITORING_PROFILE   COMPOSITE_LIMIT                  KERNEL   		DEFAULT
+
+MONITORING_PROFILE   SESSIONS_PER_USER                KERNEL   		DEFAULT
+
+MONITORING_PROFILE   CPU_PER_SESSION                  KERNEL   		DEFAULT
+
+MONITORING_PROFILE   CPU_PER_CALL                     KERNEL   		DEFAULT
+
+MONITORING_PROFILE   LOGICAL_READS_PER_SESSION        KERNEL   		DEFAULT
+
+MONITORING_PROFILE   LOGICAL_READS_PER_CALL           KERNEL   		DEFAULT
+
+MONITORING_PROFILE   IDLE_TIME                        KERNEL   		DEFAULT
+
+MONITORING_PROFILE   CONNECT_TIME                     KERNEL   		DEFAULT
+
+MONITORING_PROFILE   PRIVATE_SGA                      KERNEL   		DEFAULT
+
+MONITORING_PROFILE   FAILED_LOGIN_ATTEMPTS            PASSWORD 		UNLIMITED
+
+MONITORING_PROFILE   PASSWORD_LIFE_TIME               PASSWORD 		DEFAULT
+
+MONITORING_PROFILE   PASSWORD_REUSE_TIME              PASSWORD 		DEFAULT
+
+MONITORING_PROFILE   PASSWORD_REUSE_MAX               PASSWORD 		DEFAULT
+
+MONITORING_PROFILE   PASSWORD_VERIFY_FUNCTION         PASSWORD 		DEFAULT
+
+MONITORING_PROFILE   PASSWORD_LOCK_TIME               PASSWORD 		DEFAULT
+
+MONITORING_PROFILE   PASSWORD_GRACE_TIME              PASSWORD 		DEFAULT
+
+
+
+32 rows selected.
+
+
+
+
+
+create profile NEED_DISPEN PASSWORD_LIFE_TIME 30 PASSWORD_GRACE_TIME 5 IDLE_TIME 480 FAILED_LOGIN_ATTEMPTS 10 PASSWORD_REUSE_MAX 5 PASSWORD_LOCK_TIME 1 PASSWORD_VERIFY_FUNCTION NULL; 
+
+
+PROFILE              RESOURCE_NAME                    RESOURCE LIMIT
+-------------------- -------------------------------- -------- ------------------------------
+DEFAULT              COMPOSITE_LIMIT                  KERNEL   UNLIMITED
+DEFAULT              SESSIONS_PER_USER                KERNEL   UNLIMITED
+DEFAULT              CPU_PER_SESSION                  KERNEL   UNLIMITED
+DEFAULT              CPU_PER_CALL                     KERNEL   UNLIMITED
+DEFAULT              LOGICAL_READS_PER_SESSION        KERNEL   UNLIMITED
+DEFAULT              LOGICAL_READS_PER_CALL           KERNEL   UNLIMITED
+DEFAULT              IDLE_TIME                        KERNEL   480
+DEFAULT              CONNECT_TIME                     KERNEL   UNLIMITED
+DEFAULT              PRIVATE_SGA                      KERNEL   UNLIMITED
+DEFAULT              FAILED_LOGIN_ATTEMPTS            PASSWORD 10
+DEFAULT              PASSWORD_LIFE_TIME               PASSWORD 500
+DEFAULT              PASSWORD_REUSE_TIME              PASSWORD UNLIMITED
+DEFAULT              PASSWORD_REUSE_MAX               PASSWORD 5
+DEFAULT              PASSWORD_VERIFY_FUNCTION         PASSWORD NULL
+DEFAULT              PASSWORD_LOCK_TIME               PASSWORD 1
+DEFAULT              PASSWORD_GRACE_TIME              PASSWORD 120
+
+
+
+
+
+
+
+
+
+
+SYS at P367 >SELECT name,password FROM SYS.USER$ WHERE password is not null and name='WAS_USER';
+
+NAME                           PASSWORD
+------------------------------ ------------------------------
+WAS_USER                       E234F2B8B88B1A88
+

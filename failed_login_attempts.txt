@@ -1,0 +1,8 @@
+set line 200
+set pages 60
+col username for a15
+col os_username for a20
+col userhost for a30
+col terminal for a30
+col timestamp for a30
+SELECT os_username, username, userhost, terminal, timestamp, os_process FROM dba_audit_session WHERE username='MIRUSER' and returncode=1017 and rownum <35 ORDER BY sessionid DESC ;

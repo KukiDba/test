@@ -1,0 +1,4 @@
+alter session set nls_date_format='DD-MON-RRRR HH24:MI:SS';
+
+
+select os_username, username, userhost, terminal, to_date(timestamp, 'DD-MON-RR HH24:MI:SS'), owner, action_name from dba_audit_trail where timestamp between to_date('23-JUN-12 00:00:00', 'DD-MON-RR HH24:MI:SS') and to_date('23-JUN-12 01:00:00', 'DD-MON-RR HH24:MI:SS') and username!='DBSNMP';

@@ -1,0 +1,244 @@
+
+oracle single instance	fr711uodb006.zeu.alcatel-lucent.com--done
+Backup Location:/PRD1/oradata/Rman_backup_Temp
+
+oracle single instance	fr711uodb005.zeu.alcatel-lucent.com--done
+Backup Location:/PRD3/oradata/Rman_Backup_Temp/PBI4ML1_A
+
+oracle single instance	fr711uodb004.zeu.alcatel-lucent.com--done
+Backup Location:/PRD1/oradata/Rman_backup_Temp
+
+oracle single instance	fr712uodb003.zeu.alcatel-lucent.com--done
+Backup Location:/PRD3/oradata/Rman_Backup_Temp/PBI4ML1_A
+
+oracle single instance	fr711uodb003.zeu.alcatel-lucent.com--done
+Backup Location:/PRD3/oradata/Rman_Backup_Temp/PBI4ML1_A
+
+oracle single instance	fr712uodb002.zeu.alcatel-lucent.com- done
+Backup Location:/PRD1/oradata/Rman_Backup_Temp
+
+
+
+
+select SESSION_KEY,INPUT_TYPE,STATUS,START_TIME,END_TIME from v$rman_backup_job_details;
+set linesize 500 pagesize 2000
+col Hours format 9999.99
+col STATUS format a10
+select SESSION_KEY, INPUT_TYPE, STATUS,
+to_char(START_TIME,'mm-dd-yyyy hh24:mi:ss') as RMAN_Bkup_start_time,
+to_char(END_TIME,'mm-dd-yyyy hh24:mi:ss') as RMAN_Bkup_end_time,
+elapsed_seconds/3600 Hours from V$RMAN_BACKUP_JOB_DETAILS
+order by session_key;
+
+
+SELECT s.SID, USERNAME AS "User", PROGRAM, MODULE, ACTION, LOGON_TIME "Logon", l.* FROM V$SESSION s, V$ENQUEUE_LOCK l WHERE l.SID = s.SID AND l.TYPE = 'CF'AND l.ID1 = 0 AND l.ID2 = 2;
+
+
+
+       SID User                           PROGRAM                                          MODULE                                                           ACTION                                                           Logon     ADDR
+---------- ------------------------------ ------------------------------------------------ ---------------------------------------------------------------- ---------------------------------------------------------------- --------- ----------------
+KADDR                   SID TY        ID1        ID2      LMODE    REQUEST      CTIME      BLOCK
+---------------- ---------- -- ---------- ---------- ---------- ---------- ---------- ----------
+       297 SYS                            rman@be00zudbs001 (TNS V1-V3)                    rman@be00zudbs001 (TNS V1-V3)                                    0000003 FINISHED67                                               08-FEB-20 00000001587BC898
+00000001587BC8F0        297 CF          0          2          4          0    3166068          0
+
+
+
+select 'alter system kill session ' || '''' || sid || ',' || serial# ||',@'|| inst_id || '''' || ' immediate;' from gv$session where sid='&sid';
+
+
+backup policy HPDP
+********************
+
+set lines 200 pages 1000
+COL BS_REC    FORMAT 99999
+COL BP_REC    FORMAT 99999
+COL MB        FORMAT 9999999
+COL ENCRYPTED FORMAT A7
+COL TAG       FORMAT A25
+col MEDIA_HANDLE for a60
+SELECT S.RECID AS "BS_REC", P.RECID AS "BP_REC", P.ENCRYPTED, 
+       P.TAG, P.HANDLE AS "MEDIA_HANDLE" , P.MEDIA
+FROM   V$BACKUP_PIECE P, V$BACKUP_SET S
+WHERE  P.SET_STAMP = S.SET_STAMP
+AND    P.SET_COUNT = S.SET_COUNT;
+
+inet service --hpdp
+
+
+******************************************
+
+
+run
+{
+allocate channel t1 type disk;
+allocate channel t2 type disk;
+allocate channel t3 type disk;
+
+backup as compressed
+backup  backupset format '/PRD1/oradata/Rman_Backup_Temp/'
+skip inaccessible
+tag db_bk_full
+incremental level 0 database;
+sql 'alter system archive log current';
+BACKUP as BACKUPSET FORMAT '/PRD1/oradata/Rman_Backup_Temp/' ARCHIVELOG ALL not backed up 1 times;
+BACKUP as BACKUPSET FORMAT '/PRD1/oradata/Rman_Backup_Temp/' current controlfile;
+crosscheck backup;
+release channel t1;
+release channel t2;
+release channel t3;
+}
+
+
+
+run
+{
+allocate channel t1 type disk;
+allocate channel t2 type disk;
+allocate channel t3 type disk;
+backup as compressed
+tag db_bk_full
+backup as backupset format '/PRD1/oradata/Rman_Backup_Temp/PIDB01_A/PIDB01_A_%u_s%s_p%p_t%t'
+skip inaccessible
+tag db_bk_full
+incremental level 0 database;
+sql 'alter system archive log current';
+BACKUP as BACKUPSET FORMAT '/PRD1/oradata/Rman_Backup_Temp/PIDB01_A/PIDB01_ARCH_%s_p%p_t%t' ARCHIVELOG ALL not backed up 1 times;
+BACKUP as BACKUPSET FORMAT '/PRD1/oradata/Rman_Backup_Temp/PIDB01_A/BKPCTL_%u_s%s_p%p_t%t' current controlfile;
+crosscheck backup;
+release channel t1;
+release channel t2;
+release channel t3;
+}
+
+
+oracle 9i 
+******************
+
+RUN
+{
+configure controlfile autobackup on;
+ALLOCATE CHANNEL c1 DEVICE TYPE disk;
+ALLOCATE CHANNEL c2 DEVICE TYPE disk;
+ALLOCATE CHANNEL c3 DEVICE TYPE disk;
+ALLOCATE CHANNEL c4 DEVICE TYPE disk;
+backup incremental level 0 database tag IT3_FULL format '/ovmdbdata/rman_backup/IT3/%d_%T_%s_%p_FULL';
+sql 'alter system archive log current';
+backup tag IT3_ARCHIVE format '/ovmdbdata/rman_backup/IT3/%d_%T_%s_%p_ARCHIVE' ARCHIVELOG ALL not backed up 1 times;
+backup tag IT3_CONTROL current controlfile format '/ovmdbdata/rman_backup/IT3/%d_%T_%s_%p_CONTROL';
+release channel c1;
+release channel c2;
+release channel c3;
+release channel c4;
+}
+
+
++Lk:u2DG
+
+
+BACKUP AS COMPRESSED BACKUPSET
+
+
+
+run {
+ allocate channel tp1 type "sbt_tape";
+ allocate channel tp2 type "sbt_tape";
+ allocate channel tp3 type "sbt_tape";
+ backup current controlfile for standby;
+ backup incremental level = 0 database plus archivelog;
+ change archivelog until time 'sysdate - 3' delete;
+ release channel tp1;
+ release channel tp2;
+ release channel tp3;
+}
+
+************************************************
+
+
+oracle@fr712uora010 $
+oracle@fr712uora010 $ ps -ef|grep pmon
+oracle    24522      1  0 Oct01 ?        00:03:10 ora_pmon_PIDB01---done
+oracle    24740      1  0 Oct01 ?        00:03:04 ora_pmon_PIDMMR1--done
+oracle    24991      1  0 Oct01 ?        00:03:20 ora_pmon_PALPM01--done
+oracle    25642      1  0 Oct01 ?        00:04:33 ora_pmon_PALMR01--done
+oracle    25918      1  0 Oct01 ?        00:03:02 ora_pmon_PRMNEU1--done
+oracle   189153 188451  0 19:13 pts/0    00:00:00 grep pmon
+oracle@fr712uora010 $
+oracle@fr712uora010 $
+
+Backup Location: 
+
+SQL> select sum(bytes)/1024/1024/1024 from dba_data_files;
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+               42.5078125
+
+SQL> select name from v$database;
+
+NAME
+---------
+PIDB01
+
+SQL>
+
+
+
+SQL> select sum(bytes)/1024/1024/1024 from dba_data_files;
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+               8.77294159
+
+SQL> select name from v$database;
+
+NAME
+---------
+PIDMMR1
+
+
+SQL> select sum(bytes)/1024/1024/1024 from dba_data_files;
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+               37.8945923
+
+SQL> select name from v$database;
+
+NAME
+---------
+PALPM01
+
+
+
+SQL> select sum(bytes)/1024/1024/1024 from dba_data_files;
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+               170.094482
+
+SQL> select name from v$database;
+
+NAME
+---------
+PALMR01
+
+
+
+
+
+SQL> select sum(bytes)/1024/1024/1024 from dba_data_files;
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+                    11.25
+
+SQL> select name from v$database;
+
+NAME
+---------
+PRMNEU1
+
+
+
+

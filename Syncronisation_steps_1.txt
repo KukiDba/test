@@ -1,0 +1,156 @@
+
+Step - 1.
+On Bangalore:
+
+exec dbms_capture_adm.stop_capture('STREAMS_CAPTURE',TRUE);
+
+select capture_name, status from dba_capture  ;
+
+exec dbms_apply_adm.stop_apply('APPLY_FROM_RASEMEA', TRUE);
+exec dbms_apply_adm.stop_apply('APPLY_FROM_RASDALL', TRUE);
+exec dbms_apply_adm.stop_apply('APPLY_FROM_RASCHEN', TRUE);
+exec dbms_apply_adm.stop_apply('APPLY_FROM_RASBEIJ', TRUE);
+
+select apply_name, status, error_message, status_change_time from dba_apply ;
+
+
+
+************************************ 
+
+Step 2.
+
+On Bangalore
+
+exec dbms_propagation_adm.stop_propagation('PROP_TO_RASDALL',TRUE);
+exec dbms_propagation_adm.stop_propagation('PROP_TO_RASCHEN',TRUE);
+exec dbms_propagation_adm.stop_propagation('PROP_TO_RASEMEA',TRUE);
+exec dbms_propagation_adm.stop_propagation('PROP_TO_RASBEIJ',TRUE);
+
+
+
+--On other site.
+exec dbms_apply_adm.stop_apply('APPLY_FROM_RASSING', TRUE);
+exec dbms_propagation_adm.stop_propagation('PROP_TO_RASSING',TRUE);
+
+
+at Bangalore: 
+
+STREAMS_QUEUE
+
+
+-- To purge perform the following for both the capture and apply queue tables:
+
+
+--DECLARE
+--options dbms_aqadm.aq$_purge_options_t;
+--BEGIN
+--options.delivery_mode:=DBMS_AQADM.BUFFERED;
+--DBMS_AQADM.PURGE_QUEUE_TABLE('<capture or apply queue table name>',NULL,options);
+--END;
+-/
+
+
+
+
+-- check that the messages has been successfully purged for capture and apply queue:
+
+SELECT QUEUE_SCHEMA, QUEUE_NAME, (NUM_MSGS - SPILL_MSGS) MEM_MSG, SPILL_MSGS, NUM_MSGS
+FROM V$BUFFERED_QUEUES
+where queue_name='<capture or apply queue name>';
+
+SELECT QUEUE_SCHEMA, QUEUE_NAME, (NUM_MSGS - SPILL_MSGS) MEM_MSG, SPILL_MSGS, NUM_MSGS
+FROM V$BUFFERED_QUEUES
+where queue_name='STREAMS_QUEUE';
+
+
+
+On Banglaore:
+
+exec dbms_propagation_adm.start_propagation('PROP_TO_RASDALL');
+exec dbms_propagation_adm.start_propagation('PROP_TO_RASCHEN');
+exec dbms_propagation_adm.start_propagation('PROP_TO_RASEMEA');
+exec dbms_propagation_adm.start_propagation('PROP_TO_RASBEIJ');
+
+
+On other site.
+
+-- Start the propagation again:
+exec dbms_propagation_adm.start_propagation('PROP_TO_RASSING');
+exec dbms_apply_adm.start_apply('APPLY_FROM_RASSING'); 
+
+
+*************************************************** 
+
+
+Step 3.
+
+
+OWNER                          DIRECTORY_NAME                 DIRECTORY_PATH
+------------------------------ ------------------------------ -------------------------------------------------------
+SYS                            DATA_DUMP_DIR                  /usr1/data1/exp_dump
+
+
+--exp <USER>/<PASSWORD> owner=<USER> file=mars.dump log=mars.log object_consistent=Y
+
+tables=(NETRAS.SESSIONINFO,NETRAS.REMOTESESS, NETRAS.MESSAGEDELIVERY, NETRAS.CUSTNETWORKELEMCONNMETHOD, NETRAS.CRS, NETRAS.SERVERREQUESTS, NETRAS.ELEMENTPARAMETER, NETRAS.USERSESSION, NETRAS.TFA_TOKENS, NETRAS.TICKETATTACHMENTS)
+file=NETRAS_10tables_CHG0211557_%U.dump 
+log=NETRAS_10tables_CHG0211557_exp_log.log
+object_consistent=Y
+COMPRESS=Y
+BUFFER=999999
+
+nohup exp "'/ as sysdba'" parfile=Parfile_10table_exp.par &> nohup_expdp_CHG0211557.out &
+
+
+NETRAS.SESSIONINFO
+NETRAS.REMOTESESS
+NETRAS.MESSAGEDELIVERY
+NETRAS.CUSTNETWORKELEMCONNMETHOD
+NETRAS.CRS
+NETRAS.SERVERREQUESTS
+NETRAS.ELEMENTPARAMETER
+NETRAS.USERSESSION
+NETRAS.TFA_TOKENS
+NETRAS.TICKETATTACHMENTS
+
+
+
+
+
+--imp <USER>/<PASSWORD> file=mars.dump full=y ignore=y STREAMS_INSTANTIATION=Y
+
+file=NETRAS_10tables_CHG0211557_%U.dump 
+full=y 
+ignore=y 
+STREAMS_INSTANTIATION=Y
+
+
+nohup imp "'/ as sysdba'" parfile=impfile_10table.par &> nohup_imp_CHG0211557_prd.out &
+
+
+************************************************** 
+
+
+-- Check the errors in the error queue:
+	select apply_name, LOCAL_TRANSACTION_ID, ERROR_MESSAGE from dba_apply_error;
+
+-- To delete specific transaction:
+	exec DBMS_APPLY_ADM.DELETE_ERROR('<transaction_id>');
+
+-- To delete all errors:
+exec DBMS_APPLY_ADM.DELETE_ALL_ERRORS('<apply_name>');
+
+
+************************************* 
+
+On Bangalore:
+
+
+exec dbms_apply_adm.start_apply('APPLY_FROM_RASEMEA');
+exec dbms_apply_adm.start_apply('APPLY_FROM_RASDALL');
+exec dbms_apply_adm.start_apply('APPLY_FROM_RASCHEN'); 
+exec dbms_apply_adm.start_apply('APPLY_FROM_RASBEIJ');
+
+exec dbms_capture_adm.start_capture('STREAMS_CAPTURE');
+
+

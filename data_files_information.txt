@@ -1,0 +1,10 @@
+SELECT dfs.tablespace_name, df.file_name, df.TOTAL_SPACE_MB, dfs.FREE_SPACE_MB,TO_CHAR( (free_space_mb*100/total_space_mb),'09.00') "FREE%",   
+TRUNC(df.TOTAL_SPACE_MB-USED_SPACE_MB ) Reclaim_space_MB, AUTOEXTENSIBLE,  MAXBYTES_MB, INCREMENT_BY_MB 
+FROM (SELECT  tablespace_name, file_id,SUM(bytes)/1024/1024 AS "FREE_SPACE_MB" FROM DBA_FREE_SPACE GROUP BY tablespace_name, file_id) dfs,  
+(SELECT file_id, file_name, SUM(bytes)/1024/1024 AS "TOTAL_SPACE_MB" FROM DBA_DATA_FILES GROUP BY file_id, file_name) df,   
+(SELECT DISTINCT file_name,((ROUND(f.bytes / 1024 / 1024) - ROUND(s.bytes / 1024 / 1024))) "USED_SPACE_MB",f.AUTOEXTENSIBLE, TRUNC(f.MAXBYTES/1024/1024,2) MAXBYTES_MB, TRUNC((f.INCREMENT_BY/1024)*8,2) INCREMENT_BY_MB 
+FROM DBA_DATA_FILES f, DBA_FREE_SPACE s WHERE f.file_id = s.file_id(+) AND s.block_id IN (SELECT MAX(block_id) FROM 
+DBA_FREE_SPACE WHERE file_id = s.file_id)) aus  
+WHERE dfs.FILE_ID  = df.FILE_ID 
+AND aus.file_name(+) = df.file_name
+ ORDER BY 1,2;

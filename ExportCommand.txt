@@ -1,0 +1,28 @@
+At C:> Prompt you have to take export dump from the following syntax.
+
+ 
+
+Exp lrmairkt/lrmairkt file=C:\Kol_ACC.dmp tables=(TEMPBILLOFENTRYHEADER_PROFILE, TEMPTRANSACTION, TEMPCOMMODITYPROFILE, TEMPLICENSE, TEMPBOND_PROFILE, TEMPCERTIFICATE_PROFILE, TEMPCOMMENTS_PROFILE, TEMPPENALTY_PROFILE, TEMPAMEND_PROFILE) direct=Y indexes=N constraints=N
+
+ 
+
+Exp lrmairkt/lrmairkt file=C:\Kol_ACC1.dmp tables=( TEMPSTATUS_PROFILE, TEMPGOODSEXAMINATION_PROFILE, TEMPFINE_PROFILE, TEMPCASH_PROFILE, TEMPEXCHANGE_PROFILE, TEMPBILLOFENTRYSTATUS) direct=Y indexes=N constraints=N
+
+ 
+
+Exp lrmairkt/lrmairkt file=C:\Kol_ACC2.dmp tables=( TEMPEXPORTORIENTEDUNIT_PROFILE, TEMPIGM_PROFILE, TEMPCONTAINER_IGM_PROFILE, TEMPMISCCHARGE_PROFILE, TEMPHIST_COMMODITYPROFILE) direct=Y indexes=N constraints=N
+
+ 
+
+After thease Steps send me the dump files (Kol_ACC.dmp, Kol_ACC1.dmp, Kol_ACC2.dmp) ASAP.
+
+ 
+
+If any confusion missed call me then I will Call you.
+
+ 
+
+Regards
+
+Jaideep Kumar
+

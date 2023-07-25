@@ -1,0 +1,23 @@
+How to check default temporary tablespace 
+==============================================
+
+COLUMN property_name FORMAT A30
+COLUMN property_value FORMAT A30
+COLUMN description FORMAT A50
+SET LINESIZE 200
+
+SELECT * FROM database_properties WHERE property_name like '%TABLESPACE';
+
+
+
+
+
+set line 300
+set pages 200
+col tablespace_name for a30
+col file_name for a60
+select file_name, tablespace_name, bytes/1024/1024 "Bytes_in_MB", status, round(maxbytes/1024/1024/1024,2) "maxbytes_in_GB", autoextensible from dba_temp_files;
+
+
+
+ALTER DATABASE TEMPFILE '/db/ORACLE/P119A/ASPENnjordaaetemp.dbf' AUTOEXTEND ON NEXT 100M MAXSIZE 2048M;

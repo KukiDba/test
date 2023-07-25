@@ -1,0 +1,423 @@
+
+https://emilianofusaglia.net/category/oracle-engineered-systems/exadata-machine/
+
+https://emilianofusaglia.net/2016/02/26/exadata-machine/
+
+https://updates.oracle.com/Orion/Services/download?type=readme&aru=14434820
+https://updates.oracle.com/Orion/Services/download?type=readme&aru=14434826
+
+https://www.oracle.com/technetwork/oem/pdf/con8531-2103337.pdf
+
+https://gavinsoorma.com.au/2017/08/installing-and-configuring-the-exadata-database-machine-plug-in-for-em-cloud-control/
+
+https://docs.oracle.com/cd/E24628_01/doc.121/e27442/ch2_deployment.htm#EMXIG227
+
+
+
+Create a Database Server ILOM Service Processor User
+
+
+1. Log in to the Service Processor as root
+
+cd /SP/users
+
+create oemuser
+
+Nokia12345
+
+cd oemuser
+set role='cro'
+
+show /SP/users
+
+Test the ILOM user ID created in step 3 by listing the last 10 system events:
+
+ipmitool -I lanplus -H fih3ex2celadm03-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+
+
+
+
+
+oracle@fih3ex2dbadm01 $ ipmitool -I lanplus -H fih3ex2dbadm01-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+ 3c8 | 09/01/2019 | 09:50:45 | System Firmware Progress | Keyboard controller initialization | Asserted
+ 3c9 | 09/01/2019 | 09:50:48 | System Firmware Progress | Option ROM initialization | Asserted
+ 3ca | 09/01/2019 | 09:51:21 | System Firmware Progress | Hard-disk initialization | Asserted
+ 3cb | 09/01/2019 | 09:51:21 | System Firmware Progress | Option ROM initialization | Asserted
+ 3cc | 09/01/2019 | 09:51:30 | System Firmware Progress | System boot initiated | Asserted
+ 3cd | 09/01/2019 | 09:51:30 | System Firmware Progress | System boot initiated | Asserted
+ 3ce | 11/12/2019 | 08:09:01 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3cf | 02/10/2020 | 08:09:12 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3d0 | 05/10/2020 | 08:09:15 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3d1 | 08/08/2020 | 08:09:15 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ exit
+logout
+You have new mail in /var/spool/mail/root
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ipmitool -I lanplus -H fih3ex2dbadm01-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+ 3c8 | 09/01/2019 | 09:50:45 | System Firmware Progress | Keyboard controller initialization | Asserted
+ 3c9 | 09/01/2019 | 09:50:48 | System Firmware Progress | Option ROM initialization | Asserted
+ 3ca | 09/01/2019 | 09:51:21 | System Firmware Progress | Hard-disk initialization | Asserted
+ 3cb | 09/01/2019 | 09:51:21 | System Firmware Progress | Option ROM initialization | Asserted
+ 3cc | 09/01/2019 | 09:51:30 | System Firmware Progress | System boot initiated | Asserted
+ 3cd | 09/01/2019 | 09:51:30 | System Firmware Progress | System boot initiated | Asserted
+ 3ce | 11/12/2019 | 08:09:01 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3cf | 02/10/2020 | 08:09:12 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3d0 | 05/10/2020 | 08:09:15 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3d1 | 08/08/2020 | 08:09:15 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ipmitool -I lanplus -H fih3ex2dbadm02-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+ 3c7 | 09/01/2019 | 08:34:47 | System Firmware Progress | Keyboard controller initialization | Asserted
+ 3c8 | 09/01/2019 | 08:34:51 | System Firmware Progress | Option ROM initialization | Asserted
+ 3c9 | 09/01/2019 | 08:35:24 | System Firmware Progress | Hard-disk initialization | Asserted
+ 3ca | 09/01/2019 | 08:35:24 | System Firmware Progress | Option ROM initialization | Asserted
+ 3cb | 09/01/2019 | 08:35:32 | System Firmware Progress | System boot initiated | Asserted
+ 3cc | 09/01/2019 | 08:35:32 | System Firmware Progress | System boot initiated | Asserted
+ 3cd | 10/06/2019 | 10:41:56 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3ce | 01/04/2020 | 10:41:38 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3cf | 04/03/2020 | 10:41:41 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 3d0 | 07/02/2020 | 10:41:44 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ipmitool -I lanplus -H fih3ex2celadm01-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+ 2bc | 01/26/2019 | 15:23:04 | Power Supply #0xd9 | Power Supply AC lost | Deasserted
+ 2bd | 01/27/2019 | 15:04:00 | Power Supply #0xd9 | Power Supply AC lost | Asserted
+ 2be | 01/27/2019 | 16:06:42 | Power Supply #0xd9 | Power Supply AC lost | Deasserted
+ 2bf | 02/15/2019 | 12:28:30 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2c0 | 05/16/2019 | 12:28:37 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2c1 | 08/14/2019 | 12:28:44 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2c2 | 11/12/2019 | 12:28:33 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2c3 | 02/10/2020 | 12:28:33 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2c4 | 05/10/2020 | 12:28:31 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2c5 | 08/08/2020 | 12:28:30 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ipmitool -I lanplus -H fih3ex2celadm02-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+ 403 | 08/12/2020 | 14:27:33 | System Firmware Progress | PCI resource configuration | Asserted
+ 404 | 08/12/2020 | 14:27:34 | System Firmware Progress | Video initialization | Asserted
+ 405 | 08/12/2020 | 14:27:34 | System Firmware Progress | Option ROM initialization | Asserted
+ 406 | 08/12/2020 | 14:27:37 | System Firmware Progress | Keyboard controller initialization | Asserted
+ 407 | 08/12/2020 | 14:27:41 | System Firmware Progress | Option ROM initialization | Asserted
+ 408 | 08/12/2020 | 14:29:01 | System Firmware Progress | Hard-disk initialization | Asserted
+ 409 | 08/12/2020 | 14:29:01 | System Firmware Progress | Option ROM initialization | Asserted
+ 40a | 08/12/2020 | 14:29:09 | System Firmware Progress | System boot initiated | Asserted
+ 40b | 08/12/2020 | 14:29:09 | System Firmware Progress | System boot initiated | Asserted
+ 40c | 08/12/2020 | 14:37:58 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ipmitool -I lanplus -H fih3ex2celadm03-ilom.emea.nsn-net.net -U oemuser -P Nokia12345 -L USER sel list last 10
+ 2a5 | 11/04/2019 | 09:26:39 | System Firmware Progress | Keyboard controller initialization | Asserted
+ 2a6 | 11/04/2019 | 09:26:45 | System Firmware Progress | Option ROM initialization | Asserted
+ 2a7 | 11/04/2019 | 09:32:43 | System Firmware Progress | Hard-disk initialization | Asserted
+ 2a8 | 11/04/2019 | 09:32:43 | System Firmware Progress | Option ROM initialization | Asserted
+ 2a9 | 11/04/2019 | 09:32:51 | System Firmware Progress | System boot initiated | Asserted
+ 2aa | 11/04/2019 | 09:32:51 | System Firmware Progress | System boot initiated | Asserted
+ 2ab | 11/12/2019 | 10:28:44 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2ac | 02/10/2020 | 10:28:35 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2ad | 05/10/2020 | 10:28:49 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+ 2ae | 08/08/2020 | 10:28:36 | System ACPI Power State #0x26 | S0/G0: working | Asserted
+[root@fih3ex2dbadm01 ~]#
+
+
+
+Verify Software Versions
+**********************************
+
+1. Exadata Storage Server Software
+
+dcli -g cell_group -l root "cellcli -e list cell detail"
+
+[root@fih3ex2dbadm01 ~]# dcli -g cell_group -l root "cellcli -e list cell detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   fih3ex2celadm03
+fih3ex2celadm03.emea.nsn-net.net: accessLevelPerm:        remoteLoginEnabled
+fih3ex2celadm03.emea.nsn-net.net: bbuStatus:              failed
+fih3ex2celadm03.emea.nsn-net.net: cellVersion:            OSS_18.1.7.0.0AUG_LINUX.X64_180821
+fih3ex2celadm03.emea.nsn-net.net: cpuCount:               32/32
+fih3ex2celadm03.emea.nsn-net.net: diagHistoryDays:        7
+fih3ex2celadm03.emea.nsn-net.net: eighthRack:             FALSE
+fih3ex2celadm03.emea.nsn-net.net: fanCount:               8/8
+fih3ex2celadm03.emea.nsn-net.net: fanStatus:              normal
+fih3ex2celadm03.emea.nsn-net.net: flashCacheMode:         WriteThrough
+fih3ex2celadm03.emea.nsn-net.net: id:                     1509NM70JC
+fih3ex2celadm03.emea.nsn-net.net: interconnectCount:      2
+fih3ex2celadm03.emea.nsn-net.net: interconnect1:          ib0
+fih3ex2celadm03.emea.nsn-net.net: interconnect2:          ib1
+fih3ex2celadm03.emea.nsn-net.net: iormBoost:              0.0
+fih3ex2celadm03.emea.nsn-net.net: ipaddress1:             10.255.31.8/22
+fih3ex2celadm03.emea.nsn-net.net: ipaddress2:             10.255.31.9/22
+fih3ex2celadm03.emea.nsn-net.net: kernelVersion:          4.1.12-94.8.4.el6uek.x86_64
+fih3ex2celadm03.emea.nsn-net.net: locatorLEDStatus:       off
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              Oracle Corporation ORACLE SERVER X5-2L High Capacity
+fih3ex2celadm03.emea.nsn-net.net: memoryGB:               94
+fih3ex2celadm03.emea.nsn-net.net: metricHistoryDays:      7
+fih3ex2celadm03.emea.nsn-net.net: notificationMethod:     snmp
+fih3ex2celadm03.emea.nsn-net.net: notificationPolicy:     critical,warning,clear
+fih3ex2celadm03.emea.nsn-net.net: offloadGroupEvents:
+fih3ex2celadm03.emea.nsn-net.net: powerCount:             2/2
+fih3ex2celadm03.emea.nsn-net.net: powerStatus:            normal
+fih3ex2celadm03.emea.nsn-net.net: ramCacheMaxSize:        0
+fih3ex2celadm03.emea.nsn-net.net: ramCacheMode:           Auto
+fih3ex2celadm03.emea.nsn-net.net: ramCacheSize:           0
+fih3ex2celadm03.emea.nsn-net.net: releaseImageStatus:     success
+fih3ex2celadm03.emea.nsn-net.net: releaseVersion:         18.1.7.0.0.180821
+fih3ex2celadm03.emea.nsn-net.net: rpmVersion:             cell-18.1.7.0.0_LINUX.X64_180821-1.x86_64
+fih3ex2celadm03.emea.nsn-net.net: releaseTrackingBug:     28519942
+fih3ex2celadm03.emea.nsn-net.net: rollbackVersion:        12.1.2.3.5.170418
+fih3ex2celadm03.emea.nsn-net.net: snmpSubscriber:         host=10.130.132.35,port=162,community=public,type=ASR,asrmPort=16161
+fih3ex2celadm03.emea.nsn-net.net: host=fih3ex2dbadm02.emea.nsn-net.net,port=1830,community=public
+fih3ex2celadm03.emea.nsn-net.net: host=fih3ex2dbadm01.emea.nsn-net.net,port=1830,community=public
+fih3ex2celadm03.emea.nsn-net.net: status:                 online
+fih3ex2celadm03.emea.nsn-net.net: temperatureReading:     22.0
+fih3ex2celadm03.emea.nsn-net.net: temperatureStatus:      normal
+fih3ex2celadm03.emea.nsn-net.net: upTime:                 302 days, 3:59
+fih3ex2celadm03.emea.nsn-net.net: usbStatus:              normal
+fih3ex2celadm03.emea.nsn-net.net: cellsrvStatus:          running
+fih3ex2celadm03.emea.nsn-net.net: msStatus:               running
+fih3ex2celadm03.emea.nsn-net.net: rsStatus:               running
+
+
+fih3ex2celadm02.emea.nsn-net.net: name:                   fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: accessLevelPerm:        remoteLoginEnabled
+fih3ex2celadm02.emea.nsn-net.net: bbuStatus:              normal
+fih3ex2celadm02.emea.nsn-net.net: cellVersion:            OSS_18.1.7.0.0AUG_LINUX.X64_180821
+fih3ex2celadm02.emea.nsn-net.net: cpuCount:               32/32
+fih3ex2celadm02.emea.nsn-net.net: diagHistoryDays:        7
+fih3ex2celadm02.emea.nsn-net.net: eighthRack:             FALSE
+fih3ex2celadm02.emea.nsn-net.net: fanCount:               8/8
+fih3ex2celadm02.emea.nsn-net.net: fanStatus:              normal
+fih3ex2celadm02.emea.nsn-net.net: flashCacheMode:         WriteThrough
+fih3ex2celadm02.emea.nsn-net.net: id:                     1509NM70FX
+fih3ex2celadm02.emea.nsn-net.net: interconnectCount:      2
+fih3ex2celadm02.emea.nsn-net.net: interconnect1:          ib0
+fih3ex2celadm02.emea.nsn-net.net: interconnect2:          ib1
+fih3ex2celadm02.emea.nsn-net.net: iormBoost:              0.0
+fih3ex2celadm02.emea.nsn-net.net: ipaddress1:             10.255.31.6/22
+fih3ex2celadm02.emea.nsn-net.net: ipaddress2:             10.255.31.7/22
+fih3ex2celadm02.emea.nsn-net.net: kernelVersion:          4.1.12-94.8.4.el6uek.x86_64
+fih3ex2celadm02.emea.nsn-net.net: locatorLEDStatus:       off
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              Oracle Corporation ORACLE SERVER X5-2L High Capacity
+fih3ex2celadm02.emea.nsn-net.net: memoryGB:               94
+fih3ex2celadm02.emea.nsn-net.net: metricHistoryDays:      7
+fih3ex2celadm02.emea.nsn-net.net: notificationMethod:     snmp
+fih3ex2celadm02.emea.nsn-net.net: notificationPolicy:     critical,warning,clear
+fih3ex2celadm02.emea.nsn-net.net: offloadGroupEvents:
+fih3ex2celadm02.emea.nsn-net.net: powerCount:             2/2
+fih3ex2celadm02.emea.nsn-net.net: powerStatus:            normal
+fih3ex2celadm02.emea.nsn-net.net: ramCacheMaxSize:        0
+fih3ex2celadm02.emea.nsn-net.net: ramCacheMode:           Auto
+fih3ex2celadm02.emea.nsn-net.net: ramCacheSize:           0
+fih3ex2celadm02.emea.nsn-net.net: releaseImageStatus:     success
+fih3ex2celadm02.emea.nsn-net.net: releaseVersion:         18.1.7.0.0.180821
+fih3ex2celadm02.emea.nsn-net.net: rpmVersion:             cell-18.1.7.0.0_LINUX.X64_180821-1.x86_64
+fih3ex2celadm02.emea.nsn-net.net: releaseTrackingBug:     28519942
+fih3ex2celadm02.emea.nsn-net.net: rollbackVersion:        12.1.2.3.5.170418
+fih3ex2celadm02.emea.nsn-net.net: snmpSubscriber:         host=10.130.132.35,port=162,community=public,type=ASR,asrmPort=16161
+fih3ex2celadm02.emea.nsn-net.net: host=fih3ex2dbadm02.emea.nsn-net.net,port=1830,community=public
+fih3ex2celadm02.emea.nsn-net.net: host=fih3ex2dbadm01.emea.nsn-net.net,port=1830,community=public
+fih3ex2celadm02.emea.nsn-net.net: status:                 online
+fih3ex2celadm02.emea.nsn-net.net: temperatureReading:     22.0
+fih3ex2celadm02.emea.nsn-net.net: temperatureStatus:      normal
+fih3ex2celadm02.emea.nsn-net.net: upTime:                 19 days, 23:02
+fih3ex2celadm02.emea.nsn-net.net: usbStatus:              normal
+fih3ex2celadm02.emea.nsn-net.net: cellsrvStatus:          running
+fih3ex2celadm02.emea.nsn-net.net: msStatus:               running
+fih3ex2celadm02.emea.nsn-net.net: rsStatus:               running
+
+
+fih3ex2celadm01.emea.nsn-net.net: name:                   fih3ex2celadm01
+fih3ex2celadm01.emea.nsn-net.net: accessLevelPerm:        remoteLoginEnabled
+fih3ex2celadm01.emea.nsn-net.net: bbuStatus:              normal
+fih3ex2celadm01.emea.nsn-net.net: cellVersion:            OSS_18.1.7.0.0AUG_LINUX.X64_180821
+fih3ex2celadm01.emea.nsn-net.net: cpuCount:               32/32
+fih3ex2celadm01.emea.nsn-net.net: diagHistoryDays:        7
+fih3ex2celadm01.emea.nsn-net.net: eighthRack:             FALSE
+fih3ex2celadm01.emea.nsn-net.net: fanCount:               8/8
+fih3ex2celadm01.emea.nsn-net.net: fanStatus:              normal
+fih3ex2celadm01.emea.nsn-net.net: flashCacheMode:         WriteThrough
+fih3ex2celadm01.emea.nsn-net.net: id:                     1509NM70G4
+fih3ex2celadm01.emea.nsn-net.net: interconnectCount:      2
+fih3ex2celadm01.emea.nsn-net.net: interconnect1:          ib0
+fih3ex2celadm01.emea.nsn-net.net: interconnect2:          ib1
+fih3ex2celadm01.emea.nsn-net.net: iormBoost:              0.0
+fih3ex2celadm01.emea.nsn-net.net: ipaddress1:             10.255.31.4/22
+fih3ex2celadm01.emea.nsn-net.net: ipaddress2:             10.255.31.5/22
+fih3ex2celadm01.emea.nsn-net.net: kernelVersion:          4.1.12-94.8.4.el6uek.x86_64
+fih3ex2celadm01.emea.nsn-net.net: locatorLEDStatus:       off
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              Oracle Corporation ORACLE SERVER X5-2L High Capacity
+fih3ex2celadm01.emea.nsn-net.net: memoryGB:               94
+fih3ex2celadm01.emea.nsn-net.net: metricHistoryDays:      7
+fih3ex2celadm01.emea.nsn-net.net: notificationMethod:     snmp
+fih3ex2celadm01.emea.nsn-net.net: notificationPolicy:     critical,warning,clear
+fih3ex2celadm01.emea.nsn-net.net: offloadGroupEvents:
+fih3ex2celadm01.emea.nsn-net.net: powerCount:             2/2
+fih3ex2celadm01.emea.nsn-net.net: powerStatus:            normal
+fih3ex2celadm01.emea.nsn-net.net: ramCacheMaxSize:        0
+fih3ex2celadm01.emea.nsn-net.net: ramCacheMode:           Auto
+fih3ex2celadm01.emea.nsn-net.net: ramCacheSize:           0
+fih3ex2celadm01.emea.nsn-net.net: releaseImageStatus:     success
+fih3ex2celadm01.emea.nsn-net.net: releaseVersion:         18.1.7.0.0.180821
+fih3ex2celadm01.emea.nsn-net.net: rpmVersion:             cell-18.1.7.0.0_LINUX.X64_180821-1.x86_64
+fih3ex2celadm01.emea.nsn-net.net: releaseTrackingBug:     28519942
+fih3ex2celadm01.emea.nsn-net.net: rollbackVersion:        12.1.2.3.5.170418
+fih3ex2celadm01.emea.nsn-net.net: snmpSubscriber:         host=10.130.132.35,port=162,community=public,type=ASR,asrmPort=16161
+fih3ex2celadm01.emea.nsn-net.net: host=fih3ex2dbadm02.emea.nsn-net.net,port=1830,community=public
+fih3ex2celadm01.emea.nsn-net.net: host=fih3ex2dbadm01.emea.nsn-net.net,port=1830,community=public
+fih3ex2celadm01.emea.nsn-net.net: status:                 online
+fih3ex2celadm01.emea.nsn-net.net: temperatureReading:     23.0
+fih3ex2celadm01.emea.nsn-net.net: temperatureStatus:      normal
+fih3ex2celadm01.emea.nsn-net.net: upTime:                 611 days, 9:14
+fih3ex2celadm01.emea.nsn-net.net: usbStatus:              normal
+fih3ex2celadm01.emea.nsn-net.net: cellsrvStatus:          running
+fih3ex2celadm01.emea.nsn-net.net: msStatus:               running
+fih3ex2celadm01.emea.nsn-net.net: rsStatus:               running
+
+
+
+
+2.  ILOM ipmitool 
+***********************************
+[root@fih3ex2dbadm01 ~]# dcli -g ~/dbs_group -l root ipmitool -V
+fih3ex2dbadm01: ipmitool version 1.8.15.0
+fih3ex2dbadm02: ipmitool version 1.8.15.0
+
+3. InfiniBand Switch
+**************************************
+Switch 1
+[root@fih3ex2sw-iba01 ~]# nm2version
+SUN DCS 36p version: 2.2.9-3
+Build time: Mar  2 2018 12:54:44
+SP board info:
+Manufacturing Date: 2014.10.02
+Serial Number: "NCDH51397"
+Hardware Revision: 0x0107
+Firmware Revision: 0x0000
+BIOS version: SUN0R100
+BIOS date: 06/22/2010
+
+
+Switch 2
+[root@fih3ex2sw-ibb01 ~]# nm2version
+SUN DCS 36p version: 2.2.9-3
+Build time: Mar  2 2018 12:54:44
+SP board info:
+Manufacturing Date: 2014.10.22
+Serial Number: "NCDHL0715"
+Hardware Revision: 0x0107
+Firmware Revision: 0x0000
+BIOS version: SUN0R100
+BIOS date: 06/22/2010
+
+
+3. PDU Firmware
+*********************************
+
+
+
+    </ITEM>
+                <ITEM ID="28">
+                    <TYPE>pdu</TYPE>
+                    <ADMINNAME>fih3ex2sw-pdua01</ADMINNAME>
+                    <ADMINIP>10.174.103.113</ADMINIP>
+                    <ULOCATION>0</ULOCATION>
+                    <UHEIGHT>0</UHEIGHT>
+                </ITEM>
+                <ITEM ID="29">
+                    <TYPE>pdu</TYPE>
+                    <ADMINNAME>fih3ex2sw-pdub01</ADMINNAME>
+                    <ADMINIP>10.174.103.114</ADMINIP>
+                    <ULOCATION>0</ULOCATION>
+                    <UHEIGHT>0</UHEIGHT>
+                </ITEM>
+            </RACK>
+
+
+
+[root@fih3ex2dbadm01 onecommand]#
+[root@fih3ex2dbadm01 onecommand]# nslookup fih3ex2sw-pdua01
+Server:         10.171.0.1
+Address:        10.171.0.1#53
+
+Name:   fih3ex2sw-pdua01.emea.nsn-net.net
+Address: 10.174.103.113
+
+https://10.174.103.114/
+
+
+Part Number	
+7078665
+Serial Number	
+2343VLY-1440OM0020
+Date of Manufacture	
+10-03-2014
+Product Description	
+RMII_PDU22KVA-1_HV
+System Info
+Hardware Version	
+V2/C
+Firmware Version-V2.04 - 27.05.2015
+**************************************
+Bootloader Version	
+V0.01 - 15.10.2013
+MAC-Address	
+00-0b-38-bc-e6-30
+User Settings
+Name	
+fih3ex2sw-pdub01
+Product Identifier	
+Exadata X5-2
+Rack Serial Number	
+AK00284023
+Location	
+Nokia (HP) HEL3 DC
+
+
+KVM
+*************
+
+
+
+
+
+Open Database Ports
+**************************************
+
+The database listener ports must be opened for the Enterprise Manager OMS server(s). Note that Exadata Database Machine databases will use SCAN listeners; so, ports will need to be opened for the base compute node, the compute node virtual IP, and scan listeners addresses.
+
+For example, if an Exadata Database Machine quarter rack has been configured with two compute nodes - exadbnode1.example.com and exadbnode2.example.com - and the listeners are using port 1521, then port 1521 will have to be opened to the Enterprise Manager Server for the following addresses:
+
+    The compute node hostnames - exadbnode1.example.com and exadbnode2.example.com
+
+    The virtual IPs for each compute node - exadbnode1-vip.example.com and exadbnode1-vip.example.com
+
+    The scan listener hostname - scan-exadatadb
+
+
+
+
+oracle@fr712uora005 $ ./emctl listplugins agent
+Oracle Enterprise Manager Cloud Control 12c Release 3
+Copyright (c) 1996, 2013 Oracle Corporation.  All rights reserved.
+---------------------------------------------------------------
+oracle.sysman.db    12.1.0.4.0 /u01/app/oracle/product/oms12c/agent/plugins/oracle.sysman.db.agent.plugin_12.1.0.4.0
+oracle.sysman.beacon 12.1.0.3.0 /u01/app/oracle/product/oms12c/agent/plugins/oracle.sysman.beacon.agent.plugin_12.1.0.3.0
+oracle.sysman.emas  12.1.0.4.0 /u01/app/oracle/product/oms12c/agent/plugins/oracle.sysman.emas.agent.plugin_12.1.0.4.0
+oracle.sysman.oh    12.1.0.3.0 /u01/app/oracle/product/oms12c/agent/plugins/oracle.sysman.oh.agent.plugin_12.1.0.3.0
+oracle.sysman.emrep 12.1.0.3.0 /u01/app/oracle/product/oms12c/agent/plugins/oracle.sysman.emrep.agent.plugin_12.1.0.3.0
+
+
+
+
+
+
+
+
+
+
+
+

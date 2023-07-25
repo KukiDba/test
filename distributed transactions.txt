@@ -1,0 +1,144 @@
+begin
+dbms_transaction.purge_lost_db_entry(xid => '10.29.956421');
+end;
+/
+
+commit;
+
+
+select local_tran_id, global_tran_id, state, mixed from dba_2pc_pending; 
+
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '12.6.346174');
+end;
+/
+
+commit;
+
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '8.26.727804');
+end;
+/
+
+commit;
+
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '22.15.4045');
+end;
+/
+
+commit;
+
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '14.10.236587');
+end;
+/
+
+commit;
+
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '10.29.956421');
+end;
+/
+
+commit;
+
+=======================================================================================================================================================================
+=======================================================================================================================================================================
+column global_tran_id format a25
+column database format a22
+column global_name format a22
+SELECT * from global_name;
+col GLOBAL_TRAN_ID for a60
+SELECT LOCAL_TRAN_ID, GLOBAL_TRAN_ID,to_char(FAIL_TIME,'dd-mon-yyyy HH24:MI:SS'),STATE, MIXED FROM DBA_2PC_PENDING;
+
+SELECT LOCAL_TRAN_ID, IN_OUT,INTERFACE, DATABASE FROM DBA_2PC_NEIGHBORS;
+
+
+If the remote database cannot be accessed, a failed distributed transaction cannot be committed or rolled back and so must be purged from the list of pending transactions.
+
+
+dead 2pc transactions or in-doubt distributed transactions
+
+
+
+https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=460143772803254&id=1297450.1&displayIndex=1&_afrWindowMode=0&_adf.ctrl-state=ec448p3zh_77#SYMPTOM
+
+https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=460193292968600&parent=DOCUMENT&sourceId=1297450.1&id=159377.1&_afrWindowMode=0&_adf.ctrl-state=ec448p3zh_126
+
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '146.13.346193');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '144.33.280498');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '139.3.183593');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '110.31.4438075');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '108.30.2374232');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '102.32.3034756');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '107.2.4443714');
+end;
+/
+
+commit;
+
+begin
+dbms_transaction.purge_lost_db_entry(xid => '99.29.5396116');
+end;
+/
+
+commit;
+
+
+
+
+
+
+
+rollback force '146.13.346193'; 
+rollback force '144.33.280498'; 
+rollback force '139.3.183593'; 
+rollback force '110.31.4438075'; 
+rollback force '108.30.2374232'; 
+rollback force '102.32.3034756'; 
+rollback force '107.2.4443714'; 
+rollback force '99.29.5396116';

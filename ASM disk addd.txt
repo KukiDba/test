@@ -1,0 +1,356 @@
+
+ASMCMD>
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  NORMAL  Y         512   4096  1048576      9186     8784             3062            2861              3             Y  OCR/
+MOUNTED  NORMAL  N         512   4096  1048576   2042680   775004           204760          285122             10             N  ORADATA01/
+MOUNTED  NORMAL  N         512   4096  1048576    409520   400523                0          200261              2             N  ORARECO01/
+ASMCMD>
+ASMCMD>
+
+http://db.geeksinsight.com/2013/01/09/asm-asm-disk-status-_dropped_0001_/
+
+
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  NORMAL  Y         512   4096  1048576      9186     8784             3062            2861              3             Y  OCR/
+MOUNTED  NORMAL  N         512   4096  1048576   2042680   775004           204760          285122             10             N  ORADATA01/
+MOUNTED  NORMAL  Y         512   4096  1048576   1228560  1211382           204760          503311              2             N  ORARECO01/
+A
+A
+
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  NORMAL  Y         512   4096  1048576      9186     8784             3062            2861              3             Y  OCR/
+MOUNTED  NORMAL  Y         512   4096  1048576   3681964  2360160           204760         1077700             10             N  ORADATA01/
+MOUNTED  NORMAL  N         512   4096  1048576   1228560  1210518           204760          502879              0             N  ORARECO01/
+AS
+
+Au1I=gri
+
+
+total 0
+
+data
+
+crwxrwxrwx   1 grid     oinstall 214, 2816 Aug  6  2016 c0t60002AC0000000000000040B00015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 2880 Aug  6  2016 c0t60002AC0000000000000040A00015128d0s0
+
+crwxrwxrwx   1 grid     oinstall 214, 1728 Aug  8  2016 c0t60002AC0000000000000041C00015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 1792 Aug  8  2016 c0t60002AC0000000000000041B00015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3776 Nov 10  2016 c0t60002AC000000000000004DB00015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3712 Nov 10  2016 c0t60002AC000000000000004DC00015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3648 Nov 10  2016 c0t60002AC000000000000004D800015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3840 Nov 10  2016 c0t60002AC000000000000004DA00015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3904 Nov 10  2016 c0t60002AC000000000000004D900015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3008 Nov 10  2016 c0t60002AC0000000000000040800015128d0s0
+
+
+reco
+
+crwxrwxrwx   1 grid     oinstall 214, 3072 Nov 10  2016 c0t60002AC0000000000000040700015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 3136 Nov 10  2016 c0t60002AC0000000000000040600015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 2944 Nov 10  2016 c0t60002AC0000000000000040900015128d0s0
+crwxrwxrwx   1 grid     oinstall 214, 2752 Nov 10  2016 c0t60002AC0000000000000040C00015128d0s0
+c
+
+
+
+ALTER DISKGROUP ORADATA01 ADD FAILGROUP HEL5_ORADATA01 DISK '/dev/rdsk/c0t60002AC0000000000000040A00015128d0s0' FORCE,'/dev/rdsk/c0t60002AC0000000000000040B00015128d0s0' FORCE REBALANCE POWER 1;
+
+alter diskgroup ORADATA01 drop disk /dev/rdsk/c0t60002AC0000000000000040A00015128d0s0;
+
+ alter diskgroup dg2 drop disk disk7;
+ORADATA01_0024
+
+alter diskgroup ORADATA01 drop disk ORADATA01_0025;
+
+
+ SELECT SUBSTR(d.name,1,16) AS asmdisk, d.mount_status, d.state,
+ dg.name AS diskgroup FROM V$ASM_DISKGROUP dg, V$ASM_DISK d
+WHERE dg.group_number = d.group_number;
+
+ ALTER DISKGROUP DATA_DBNAME ADD DISK '/dev/rdsk/c6t600507680180854860000000000000B2d0s0' SIZE 102400 M REBALANCE POWER 6;
+
+
+alter diskgroup GRID add failgroup GRID_0001 disk '/dev/mapper/asmt1nrocr1';
+
+before
+
+
+col PATH for a50
+col HEADER_STATUS for a15
+col STATE for a15
+col FAILGROUP for a20
+col FAILGROUP_TYPE for a25
+select group_number as gn, path, name, header_status, state,
+failgroup,FAILGROUP_TYPE from v$asm_disk where HEADER_STATUS='UNKNOWN';
+
+       GN PATH                                               NAME                                          HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- --------------------------------------------- --------------- --------------- -------------------- -------------------------
+         1                                                    _DROPPED_0003_OCR                             UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         1                                                    _DROPPED_0004_OCR                             UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         1                                                    _DROPPED_0005_OCR                             UNKNOWN         FORCING         HEL5_OCR             REGULAR
+
+
+
+         2                                                    _DROPPED_0005_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0006_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0007_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0019_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0009_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0011_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0013_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0015_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0017_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0008_ORADATA01                       UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+
+13 
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         0 /dev/rdsk/c0t60002AC0000000000000040600015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         3                                                    _DROPPED_0003_ORARECO01        UNKNOWN         FORCING         HEL5_ORARECO01       REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040800015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040900015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040A00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040B00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040C00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000041A00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000041B00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000041C00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC000000000000004D800015128d0s0                                 MEMBER          NORMAL                               REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         0 /dev/rdsk/c0t60002AC000000000000004D900015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC000000000000004DA00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC000000000000004DB00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC000000000000004DC00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040700015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         3                                                    _DROPPED_0002_ORARECO01        UNKNOWN         FORCING         HEL5_ORARECO01       REGULAR
+         2                                                    _DROPPED_0019_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0017_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0015_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0013_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0011_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         2                                                    _DROPPED_0009_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0008_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0007_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0006_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0005_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         1                                                    _DROPPED_0005_OCR              UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         1                                                    _DROPPED_0004_OCR              UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         1                                                    _DROPPED_0003_OCR              UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036A000151A3d0s0  HEL3_ORADATA01_01              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036B000151A3d0s0  HEL3_ORADATA01_02              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036C000151A3d0s0  HEL3_ORADATA01_03              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         2 /dev/rdsk/c0t60002AC0000000000000036D000151A3d0s0  HEL3_ORADATA01_04              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036E000151A3d0s0  HEL3_ORADATA01_05              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         3 /dev/rdsk/c0t60002AC0000000000000036F000151A3d0s0  HEL3_ORARECO01_01              MEMBER          NORMAL          HEL3_ORARECO01       REGULAR
+         3 /dev/rdsk/c0t60002AC00000000000000370000151A3d0s0  HEL3_ORARECO01_02              MEMBER          NORMAL          HEL3_ORARECO01       REGULAR
+         1 /dev/rdsk/c0t60002AC0000000000000037F000151A3d0s0  OCR_0000                       MEMBER          NORMAL          HEL3_OCR             REGULAR
+         1 /dev/rdsk/c0t60002AC00000000000000380000151A3d0s0  OCR_0002                       MEMBER          NORMAL          HEL3_OCR             REGULAR
+         1 /dev/rdsk/c0t60002AC00000000000000381000151A3d0s0  OCR_0001                       MEMBER          NORMAL          HEL3_OCR             REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043C000151A3d0s0  HEL3_ORADATA01_06              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043D000151A3d0s0  HEL3_ORADATA01_07              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043E000151A3d0s0  HEL3_ORADATA01_08              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043F000151A3d0s0  HEL3_ORADATA01_09              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         2 /dev/rdsk/c0t60002AC00000000000000440000151A3d0s0  HEL3_ORADATA01_10              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+
+45 rows selected.
+
+
+
+
+
+
+after added
+
+
+
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         0 /dev/rdsk/c0t60002AC0000000000000040A00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000040B00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         2                                                    _DROPPED_0019_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0017_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0015_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0013_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0011_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0009_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0008_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0007_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         2                                                    _DROPPED_0006_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         2                                                    _DROPPED_0005_ORADATA01        UNKNOWN         FORCING         HEL5_ORADATA01       REGULAR
+         1                                                    _DROPPED_0005_OCR              UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         1                                                    _DROPPED_0004_OCR              UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         1                                                    _DROPPED_0003_OCR              UNKNOWN         FORCING         HEL5_OCR             REGULAR
+         0 /dev/rdsk/c0t60002AC000000000000004DC00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC000000000000004DB00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000041C00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000041B00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         0 /dev/rdsk/c0t60002AC0000000000000041A00015128d0s0                                 MEMBER          NORMAL                               REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036A000151A3d0s0  HEL3_ORADATA01_01              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036B000151A3d0s0  HEL3_ORADATA01_02              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         2 /dev/rdsk/c0t60002AC0000000000000036C000151A3d0s0  HEL3_ORADATA01_03              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036D000151A3d0s0  HEL3_ORADATA01_04              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000036E000151A3d0s0  HEL3_ORADATA01_05              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         3 /dev/rdsk/c0t60002AC0000000000000036F000151A3d0s0  HEL3_ORARECO01_01              MEMBER          NORMAL          HEL3_ORARECO01       REGULAR
+         3 /dev/rdsk/c0t60002AC00000000000000370000151A3d0s0  HEL3_ORARECO01_02              MEMBER          NORMAL          HEL3_ORARECO01       REGULAR
+         1 /dev/rdsk/c0t60002AC0000000000000037F000151A3d0s0  OCR_0000                       MEMBER          NORMAL          HEL3_OCR             REGULAR
+         1 /dev/rdsk/c0t60002AC00000000000000380000151A3d0s0  OCR_0002                       MEMBER          NORMAL          HEL3_OCR             REGULAR
+         1 /dev/rdsk/c0t60002AC00000000000000381000151A3d0s0  OCR_0001                       MEMBER          NORMAL          HEL3_OCR             REGULAR
+         3 /dev/rdsk/c0t60002AC0000000000000040600015128d0s0  ORARECO01_0006                 MEMBER          NORMAL          HEL5_ORARECO01       REGULAR
+         3 /dev/rdsk/c0t60002AC0000000000000040700015128d0s0  ORARECO01_0007                 MEMBER          NORMAL          HEL5_ORARECO01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000040800015128d0s0  ORADATA01_0020                 MEMBER          NORMAL          HEL5_ORADATA01       REGULAR
+
+        GN PATH                                               NAME                           HEADER_STATUS   STATE           FAILGROUP            FAILGROUP_TYPE
+---------- -------------------------------------------------- ------------------------------ --------------- --------------- -------------------- -------------------------
+         3 /dev/rdsk/c0t60002AC0000000000000040900015128d0s0  ORARECO01_0005                 MEMBER          NORMAL          HEL5_ORARECO01       REGULAR
+         3 /dev/rdsk/c0t60002AC0000000000000040C00015128d0s0  ORARECO01_0004                 MEMBER          NORMAL          HEL5_ORARECO01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043C000151A3d0s0  HEL3_ORADATA01_06              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043D000151A3d0s0  HEL3_ORADATA01_07              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043E000151A3d0s0  HEL3_ORADATA01_08              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC0000000000000043F000151A3d0s0  HEL3_ORADATA01_09              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC00000000000000440000151A3d0s0  HEL3_ORADATA01_10              MEMBER          NORMAL          HEL3_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC000000000000004D800015128d0s0  ORADATA01_0023                 MEMBER          NORMAL          HEL5_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC000000000000004D900015128d0s0  ORADATA01_0021                 MEMBER          NORMAL          HEL5_ORADATA01       REGULAR
+         2 /dev/rdsk/c0t60002AC000000000000004DA00015128d0s0  ORADATA01_0022                 MEMBER          NORMAL          HEL5_ORADATA01       REGULAR
+
+43 rows selected.
+
+
+
+fihecdpp060.emea.nsn-net.net
+
+Aq+7<H7[
+
+GROUP_NUMBER OPERA STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE
+------------ ----- ---- ---------- ---------- ---------- ---------- ---------- ----------- --------------------------------------------
+           1 REBAL WAIT          1
+           2 REBAL ERRS          1                                                         ORA-15041
+
+
+
+alter diskgroup ORADATA01 rebalance power 1;
+
+select * from gv$asm_operation; 
+
+
+UCCESS: refreshed membership for 2/0x23c50ac1 (ORADATA01)
+NOTE: starting rebalance of group 2/0x23c50ac1 (ORADATA01) at power 1
+SUCCESS: alter diskgroup ORADATA01 rebalance power 1
+Starting background process ARB0
+Mon Aug 31 12:35:42 2020
+ARB0 started with pid=34, OS id=15524
+NOTE: assigning ARB0 to group 2/0x23c50ac1 (ORADATA01) with 1 parallel I/O
+cellip.ora not found.
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file refresh on diskgroup ORADATA01
+NOTE: Refresh completed on diskgroup ORADATA01. No voting file found.
+ERROR: ORA-15041 thrown in ARB0 for group number 2
+Errors in file /usr1/apl/grid/diag/asm/+asm/+ASM1/trace/+ASM1_arb0_15524.trc:
+ORA-15041: diskgroup "ORADATA01" space exhausted
+Mon Aug 31 12:35:47 2020
+NOTE: stopping process ARB0
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: rebalance interrupted for group 2/0x23c50ac1 (ORADATA01)
+NOTE: Attempti
+
+
+
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+Mon Aug 31 13:34:44 2020
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed
+
+
+
+col name format a15
+col path format a20
+select GROUP_NUMBER,DISK_NUMBER,MOUNT_STATUS,HEADER_STATUS,NAME,PATH from v$asm_disk;
+
+NOTE: Failed voting file relocation on diskgroup OCR
+Mon Aug 31 18:13:20 2020
+SQL> alter diskgroup ORADATA01 drop disk ORADATA01_0025
+NOTE: requesting all-instance membership refresh for group=2
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+Mon Aug 31 18:13:21 2020
+GMON updating for reconfiguration, group 2 at 39 for pid 26, osid 4873
+NOTE: cache closing disk 5 of grp 2: (not open) _DROPPED_0005_ORADATA01
+NOTE: cache closing disk 6 of grp 2: (not open) _DROPPED_0006_ORADATA01
+NOTE: cache closing disk 7 of grp 2: (not open) _DROPPED_0007_ORADATA01
+NOTE: cache closing disk 8 of grp 2: (not open) _DROPPED_0008_ORADATA01
+NOTE: cache closing disk 9 of grp 2: (not open) _DROPPED_0009_ORADATA01
+NOTE: cache closing disk 11 of grp 2: (not open) _DROPPED_0011_ORADATA01
+NOTE: cache closing disk 13 of grp 2: (not open) _DROPPED_0013_ORADATA01
+NOTE: cache closing disk 15 of grp 2: (not open) _DROPPED_0015_ORADATA01
+NOTE: cache closing disk 17 of grp 2: (not open) _DROPPED_0017_ORADATA01
+NOTE: cache closing disk 19 of grp 2: (not open) _DROPPED_0019_ORADATA01
+NOTE: group ORADATA01: updated PST location: disk 0000 (PST copy 0)
+NOTE: group ORADATA01: updated PST location: disk 0020 (PST copy 1)
+NOTE: group 2 PST updated.
+NOTE: membership refresh pending for group 2/0x23c50ac1 (ORADATA01)
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+GMON querying group 2 at 40 for pid 17, osid 23224
+NOTE: cache closing disk 5 of grp 2: (not open) _DROPPED_0005_ORADATA01
+NOTE: cache closing disk 6 of grp 2: (not open) _DROPPED_0006_ORADATA01
+NOTE: cache closing disk 7 of grp 2: (not open) _DROPPED_0007_ORADATA01
+NOTE: cache closing disk 8 of grp 2: (not open) _DROPPED_0008_ORADATA01
+NOTE: cache closing disk 9 of grp 2: (not open) _DROPPED_0009_ORADATA01
+NOTE: cache closing disk 11 of grp 2: (not open) _DROPPED_0011_ORADATA01
+NOTE: cache closing disk 13 of grp 2: (not open) _DROPPED_0013_ORADATA01
+NOTE: cache closing disk 15 of grp 2: (not open) _DROPPED_0015_ORADATA01
+NOTE: cache closing disk 17 of grp 2: (not open) _DROPPED_0017_ORADATA01
+NOTE: cache closing disk 19 of grp 2: (not open) _DROPPED_0019_ORADATA01
+SUCCESS: refreshed membership for 2/0x23c50ac1 (ORADATA01)
+NOTE: starting rebalance of group 2/0x23c50ac1 (ORADATA01) at power 1
+SUCCESS: alter diskgroup ORADATA01 drop disk ORADATA01_0025
+Starting background process ARB0
+Mon Aug 31 18:13:24 2020
+ARB0 started with pid=37, OS id=4962
+NOTE: assigning ARB0 to group 2/0x23c50ac1 (ORADATA01) with 1 parallel I/O
+cellip.ora not found.
+NOTE: F1X0 copy 2 relocating from 20:2 to 23:6 for diskgroup 2 (ORADATA01)
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+Mon Aug 31 18:13:30 2020
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocation on diskgroup OCR
+NOTE: Attempting voting file refresh on diskgroup ORADATA01
+NOTE: Refresh completed on diskgroup ORADATA01. No voting file found.
+NOTE: Attempting voting file relocation on diskgroup OCR
+NOTE: Failed voting file relocati
+
+

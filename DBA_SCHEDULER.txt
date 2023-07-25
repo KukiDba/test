@@ -1,0 +1,69 @@
+select * from DBA_SCHEDULER_JOBS
+
+SELECT * FROM DBA_SCHEDULER_JOB_LOG WHERE JOB_NAME ='GATHER_STATS_JOB'  ORDER BY 2 desc
+
+SELECT * FROM DBA_SCHEDULER_WINDOWS
+
+SELECT * FROM DBA_SCHEDULER_WINDOW_LOG ORDER BY 2 desc
+
+select log_id, log_date, job_name, owner, status from dba_scheduler_job_log WHERE JOB_NAME ='GATHER_STATS_JOB'  ORDER BY 2 desc;
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+
+SYS at P626 >select job_name from DBA_SCHEDULER_JOBS;
+
+JOB_NAME
+------------------------------
+PURGE_LOG
+FGR$AUTOPURGE_JOB
+GATHER_STATS_JOB
+AUTO_SPACE_ADVISOR_JOB
+MGMT_CONFIG_JOB
+MGMT_STATS_CONFIG_JOB
+
+
+SYS at P626 >desc DBA_SCHEDULER_SCHEDULES
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ OWNER                                                 NOT NULL VARCHAR2(30)
+ SCHEDULE_NAME                                         NOT NULL VARCHAR2(30)
+ SCHEDULE_TYPE                                                  VARCHAR2(8)
+ START_DATE                                                     TIMESTAMP(6) WITH TIME ZONE
+ REPEAT_INTERVAL                                                VARCHAR2(4000)
+ EVENT_QUEUE_OWNER                                              VARCHAR2(30)
+ EVENT_QUEUE_NAME                                               VARCHAR2(30)
+ EVENT_QUEUE_AGENT                                              VARCHAR2(30)
+ EVENT_CONDITION                                                VARCHAR2(4000)
+ END_DATE                                                       TIMESTAMP(6) WITH TIME ZONE
+ COMMENTS                                                       VARCHAR2(240)
+
+SYS at P626 >select schedule_name from DBA_SCHEDULER_SCHEDULES;
+
+SCHEDULE_NAME
+------------------------------
+DAILY_PURGE_SCHEDULE
+
+SYS at P626 >desc DBA_SCHEDULER_PROGRAMS
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ OWNER                                                 NOT NULL VARCHAR2(30)
+ PROGRAM_NAME                                          NOT NULL VARCHAR2(30)
+ PROGRAM_TYPE                                                   VARCHAR2(16)
+ PROGRAM_ACTION                                                 VARCHAR2(4000)
+ NUMBER_OF_ARGUMENTS                                            NUMBER
+ ENABLED                                                        VARCHAR2(5)
+ DETACHED                                                       VARCHAR2(5)
+ COMMENTS                                                       VARCHAR2(240)
+
+SYS at P626 >select program_name from DBA_SCHEDULER_PROGRAMS;
+
+PROGRAM_NAME
+------------------------------
+PURGE_LOG_PROG
+GATHER_STATS_PROG
+AUTO_SPACE_ADVISOR_PROG

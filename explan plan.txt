@@ -1,0 +1,48 @@
+https://www.youtube.com/watch?v=Xpmi55rn4YE
+
+explain plan
+
+Sql query
+
+then 
+
+select * from table(dbms_xplan.display_cursor());
+
+sql id:
+sql text:
+plan hash value:
+child number:
+Format:
+basic:
+Typical:
+
+
+
+**************************************
+
+Full esttimate rows
+
+Gather_plan_statistics in sql query then
+
+
+select * from table(dbms_xplan.display_cursor(format=>'ALLSTATS LAST'));
+last exeqution of this cursor
+A-time A-rows A-cost memory 
+
+
+************************************************************************
+select * from table(dbms_xplan.display_cursor(sql_id=>'dkksn56rnrl', format=>'ALLSTATS LAST +cost +bytes'));
+
+
+outline =sets of hints
+
+***************************
+
+Binds value
+select * from table(dbms_xplan.display_cursor(format=>'ALLSTATS LAST +Peeked_binds+cost +bytes'));
+
+
+
+
+select * from table(dbms_xplan.display_cursor(sql_id=>'dkksn56rnrl', format=>'ALLSTATS LAST +outline'));
+

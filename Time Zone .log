@@ -1,0 +1,1600 @@
+
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
++02:00
+18-NOV-19 06.56.41.938278 PM +01:00
+
+
+SQL> ! date
+Mon Nov 18 18:56:50 CET 2019
+
+SQL>
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+PEAIDS    READ WRITE           ARCHIVELOG
+
+SQL> show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      /u01/app/oracle/admin/PEAIDS/d
+                                                 bs/spfilePEAIDS.ora
+
+SQL> ALTER DATABASE SET TIME_ZONE = 'US/Eastern';
+
+Database altered.
+
+SQL>
+SQL>
+SQL> alter database set time_zone = '-05:00';
+
+Database altered.
+
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@fr712unod008 $ export TZ='US/Eastern'
+oracle@fr712unod008 $
+oracle@fr712unod008 $ . oraenv
+ORACLE_SID = [PEAIDS] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@fr712unod008 $
+oracle@fr712unod008 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Nov 18 13:04:17 2019
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 1.0689E+10 bytes
+Fixed Size                  2262656 bytes
+Variable Size            6039800192 bytes
+Database Buffers         4596957184 bytes
+Redo Buffers               50454528 bytes
+Database mounted.
+Database opened.
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-05:00
+18-NOV-19 01.04.33.614260 PM -05:00
+
+
+SQL>
+SQL>
+SQL> /
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-05:00
+18-NOV-19 01.05.55.189164 PM -05:00
+
+
+SQL> set line 100
+SQL>
+SQL> /
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-05:00 18-NOV-19 01.06.01.788557 PM -05:00
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+PEAIDS    READ WRITE           ARCHIVELOG
+ 
+
+
+
+
+*******************************************************
+
+login as: ps_unx01
+Pre-authentication banner message from server:
+|
+| Welcome to SUSE Linux Enterprise Server 11 SP4  (x86_64) - Kernel \r (\l).
+|
+|
+End of banner message from server
+Keyboard-interactive authentication prompts from server:
+| Password:
+End of keyboard-interactive prompts from server
+Last login: Mon Dec 28 08:02:58 2020 from 10.116.0.213
+ps_unx01@us70tudbs003:~>
+ps_unx01@us70tudbs003:~>
+ps_unx01@us70tudbs003:~> sudo su - oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ ps -ef|grep pmon
+oracle     3304   3191  0 22:16 pts/0    00:00:00 grep pmon
+oracle    21401      1  0  2019 ?        02:08:05 ora_pmon_PAIP
+oracle   101892      1  0 Apr20 ?        01:16:29 ora_pmon_PHMS
+oracle   159045      1  0 Dec19 ?        00:03:36 ora_pmon_PCMARTOP
+oracle   169566      1  0 Dec19 ?        00:03:41 ora_pmon_PDBUSRHB
+oracle   173361      1  0 Dec19 ?        00:05:48 ora_pmon_PCMART1
+oracle   182367      1  0 Dec19 ?        00:03:44 ora_pmon_PDBUSSFW
+oracle   187359      1  0 Dec19 ?        00:03:41 ora_pmon_PDBUSCLS
+oracle   201903      1  0 Dec19 ?        00:04:02 ora_pmon_PDBUSFAT
+oracle   207023      1  0 Dec19 ?        00:03:44 ora_pmon_PDBUSGEF
+oracle   221927      1  0 Dec19 ?        00:03:42 ora_pmon_PDBUSGKO
+oracle   231597      1  0 Dec19 ?        00:03:42 ora_pmon_PDBUSPSS
+oracle   242077      1  0 Dec19 ?        00:03:41 ora_pmon_PDBUSTRL
+oracle   250156      1  0 Dec19 ?        00:03:42 ora_pmon_PHPSIM
+oracle   254923      1  0 Dec19 ?        00:03:44 ora_pmon_PIDMMR2
+oracle   259068      1  0 Dec19 ?        00:03:59 ora_pmon_PILINKWC
+oracle   263405      1  0 Dec19 ?        00:04:14 ora_pmon_PQMSBO1
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [oracle] ? PDBUSFAT
+The Oracle base has been set to /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Dec 28 22:16:44 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-03:00
+28-DEC-20 10.17.23.285059 PM -05:00
+
+
+SQL> show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      /u01/app/oracle/product/11.2.0
+                                                 .4.180116/dbs/spfilePDBUSFAT.o
+                                                 ra
+SQL> select DbTimeZone from dual;
+
+DBTIME
+------
+-03:00
+
+SQL>
+SQL>
+SQL> select name from v$database;
+
+NAME
+---------
+PDBUSFAT
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ? PDBUSSFW
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Dec 28 22:27:51 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+SQL> select DbTimeZone from dual;
+
+DBTIME
+------
+-03:00
+
+SQL> desc v$instance
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ INSTANCE_NUMBER                                    NUMBER
+ INSTANCE_NAME                                      VARCHAR2(16)
+ HOST_NAME                                          VARCHAR2(64)
+ VERSION                                            VARCHAR2(17)
+ STARTUP_TIME                                       DATE
+ STATUS                                             VARCHAR2(12)
+ PARALLEL                                           VARCHAR2(3)
+ THREAD#                                            NUMBER
+ ARCHIVER                                           VARCHAR2(7)
+ LOG_SWITCH_WAIT                                    VARCHAR2(15)
+ LOGINS                                             VARCHAR2(10)
+ SHUTDOWN_PENDING                                   VARCHAR2(3)
+ DATABASE_STATUS                                    VARCHAR2(17)
+ INSTANCE_ROLE                                      VARCHAR2(18)
+ ACTIVE_STATE                                       VARCHAR2(9)
+ BLOCKED                                            VARCHAR2(3)
+
+SQL> select STARTUP_TIME from v$instance;
+
+STARTUP_T
+---------
+19-DEC-20
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSSFW] ? PDBUSGEF
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Dec 28 22:31:22 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select DbTimeZone from dual;
+
+DBTIME
+------
+-03:00
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSGEF] ? PDBUSGKO
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Dec 28 22:31:52 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select DbTimeZone from dual;
+
+DBTIME
+------
+-03:00
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Dec 28 22:32:50 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+SQL> select
+   sysdate,
+   current_timestamp,
+   systimestamp,
+   localtimestamp
+from
+   dual;
+  2    3    4    5    6    7
+SYSDATE
+---------
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+LOCALTIMESTAMP
+---------------------------------------------------------------------------
+28-DEC-20
+28-DEC-20 10.32.52.918046 PM -05:00
+28-DEC-20 10.32.52.918043 PM -05:00
+28-DEC-20 10.32.52.918046 PM
+
+
+SQL> set line 250
+SQL>
+SQL> /
+
+SYSDATE   CURRENT_TIMESTAMP                                                           SYSTIMESTAMP                                                                LOCALTIMESTAMP
+--------- --------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+28-DEC-20 28-DEC-20 10.33.03.313989 PM -05:00                                         28-DEC-20 10.33.03.313985 PM -05:00                                         28-DEC-20 10.33.03.313989 PM
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> SELECT to_char(sysdate, 'YYYY-MM-DD HH24:MI') AS MY_SYSDATE
+  2  , TO_CHAR(FROM_TZ (CAST (SYSDATE AS TIMESTAMP), 'Brazil/East (UTC-3)') AT TIME ZONE 'GMT'
+, 'YYYY-MM-DD HH24:MI') as gmt_brazil_east
+, TO_CHAR(FROM_TZ (CAST (SYSDATE AS TIMESTAMP), 'Brazil/East (UTC-3)') AT TIME ZONE 'GMT', 'YYYY-MM-DD HH24:MI') as (UTC-3)
+FROM DUAL
+WHERE 1=1
+;
+  3    4    5    6    7  , TO_CHAR(FROM_TZ (CAST (SYSDATE AS TIMESTAMP), 'Brazil/East (UTC-3)') AT TIME ZONE 'GMT', 'YYYY-MM-DD HH24:MI') as (UTC-3)
+                                                                                                                    *
+ERROR at line 4:
+ORA-00923: FROM keyword not found where expected
+
+
+SQL> SELECT to_char(sysdate, 'YYYY-MM-DD HH24:MI') AS MY_SYSDATE
+  2  ,TO_CHAR(FROM_TZ (CAST (SYSDATE AS TIMESTAMP), 'Brazil/East (UTC-3)') AT TIME ZONE 'GMT'
+,'YYYY-MM-DD HH24:MI') as gmt_brazil_east
+,TO_CHAR(FROM_TZ (CAST (SYSDATE AS TIMESTAMP), 'Brazil/East (UTC-3)') AT TIME ZONE 'GMT', 'YYYY-MM-DD HH24:MI') as (UTC-3) FROM DUAL WHERE 1=1;  3    4
+,TO_CHAR(FROM_TZ (CAST (SYSDATE AS TIMESTAMP), 'Brazil/East (UTC-3)') AT TIME ZONE 'GMT', 'YYYY-MM-DD HH24:MI') as (UTC-3) FROM DUAL WHERE 1=1
+                                                                                                                   *
+ERROR at line 4:
+ORA-00923: FROM keyword not found where expected
+
+
+SQL> ! date
+Mon Dec 28 22:45:18 EST 2020
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> SELECT
+  TZ_OFFSET( 'Brazil/East' )
+FROM
+  DUAL;  2    3    4
+
+TZ_OFFS
+-------
+-02:00
+
+SQL> SELECT
+  TZ_OFFSET( 'Brazil/East (UTC-3)' )
+FROM
+  DUAL;  2    3    4
+  TZ_OFFSET( 'Brazil/East (UTC-3)' )
+  *
+ERROR at line 2:
+ORA-01878: specified field not found in datetime or interval
+
+
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSGKO] ?  PDBUSFAT
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Mon Dec 28 23:03:06 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      /u01/app/oracle/product/11.2.0
+                                                 .4.180116/dbs/spfilePDBUSFAT.o
+                                                 ra
+SQL>
+SQL> ^[l
+SP2-0042: unknown command "" - rest of line ignored.
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> SELECT DBTIMEZONE FROM dual;
+
+DBTIME
+------
+-03:00
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.17.45.879629 AM -05:00
+
+SQL> ! date
+Tue Dec 29 00:17:51 EST 2020
+
+SQL> select TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-
+--------------------
+29-DEC-2020 00:18:16
+
+SQL> show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      /u01/app/oracle/product/11.2.0
+                                                 .4.180116/dbs/spfilePDBUSFAT.o
+                                                 ra
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ cd /u01/app/oracle/product/11.2.0.4.180116/dbs/
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ cp spfilePDBUSFAT.ora spfilePDBUSFAT.ora_bck_29dec2020
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 00:20:12 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+PDBUSFAT  READ WRITE           ARCHIVELOG
+
+SQL>
+
+SQL> SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.21.58.692940 AM -05:00
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> ALTER DATABASE SET TIME_ZONE = 'Brazil/East' scope=spfile;
+ALTER DATABASE SET TIME_ZONE = 'Brazil/East' scope=spfile
+                                             *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> ALTER DATABASE SET TIME_ZONE = 'Brazil/East' scope = spfile;
+ALTER DATABASE SET TIME_ZONE = 'Brazil/East' scope = spfile
+                                             *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> ALTER DATABASE SET TIME_ZONE = 'Brazil/East';
+
+Database altered.
+
+SQL>
+SQL>
+SQL>
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.26.13.532107 AM -05:00
+
+SQL>
+SQL>
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL>
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.26.35.315953 AM -05:00
+
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2137886720 bytes
+Fixed Size                  2254952 bytes
+Variable Size            1191184280 bytes
+Database Buffers          922746880 bytes
+Redo Buffers               21700608 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL>  select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.27.46.453431 AM -05:00
+
+SQL>
+SQL> SELECT DBTIMEZONE FROM dual;SELECT DBTIMEZONE FROM dual;
+SELECT DBTIMEZONE FROM dual;SELECT DBTIMEZONE FROM dual
+                           *
+ERROR at line 1:
+ORA-00911: invalid character
+
+
+SQL> SELECT DBTIMEZONE FROM dual;
+
+DBTIME
+------
+-03:00
+
+SQL> SELECT
+  TZ_OFFSET( 'Brazil/East (UTC-3)' )
+FROM
+  DUAL;  2    3    4
+  TZ_OFFSET( 'Brazil/East (UTC-3)' )
+  *
+ERROR at line 2:
+ORA-01878: specified field not found in datetime or interval
+
+
+SQL> SELECT
+  TZ_OFFSET( 'Brazil/East' )
+FROM
+  DUAL;  2    3    4
+
+TZ_OFFS
+-------
+-02:00
+
+SQL>
+SQL>
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.30.36.419184 AM -05:00
+
+SQL>
+SQL>
+SQL> SELECT
+  DBTIMEZONE
+FROM
+  dual;  2    3    4
+
+DBTIME
+------
+-03:00
+
+SQL> ALTER DATABASE SET TIME_ZONE = 'Brazil/East';
+
+Database altered.
+
+SQL>
+SQL>
+SQL> SELECT
+  DBTIMEZONE
+FROM
+  dual;  2    3    4
+
+DBTIME
+------
+-03:00
+
+SQL> SELECT
+  2    t.owner,
+  t.table_name,
+  t.column_name,
+  t.data_type
+FROM
+  dba_tab_cols t
+INNER JOIN dba_objects o ON o.owner = t.owner AND t.table_name = o.object_name
+WHERE
+  t.data_type LIKE '%WITH LOCAL TIME ZONE' AND
+  o.object_type = 'TABLE' AND
+  o.owner = 'OT';  3    4    5    6    7    8    9   10   11   12
+
+no rows selected
+
+SQL> SELECT
+  DBTIMEZONE
+FROM
+  dual;  2    3    4
+
+DBTIME
+------
+-03:00
+
+SQL>
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oreenv
+-ksh: .: oreenv: cannot open [No such file or directory]
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 00:35:24 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2137886720 bytes
+Fixed Size                  2254952 bytes
+Variable Size            1191184280 bytes
+Database Buffers          922746880 bytes
+Redo Buffers               21700608 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL>
+SQL> SELECT
+  DBTIMEZONE
+FROM
+  dual;  2    3    4
+
+DBTIMEZONE
+-----------
+Brazil/East
+
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+29-DEC-20 12.36.36.712577 AM -05:00
+
+SQL>
+SQL>
+SQL> select dbtimezone from dual;
+
+DBTIMEZONE
+-----------
+Brazil/East
+
+SQL> select from_tz ( timestamp'2020-01-01 00:00:00', 'US/Eastern' ) first_jan_et,
+  2         from_tz ( timestamp'2020-07-07 00:00:00', 'US/Eastern' ) seventh_jul_et,
+       from_tz ( timestamp'2020-01-01 00:00:00', 'US/Eastern' ) at time zone 'UTC' first_jan_utc,
+       from_tz ( timestamp'2020-07-07 00:00:00', 'US/Eastern' ) at time zone 'UTC' seventh_jul_utc
+from   dual;  3    4    5
+
+FIRST_JAN_ET
+---------------------------------------------------------------------------
+SEVENTH_JUL_ET
+---------------------------------------------------------------------------
+FIRST_JAN_UTC
+---------------------------------------------------------------------------
+SEVENTH_JUL_UTC
+---------------------------------------------------------------------------
+01-JAN-20 12.00.00.000000000 AM US/EASTERN
+07-JUL-20 12.00.00.000000000 AM US/EASTERN
+01-JAN-20 05.00.00.000000000 AM UTC
+07-JUL-20 04.00.00.000000000 AM UTC
+
+
+SQL> set line 150
+SQL>
+SQL> /
+
+FIRST_JAN_ET
+---------------------------------------------------------------------------
+SEVENTH_JUL_ET
+---------------------------------------------------------------------------
+FIRST_JAN_UTC
+---------------------------------------------------------------------------
+SEVENTH_JUL_UTC
+---------------------------------------------------------------------------
+01-JAN-20 12.00.00.000000000 AM US/EASTERN
+07-JUL-20 12.00.00.000000000 AM US/EASTERN
+01-JAN-20 05.00.00.000000000 AM UTC
+07-JUL-20 04.00.00.000000000 AM UTC
+
+
+SQL> set line 250
+SQL>
+SQL> /
+
+FIRST_JAN_ET                                                                SEVENTH_JUL_ET                                                              FIRST_JAN_UTC
+--------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+SEVENTH_JUL_UTC
+---------------------------------------------------------------------------
+01-JAN-20 12.00.00.000000000 AM US/EASTERN                                  07-JUL-20 12.00.00.000000000 AM US/EASTERN                                  01-JAN-20 05.00.00.000000000 AM UTC
+07-JUL-20 04.00.00.000000000 AM UTC
+
+
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIMEZONE  SESSIONTIMEZONE
+----------- ---------------------------------------------------------------------------
+Brazil/East -05:00
+
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIMEZONE  SESSIONTIMEZONE
+----------- ---------------------------------------------------------------------------
+Brazil/East -05:00
+
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2137886720 bytes
+Fixed Size                  2254952 bytes
+Variable Size            1207961496 bytes
+Database Buffers          905969664 bytes
+Redo Buffers               21700608 bytes
+Database mounted.
+Database opened.
+SQL> SELECT * FROM   dba_scheduler_global_attribute WHERE  attribute_name = 'DEFAULT_TIMEZONE';
+
+ATTRIBUTE_NAME                 VALUE
+------------------------------ --------------------------------------------------------------------------------------------------------------------------------
+DEFAULT_TIMEZONE               CST6CDT
+
+SQL> SELECT
+  DBTIMEZONE
+FROM
+  dual;
+  2    3    4
+DBTIME
+------
+-03:00
+
+SQL> select dbms_scheduler.stime from dual;
+
+STIME
+---------------------------------------------------------------------------
+28-DEC-20 11.44.17.969430000 PM CST6CDT
+
+SQL> select sysdate from dual;select sysdate from dual;
+select sysdate from dual;select sysdate from dual
+                        *
+ERROR at line 1:
+ORA-00911: invalid character
+
+
+SQL> select sysdate from dual;
+
+SYSDATE
+---------
+29-DEC-20
+
+SQL> select dbms_scheduler.stime from dual;
+
+STIME
+---------------------------------------------------------------------------
+28-DEC-20 11.47.02.951008000 PM CST6CDT
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 12.52.35.219863 AM -05:00
+
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 00:53:03 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select name from v$database;
+
+NAME
+---------
+PDBUSFAT
+
+SQL>
+SQL>
+SQL>
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL>
+SQL>
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 03:57:32 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2137886720 bytes
+Fixed Size                  2254952 bytes
+Variable Size            1207961496 bytes
+Database Buffers          905969664 bytes
+Redo Buffers               21700608 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-03:00
+29-DEC-20 03.57.52.897499 AM -02:00
+
+
+SQL> set line 150
+SQL>
+SQL> /
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 03.58.18.577616 AM -02:00
+
+SQL> select dbms_scheduler.stime from dual;
+
+STIME
+---------------------------------------------------------------------------
+28-DEC-20 11.59.20.870512000 PM CST6CDT
+
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIME SESSIONTIMEZONE
+------ ---------------------------------------------------------------------------
+-03:00 -02:00
+
+SQL>
+SQL>
+SQL> select name from v$database;
+
+NAME
+---------
+PDBUSFAT
+
+SQL> ! date
+Tue Dec 29 04:00:50 -02 2020
+
+SQL> ! hostname
+us70tudbs003
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ? PDBUSSFW
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:01:22 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIME
+------
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+-03:00
+-02:00
+
+
+SQL> select startup_time from v$instnace;
+select startup_time from v$instnace
+                         *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> desc v$instance
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ INSTANCE_NUMBER                                    NUMBER
+ INSTANCE_NAME                                      VARCHAR2(16)
+ HOST_NAME                                          VARCHAR2(64)
+ VERSION                                            VARCHAR2(17)
+ STARTUP_TIME                                       DATE
+ STATUS                                             VARCHAR2(12)
+ PARALLEL                                           VARCHAR2(3)
+ THREAD#                                            NUMBER
+ ARCHIVER                                           VARCHAR2(7)
+ LOG_SWITCH_WAIT                                    VARCHAR2(15)
+ LOGINS                                             VARCHAR2(10)
+ SHUTDOWN_PENDING                                   VARCHAR2(3)
+ DATABASE_STATUS                                    VARCHAR2(17)
+ INSTANCE_ROLE                                      VARCHAR2(18)
+ ACTIVE_STATE                                       VARCHAR2(9)
+ BLOCKED                                            VARCHAR2(3)
+
+SQL> select STARTUP_TIME from v$instance;
+
+STARTUP_T
+---------
+19-DEC-20
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-03:00
+29-DEC-20 04.02.32.383103 AM -02:00
+
+
+SQL> ! date
+Tue Dec 29 04:03:48 -02 2020
+
+SQL> ALTER DATABASE SET TIME_ZONE = 'Brazil/East';
+
+Database altered.
+
+SQL>
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSSFW] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:05:27 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 1068937216 bytes
+Fixed Size                  2260088 bytes
+Variable Size             859833224 bytes
+Database Buffers          197132288 bytes
+Redo Buffers                9711616 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL> select dbtimezone, sessiontimezone from dual
+  2  ;
+
+DBTIMEZONE
+-----------
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+Brazil/East
+-02:00
+
+
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL>
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIMEZONE
+-----------
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+Brazil/East
+-02:00
+
+
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> . oraebv
+SP2-0042: unknown command ". oraebv" - rest of line ignored.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSSFW] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:07:43 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 1068937216 bytes
+Fixed Size                  2260088 bytes
+Variable Size             859833224 bytes
+Database Buffers          197132288 bytes
+Redo Buffers                9711616 bytes
+Database mounted.
+Database opened.
+SQL> select dbtimezone, sessiontimezone from dual;select dbtimezone, sessiontimezone from dual;select dbtimezone, sessiontimezone from dual;
+select dbtimezone, sessiontimezone from dual;select dbtimezone, sessiontimezone from dual;select dbtimezone, sessiontimezone from dual
+                                            *
+ERROR at line 1:
+ORA-00911: invalid character
+
+
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIME
+------
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+-03:00
+-02:00
+
+
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSSFW] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSSFW] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:09:21 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL>
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 1068937216 bytes
+Fixed Size                  2260088 bytes
+Variable Size             859833224 bytes
+Database Buffers          197132288 bytes
+Redo Buffers                9711616 bytes
+Database mounted.
+Database opened.
+SQL> select dbtimezone, sessiontimezone from dual;
+
+DBTIME
+------
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+-03:00
+-02:00
+
+
+SQL> select
+   sessiontimezone
+from
+   dual;
+  2    3    4
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+-02:00
+
+SQL> ! date
+Tue Dec 29 04:12:43 -02 2020
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-03:00
+29-DEC-20 04.17.45.530695 AM -02:00
+
+
+SQL> set line 150
+SQL>
+SQL> /
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.17.57.905399 AM -02:00
+
+SQL>
+SQL>
+SQL> select name from v$database;
+
+NAME
+---------
+PDBUSSFW
+
+SQL>
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSSFW] ? PDBUSGEF
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:23:51 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-03:00
+29-DEC-20 04.23.57.603607 AM -02:00
+
+
+SQL> set line 150
+SQL> /
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.24.08.103061 AM -02:00
+
+SQL> ! date
+Tue Dec 29 04:24:13 -02 2020
+
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL>
+SQL> shu immemdiate
+SP2-0717: illegal SHUTDOWN option
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSGEF] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:26:21 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2137886720 bytes
+Fixed Size                  2254952 bytes
+Variable Size            1375733656 bytes
+Database Buffers          738197504 bytes
+Redo Buffers               21700608 bytes
+Database mounted.
+Database opened.
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME
+------
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+-03:00
+29-DEC-20 04.26.40.808460 AM -02:00
+
+
+SQL> set line 150
+SQL>
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.26.47.646228 AM -02:00
+
+SQL>
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.27.26.542144 AM -02:00
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> select name from v$database;
+
+NAME
+---------
+PDBUSGEF
+
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSGEF] ? PDBUSGKO
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:28:38 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+SQL>
+SQL> set line 150
+SQL>
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.28.52.418416 AM -02:00
+
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.29.17.589674 AM -02:00
+
+SQL> alter database set time_zone = '-03:00';
+
+Database altered.
+
+SQL>
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSGKO] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:30:05 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 1068937216 bytes
+Fixed Size                  2260088 bytes
+Variable Size             809501576 bytes
+Database Buffers          247463936 bytes
+Redo Buffers                9711616 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL> set line 150
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.30.36.230955 AM -02:00
+
+SQL>
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSGKO] ? PDBUSFATPDBUSFAT
+ORACLE_HOME = [/home/oracle] ?
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFATPDBUSFAT] ? PDBUSFAT
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:36:01 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> set line 150
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.36.16.343388 AM -02:00
+
+SQL> ALTER DATABASE SET TIME_ZONE = 'Brazil/East';
+
+Database altered.
+
+SQL>
+SQL>  select dbtimezone,systimestamp from dual;
+
+DBTIME SYSTIMESTAMP
+------ ---------------------------------------------------------------------------
+-03:00 29-DEC-20 04.36.54.611734 AM -02:00
+
+SQL>
+SQL>
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ? export TZ='Brazil/East'
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $
+oracle@us70tudbs003 $ export TZ='Brazil/East'
+oracle@us70tudbs003 $ . oraenv
+ORACLE_SID = [PDBUSFAT] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+oracle@us70tudbs003 $ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Dec 29 04:37:38 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2137886720 bytes
+Fixed Size                  2254952 bytes
+Variable Size            1207961496 bytes
+Database Buffers          905969664 bytes
+Redo Buffers               21700608 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL> set line 150
+SQL>
+SQL> select dbtimezone,systimestamp from dual;
+
+DBTIMEZONE  SYSTIMESTAMP
+----------- ---------------------------------------------------------------------------
+Brazil/East 29-DEC-20 04.38.06.274557 AM -02:00
+
+SQL> select name from v$database;
+
+NAME
+---------
+PDBUSFAT
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@us70tudbs003 $
+
+
+
+
+
+
+ 
+

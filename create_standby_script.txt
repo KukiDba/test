@@ -1,0 +1,50 @@
+connect target sys/RA#M6IR3#HAN@T700_P 
+connect auxiliary sys/RA#M6IR3#HAN@T700_S
+run 
+{ 
+  allocate channel prmy1 type disk; 
+  allocate channel prmy2 type disk; 
+  allocate auxiliary channel stby1 type disk; 
+  duplicate target database for standby from active database 
+   spfile 
+     parameter_value_convert 'T700_P','T700_S' 
+     set 'db_unique_name' = 'T700_S' 
+     set control_files='/prog67/ORACLE/T700_S/control01.ctl', 
+                       '/prog67/ORACLE/T700_S/control02.ctl', 
+                       '/db67/ORACLE/T700_S/control03.ctl' 
+     set db_file_name_convert ='/db/ORACLE/T700_P/','/db67/ORACLE/T700_S/' 
+     set log_file_name_convert= '/logA/ORACLE/T700_P/','/prog67/ORACLE/T700_S/','/logB/ORACLE/T700_P/','/prog67/ORACLE/T700_S/' 
+     set log_archive_dest_1='LOCATION=location=/prog67/oracle/admin/T700_S/arch/archT700_S.log' 
+     set local_listener='LIST_DB67_03' 
+     set log_archive_max_processes='5' 
+     set fal_client='T700_S' 
+     set fal_server='T700_P' 
+     set standby_file_management='AUTO' 
+     set log_archive_config='dg_config=(T700_P,T700_S)' 
+     set log_archive_dest_2='service=T700_P LGWR ASYNC valid_for=(ONLINE_LOGFILE,PRIMARY_ROLE) db_unique_name=T700_P' nofilenamecheck; 
+     sql channel prmy1 "alter system set log_archive_config=''dg_config=(T700_P,T700_S)''"; 
+     sql channel prmy1 "alter system set log_archive_dest_2=''service=T700_S LGWR ASYNC DB_UNIQUE_NAME=T700_S valid_for=(PRIMARY_ROLE,ONLINE_LOGFILE)''"; 
+     sql channel prmy1 "alter system set log_archive_max_processes=5"; 
+     sql channel prmy1 "alter system set fal_client=T700_P"; 
+     sql channel prmy1 "alter system set fal_server=T700_S"; 
+     sql channel prmy1 "alter system set standby_file_management=AUTO"; 
+     sql channel prmy1 "alter system archive log current"; 
+     allocate auxiliary channel stby type disk; 
+     sql channel stby  "alter database recover managed standby database using current logfile disconnect"; 
+} 
+
+
+
+
+
+run
+{
+allocate channel c1 device type disk format '/dbfra/ORACLE/fra/INCREMENTAL_BKP/increment_bkp_T101_P_%U';
+allocate channel c2 device type disk format '/dbfra/ORACLE/fra/INCREMENTAL_BKP/increment_bkp_T101_P_%U';
+BACKUP DATABASE;
+release channel c1;
+release channel c2;
+}
+
+alter database create standby controlfile as '/dbfra/ORACLE/fra/INCREMENTAL_BKP/stndby_control01.ctl';
+

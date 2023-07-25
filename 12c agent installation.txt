@@ -1,0 +1,264 @@
+curl "https://oem.statoil.no/em/install/getAgentImage" --insecure -o /tmp/AgentPull.sh
+
+chmod +x /tmp/AgentPull.sh
+
+/tmp/AgentPull.sh -showPlatforms
+
+
+vi /home/oracle/AgentResponseFile
+	
+LOGIN_USER=sysman
+LOGIN_PASSWORD=pw12Cl0ud
+PLATFORM="Linux x86-64"
+AGENT_REGISTRATION_PASSWORD=O3M12cl0ud
+
+
+Create oraInst.loc file in /home/oracle/oraInst.loc
+ 
+inventory_loc=/home/oracle/oraInventory
+inst_group=dba
+
+AGENT_BASE_DIR= should be on /home/oracle on a server in a cluster
+                On a standalone server/VMware the AGENT_BASE_DIR should point to /prog or /dbprog
+
+
+cd /tmp
+chmod +x /tmp/AgentPull.sh
+chmod 755 /tmp/AgentPull.sh
+
+/tmp/AgentPull.sh RSPFILE_LOC=/home/oracle/AgentResponseFile AGENT_BASE_DIR=/dbprog/oracle/Middleware/agent12c -invPtrLoc /home/oracle/oraInst.loc
+
+
+If you will get proxy error then unset proxy from environment variable using below command
+
+unsetenv http_proxy
+unsetenv HTTPS_PROXY
+unsetenv HTTP_PROXY
+unsetenv https_proxy
+
+
+
+[root@st-db109 ~]# /dbprog/oracle/Middleware/agent12c/core/12.1.0.5.0/root.sh
+Finished product-specific root actions.
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl secure agent    --> it will stop running agent and secure it and start it. (password - O3M12cl0ud) --> AGENT_REGISTRATION_PASSWORD
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl status agent
+
+
+**************************************************************************************************************************************************
+or 
+**************************************************************************************************************************************************
+
+vi /home/oracle/AgentResponseFile
+	
+LOGIN_USER=sysman
+LOGIN_PASSWORD=pw12Cl0ud
+PLATFORM="Linux x86-64"
+AGENT_REGISTRATION_PASSWORD=O3M12cl0ud
+
+
+Create oraInst.loc file in /home/oracle/oraInst.loc
+ 
+inventory_loc=/home/oracle/oraInventory
+inst_group=dba
+
+
+cd /home/oracle/emcli
+
+./emcli login -username=sysman -password=pw12Cl0ud
+
+./emcli sync
+
+./emcli get_supported_platforms
+
+./emcli get_agentimage -destination=/tmp/sisant -platform="Linux x86-64" -version=12.1.0.5.0
+
+cd /tmp/sisant/
+
+unzip 12.1.0.5.0_AgentCore_226.zip
+
+./agentDeploy.sh RSPFILE_LOC=/home/oracle/AgentResponseFile AGENT_BASE_DIR=/dbprog/oracle/Middleware/agent12c -invPtrLoc /home/oracle/oraInst.loc OMS_HOST=oem.statoil.no EM_UPLOAD_PORT=4903
+
+
+[root@st-db109 ~]# /dbprog/oracle/Middleware/agent12c/core/12.1.0.5.0/root.sh
+Finished product-specific root actions.
+
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl stop agent
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl secure agent    --> it will stop running agent and secure it and start it. (password - O3M12cl0ud)
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl start agent
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl status agent
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl upload agent
+
+
+
+oracle@st-db126 70% /dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl config agent listtargets
+Oracle Enterprise Manager Cloud Control 12c Release 5
+Copyright (c) 1996, 2015 Oracle Corporation.  All rights reserved.
+[agent12c1_1_st-db126.st.statoil.no, oracle_home]
+[st-db126.st.statoil.no, host]
+[st-db126.st.statoil.no:3872, oracle_emd]
+[P010RMAN, oracle_database]
+[P181, oracle_database]
+[P182, oracle_database]
+[P182B, oracle_database]
+[P185, oracle_database]
+[P185A, oracle_database]
+[P194, oracle_database]
+[P203, oracle_database]
+[P208, oracle_database]
+[P208I, oracle_database]
+[P210, oracle_database]
+[P228, oracle_database]
+[P463, oracle_database]
+[P492, oracle_database]
+[P668, oracle_database]
+[P793, oracle_database]
+[P794, oracle_database]
+[P884, oracle_database]
+[LIST_DB100_01_st-db126.st.statoil.no, oracle_listener]
+[LIST_DB100_11_st-db126.st.statoil.no, oracle_listener]
+[LIST_DB100_ARCSDE_st-db126.st.statoil.no, oracle_listener]
+[LIST_DB100_KERB_st-db126.st.statoil.no, oracle_listener]
+[LIST_DB101_02_st-db126.st.statoil.no, oracle_listener]
+[LIST_DB102_03_st-db126.st.statoil.no, oracle_listener]
+[LIST_P182_st-db126.st.statoil.no, oracle_listener]
+[LIST_P793_st-db126.st.statoil.no, oracle_listener]
+[OraHome2_3_st-db126.st.statoil.no, oracle_home]
+[Home10204_db102_4_st-db126.st.statoil.no, oracle_home]
+[OraHome8_10_st-db126.st.statoil.no, oracle_home]
+[OraHome1_1_st-db126.st.statoil.no, oracle_home]
+[OraHome4_7_st-db126.st.statoil.no, oracle_home]
+[OraHome5_7_st-db126.st.statoil.no, oracle_home]
+[OraHome1_1_st-db126.st.statoil.no_3218, oracle_home]
+[OraHome2_3_st-db126.st.statoil.no_6652, oracle_home]
+[OraHome7_9_st-db126.st.statoil.no, oracle_home]
+[OraHome1_1_st-db126.st.statoil.no_9189, oracle_home]
+[OraHome3_4_st-db126.st.statoil.no, oracle_home]
+[OraHome4_5_st-db126.st.statoil.no, oracle_home]
+
+
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl config agent addInternalTargets
+
+
+
+
+cp /dbprog/oracle/Middleware/agent12c/core/12.1.0.5.0/root.sh /tmp/ora.sh
+
+chmod +x /tmp/ora.sh
+
+sudo /tmp/ora.sh
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl start agent
+
+or 
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl start agent
+
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl stop agent
+
+
+
+In Cluster
+=======================================================
+
+/tmp/AgentPull.sh RSPFILE_LOC=/home/oracle/AgentResponseFile AGENT_BASE_DIR=/dbprog/oracle/Middleware/agent12c -invPtrLoc /home/oracle/oraInst.loc
+
+/dbprog/oracle/Middleware/agent12c/core/12.1.0.5.0/root.sh
+
+ 
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl stop agent
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl status agent
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl upload agent
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl pingOMS
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/sysman/emd/upload
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl clearstate agent
+
+
+
+Troubleshooting Part - 
+
+If getting below error in /dbprog/oracle/Middleware/agent12c/agent_inst/sysman/log/emagent.nohup
+
+OMS decided to shutdown the agent because of the following reason sent from OMS:  AGENT_TZ_MISMATCH
+
+cd /<path>/oracle/Middleware/agent12c/core/12.1.0.5.0/bin
+
+emctl resetTZ agent
+
+Output
+===========
+oracle@st-db96 47% /dbprog/oracle/Middleware/agent12c/agent_inst/bin/emctl resetTZ agent
+Oracle Enterprise Manager Cloud Control 12c Release 5
+Copyright (c) 1996, 2015 Oracle Corporation.  All rights reserved.
+Updating /dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties...
+Successfully updated /dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties.
+Login as the em repository user and run the  script:
+exec mgmt_target.set_agent_tzrgn('st-db96.statoil.no:3872','Europe/Oslo')
+and commit the changes
+This can be done for example by logging into sqlplus and doing
+SQL> exec mgmt_target.set_agent_tzrgn('st-db96.statoil.no:3872','Europe/Oslo')
+SQL> commit
+oracle@st-db96 48%
+
+
+
+Go to --> /<path>/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties
+
+exec mgmt_target.set_agent_tzrgn('rio-db02.statoil.no:3872','America/Sao_Paulo')
+
+Now, login to P010OEM as sysman user and execute above command.
+
+restart agent again.
+
+
+==========================================================
+Memory increase
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties
+
+or 
+
+vi /dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties
+
+agentJavaDefines=-Xmx512M -XX:MaxPermSize=96M
+
+Increase -Xmx128M or any value to larger like -Xmx512M
+
+
+==========================================================
+
+If getting below error in /dbprog/oracle/Middleware/agent12c/agent_inst/sysman/log/emagent.nohup
+
+OMS decided to shutdown the agent because of the following reason sent from OMS:  EM_PLUGIN_MISMATCH_AND_AGENT_NOT_YET_MANAGED
+
+Solution :
+
+Reinstall agent
+
+==========================================================
+
+Blocked Reason         : Agent with url https://st-db109.st.statoil.no:3872/emd/main/ is out-of-sync with repository (2/101) !
+
+
+
+
+exec mgmt_target.set_agent_tzrgn('st-db96.statoil.no:3872','Arctic/Longyearbyen')
+
+
+/dbprog/oracle/Middleware/agent12c/agent_inst/sysman/config/emd.properties
+
+agentTZRegion=CET

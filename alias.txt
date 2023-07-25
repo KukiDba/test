@@ -1,0 +1,5 @@
+modified .cshrc for sid alias, not to use setTZ.
+
+cd /home/oracle
+chmod +x .cshrc
+source .cshrc

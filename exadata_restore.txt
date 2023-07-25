@@ -1,0 +1,218 @@
+run
+{
+allocate channel 'sbt_wkly_0' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_1' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_2' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_3' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_4' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_5' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+SET NEWNAME FOR DATABASE   TO  '/u01/app/oracle/admin/oradata/servcstg/datafile/14august/%b';
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+SET UNTIL TIME "to_date ( '13-AUG-2020 13:56:07', 'DD-MON-YYYY HH24:MI:SS')";
+restore database;
+switch datafile all;
+recover database;
+}
+												
+
+
+
+run {
+allocate channel 'sbt_wkly_0' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_1' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_2' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_3' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_4' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+allocate channel 'sbt_wkly_5' type 'sbt_tape'
+parms 
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988)'
+;
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+backup
+format 
+'FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988<SERVCSTG1_%s:%t:%p:%U>.dbf'
+recovery area;
+backup
+format 
+'FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988<SERVCSTG1_%s:%t:%p:%U>.dbf'
+current controlfile;
+}												
+
+
+
+
+list backup of controlfile completed between "to_date('05.08.2020 01','dd.mm.yyyy hh24')" and "to_date('14.06.2014 02','dd.mm.yyyy hh24')";
+
+
+
+list backup of controlfile completed between "to_date('05.08.2020','dd.mm.yyyy hh24')" and "to_date('13.08.2020','dd.mm.yyyy hh24')";
+					
+
+
+
+run
+{
+ALLOCATE CHANNEL CH1 DEVICE TYPE 'SBT_TAPE';
+send 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988) ';
+restore controlfile from 'c-451406173-20200812-03';
+RELEASE CHANNEL CH1;      
+}
+
+
+
+run
+{
+ALLOCATE CHANNEL CH1 DEVICE TYPE 'SBT_TAPE';
+send 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY_SD02642988) ';
+SET UNTIL TIME "to_date ('13-AUG-2020 13:56:07', 'DD-MON-YYYY HH24:MI:SS')";
+restore UNTIL TIME "to_date ('13-AUG-2020 13:56:07', 'DD-MON-YYYY HH24:MI:SS')" controlfile  to '/u01/app/oracle/admin/oradata/';
+RELEASE CHANNEL CH1;
+}
+
+
+run {
+allocate channel 'dev_0' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_Archlog_DLY)'
+;
+allocate channel 'dev_1' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_Archlog_DLY)'
+;
+allocate channel 'dev_2' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_Archlog_DLY)'
+;
+allocate channel 'dev_3' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_Archlog_DLY)'
+;
+allocate channel 'dev_4' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_Archlog_DLY)'
+;
+allocate channel 'dev_5' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_Archlog_DLY)'
+;
+set archivelog destination to '/u01/app/oracle/admin/arch/';
+restore archivelog from logseq=404779 until logseq=405103 thread=2;
+}
+
+
+
+
+select sequence# , name from gv$archived_log where <sequence no> between FIRST_CHANGE# and NEXT_CHANGE#; 
+
+
+did setup for thread2 in pfile
+
+addes SERVCSTG1.thread=2
+
+
+
+ORA-00279: change 14485389934582 generated at 08/19/2020 23:08:43 needed for
+thread 1
+ORA-00289: suggestion : /u01/app/oracle/admin/arch/1_405026_898265062.dbf
+ORA-00280: change 14485389934582 for thread 1 is in sequence #405026
+ORA-00278: log file '/u01/app/oracle/admin/arch/1_405025_898265062.dbf' no
+longer needed for this recovery
+
+
+ORA-00308: cannot open archived log
+'/u01/app/oracle/admin/arch/1_405026_898265062.dbf'
+ORA-27037: unable to obtain file status
+Linux-x86_64 Error: 2: No such file or directory
+Additional information: 3
+
+
+SQL> recover database using backup controlfile until cancel;
+ORA-00279: change 14485389934582 generated at 08/19/2020 23:08:43 needed for
+thread 1
+ORA-00289: suggestion : /u01/app/oracle/admin/arch/1_405026_898265062.dbf
+ORA-00280: change 14485389934582 for thread 1 is in sequence #405026
+
+
+Specify log: {<RET>=suggested | filename | AUTO | CANCEL}
+CANCEL
+Media recovery cancelled.
+
+check datafile required recovery or not use below queries
+
+COL DF# FORMAT 999
+COL DF_NAME FORMAT A35
+COL TBSP_NAME FORMAT A7
+COL STATUS FORMAT A7
+COL ERROR FORMAT A10
+COL CHANGE# FORMAT 99999999
+SELECT r.FILE# AS df#, d.NAME AS df_name, t.NAME AS tbsp_name, 
+       d.STATUS, r.ERROR, r.CHANGE#, r.TIME
+FROM V$RECOVER_FILE r, V$DATAFILE d, V$TABLESPACE t
+WHERE t.TS# = d.TS#
+AND d.FILE# = r.FILE#
+;
+
+
+
+SQL> alter database open resetlogs;
+alter database open resetlogs
+*
+ERROR at line 1:
+ORA-38856: cannot mark instance SERVCSTG1 (redo thread 2) as enabled
+
+ removed SERVCSTG1.thread=2 from pfile
+
+SQL> alter database open resetlogs;
+alter database open resetlogs
+*
+ERROR at line 1:
+ORA-38856: cannot mark instance UNNAMED_INSTANCE_2 (redo thread 2) as enabled
+
+
+1.Set the following parameter in the auxiliary init.ora file:
+
+_no_recovery_through_resetlogs=TRUE
+
+Then open with resetlogs;
+ 
+
+Once the auxiliary has opened, removed this hidden parameter.
+
+
+ALTER TABLESPACE TEMP ADD TEMPFILE '/u01/app/oracle/admin/oradata/servcstg/datafile/15august/temp01.dbf' SIZE 10G;
+
+
+

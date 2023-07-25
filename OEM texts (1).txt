@@ -1,0 +1,573 @@
+
+Step 1:- 
+Login :- fihecdpp004.emea.nsn-net.net
+ 
+Cd /usr1/apl/oracle/agent12c
+ 
+And Run below command  :- 
+ 
+oracle@fihecdpp004/NSNRAS1
+/usr1/apl/oracle/agent12c > ./AgentPull.sh LOGIN_USER=SYSMAN LOGIN_PASSWORD=Nokia_12345 PLATFORM="Oracle Solaris on x86-64 (64-bit)" VERSION=12.1.0.3.0 AGENT_BASE_DIR=/usr1/apl/oracle/agent12c -download_only
+ 
+ 
+Step 2:- 
+ 
+Once the software is copy (agent.zip)   to the below list of server using sftp  in  /tmp  directory 
+
+OMS_HOST=fr712uora005.zeu.alcatel-lucent.com
+EM_UPLOAD_PORT=4902
+AGENT_REGISTRATION_PASSWORD=Infra_12345
+AGENT_PORT=3872
+b_startAgent=true
+ORACLE_HOSTNAME=il27devdb01.americas.nsn-net.net
+
+
+ 
+
+./agentDeploy.sh  AGENT_BASE_DIR=/opt/oracle/agent12c RESPONSE_FILE=/opt/oracle/agent12c/agent.rsp -ignorePrereqs
+
+cd /opt/oracle/agent12c/
+
+$AGENT_HOME/perl/bin/perl $AGENT_HOME/sysman/install/AgentDeinstall.pl -agentHome $AGENT_HOME
+
+export _JAVA_OPTIONS=-Xmx512M
+
+https://www.slideshare.net/gokhanatil/oracle-enterprise-manager-12c-emcli-crash-course
+
+Delete OEM targets host
+************************
+
+./emcli delete_target -name='us0fhudbs012.ndc.alcatel-lucent.com:3872' -type='oracle_emd' -delete_monitored_targets
+
+./emctl status agent
+./emctl upload agent
+./emctl stop agent
+./emctl start agent
+
+
+
+http://www.oracledbasupport.co.uk/querying-grid-repository-tables/
+
+$/opt/oracle/agent12c/core/12.1.0.3.0/oui/bin/runInstaller -deinstall -silent "REMOVE_HOMES={/home/oracle/agent/plugins/oracle.sysman.emas.oms.plugin_12.1.0.1.0,/home/oracle/agent/plugins/oracle.sysman.emct.oms.plugin_12.1.0.1.0}"  -invPtrLoc /opt/oracle/oraInventory/oraInst.loc
+
+
+
+/opt/oracle/agent12c/core/12.1.0.3.0/oui/bin/runInstaller -deinstall -silent "REMOVE_HOMES={/opt/oracle/agent12c/}" -invPtrLoc /opt/oracle/oraInventory/oraInst.loc
+
+ SELECT A.HOST_NAME,
+        A.DATABASE_NAME,
+ TO_CHAR(A.STARTUP_TIME,'DD-MON-YYYY') "STARTUP_DATE" ,
+        TO_CHAR(A.creation_date,'DD-MON-YYYY') "CREATION_DATE",
+        A.LOG_MODE,A.CHARACTERSET,A.DBVERSION,
+        AVAILABILITY_STATUS,E.SGASIZE,
+ G.HOME_LOCATION "ORACLE_HOME",
+ F.property_value "PORT",
+ C.cpu_count,
+ C.CPU_CORE_COUNT,
+ SUBSTR(D.OS_SUMMARY,1,40) "OS PLATFORM" 
+ FROM  SYSMAN.MGMT$DB_DBNINSTANCEINFO A, 
+ SYSMAN.MGMT$AVAILABILITY_CURRENT B,
+ SYSMAN.MGMT$DB_CPU_USAGE C ,  
+ sysman.mgmt$os_hw_summary D,
+ sysman.mgmt$db_sga_all E ,
+ SYSMAN.MGMT$TARGET_PROPERTIES F  , 
+ SYSMAN.MGMT$ORACLE_SW_ENT_TARGETS G 
+ WHERE B.TARGET_TYPE='oracle_database' and
+ A.TARGET_NAME=B.TARGET_NAME AND
+ A.TARGET_NAME=C.TARGET_NAME AND 
+ A.HOST_NAME=D.HOST_NAME and 
+ a.target_name=E.target_name  AND 
+ E.SGANAME='Total SGA (MB)'  AND
+   A.TARGET_NAME=F.TARGET_NAME AND
+   a.target_name=G.TARGET_NAME and  
+   F.PROPERTY_NAME='Port' 
+ORDER BY host_name desc;
+
+
+set lines 200
+col DATABASE_NAME for a40
+col DATABASE_VERSION for a20
+col SERVER for a40
+col OS for a20
+col OS_VERSION for a60
+select db.TARGET_NAME DATABASE_NAME, db.TYPE_QUALIFIER1 DATABASE_VERSION, os.TARGET_NAME SERVER, os.TYPE_QUALIFIER1 OS, os.TYPE_QUALIFIER2 OS_VERSION
+from SYSMAN.MGMT$TARGET db, SYSMAN.MGMT$TARGET os 
+where db.HOST_NAME = os.TARGET_NAME 
+and db.target_type='oracle_database'
+and os.target_type='host'
+order by 1;
+
+/u01/app/oracle/product/oms12c
+
+
+oracle@fr712uora005 $ pwd
+/u01/app/oracle/product/oms12c/oms/bin
+or
+
+export OMS_HOME=/u01/app/oracle/product/oms12c/r3/oms
+export PATH=$OMS_HOME/OPatch:$PATH
+export PATH=$OMS_HOME/bin:$PATH
+
+
+export ORACLE_HOME=/u01/app/oracle/product/oms12c/r3/oms
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATH=$ORACLE_HOME/bin:$PATH
+
+
+oracle@fr712uora005 $ emctl status oms
+Oracle Enterprise Manager Cloud Control 12c Release 3
+Copyright (c) 1996, 2013 Oracle Corporation.  All rights reserved.
+WebTier is Up
+Oracle Management Server is Up
+oracle@fr712uora005 $
+oracle@fr712uora005 $
+
+
+
+	Integrate BI Publisher (BIP) with Enterprise Manager 12c Cloud Control after Installation or Upgrade (Doc ID 1392921.1)
+https://docs.oracle.com/cd/E24628_01/install.121/e24089/install_em_bip.htm#EMADV12232
+
+
+Hi Team,
+
+We need help of Installation/Integration of BI publisher with OEM 12c.
+
+BI Publisher Installation help--OEM 12c
+
+
+oracle@fr712uora005 $
+oracle@fr712uora005 $ pwd
+/u01/app/oracle/product/oms12c/oms/bin
+oracle@fr712uora005 $
+oracle@fr712uora005 $
+oracle@fr712uora005 $ ls -ld configureBIP
+-rwxr-x--- 1 oracle dba 2929 Aug 12  2011 configureBIP
+oracle@fr712uora005 $
+oracle@fr712uora005 $
+oracle@fr712uora005 $
+oracle@fr712uora005 $
+oracle@fr712uora005 $ configureBIP
+you must do a software-only install of "BI EE 11.1.1.6.0" before running this script
+oracle@fr712uora005 $ ./configureBIP
+.
+
+
+
+
+
+
+
+
+SELECT DISTINCT
+            tbl_tar.target_guid,
+            tbl_sid.sid AS instance_name,
+            CASE
+               WHEN tbl_tar.host_name LIKE '%.%'
+               THEN
+                  LOWER (SUBSTR (tbl_tar.host_name,
+                                 1,
+                                   INSTR (tbl_tar.host_name,
+                                          '.',
+                                          2,
+                                          1)
+                                 - 1))
+               ELSE
+                  LOWER (tbl_tar.host_name)
+            END
+               host_name,
+            DECODE (tbl_ava.current_status,
+                    0, 'Down',
+                    1, 'Up',
+                    2, 'Metric Error',
+                    3, 'Agent Down',
+                    4, 'Unreachable',
+                    5, 'Blackout',
+                    6, 'Unknown')
+               status,
+            tbl_groups.composite_target_name AS "GROUP",
+            tbl_ver.version,
+            CASE
+               WHEN tbl_mem.mem_max > 0
+               THEN
+                  CEIL (tbl_mem.mem_max / 1024 / 1024)
+               ELSE
+                  CEIL (tbl_sga.sga / 1024 / 1024 + tbl_pga.pga / 1024 / 1024)
+            END
+               total_memory,
+            tbl_dg.data_guard_status,
+            tbl_port.port,
+            tbl_home.PATH,
+            tbl_company.company,
+            tbl_location.location,
+            tbl_appcontact.app_contact,
+            tbl_costcenter.cost_center,
+            tbl_tier.tier,
+            tbl_department.department,
+            tbl_dbplatform.db_platform,
+            tbl_dbhostos.db_host_os,
+            tbl_comment.notes
+       FROM (SELECT p.target_guid, p.property_value AS port
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'Port') tbl_port,
+            (SELECT s.target_guid, UPPER (s.property_value) AS sid
+               FROM mgmt_target_properties s
+              WHERE s.property_name = 'SID') tbl_sid,
+            (SELECT s.target_guid, s.property_value AS version
+               FROM mgmt_target_properties s
+              WHERE s.property_name IN ('Version')) tbl_ver,
+            (SELECT s.target_guid, s.property_value AS PATH
+               FROM mgmt_target_properties s
+              WHERE s.property_name IN ('OracleHome')) tbl_home,
+            (SELECT s.target_guid, s.property_value AS data_guard_status
+               FROM mgmt_target_properties s
+              WHERE s.property_name IN ('DataGuardStatus')) tbl_dg,
+            (SELECT s.target_guid, s.VALUE AS PGA
+               FROM mgmt$db_init_params s
+              WHERE s.name = 'pga_aggregate_target') tbl_pga,
+            (SELECT s.target_guid, s.VALUE AS SGA
+               FROM mgmt$db_init_params s
+              WHERE s.name = 'sga_max_size') tbl_sga,
+            (SELECT s.target_guid, s.VALUE AS mem_max
+               FROM mgmt$db_init_params s
+              WHERE s.name = 'memory_target') tbl_mem,
+            (SELECT p.target_guid, p.property_value AS notes
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_comment') tbl_comment,
+            (SELECT p.target_guid, p.property_value AS company
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_line_of_bus') tbl_company,
+            (SELECT p.target_guid, p.property_value AS location
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_location') tbl_location,
+            (SELECT p.target_guid, p.property_value AS app_contact
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_contact') tbl_appcontact,
+            (SELECT p.target_guid, p.property_value AS cost_center
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_cost_center') tbl_costcenter,
+            (SELECT p.target_guid, p.property_value AS tier
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_lifecycle_status') tbl_tier,
+            (SELECT p.target_guid, p.property_value AS department
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_department') tbl_department,
+            (SELECT p.target_guid, p.property_value AS db_platform
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_platform') tbl_dbplatform,
+            (SELECT p.target_guid, p.property_value AS db_host_os
+               FROM mgmt_target_properties p
+              WHERE p.property_name = 'orcl_gtp_os') tbl_dbhostos,
+            mgmt_target_properties tbl_main,
+            mgmt_targets tbl_tar,
+            mgmt_current_availability tbl_ava,
+            (SELECT composite_target_name, member_target_guid
+               FROM MGMT_TARGET_MEMBERSHIPS
+              WHERE     composite_target_type = 'composite'
+                    AND composite_target_name IN
+                           ('Production', 'Non-Production', 'SuperCluster')
+                    AND member_target_type = 'oracle_database') tbl_groups
+      WHERE     tbl_main.target_guid = tbl_port.target_guid(+)
+            AND tbl_main.target_guid = tbl_sid.target_guid(+)
+            AND tbl_main.target_guid = tbl_tar.target_guid(+)
+            AND tbl_main.target_guid = tbl_ver.target_guid(+)
+            AND tbl_main.target_guid = tbl_home.target_guid(+)
+            AND tbl_main.target_guid = tbl_dg.target_guid(+)
+            AND tbl_main.target_guid = tbl_pga.target_guid(+)
+            AND tbl_main.target_guid = tbl_sga.target_guid(+)
+            AND tbl_main.target_guid = tbl_mem.target_guid(+)
+            AND tbl_main.target_guid = tbl_ava.target_guid(+)
+            AND tbl_main.target_guid = tbl_comment.target_guid(+)
+            AND tbl_main.target_guid = tbl_company.target_guid(+)
+            AND tbl_main.target_guid = tbl_location.target_guid(+)
+            AND tbl_main.target_guid = tbl_appcontact.target_guid(+)
+            AND tbl_main.target_guid = tbl_costcenter.target_guid(+)
+            AND tbl_main.target_guid = tbl_tier.target_guid(+)
+            AND tbl_main.target_guid = tbl_department.target_guid(+)
+            AND tbl_main.target_guid = tbl_dbplatform.target_guid(+)
+            AND tbl_main.target_guid = tbl_dbhostos.target_guid(+)
+            AND tbl_main.target_guid = tbl_groups.member_target_guid(+)
+            AND tbl_tar.target_type = 'oracle_database'
+   GROUP BY tbl_tar.target_guid,
+            tbl_port.port,
+            tbl_sid.sid,
+            tbl_tar.host_name,
+            tbl_ver.version,
+            tbl_home.PATH,
+            tbl_dg.data_guard_status,
+            tbl_pga.pga,
+            tbl_sga.sga,
+            tbl_mem.mem_max,
+            tbl_ava.current_status,
+            tbl_groups.composite_target_name,
+            tbl_comment.notes,
+            tbl_company.company,
+            tbl_location.location,
+            tbl_appcontact.app_contact,
+            tbl_costcenter.cost_center,
+            tbl_tier.tier,
+            tbl_department.department,
+            tbl_dbplatform.db_platform,
+            tbl_dbhostos.db_host_os
+   ORDER BY 2;
+
+
+./emctl stop agent
+./emctl start agent
+./emctl clearstate agent
+./emctl upload
+
+./emctl status agent
+
+emctl clearstate agent
+
+gent Home        : /orasys/product/agent_12c/agent_inst
+Agent Binaries    : /orasys/product/agent_12c/core/12.1.0.3.0
+Agent Process ID  : 28939
+Parent Process ID : 28816
+Agent URL         : https://bcv50sde.dc-m.alcatel-lucent.com:3872/emd/main/
+Repository URL    : https://fr712uora005.zeu.alcatel-lucent.com:4902/empbs/upload
+Started at        : 2020-07-22 21:31:26
+Started by user   : oracle
+Last Reload       : (none)
+Last succ
+
+
+Metric evaluation error start - No such metadata for target type
+
+alter user DBSNMP identified by  Highway_1234;
+
+WITH rec_patch AS
+(SELECT *
+FROM
+(SELECT pa.host_name ,
+pa.pa_tgt_name AS target_name ,
+pa.abstract ,
+pa.patch ,
+SUBSTR(CONCAT(CONCAT(pa.abstract,'(‘),CONCAT(pa.patch,’)’)),27) AS recommended_patch ,
+pa.pa_tgt_guid AS target_guid ,
+ROW_NUMBER() OVER (PARTITION BY pa.pa_tgt_name ORDER BY pa.pa_tgt_name, pa.patch DESC) AS rn
+FROM sysman.mgmt$pa_recom_metric_source pa
+–WHERE pa.abstract like ‘DATABASE PATCH SET UPDATE%’
+WHERE lower(pa.abstract) LIKE lower(‘DATABASE%’)
+)
+WHERE rn = 1
+),
+new_DB_patch AS
+(SELECT *
+FROM (
+(SELECT a.TARGET_GUID,
+a.TARGET_NAME,
+a.TARGET_TYPE,
+a.HOST_NAME,
+b.PROPERTY_VALUE DB_VERSION ,
+D.CM_TARGET_NAME,
+D.DESCRIPTION ,
+ROW_NUMBER() OVER (PARTITION BY A.TARGET_NAME ORDER BY A.TARGET_NAME, D.DESCRIPTION DESC) AS RN
+FROM sysman.MGMT$TARGET a,
+MGMT$TARGET_PROPERTIES b,
+MGMT$OH_INSTALLED_TARGETS C,
+CM$MGMT_LL_INV_PATCHES D
+WHERE a.TARGET_GUID = b.TARGET_GUID
+AND a.target_type = b.target_type
+AND a.target_name = b.target_name
+–and b.PROPERTY_VALUE like ‘12.1.0.2%’–‘12.2%’
+AND b.TARGET_TYPE IN ( ‘oracle_database’,’oracle_pdb’,’osm_instance’)
+AND b.property_name = ‘DBVersion’
+AND C.INST_TARGET_NAME=a.target_name
+AND D.cm_target_name =C.OH_TARGET_NAME
+AND lower(D.DESCRIPTION) LIKE lower(‘Database%’)
+ORDER BY 2
+) )
+WHERE RN=1
+)
+SELECT
+/* +parallel(auto)*/
+B.TARGET_GUID,
+B.TARGET_NAME,
+B.TARGET_TYPE,
+B.HOST_NAME,
+C.HOSTVERSION,
+C.OS,
+C.PLATFORM,
+C.APPLIANCE,
+C.LOCATION,
+B.DB_VERSION,
+UPPER(B.DESCRIPTION) INSTALLED_PATCH,
+rec.patch RECOMMENDED_PATCH,
+rec.abstract RECOMMENDED_PATCH_DETAILS
+FROM rec_patch rec,
+new_DB_patch B ,
+HOST_INFO C
+WHERE B.target_name = rec.target_name(+)
+AND C.TARGET_NAME =B.HOST_NAME
+ORDER BY TARGET_NAME;
+
+
+CREATE VIEW HOST_INFO
+AS
+SELECT
+/* +parallel(auto)*/
+MGMT_PROP.TARGET_GUID,
+MGMT_PROP.TARGET_NAME,
+MGMT_PROP.TARGET_TYPE,
+MGMT_PROP.HOSTVERSION,
+MGMT_PROP.HOSTTARGETVERSION,
+MGMT_PROP.IP_ADDRESS,
+MGMT_PROP.OS,
+MGMT_PROP.OS_PATCHLEVEL,
+MGMT_PROP.PLATFORM,
+MGMT_PROP.DB_DEPT
+FROM
+(SELECT a.TARGET_GUID,
+a.TARGET_NAME,
+a.TARGET_TYPE,
+a.host_name,
+MAX(DECODE(b.PROPERTY_NAME, ‘Version’, b.property_value)) AS “HOSTVERSION”,
+MAX(DECODE(b.PROPERTY_NAME, ‘HostTargetVersion’, b.property_value)) AS “HOSTTARGETVERSION”,
+MAX(DECODE(b.PROPERTY_NAME, ‘IP_address’, b.property_value)) AS “IP_ADDRESS”,
+MAX(DECODE(b.PROPERTY_NAME, ‘OS’, b.property_value)) AS “OS”,
+MAX(DECODE(b.PROPERTY_NAME, ‘OS_patchlevel’, b.property_value)) AS “OS_PATCHLEVEL”,
+MAX(DECODE(b.PROPERTY_NAME, ‘Platform’, b.property_value)) AS PLATFORM,
+MAX(DECODE(b.PROPERTY_NAME, ‘orcl_gtp_department’, b.property_value)) AS “DB_DEPT”,
+MAX(DECODE(b.PROPERTY_NAME, ‘orcl_gtp_location’, b.property_value)) AS “LOCATION”,
+MAX(DECODE(b.PROPERTY_NAME, ‘orcl_gtp_lifecycle_status’, b.property_value)) AS “ENVIRONMENT”,
+MAX(DECODE(b.PROPERTY_NAME, ‘orcl_gtp_line_of_bus’, b.property_value)) AS “LINE_OF_BUSINESS”,
+MAX(DECODE(b.PROPERTY_NAME, ‘orcl_gtp_contact’, b.property_value)) AS “CONTACT”
+FROM sysman.MGMT$TARGET a,
+MGMT$TARGET_PROPERTIES b
+WHERE a.TARGET_GUID = b.TARGET_GUID
+AND a.target_type = b.target_type
+AND a.target_name = b.target_name
+AND b.PROPERTY_NAME IN (‘HostTargetVersion’,’IP_address’,’OS’,’OS_patchlevel’,’Platform’,’Version’,’orcl_gtp_department’,’orcl_gtp_lifecycle_status’,’orcl_gtp_line_of_bus’,’orcl_gtp_location’,’orcl_gtp_os’,’orcl_gtp_platform’,’orcl_gtp_contact’)
+AND a.target_type = (‘host’)
+GROUP BY a.TARGET_GUID,
+a.TARGET_NAME,
+a.TARGET_TYPE,
+a.host_name
+ORDER BY “DB_DEPT”,
+“LINE_OF_BUSINESS”
+) MGMT_PROP;
+
+
+
+SELECT home.host_name,home.container_location, home.container_name, (SUBSTR( comp.version, 1, 9 )|| nvl((substr(home.patchsets,instr(home.patchsets,'P')+10,1)),0)) PSU,
+  comp.installer_version,
+  comp.timestamp as install_timestamp,
+  home.interim_patches, home.bugs_fixed_by_interim_patches
+FROM (SELECT s.target_name host_name, c.container_guid,
+  c.container_location, c.container_name,
+  ecm_util.patchsets_in_home(c.container_guid) patchsets,
+  ecm_util.interim_patches_in_home(c.container_guid) interim_patches,
+  ecm_util.fixed_bugs_in_home(c.container_guid) bugs_fixed_by_interim_patches
+  FROM mgmt_inv_container c, mgmt_ecm_snapshot s, mgmt_targets t
+  WHERE c.snapshot_guid = s.snapshot_guid
+  AND s.is_current = 'Y'
+  AND s.snapshot_type = 'host_configuration'
+  AND t.target_name = s.target_name
+  AND t.target_type = 'host') home,
+  mgmt_inv_component comp, mgmt_inv_versioned_patch patch
+WHERE home.container_guid = comp.container_guid
+  AND comp.component_guid = patch.component_guid(+)
+  AND comp.external_name like '%Oracle Database%'
+  AND comp.name = 'oracle.server';
+
+SELECT key_value "Tablespace Allocated Space (MB)", key_value2 "Tablespace Used Space (MB)", key_value3 "Tablespace Free Space (MB)
+
+
+SELECT A.HOST_NAME,
+        A.DATABASE_NAME,
+TO_CHAR(A.STARTUP_TIME,'DD-MON-YYYY') "STARTUP_DATE" ,
+        TO_CHAR(A.creation_date,'DD-MON-YYYY') "CREATION_DATE",
+        A.LOG_MODE,A.CHARACTERSET,A.DBVERSION,A.BANNER,
+       E.SGASIZE,
+G.HOME_LOCATION "ORACLE_HOME",
+F.property_value "PORT",
+C.cpu_count,
+C.CPU_CORE_COUNT,
+SUBSTR(D.OS_SUMMARY,1,40) "OS_PLATFORM" ,
+round(SUM(H.TABLESPACE_SIZE)/1024/1024/1024,0) AS "DB_TABLESPACE_USED" 
+FROM  SYSMAN.MGMT$DB_DBNINSTANCEINFO A, 
+SYSMAN.MGMT$AVAILABILITY_CURRENT B,
+SYSMAN.MGMT$DB_CPU_USAGE C ,  
+sysman.mgmt$os_hw_summary D,
+sysman.mgmt$db_sga_all E ,
+SYSMAN.MGMT$TARGET_PROPERTIES F  , 
+SYSMAN.MGMT$ORACLE_SW_ENT_TARGETS G ,
+sysman.MGMT$DB_TABLESPACES H
+WHERE B.TARGET_TYPE='oracle_database' and
+A.TARGET_NAME=B.TARGET_NAME AND
+A.TARGET_NAME=C.TARGET_NAME(+) AND 
+A.HOST_NAME=D.HOST_NAME and 
+a.target_name=E.target_name  AND 
+E.SGANAME='Total SGA (MB)'  AND
+   A.TARGET_NAME=F.TARGET_NAME AND
+   a.target_name=G.TARGET_NAME and  
+   F.PROPERTY_NAME='Port' AND 
+   A.TARGET_NAME=H.TARGET_NAME
+   GROUP BY A.HOST_NAME,
+          A.DATABASE_NAME,
+TO_CHAR(A.STARTUP_TIME,'DD-MON-YYYY'),
+        CREATION_DATE,
+        A.LOG_MODE,A.CHARACTERSET,A.DBVERSION,A.BANNER,
+       E.SGASIZE,
+G.HOME_LOCATION ,
+F.property_value ,
+C.cpu_count,
+C.CPU_CORE_COUNT,
+SUBSTR(D.OS_SUMMARY,1,40)
+ORDER BY host_name desc;
+
+
+SELECT
+      HOST_NAME,
+      TARGET_NAME,
+      round(SUM(TABLESPACE_SIZE)/1024/1024,0) AS "DB_TABLESPACE_USED"
+FROM 
+    MGMT$DB_TABLESPACES
+GROUP BY
+        target_name,
+        host_name
+ORDER BY 
+        host_name, 
+        target_name;
+
+
+select target_name,key_value "TABLESPACE/ARCHIVE_DIR", round(to_number(value),1) ||'%' as PERCENTAGE,collection_time from
+(select Target_name,key_value,value,to_char(collection_timestamp,'YYYY-MM-DD HH24:MI:SS')
+as Collection_time from sysman.MGMT$METRIC_CURRENT where target_type in ('oracle_database','rac_database') and metric_label in ('Tablespaces Full')
+and column_label in ('Tablespace Space Used (%)') and to_num(value)>${tbsthreshold} and collection_timestamp>sysdate-30
+union all
+select Target_name,key_value,value,to_char(collection_timestamp,'YYYY-MM-DD HH24:MI:SS')
+as Collection_time from sysman.MGMT$METRIC_CURRENT where target_type in ('oracle_database','rac_database') and metric_label in ( 'Archive Area')
+and column_label in ('Archive Area Used (%)') and to_num(value)>${arcthreshold} and collection_timestamp>sysdate-30 ) order by to_number(value) desc;
+
+
+
+
+SELECT key_value "Database Size", key_value2 "Used space", key_value3 "Free space"
+FROM MGMT$METRIC_CURRENT
+WHERE target_guid=HEXTORAW(??EMIP_BIND_TARGET_GUID??)
+AND metric_name = 'ME$DatabaseSpaceTest'
+
+
+SELECT Database,
+Month_Date,
+round(sum(decode(metric_column, 'spaceUsed', maximum))/1024/1024, 3) Used_Size_Tb,
+round(sum(decode(metric_column, 'spaceAllocated', maximum))/1024/1024, 3) Allocated_Size_Tb
+FROM
+(
+SELECT target_name Database, trunc(rollup_timestamp, 'MONTH') Month_Date, key_value TB, metric_column, round(max(maximum),0) maximum
+FROM mgmt$metric_daily
+WHERE target_type = 'rac_database'
+and metric_name = 'tbspAllocation'
+and metric_column in ('spaceAllocated', 'spaceUsed')
+and target_name in ('VERS')
+GROUP BY target_name, key_value, trunc(rollup_timestamp, 'MONTH'), metric_column
+)
+GROUP BY Database, Month_Date
+ORDER BY Database, Month_Date
+/
+
+
+
+

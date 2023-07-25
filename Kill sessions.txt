@@ -1,0 +1,143 @@
+2:48 PM 3/29/2017 HOW TO KILL THE SESSIONS
+••••••••••••••••••••••••••••••••••••••••••
+
+Use below query to find out the active sessions
+-----------------------------------------------
+
+set echo off 
+set linesize 95 
+set head on 
+set feedback on 
+col sid head "Sid" form 9999 trunc 
+col serial# form 99999 trunc head "Ser#" 
+col username form a8 trunc 
+col osuser form a7 trunc 
+col machine form a20 trunc head "Client|Machine" 
+col program form a15 trunc head "Client|Program" 
+col login form a11 
+col "last call" form 9999999 trunc head "Last Call|In Secs" 
+col status form a6 trunc 
+select sid,serial#,substr(username,1,10) username,substr(osuser,1,10) osuser, 
+substr(program||module,1,15) program,substr(machine,1,22) machine, 
+to_char(logon_time,'ddMon hh24:mi') login, 
+last_call_et "last call",status 
+from gv$session where status='ACTIVE' 
+order by 1 
+/
+
+select s.sid, s.serial#, s.username
+from  v$session s,
+order by s.username 
+
+select s.sid, s.serial#, s.username,to_char(logon_time,'ddMon hh24:mi') login
+from  v$session s
+order by Login
+
+for pid in $(ps -ef | grep "/opt/omni/bin/perl" | awk '{print $2}'); do kill -9 $pid; done
+
+
+for pid in $(ps -ef | grep "oracleNAIPIN9 (LOCAL=NO)" | awk '{print $2}'); do kill -9 $pid; done
+
+
+# Kill Java daemon wrapper processes
+ps -ef | grep /export/home/caratins/plm/ext/bin/sparc-sun-solaris10/wrapper | grep -v "grep" | awk '{print $2}' | xargs kill
+
+# Kill dtv_dmn-process
+ps -ef | grep dtv_dmn  | grep -v "grep" | awk '{print $2}' | xargs kill
+
+
+
+
+
+
+ col sql_text form a80
+set lines 120
+select sql_text from gv$sqltext where hash_value=
+(select sql_hash_value from gv$session where sid=&1) 
+order by piece
+/
+ 
+
+ 
+select sid,inst_id,opname,totalwork,sofar,start_time,time_remaining 
+from gv$session_longops 
+where totalwork<>sofar
+/
+
+
+Use below query to find out the inactive sessins
+------------------------------------------------
+
+set echo off 
+set linesize 95 
+set head on 
+set feedback on 
+col sid head "Sid" form 9999 trunc 
+col serial# form 99999 trunc head "Ser#" 
+col username form a8 trunc 
+col osuser form a7 trunc 
+col machine form a20 trunc head "Client|Machine" 
+col program form a15 trunc head "Client|Program" 
+col login form a11 
+col "last call" form 9999999 trunc head "Last Call|In Secs" 
+col status form a6 trunc 
+select sid,serial#,substr(username,1,10) username,substr(osuser,1,10) osuser, 
+substr(program||module,1,15) program,substr(machine,1,22) machine, 
+to_char(logon_time,'ddMon hh24:mi') login, 
+last_call_et "last call",status 
+from gv$session where status='INACTIVE' 
+order by 1 
+/
+
+select count(s.status) INACTIVE_SESSIONS
+from gv$session s, v$process p
+where
+p.addr=s.paddr and
+s.status='INACTIVE';
+select count(*) from v$session where username='NOLS_CCE_01';
+
+For killing the session use below query for particular user
+-----------------------------------------------------------
+
+select 'ALTER SYSTEM KILL SESSION ''' ||sid||','||serial#|| ''' IMMEDIATE;',status from gv$session s where status ='ACTIVE' and username='ASLMDBV3' order by username;
+
+Kill sessions for a sql_id
+--------------------------
+select 'alter system kill session ' ||''''||SID||','||SERIAL#||' immediate ;' from v$session where sql_id='&sql_id'; 
+
+For RAC
+-------
+
+select 'alter system kill session ' ||''''||SID||','||SERIAL#||',@'||inst_id||''''||' immediate ;' 
+from gv$session where sql_id='&sql_id'
+
+Actual command for kiling the sessions
+--------------------------------------
+
+ALTER SYSTEM KILL SESSION '1476,11761' IMMEDIATE;
+
+Find out total no of inactive sessions
+--------------------------------------
+
+select count(s.status) INACTIVE_SESSIONS from gv$session s, v$process p where p.addr=s.paddr and s.status='INACTIVE';
+
+
+USER last login details 
+******************************
+SELECT TO_CHAR(TIMESTAMP#,'MM/DD/YY HH:MI:SS') TIMESTAMP,
+ USERID, AA.NAME ACTION FROM SYS.AUD$ AT, SYS.AUDIT_ACTIONS AA
+ WHERE AT.ACTION# = AA.ACTION
+ and AA.name='LOGON'
+ and userid in
+ ('&User_id')
+ ORDER BY TIMESTAMP# DESC;
+ select OS_USERNAME,action_name,USERNAME,to_char(timestamp, 'DD MON YYYY hh24:mi') logon_time,
+ to_char(logoff_time,'DD MON YYYY hh24:mi') logoff
+ from dba_audit_session where username ='&user'
+ AND (timestamp > (sysdate - 61))
+ order by logon_time,username,timestamp,logoff_time;
+
+
+
+
+

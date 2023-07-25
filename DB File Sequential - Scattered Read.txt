@@ -1,0 +1,19 @@
+DB File Sequential Read. 
+=========================
+This event generally indicates a single block read (an index read). 
+
+For example -- 
+A large number of waits here could indicate poor joining orders of tables, or unselective indexing. It is normal for this number to be 
+large for a high-transaction, well-tuned system, but it can indicate problems in some circumstances. You should correlate this wait 
+statistic with other known issues within the Utlstat/Statspack report, such as inefficient SQL. Check to ensure that index scans are 
+necessary, and check join orders for multiple table joins. Problematic hash-area joins should show up in the PGA memory, but they're also 
+memory hogs that could cause high wait numbers for sequential reads. They can also show up as direct path read/write waits. 
+
+
+DB File Scattered Read.
+=======================
+This generally indicates waits related to full table scans. As full table scans are pulled into memory, they rarely fall into 
+contiguous buffers but instead are scattered throughout the buffer cache. A large number here indicates that your table may have 
+missing or suppressed indexes. Although it may be more efficient in your situation to perform a full table scan than an index scan, 
+check to ensure that full table scans are necessary when you see these waits. Try to cache small tables to avoid reading them in over 
+and over again, since a full table scan is put at the cold end of the LRU (Least Recently Used) list. 

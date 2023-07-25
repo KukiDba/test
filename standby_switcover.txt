@@ -1,0 +1,775 @@
+
+login as: oracle
+oracle@fih3ex1dbadm01.emea.nsn-net.net's password:
+Last login: Thu Oct 29 14:44:18 2020 from fihel1d-pulsemgate-int-fw01.emea.nsn-net.net
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ ps -ef|grep pmon
+oracle    42663      1  0 May27 ?        00:42:18 ora_pmon_SERVCSTG1
+oracle    59831      1  0  2019 ?        00:50:33 asm_pmon_+ASM1
+oracle    93451  93350  0 08:36 pts/1    00:00:00 grep pmon
+oracle   301657      1  0  2019 ?        01:50:23 ora_pmon_SCDWDG1
+oracle   338281      1  0  2019 ?        00:28:26 mdb_pmon_-MGMTDB
+oracle   348296      1  0 Feb25 ?        01:15:27 ora_pmon_SCSTGDG1
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ . oraenv
+ORACLE_SID = [oracle] ? SCSTGDG1
+The Oracle base has been set to /u01/app/oracle
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 08:38:40 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  MOUNTED              PHYSICAL STANDBY
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ ps -ef|grep pmon
+oracle    42663      1  0 May27 ?        00:42:18 ora_pmon_SERVCSTG1
+oracle    59831      1  0  2019 ?        00:50:33 asm_pmon_+ASM1
+oracle   109923  93350  0 08:43 pts/1    00:00:00 grep pmon
+oracle   301657      1  0  2019 ?        01:50:23 ora_pmon_SCDWDG1
+oracle   338281      1  0  2019 ?        00:28:26 mdb_pmon_-MGMTDB
+oracle   348296      1  0 Feb25 ?        01:15:27 ora_pmon_SCSTGDG1
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ . oraenv
+ORACLE_SID = [SCSTGDG1] ? SCDWDG1
+The Oracle base remains unchanged with value /u01/app/oracle
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 08:43:50 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCDW   MOUNTED              PHYSICAL STANDBY
+
+SQL> ! ps -ef|grep mrp
+oracle   111842 110949  0 08:44 pts/1    00:00:00 /bin/bash -c  ps -ef|grep mrp
+oracle   111844 111842  0 08:44 pts/1    00:00:00 grep mrp
+oracle   285451      1  0 May09 ?        00:10:32 ora_mrp0_SCDWDG1
+oracle   344253      1  0 Oct10 ?        00:01:38 ora_mrp0_SCSTGDG1
+
+SQL> Select
+   PROCESS,
+   SEQUENCE#,
+   STATUS
+From
+   V$MANAGED_STANDBY;  2    3    4    5    6
+
+PROCESS    SEQUENCE# STATUS
+--------- ---------- ------------
+ARCH           23518 CLOSING
+ARCH           23512 CLOSING
+ARCH           22670 CLOSING
+ARCH           23513 CLOSING
+MRP0           23519 APPLYING_LOG
+RFS            23519 IDLE
+RFS                0 IDLE
+
+7 rows selected.
+
+SQL>
+SQL> select db_unique_name,protection_mode,synchronization_status,synchronized from v$archive_dest_status where db_unique_name != 'NONE';
+
+DB_UNIQUE_NAME                 PROTECTION_MODE      SYNCHRONIZATION_STATUS SYN
+------------------------------ -------------------- ---------------------- ---
+SERVCDW                        MAXIMUM PERFORMANCE  STATUS NOT AVAILABLE   NO
+
+SQL> select client_process,process,sequence#,status from v$managed_standby;
+
+CLIENT_P PROCESS    SEQUENCE# STATUS
+-------- --------- ---------- ------------
+ARCH     ARCH           23518 CLOSING
+ARCH     ARCH           23512 CLOSING
+ARCH     ARCH           22670 CLOSING
+ARCH     ARCH           23513 CLOSING
+N/A      MRP0           23519 APPLYING_LOG
+LGWR     RFS            23519 IDLE
+UNKNOWN  RFS                0 IDLE
+
+7 rows selected.
+
+SQL>
+SQL>
+SQL> /
+
+CLIENT_P PROCESS    SEQUENCE# STATUS
+-------- --------- ---------- ------------
+ARCH     ARCH           23518 CLOSING
+ARCH     ARCH           23512 CLOSING
+ARCH     ARCH           22670 CLOSING
+ARCH     ARCH           23513 CLOSING
+N/A      MRP0           23519 APPLYING_LOG
+LGWR     RFS            23519 IDLE
+UNKNOWN  RFS                0 IDLE
+
+7 rows selected.
+
+SQL>
+SQL>
+SQL>
+SQL> show parameter dump
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+background_core_dump                 string      partial
+background_dump_dest                 string      /u01/app/oracle/diag/rdbms/scd
+                                                 wdg/SCDWDG1/trace
+core_dump_dest                       string      /u01/app/oracle/diag/rdbms/scd
+                                                 wdg/SCDWDG1/cdump
+max_dump_file_size                   string      UNLIMITED
+shadow_core_dump                     string      partial
+user_dump_dest                       string      /u01/app/oracle/diag/rdbms/scd
+                                                 wdg/SCDWDG1/trace
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+[oracle@fih3ex1dbadm01 ~]$
+[oracle@fih3ex1dbadm01 ~]$ cd /u01/app/oracle/diag/rdbms/scdwdg/SCDWDG1/trace/
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ tail -f alert_SCDWDG1.log
+Sun Nov 08 09:32:03 2020
+Deleted Oracle managed file +RECOC1/scdwdg/archivelog/2020_09_21/thread_1_seq_22761.3177.1051682769
+Archived Log entry 46885 added for thread 2 sequence 23521 ID 0xc58d6e81 dest 1:
+Sun Nov 08 09:32:04 2020
+RFS[21]: Assigned to RFS process 222015
+RFS[21]: Possible network disconnect with primary database
+Sun Nov 08 09:32:04 2020
+RFS[14]: Possible network disconnect with primary database
+Sun Nov 08 09:32:04 2020
+RFS[17]: Possible network disconnect with primary database
+
+
+
+
+^C
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 09:38:45 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCDW   MOUNTED              PHYSICAL STANDBY
+
+SQL>
+SQL> alter database commit to switchover to primary with session shutdown;
+
+Database altered.
+
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCDW   MOUNTED              PRIMARY
+
+SQL>
+SQL> alter database open;
+
+Database altered.
+
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCDW   READ WRITE           PRIMARY
+
+SQL> ! date
+Sun Nov  8 09:40:04 EET 2020
+
+SQL> ! hostname
+fih3ex1dbadm01.emea.nsn-net.net
+
+SQL>
+SQL>
+SQL> ! ps -ef|grep mrp
+oracle   242859 237788  0 09:40 pts/1    00:00:00 /bin/bash -c  ps -ef|grep mrp
+oracle   242861 242859  0 09:40 pts/1    00:00:00 grep mrp
+oracle   344253      1  0 Oct10 ?        00:01:38 ora_mrp0_SCSTGDG1
+
+SQL> select switchover_status from V$database;
+
+SWITCHOVER_STATUS
+--------------------
+SESSIONS ACTIVE
+
+SQL>
+SQL>
+SQL> alter database commit to switchover to physical standby with session shutdown;
+
+Database altered.
+
+SQL>
+SQL>
+SQL> shu immediate
+ORA-01012: not logged on
+SQL>
+SQL>
+SQL> exit
+
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ . oraenv
+ORACLE_SID = [SCDWDG1] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+[oracle@fih3ex1dbadm01 trace]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 09:46:46 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup mount;
+ORACLE instance started.
+
+Total System Global Area 1.6034E+10 bytes
+Fixed Size                  2269072 bytes
+Variable Size            3321888880 bytes
+Database Buffers         1.2549E+10 bytes
+Redo Buffers              160698368 bytes
+Database mounted.
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCDW   MOUNTED              PHYSICAL STANDBY
+
+SQL>
+SQL>
+SQL> ! ps -ef|grep mrp
+oracle   263184      1  6 09:47 ?        00:00:08 ora_mrp0_SCDWDG1
+oracle   268866 259842  0 09:49 pts/1    00:00:00 /bin/bash -c  ps -ef|grep mrp
+oracle   268868 268866  0 09:49 pts/1    00:00:00 grep mrp
+oracle   344253      1  0 Oct10 ?        00:01:38 ora_mrp0_SCSTGDG1
+
+SQL>
+SQL>
+SQL> ! ps -ef|grep mrp
+oracle   263184      1  1 09:47 ?        00:00:08 ora_mrp0_SCDWDG1
+oracle   283095 259842  0 09:56 pts/1    00:00:00 /bin/bash -c  ps -ef|grep mrp
+oracle   283097 283095  0 09:56 pts/1    00:00:00 grep mrp
+oracle   344253      1  0 Oct10 ?        00:01:38 ora_mrp0_SCSTGDG1
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ ps -ef |grep mrp
+oracle   263184      1  1 09:47 ?        00:00:08 ora_mrp0_SCDWDG1
+oracle   283959  93350  0 09:56 pts/1    00:00:00 grep mrp
+oracle   344253      1  0 Oct10 ?        00:01:38 ora_mrp0_SCSTGDG1
+[oracle@fih3ex1dbadm01 trace]$ ps -ef |grep pmon
+oracle    42663      1  0 May27 ?        00:42:19 ora_pmon_SERVCSTG1
+oracle    59831      1  0  2019 ?        00:50:34 asm_pmon_+ASM1
+oracle   260796      1  0 09:47 ?        00:00:00 ora_pmon_SCDWDG1
+oracle   284006  93350  0 09:56 pts/1    00:00:00 grep pmon
+oracle   338281      1  0  2019 ?        00:28:26 mdb_pmon_-MGMTDB
+oracle   348296      1  0 Feb25 ?        01:15:28 ora_pmon_SCSTGDG1
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ . oraenv
+ORACLE_SID = [SCDWDG1] ? SCSTGDG1
+The Oracle base remains unchanged with value /u01/app/oracle
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 09:57:05 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  MOUNTED              PHYSICAL STANDBY
+
+SQL>
+SQL>
+SQL> SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last_in_Sequence", APPL.SEQUENCE# "Last_Applied_Sequence", (ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference"
+  2  FROM
+(SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH,
+(SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL
+WHERE
+ARCH.THREAD# = APPL.THREAD#
+ORDER BY 1;  3    4    5    6    7
+
+
+
+
+    Thread Last_in_Sequence Last_Applied_Sequence Difference
+---------- ---------------- --------------------- ----------
+         1           422041                422041          0
+         1           422041                422041          0
+         2           418675                418675          0
+         2           418675                418675          0
+
+SQL> SQL> SQL> SQL>
+SQL>
+SQL>
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  MOUNTED              PHYSICAL STANDBY
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ . oraenv
+ORACLE_SID = [SCSTGDG1] ? SCSTGDG1
+The Oracle base remains unchanged with value /u01/app/oracle
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 10:15:27 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  MOUNTED              PHYSICAL STANDBY
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> alter database commit to switchover to primary with session shutdown;
+
+Database altered.
+
+SQL>
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  MOUNTED              PRIMARY
+
+SQL> alter database open;
+
+Database altered.
+
+SQL>
+SQL>
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  READ WRITE           PRIMARY
+
+SQL>
+SQL> ! date
+Sun Nov  8 10:18:59 EET 2020
+
+SQL>
+SQL>
+SQL> ! hostname
+fih3ex1dbadm01.emea.nsn-net.net
+
+SQL>
+SQL>
+SQL>
+SQL> ! ps -ef|grep mrp
+oracle   263184      1  0 09:47 ?        00:00:08 ora_mrp0_SCDWDG1
+oracle   338562 327740  0 10:19 pts/1    00:00:00 /bin/bash -c  ps -ef|grep mrp
+oracle   338564 338562  0 10:19 pts/1    00:00:00 grep mrp
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> select switchover_status from V$database;
+
+SWITCHOVER_STATUS
+--------------------
+SESSIONS ACTIVE
+
+SQL>
+SQL>
+SQL> alter database commit to switchover to physical standby with session shutdown;
+
+Database altered.
+
+SQL>
+SQL>
+SQL>
+SQL> select name,open_mode,database_role from v$database;
+select name,open_mode,database_role from v$database
+*
+ERROR at line 1:
+ORA-01034: ORACLE not available
+Process ID: 327741
+Session ID: 951 Serial number: 20497
+
+
+SQL>
+SQL> shu immediate
+ORA-01012: not logged on
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ . oraenv
+ORACLE_SID = [SCSTGDG1] ?
+The Oracle base remains unchanged with value /u01/app/oracle
+[oracle@fih3ex1dbadm01 trace]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Nov 8 10:22:54 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup mount;
+ORACLE instance started.
+
+Total System Global Area 2.6724E+10 bytes
+Fixed Size                  2265864 bytes
+Variable Size            6777998584 bytes
+Database Buffers         1.9797E+10 bytes
+Redo Buffers              146317312 bytes
+Database mounted.
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+SERVCSTG  MOUNTED              PHYSICAL STANDBY
+
+SQL>
+SQL>
+SQL> ! date
+Sun Nov  8 10:24:44 EET 2020
+
+SQL>
+SQL>
+SQL> ! hostname
+fih3ex1dbadm01.emea.nsn-net.net
+
+SQL>
+SQL>
+SQL> ! ps -ef|grep mrp
+oracle   263184      1  0 09:47 ?        00:00:08 ora_mrp0_SCDWDG1
+oracle   349279      1  6 10:24 ?        00:00:10 ora_mrp0_SCSTGDG1
+oracle   355118 347118  0 10:26 pts/1    00:00:00 /bin/bash -c  ps -ef|grep mrp
+oracle   355120 355118  0 10:26 pts/1    00:00:00 grep mrp
+
+SQL>
+SQL>
+SQL> SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last_in_Sequence", APPL.SEQUENCE# "Last_Applied_Sequence", (ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference"
+  2  FROM
+(SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH,
+(SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL
+WHERE
+ARCH.THREAD# = APPL.THREAD#
+ORDER BY 1;  3    4    5    6    7
+
+
+
+    Thread Last_in_Sequence Last_Applied_Sequence Difference
+---------- ---------------- --------------------- ----------
+         1           422052                422052          0
+         1           422052                422052          0
+         2           418681                418681          0
+
+SQL> SQL> SQL>
+SQL>
+SQL> /
+
+    Thread Last_in_Sequence Last_Applied_Sequence Difference
+---------- ---------------- --------------------- ----------
+         1           422052                422052          0
+         1           422052                422052          0
+         2           418681                418681          0
+
+SQL> Select
+   PROCESS,
+   SEQUENCE#,
+   STATUS
+From
+   V$MANAGED_STANDBY;  2    3    4    5    6
+
+PROCESS    SEQUENCE# STATUS
+--------- ---------- ------------
+ARCH          422051 CLOSING
+ARCH               0 CONNECTED
+ARCH          422050 CLOSING
+ARCH          422052 CLOSING
+MRP0          422053 APPLYING_LOG
+RFS                0 IDLE
+RFS           422053 IDLE
+RFS                0 IDLE
+
+8 rows selected.
+
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+Data Mining and Real Application Testing options
+You have new mail in /var/spool/mail/oracle
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ srvctl status instance -d SERVCSTG -i SERVCSTG2
+PRCD-1120 : The resource for database SERVCSTG could not be found.
+PRCR-1001 : Resource ora.servcstg.db does not exist
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ . oraenv
+ORACLE_SID = [SCSTGDG1] ? +ASM1
+The Oracle base remains unchanged with value /u01/app/oracle
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATAC1.MIGRATION.advm
+               ONLINE  ONLINE       fih3ex1dbadm01           Volume device /dev/a
+                                                             sm/migration-434 is
+                                                             online,STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           Volume device /dev/a
+                                                             sm/migration-434 is
+                                                             online,STABLE
+ora.DATAC1.dg
+               ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.DBFS_DG.dg
+               ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.RECOC1.dg
+               ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.asm
+               ONLINE  ONLINE       fih3ex1dbadm01           Started,STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           Started,STABLE
+ora.datac1.migration.acfs
+               ONLINE  ONLINE       fih3ex1dbadm01           mounted on /migratio
+                                                             n,STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           mounted on /migratio
+                                                             n,STABLE
+ora.net1.network
+               ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.ons
+               ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+               ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.LISTENER_SCAN2.lsnr
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.LISTENER_SCAN3.lsnr
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.MGMTLSNR
+      1        ONLINE  ONLINE       fih3ex1dbadm01           169.254.5.64 10.255.
+                                                             30.0 10.255.30.1,STA
+                                                             BLE
+ora.cvu
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.fih3ex1dbadm01.vip
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.fih3ex1dbadm02.vip
+      1        ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.mgmtdb
+      1        ONLINE  ONLINE       fih3ex1dbadm01           Open,STABLE
+ora.oc4j
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.scan1.vip
+      1        ONLINE  ONLINE       fih3ex1dbadm02           STABLE
+ora.scan2.vip
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.scan3.vip
+      1        ONLINE  ONLINE       fih3ex1dbadm01           STABLE
+ora.scdwdg.app_dw.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.db
+      1        ONLINE  INTERMEDIATE fih3ex1dbadm01           Mounted (Closed),STA
+                                                             BLE
+      2        OFFLINE OFFLINE                               Instance Shutdown,ST
+                                                             ABLE
+ora.scdwdg.etl_dw.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.etl_dw_hws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.etl_dw_opera.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.etl_dw_sws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.oem_servcdw.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.rep_dw_hws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.rep_dw_opera.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.rep_dw_sws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.reporter_dw.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scdwdg.user_dw.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.apex_stg.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        ONLINE  OFFLINE                               STABLE
+ora.scstgdg.app_stg.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.db
+      1        ONLINE  INTERMEDIATE fih3ex1dbadm01           Mounted (Closed),STA
+                                                             BLE
+      2        OFFLINE OFFLINE                               Instance Shutdown,ST
+                                                             ABLE
+ora.scstgdg.etl_stg.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.etl_stg_hws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.etl_stg_ipm.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.etl_stg_opera.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.etl_stg_sws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.etl_stg_wtr.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.oem.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.rep_stg_hws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.rep_stg_ipm.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.rep_stg_opera.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.rep_stg_sws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.rep_stg_wtr.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.reporter_stg.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.sas_stg_hws.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+ora.scstgdg.user_stg.emea.nsn_net.net.svc
+      1        OFFLINE OFFLINE                               STABLE
+      2        OFFLINE OFFLINE                               STABLE
+--------------------------------------------------------------------------------
+[oracle@fih3ex1dbadm01 trace]$

@@ -1,0 +1,175 @@
+prod
+
+1.Host : fihecdppdb083.emea.nsn-net.net
+DBName: SWD
+
+Test
+fihecdpq233
+
+ps_unx01
+S5C<Qi$c
+
+:J=Vtk0U
+
+2.fihecdppdb089.emea.nsn-net.net-host name
+SWLK_PROD-dbname
+
+mdb$+8eE
+
+fihecdpq233
+
+g:0:kL=A
+
+
+fihecdppdb089.emea.nsn-net.net
+SWLK_PROD-dbname
+
+fihecdppdb083mea.nsn-net.net
+SWD 
+
+g:0:kL=A
+
+u0Lno>p~
+
+
+/usr1/apl/oracle
+
+b7lqE3X>
+
+GC21tv'c
+
+
+SWD_NEW:/usr1/apl/oracle/product/11.2.0.4:N
+
+05-09-2020 02:19:47 05-09-2020 04:19:08
+
+restore controlfile from 'TAG20200509T222014';
+
+SET UNTIL TIME "to_date ( '14-FEB-2020 08:24:00', 'DD-MON-YYYY HH24:MI:SS')";
+
+05-09-2020 02:19:47 05-09-2020 04:19:08
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+set until time "to_date('09-May-2020 04:19:00','DD-MON-YYYY HH24:MI:SS')";
+SET NEWNAME FOR DATABASE TO "/restore_bkp/data1/%b";
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+release channel C1;
+release channel C2;
+}
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+set until time "to_date('09-May-2020 04:19:00','DD-MON-YYYY HH24:MI:SS')";
+switch datafile all;
+switch tempfile all;
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+}
+
+switch datafile all;
+switch tempfile all;
+recover database
+
+
+run {
+allocate channel c1 type 'sbt_tape';
+send 'NB_ORA_SERV=nbu_master, NB_ORA_CLIENT=ora_clnt';
+restore controlfile to '/tmp/cntrl.bak' from 'cntrl_624_1_770006541';
+release channel c1;
+} 
+
+
+run
+ {
+allocate channel C1 type 'SBT_TAPE';
+restore controlfile from 'TAG20200509T041842';
+}
+
+
+FIHECDPPDB083_NOLS_ONDB_SWD_L2_FULL_DLY<SWD_54854:1039921164:1>.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+54291   Full    25.50M     SBT_TAPE    00:00:18     09-MAY-20
+        BP Key: 54291   Status: AVAILABLE  Compressed: NO  Tag: TAG20200509T041842
+        Handle: FIHECDPPDB083_NOLS_ONDB_SWD_L2_FULL_DLY<SWD_54863:1039925922:1>.dbf   Media: 6d08ae0a:5eb5e6f9:9493:2e48
+  Control File Included: Ckp SCN: 14271368905268   Ckp time: 09-MAY-20
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+set until time "to_date('09-May-2020 04:19:00','DD-MON-YYYY HH24:MI:SS')";
+restore database;
+set newname for datafile 1 to '/restore_bkp/data1/system01.dbf';
+set newname for datafile 2 to '/restore_bkp/data1/sysaux01.dbf';
+set newname for datafile 3 to '/restore_bkp/data1/undotbs01.dbf';
+set newname for datafile 4 to '/restore_bkp/data1/perfstat01.dbf';
+set newname for datafile 5 to '/restore_bkp/data1/users01.dbf';
+set newname for datafile 6 to '/restore_bkp/data1/mv_log_swd01.dbf';
+set newname for datafile 7 to '/restore_bkp/data1/streams_data01.dbf';
+set newname for datafile 8 to '/restore_bkp/data1/swd_01_data_large01.dbf';
+set newname for datafile 9 to '/restore_bkp/data1/swd_01_data_med01.dbf';
+set newname for datafile 10 to '/restore_bkp/data1/swd_01_data_sml01.dbf';
+set newname for datafile 11 to '/restore_bkp/data1/swd_01_index_large01.dbf';
+set newname for datafile 12 to '/restore_bkp/data1/swd_01_index_med01.dbf';
+set newname for datafile 13 to '/restore_bkp/data1/swd_01_index_sml01.dbf';
+set newname for datafile 14 to '/restore_bkp/data1/swlkt_data0101.dbf';
+set newname for datafile 15 to '/restore_bkp/data1/logminer_ts.dbf';
+set newname for datafile 16 to '/restore_bkp/data1/streams_adm.dbf';
+set newname for datafile 17 to '/restore_bkp/data1/informat_01_data_med.dbf';
+set newname for datafile 18 to '/restore_bkp/data1/informat_01_index_med.dbf';
+set newname for datafile 19 to '/restore_bkp/data1/logmnr_tbs.dbf';
+set newname for datafile 20 to '/restore_bkp/data1/logmnr_ts.dbf';
+set newname for datafile 21 to '/restore_bkp/data1/swdlg.dbf';
+set newname for datafile 22 to '/restore_bkp/data1/swd_lei.dbf';
+set newname for datafile 23 to '/restore_bkp/data1/swlkt_index01.dbf';
+set newname for datafile 24 to '/restore_bkp/data1/tools.dbf';
+set newname for datafile 25 to '/restore_bkp/data1/undotbs.dbf';
+set newname for datafile 26 to '/restore_bkp/data1/swd_01_data_med02.dbf';
+set newname for datafile 27 to '/restore_bkp/data1/undotbs02.dbf';
+switch datafile all;
+switch tempfile all;
+
+
+recover database;
+}
+
+
+
+
+
+*.undo_management='MANUAL'
+ _ALLOW_RESETLOGS_CORRUPTION = TRUE
+ _ALLOW_ERROR_SIMULATION = TRUE
+
+
+ORA-00279: change 14271368885023 generated at 05/09/2020 04:13:24 needed for
+thread 1
+ORA-00289: suggestion : /usr1/arch/SWD_NEW/1_381419_812556044.dbf
+ORA-00280: change 14271368885023 for thread 1 is in sequence #381419
+ORA-00278: log file '/usr1/arch/SWD_NEW/1_381418_812556044.dbf' no longer
+needed for this recovery
+
+
+ORA-00308: cannot open archived log '/usr1/arch/SWD_NEW/1_381419_812556044.dbf'
+ORA-27037: unable to obtain file status
+Solaris-AMD64 Error: 2: No such file or directory
+Additional information: 3
+
+
+SQL>
+
+/usr1/apl/oracle

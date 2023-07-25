@@ -1,0 +1,40 @@
+On Standby
+==============
+
+show parameter broker
+
+alter system set dg_broker_config_file1='/dbprog/oracle/admin/RIO4AM_S/pfile/dr1RIO4AM_S.dat' scope=both;
+
+alter system set dg_broker_config_file2='/dbprog/oracle/admin/RIO4AM_S/pfile/dr2RIO4AM_S.dat' scope=both;
+
+alter system set dg_broker_start=true scope=both;
+
+show parameter broker
+
+================================================================================================================
+================================================================================================================
+
+On Primary
+==============
+
+show parameter broker
+
+alter system set dg_broker_config_file1='/dbprog/oracle/admin/RIO4AM/pfile/dr1RIO4AM.dat' scope=both;
+
+alter system set dg_broker_config_file2='/dbprog/oracle/admin/RIO4AM/pfile/dr2RIO4AM.dat' scope=both;
+
+alter system set dg_broker_start=true scope=both;
+
+show parameter broker
+
+
+CREATE CONFIGURATION 'DG_CONFIG' AS PRIMARY DATABASE IS 'RIO4AM' CONNECT IDENTIFIER IS 'RIO4AM';
+
+add database 'RIO4AM_S' as connect identifier is 'RIO4AM_S';
+
+ENABLE CONFIGURATION;
+
+show configuration verbose;
+
+
+

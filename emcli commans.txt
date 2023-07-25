@@ -1,0 +1,17 @@
+
+
+/u01/app/oracle/product/oms12c/oms/bin
+
+./emcli login -username=sysman
+
+ ./emcli get_targets
+
+
+To list all databases: 
+emcli get_targets -targets=oracle_database -format=name:csv
+
+
+To list all hosts
+emcli get_targets -targets=host -format=name:csv
+ 
+

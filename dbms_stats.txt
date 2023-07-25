@@ -1,0 +1,317 @@
+EXEC DBMS_STATS.gather_database_stats(estimate_percent => 15);
+
+EXEC DBMS_STATS.gather_database_stats(estimate_percent => dbms_stats.auto_sample_size);
+
+
+
+PL/SQL Packages DBMS_STATS - Gather, View, Modify or Delete optimizer statistics for database objects.
+
+Subprocedures:
+
+
+
+1)	GATHER_DATABASE_STATS (estimate_percent, block_sample, method_opt, degree, granularity, cascade, stattab, statid, options, objlist, statown, gather_sys, no_invalidate, gather_temp, gather_fixed, stattype);
+
+
+
+2)	GATHER_INDEX_STATS (ownname, indname, partname, estimate_percent, stattab, statid, statown, degree, granularity, no_invalidate, stattype);
+
+
+
+3) 	GATHER_SCHEMA_STATS (ownname, estimate_percent, block_sample, method_opt, degree, granularity, cascade, stattab, statid, options, statown, no_invalidate, gather_temp, gather_fixed);
+
+
+
+4)	GENERATE_STATS (ownname, objname, organized);
+
+
+
+5) 	GATHER_SYSTEM_STATS (gathering_mode, interval, stattab, statid, statown);
+
+
+
+6) 	GATHER_TABLE_STATS (ownname, tabname, partname, estimate_percent, block_sample, method_opt, degree, granularity, cascade, stattab, statid, statown, no_invalidate, stattype);
+
+
+
+7)	PREPARE_COLUMN_VALUES (srec,values);
+
+
+
+8)	SET_COLUMN_STATS 
+
+
+
+9)	SET_INDEX_STATS 
+
+
+
+10)	SET_SYSTEM_STATS 
+
+
+
+11)	SET_TABLE_STATS 
+
+
+
+12) 	CONVERT_RAW_VALUE 
+
+
+
+13) 	GET_COLUMN_STATS 
+
+
+
+14)	GET_INDEX_STATS 
+
+
+
+15)	GET_SYSTEM_STATS 
+
+
+
+16)	GET_TABLE_STATS 
+
+
+
+17)	DELETE_COLUMN_STATS (ownname,tabname,colname,partname,stattab,statid, cascade_parts,statown,no_invalidate,force);
+
+
+
+18)	DELETE_DATABASE_STATS (stattab,statid,statown,no_invalidate,stattype,force);
+
+
+
+19)	DELETE_INDEX_STATS (ownname, indname, partname, stattab, statid, cascade_parts, statown, no_invalidate, stattype, force);
+
+
+
+20)	DELETE_SCHEMA_STATS (ownname, stattab, statid, statown, no_invalidate, stattype, force);
+
+
+
+21)	DELETE_SYSTEM_STATS (stattab, statid, statown); 
+
+
+
+22)	DELETE_TABLE_STATS (ownname, tabname, partname, stattab, statid, cascade_parts, cascade_columns, cascade_indexes, statown, no_invalidate, stattype, force);
+
+
+
+23) 	CREATE_STAT_TABLE (new 11g parameter)
+
+
+
+24)	DROP_STAT_TABLE 
+
+
+
+25)	EXPORT_COLUMN_STATS 
+
+
+
+26)	EXPORT_INDEX_STATS 
+
+
+
+27)	EXPORT_SYSTEM_STATS 
+
+
+
+28)	EXPORT_TABLE_STATS 
+
+
+
+29)	EXPORT_SCHEMA_STATS 
+
+
+
+30)	EXPORT_DATABASE_STATS 
+
+
+
+31)	IMPORT_COLUMN_STATS 
+
+
+
+32)	IMPORT_INDEX_STATS 
+
+
+
+33)	IMPORT_SYSTEM_STATS 
+
+
+
+34)	IMPORT_TABLE_STATS 
+
+
+
+35)	IMPORT_SCHEMA_STATS 
+
+
+
+36)	IMPORT_DATABASE_STATS 
+
+
+
+37)	FLUSH_SCHEMA_MONITORING_INFO 
+
+
+
+38)	FLUSH_DATABASE_MONITORING_INFO 
+
+
+
+39)	ALTER_SCHEMA_TABLE_MONITORING 
+
+
+
+40)	ALTER_DATABASE_TABLE_MONITORING   
+
+
+
+
+
+
+Oracle Corporation recommend setting the ESTIMATE_PERCENT parameter of the gathering procedures to DBMS_STATS.AUTO_SAMPLE_SIZE. 
+
+
+
+This will maximize performance gains while achieving good statistical accuracy.
+
+
+===========================================================================================================================
+
+
+
+17)	DELETE_COLUMN_STATS	-- Deletes column related statistics
+
+	
+
+DELETE_COLUMN_STATS (ownname, tabname, colname, partname, stattab, statid, ascade_parts, statown, no_invalidate, force);
+
+	
+
+dbms_stats.delete_column_stats
+(
+	
+ownname       IN VARCHAR2,               -- schema name
+	
+tabname       IN VARCHAR2,               -- table name
+	
+colname       IN VARCHAR2,               -- column name
+	
+partname      IN VARCHAR2 DEFAULT NULL,  -- partition name
+	
+statab        IN VARCHAR2 DEFAULT NULL,  -- user stat table name
+	
+statid        IN VARCHAR2 DEFAULT NULL,  -- optional id.
+	
+cascade_parts IN BOOLEAN  DEFAULT TRUE,  -- cascade to partitions
+	
+statown       IN VARCHAR2 DEFAULT NULL,  -- stat table owner
+	
+no_validate   IN BOOLEAN  DEFAULT        -- invalidate shared cursor
+  	
+to_no_invalidate_type(get_param('NO_INVALIDATE')),
+	
+force         IN BOOLEAN  DEFAULT FALSE, --delete locked statistics
+	
+col_stat_type IN VARCHAR2 DEFAULT 'ALL');
+
+
+
+
+
+http://www.oradev.com/create_statistics.jsp
+
+
+===========================================================================================================================
+
+
+3) DBMS_STATS.GATHER_SCHEMA_STATS 
+
+
+From Oracle 8i the DBMS_STATS package is the preferred method Oracle list a number of benefits to using it including parallel execution, long term storage of statistics and transfer of statistics between servers. 
+
+Once again, it follows a similar format to the other methods: 
+
+
+
+Syntax:
+exec DBMS_STATS.GATHER_SCHEMA_STATS (ownname, estimate_percent, block_sample, method_opt, degree, granularity, cascade, stattab, statid, options, statown, no_invalidate, gather_temp, gather_fixed); 
+
+
+
+Code examples:
+
+
+=======================
+exec DBMS_STATS.GATHER_SCHEMA_STATS('SCOTT',DBMS_STATS.AUTO_SAMPLE_SIZE);
+
+
+
+exec DBMS_STATS.GATHER_SCHEMA_STATS(ownname=>'SCOTT', estimate_percent=>DBMS_STATS.AUTO_SAMPLE_SIZE);
+
+
+
+exec DBMS_STATS.gather_schema_stats(ownname => 'SCOTT', estimate_percent => 25);
+
+
+
+exec DBMS_STATS.gather_table_stats('SCOTT', 'EMPLOYEES');
+
+
+
+exec DBMS_STATS.gather_index_stats('SCOTT', 'EMPLOYEES_PK');
+
+
+
+exec DBMS_STATS.DELETE_SCHEMA_STATS('SCOTT');
+
+
+
+
+1) DBMS_STATS
+
+
+The DBMS_STATS package was introduced in Oracle 8i and is Oracles preferred method of gathering object statistics. 
+Oracle list a number of benefits to using it including parallel execution, long term storage of statistics and transfer of statistics between servers. 
+
+Once again, it follows a similar format to the other methods:
+
+
+
+EXEC DBMS_STATS.gather_database_stats;
+
+
+EXEC DBMS_STATS.gather_database_stats(estimate_percent => 15);
+
+
+
+EXEC DBMS_STATS.gather_schema_stats('SCOTT');
+
+
+EXEC DBMS_STATS.gather_schema_stats('SCOTT', estimate_percent => 15);
+
+
+
+EXEC DBMS_STATS.gather_table_stats('SCOTT', 'EMPLOYEES');
+
+
+EXEC DBMS_STATS.gather_table_stats('SCOTT', 'EMPLOYEES', estimate_percent => 15);
+
+
+
+EXEC DBMS_STATS.gather_index_stats('SCOTT', 'EMPLOYEES_PK');
+
+
+EXEC DBMS_STATS.gather_index_stats('SCOTT', 'EMPLOYEES_PK', estimate_percent => 15);
+
+
+
+
+
+
+
+

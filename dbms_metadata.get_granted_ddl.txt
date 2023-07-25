@@ -1,0 +1,76 @@
+The purpose of the GET_GRANTED_DDL function is to generate the DDL required around grants given to a particular user. 
+
+If you wanted to generate the system grants given to a user.
+
+
+exec dbms_metadata.get_granted_ddl (
+object_type  IN VARCHAR2, 
+grantee      IN VARCHAR2 DEFAULT NULL, 
+version      IN VARCHAR2 DEFAULT 'COMPATIBLE', 
+model        IN VARCHAR2 DEFAULT 'ORACLE', 
+transform    IN VARCHAR2 DEFAULT 'DDL', 
+object_count IN NUMBER   DEFAULT 10000
+) 
+RETURN CLOB;
+
+EXAMPLES:
+---------
+
+1)	If you wanted to generate the system grants given to a user.
+
+	select DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','<schema>') from dual;
+
+2)	If you wanted to generate the roles granted to a user.
+
+	select DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','<schema>') from dual;
+
+3)	If you wanted all the object grants given to a user.
+
+	select DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','<schema>') from dual;
+
+4)	If you wanted TABLESPACE QUOTA given to a user.
+
+	select DBMS_METADATA.GET_DEPENDENT_DDL('TABLESPACE_QUOTA', 'SCOTT') FROM DUAL;
+
+	Example :
+	==================================================
+
+	create user quota identified by values 'quota'
+	default tablespace users
+	temporary tablespace tempnew
+	quota 2048M on users;
+
+	O/P - 
+	User created.
+
+	select dbms_metadata.get_ddl('USER', 'QUOTA') from dual;
+
+	O/P - 
+	CREATE USER "QUOTA" IDENTIFIED BY VALUES 'quota'
+   		DEFAULT TABLESPACE "USERS"
+   		TEMPORARY TABLESPACE "TEMP"
+	
+	select dbms_metadata.get_granted_ddl('TABLESPACE_QUOTA', 'QUOTA') from dual;
+
+	O/P -
+		DECLARE
+  		TEMP_COUNT NUMBER;
+  		SQLSTR VARCHAR2(200);
+	BEGIN
+  		SQLSTR := 'ALTER USER "QUOTA" QUOTA 2147483648 ON "USERS"';
+  		EXECUTE IMMEDIATE SQLSTR;
+	EXCEPTION
+  		WHEN OTHERS THEN
+    		IF SQLCODE = -30041 THEN
+      			SQLSTR := 'SELECT COUNT(*) FROM USER_TABLESPACES
+              		WHERE TABLESPACE_NAME = ''USERS'' AND CONTENTS = ''TEMPORARY''';
+      			EXECUTE IMMEDIATE SQLSTR INTO TEMP_COUNT;
+      			IF TEMP_COUNT = 1 THEN RETURN;
+      			ELSE RAISE;
+      			END IF;
+    		ELSE
+      			RAISE;
+    		END IF;
+	END;
+
+

@@ -1,0 +1,1710 @@
+
+
+
+ disk replacement procedure document: Doc ID 1390836.1 
+ 
+ 
+login as: root
+root@fih3ex2dbadm01.emea.nsn-net.net's password:
+Access denied
+root@fih3ex2dbadm01.emea.nsn-net.net's password:
+Access denied
+root@fih3ex2dbadm01.emea.nsn-net.net's password:
+login as: ps_unx01
+ps_unx01@fih3ex2dbadm01.emea.nsn-net.net's password:
+Last login: Wed Oct  7 12:42:15 2020 from 10.116.0.213
+[ps_unx01@fih3ex2dbadm01 ~]$
+[ps_unx01@fih3ex2dbadm01 ~]$
+[ps_unx01@fih3ex2dbadm01 ~]$ sudo su -
+[sudo] password for ps_unx01:
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# history | grep dcli
+  996  2020-10-08.11:00:48 history | grep dcli
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk"
+fih3ex2celadm03.emea.nsn-net.net: 8:0            EG9TPX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:1            EEUKMX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:2            EGXMAX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:3            EGZG5X                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:4            EG9BUX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:5            EEXGLX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:6            EEYXZX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:7            EEYX0X                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:8            EEYWZX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:9            EEU70X                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:10           EEZ1HX                  normal
+fih3ex2celadm03.emea.nsn-net.net: 8:11           EEU87X                  normal
+fih3ex2celadm03.emea.nsn-net.net: FLASH_1_1      CVMD502600EL1P6KGN      normal
+fih3ex2celadm03.emea.nsn-net.net: FLASH_2_1      CVMD5026001S1P6KGN      normal
+fih3ex2celadm03.emea.nsn-net.net: FLASH_4_1      CVMD502600E31P6KGN      normal
+fih3ex2celadm03.emea.nsn-net.net: FLASH_5_1      CVMD5026009Q1P6KGN      normal
+fih3ex2celadm02.emea.nsn-net.net: 8:0            EG8EKX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:1            EH9Y7X                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:2            E8XHRX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:3            EHGJLX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:4            ES07WX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:5            EGZ3RX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:6            EGK7KX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:7            EEHKMX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:8            EHAB7X                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:9            EH2HNX                  warning - predictive failure
+fih3ex2celadm02.emea.nsn-net.net: 8:10           EH9YLX                  normal
+fih3ex2celadm02.emea.nsn-net.net: 8:11           EHALMX                  normal
+fih3ex2celadm02.emea.nsn-net.net: FLASH_1_1      CVMD5026007P1P6KGN      normal
+fih3ex2celadm02.emea.nsn-net.net: FLASH_2_1      CVMD5026007R1P6KGN      normal
+fih3ex2celadm02.emea.nsn-net.net: FLASH_4_1      CVMD5025008N1P6KGN      normal
+fih3ex2celadm02.emea.nsn-net.net: FLASH_5_1      CVMD445600DC1P6KGN      normal
+fih3ex2celadm01.emea.nsn-net.net: 8:0            EGXM4X                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:1            EGAZPX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:2            EP9BEX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:3            EGNVNX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:4            E8XXKX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:5            EGM5MX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:6            EE968X                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:7            EH78MX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:8            EGDUAX                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:9            EEZL8X                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:10           EGLA1X                  normal
+fih3ex2celadm01.emea.nsn-net.net: 8:11           EGM64X                  normal
+fih3ex2celadm01.emea.nsn-net.net: FLASH_1_1      CVMD502500511P6KGN      normal
+fih3ex2celadm01.emea.nsn-net.net: FLASH_2_1      CVMD502600601P6KGN      normal
+fih3ex2celadm01.emea.nsn-net.net: FLASH_4_1      CVMD502600D51P6KGN      normal
+fih3ex2celadm01.emea.nsn-net.net: FLASH_5_1      CVMD5026000X1P6KGN      normal
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun"
+fih3ex2celadm03.emea.nsn-net.net: 0_0    0_0     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_1    0_1     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_2    0_2     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_3    0_3     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_4    0_4     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_5    0_5     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_6    0_6     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_7    0_7     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_8    0_8     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_9    0_9     normal
+fih3ex2celadm03.emea.nsn-net.net: 0_10   0_10    normal
+fih3ex2celadm03.emea.nsn-net.net: 0_11   0_11    normal
+fih3ex2celadm03.emea.nsn-net.net: 1_1    1_1     normal
+fih3ex2celadm03.emea.nsn-net.net: 2_1    2_1     normal
+fih3ex2celadm03.emea.nsn-net.net: 4_1    4_1     normal
+fih3ex2celadm03.emea.nsn-net.net: 5_1    5_1     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_0    0_0     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_1    0_1     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_2    0_2     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_3    0_3     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_4    0_4     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_5    0_5     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_6    0_6     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_7    0_7     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_8    0_8     normal
+fih3ex2celadm02.emea.nsn-net.net: 0_9    0_9     warning - predictive failure
+fih3ex2celadm02.emea.nsn-net.net: 0_10   0_10    normal
+fih3ex2celadm02.emea.nsn-net.net: 0_11   0_11    normal
+fih3ex2celadm02.emea.nsn-net.net: 1_1    1_1     normal
+fih3ex2celadm02.emea.nsn-net.net: 2_1    2_1     normal
+fih3ex2celadm02.emea.nsn-net.net: 4_1    4_1     normal
+fih3ex2celadm02.emea.nsn-net.net: 5_1    5_1     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_0    0_0     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_1    0_1     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_2    0_2     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_3    0_3     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_4    0_4     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_5    0_5     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_6    0_6     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_7    0_7     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_8    0_8     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_9    0_9     normal
+fih3ex2celadm01.emea.nsn-net.net: 0_10   0_10    normal
+fih3ex2celadm01.emea.nsn-net.net: 0_11   0_11    normal
+fih3ex2celadm01.emea.nsn-net.net: 1_1    1_1     normal
+fih3ex2celadm01.emea.nsn-net.net: 2_1    2_1     normal
+fih3ex2celadm01.emea.nsn-net.net: 4_1    4_1     normal
+fih3ex2celadm01.emea.nsn-net.net: 5_1    5_1     normal
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list griddisk"
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_00_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_01_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_02_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_03_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_04_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: DATAC1_CD_05_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_06_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_07_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_08_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_09_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_10_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: DATA_CD_11_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_02_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_03_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_04_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_05_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_06_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_07_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_08_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_09_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_10_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: DBFS_DG_CD_11_fih3ex2celadm03  active
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_00_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_01_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_02_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_03_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_04_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: RECOC1_CD_05_fih3ex2celadm03   active
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_06_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_07_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_08_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_09_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_10_fih3ex2celadm03     active
+fih3ex2celadm03.emea.nsn-net.net: RECO_CD_11_fih3ex2celadm03     active
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_00_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_01_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_02_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_03_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_04_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: DATAC1_CD_05_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_06_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_07_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_08_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_09_fih3ex2celadm02     proactive failure
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_10_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: DATA_CD_11_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_02_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_03_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_04_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_05_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_06_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_07_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_08_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_09_fih3ex2celadm02  proactive failure
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_10_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: DBFS_DG_CD_11_fih3ex2celadm02  active
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_00_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_01_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_02_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_03_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_04_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: RECOC1_CD_05_fih3ex2celadm02   active
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_06_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_07_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_08_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_09_fih3ex2celadm02     proactive failure
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_10_fih3ex2celadm02     active
+fih3ex2celadm02.emea.nsn-net.net: RECO_CD_11_fih3ex2celadm02     active
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_00_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_01_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_02_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_03_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_04_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: DATAC1_CD_05_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_06_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_07_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_08_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_09_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_10_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: DATA_CD_11_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_02_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_03_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_04_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_05_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_06_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_07_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_08_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_09_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_10_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: DBFS_DG_CD_11_fih3ex2celadm01  active
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_00_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_01_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_02_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_03_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_04_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: RECOC1_CD_05_fih3ex2celadm01   active
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_06_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_07_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_08_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_09_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_10_fih3ex2celadm01     active
+fih3ex2celadm01.emea.nsn-net.net: RECO_CD_11_fih3ex2celadm01     active
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm03.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm03.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm03.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm03.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm03.emea.nsn-net.net: physicalInsertTime:     2016-03-02T11:49:23+02:00
+fih3ex2celadm03.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm03.emea.nsn-net.net: physicalSerial:         EEU70X
+fih3ex2celadm03.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm03.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm02.emea.nsn-net.net: deviceId:               32
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm02.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm02.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm02.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm02.emea.nsn-net.net: physicalInsertTime:     2017-09-06T14:05:48+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm02.emea.nsn-net.net: physicalSerial:         EH2HNX
+fih3ex2celadm02.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm02.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm02.emea.nsn-net.net: status:                 warning - predictive failure
+fih3ex2celadm01.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm01.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm01.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm01.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm01.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm01.emea.nsn-net.net: physicalInsertTime:     2016-03-02T13:49:57+02:00
+fih3ex2celadm01.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm01.emea.nsn-net.net: physicalSerial:         EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm01.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 8_9 detail"
+fih3ex2celadm03.emea.nsn-net.net:
+fih3ex2celadm03.emea.nsn-net.net: CELL-02008: LUN does not exist: 8_9. Please use 'LIST LUN' to see valid LUN names.
+fih3ex2celadm02.emea.nsn-net.net:
+fih3ex2celadm02.emea.nsn-net.net: CELL-02008: LUN does not exist: 8_9. Please use 'LIST LUN' to see valid LUN names.
+fih3ex2celadm01.emea.nsn-net.net:
+fih3ex2celadm01.emea.nsn-net.net: CELL-02008: LUN does not exist: 8_9. Please use 'LIST LUN' to see valid LUN names.
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net:
+fih3ex2celadm03.emea.nsn-net.net: CELL-02008: LUN does not exist: 8:9. Please use 'LIST LUN' to see valid LUN names.
+fih3ex2celadm02.emea.nsn-net.net:
+fih3ex2celadm02.emea.nsn-net.net: CELL-02008: LUN does not exist: 8:9. Please use 'LIST LUN' to see valid LUN names.
+fih3ex2celadm01.emea.nsn-net.net:
+fih3ex2celadm01.emea.nsn-net.net: CELL-02008: LUN does not exist: 8:9. Please use 'LIST LUN' to see valid LUN names.
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm03.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm03.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm03.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm03.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm03.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm03.emea.nsn-net.net: lunWriteCacheMode:      "WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm02.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm02.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm02.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm02.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm02.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm02.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm02.emea.nsn-net.net: status:                 warning - predictive failure
+fih3ex2celadm01.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm01.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm01.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm01.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm01.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm01.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm01.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm03.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm03.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm03.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm03.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm03.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm03.emea.nsn-net.net: lunWriteCacheMode:      "WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm02.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm02.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm02.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm02.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm02.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm02.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm02.emea.nsn-net.net: status:                 warning - predictive failure
+fih3ex2celadm01.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm01.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm01.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm01.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm01.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm01.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm01.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm03.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm03.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm03.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm03.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm03.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm03.emea.nsn-net.net: lunWriteCacheMode:      "WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm02.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm02.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm02.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm02.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm02.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm02.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm02.emea.nsn-net.net: status:                 warning - predictive failure
+fih3ex2celadm01.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm01.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm01.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm01.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm01.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm01.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm01.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list celldisk where lun=0_3 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   CD_03_fih3ex2celadm03
+fih3ex2celadm03.emea.nsn-net.net: comment:
+fih3ex2celadm03.emea.nsn-net.net: creationTime:           2016-03-02T16:01:15+02:00
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdd
+fih3ex2celadm03.emea.nsn-net.net: devicePartition:        /dev/sdd
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm03.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm03.emea.nsn-net.net: id:                     2e34b09f-e00c-4925-b239-14a258e267de
+fih3ex2celadm03.emea.nsn-net.net: physicalDisk:           EGZG5X
+fih3ex2celadm03.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   CD_03_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2016-03-02T16:01:55+02:00
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdd
+fih3ex2celadm02.emea.nsn-net.net: devicePartition:        /dev/sdd
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm02.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm02.emea.nsn-net.net: id:                     ead43482-99ad-4b72-8767-6625f77d9e58
+fih3ex2celadm02.emea.nsn-net.net: physicalDisk:           EHGJLX
+fih3ex2celadm02.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   CD_03_fih3ex2celadm01
+fih3ex2celadm01.emea.nsn-net.net: comment:
+fih3ex2celadm01.emea.nsn-net.net: creationTime:           2016-03-02T16:01:55+02:00
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdd
+fih3ex2celadm01.emea.nsn-net.net: devicePartition:        /dev/sdd
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm01.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm01.emea.nsn-net.net: id:                     c66ea5f5-1b7b-4e5d-b269-f33720d8ad88
+fih3ex2celadm01.emea.nsn-net.net: physicalDisk:           EGNVNX
+fih3ex2celadm01.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list celldisk where lun=0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   CD_09_fih3ex2celadm03
+fih3ex2celadm03.emea.nsn-net.net: comment:
+fih3ex2celadm03.emea.nsn-net.net: creationTime:           2017-05-13T09:06:15+03:00
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: devicePartition:        /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm03.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm03.emea.nsn-net.net: id:                     5eed2af4-5ca4-4dd1-ace1-dc142db7a497
+fih3ex2celadm03.emea.nsn-net.net: physicalDisk:           EEU70X
+fih3ex2celadm03.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2017-09-06T14:05:50+03:00
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: devicePartition:        /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             5450
+fih3ex2celadm02.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm02.emea.nsn-net.net: id:                     0cc8ae9b-eb00-4b1d-acca-5ce74121e767
+fih3ex2celadm02.emea.nsn-net.net: physicalDisk:           EH2HNX
+fih3ex2celadm02.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm02.emea.nsn-net.net: status:                 proactive failure
+fih3ex2celadm01.emea.nsn-net.net: name:                   CD_09_fih3ex2celadm01
+fih3ex2celadm01.emea.nsn-net.net: comment:
+fih3ex2celadm01.emea.nsn-net.net: creationTime:           2017-05-13T09:06:11+03:00
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: devicePartition:        /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm01.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm01.emea.nsn-net.net: id:                     35aee959-5f82-4a9c-95d0-4d9a45ea2dfa
+fih3ex2celadm01.emea.nsn-net.net: physicalDisk:           EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list griddisk where celldisk=CD_09_fih3ex2celadm02 detail"
+fih3ex2celadm02.emea.nsn-net.net: name:                   DATA_CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: asmDiskGroupName:       DATAC1
+fih3ex2celadm02.emea.nsn-net.net: asmDiskName:            DATA_CD_09_FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: asmFailGroupName:       FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: availableTo:
+fih3ex2celadm02.emea.nsn-net.net: cachingPolicy:          default
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2017-09-06T14:05:53+03:00
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             84
+fih3ex2celadm02.emea.nsn-net.net: id:                     5a5a083d-a55a-4c74-a65c-b3fc83327f6b
+fih3ex2celadm02.emea.nsn-net.net: size:                   2.8837890625T
+fih3ex2celadm02.emea.nsn-net.net: status:                 proactive failure
+fih3ex2celadm02.emea.nsn-net.net:
+fih3ex2celadm02.emea.nsn-net.net: name:                   DBFS_DG_CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: asmDiskGroupName:       DBFS_DG
+fih3ex2celadm02.emea.nsn-net.net: asmDiskName:            DBFS_DG_CD_09_FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: asmFailGroupName:       FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: availableTo:
+fih3ex2celadm02.emea.nsn-net.net: cachingPolicy:          default
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2017-09-06T14:05:58+03:00
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm02.emea.nsn-net.net: id:                     0a636e92-3a3a-4ae9-bdad-ef6479c7ae40
+fih3ex2celadm02.emea.nsn-net.net: size:                   33.796875G
+fih3ex2celadm02.emea.nsn-net.net: status:                 proactive failure
+fih3ex2celadm02.emea.nsn-net.net:
+fih3ex2celadm02.emea.nsn-net.net: name:                   RECO_CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: asmDiskGroupName:       RECOC1
+fih3ex2celadm02.emea.nsn-net.net: asmDiskName:            RECO_CD_09_FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: asmFailGroupName:       FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: availableTo:
+fih3ex2celadm02.emea.nsn-net.net: cachingPolicy:          default
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2017-09-06T14:05:56+03:00
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             5366
+fih3ex2celadm02.emea.nsn-net.net: id:                     1fbf2efe-1ebc-478f-8171-ca72c7c56080
+fih3ex2celadm02.emea.nsn-net.net: size:                   738.4375G
+fih3ex2celadm02.emea.nsn-net.net: status:                 proactive failure
+[root@fih3ex2dbadm01 ~]#
+login as: root
+root@fih3ex2dbadm01.emea.nsn-net.net's password:
+Access denied
+root@fih3ex2dbadm01.emea.nsn-net.net's password:
+
+
+post
+
+
+login as: root
+root@fih3ex2dbadm02.emea.nsn-net.net's password:
+Last login: Sun Oct  4 18:56:09 2020 from fih3ex2dbadm01.emea.nsn-net.net
+[root@fih3ex2dbadm02 ~]#
+[root@fih3ex2dbadm02 ~]#
+[root@fih3ex2dbadm02 ~]#
+[root@fih3ex2dbadm02 ~]#
+[root@fih3ex2dbadm02 ~]# ssh fih3ex2dbadm0
+ssh: Could not resolve hostname fih3ex2dbadm0: Name or service not known
+[root@fih3ex2dbadm02 ~]# ssh fih3ex2dbadm01
+Last login: Thu Oct  8 11:52:42 2020 from fihel1d-pulsemgate-int-fw01.emea.nsn-net.net
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# traceroute fr712uora005.zeu.alcatel-lucent.com^C
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# telnet fr712uora005.zeu.alcatel-lucent.com 3872
+Trying 135.239.16.36...
+^C
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm03.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm03.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm03.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm03.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm03.emea.nsn-net.net: physicalInsertTime:     2016-03-02T11:49:23+02:00
+fih3ex2celadm03.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm03.emea.nsn-net.net: physicalSerial:         EEU70X
+fih3ex2celadm03.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm03.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm02.emea.nsn-net.net: deviceId:               32
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm02.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm02.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm02.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm02.emea.nsn-net.net: physicalInsertTime:     2017-09-06T14:05:48+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm02.emea.nsn-net.net: physicalSerial:         EH2HNX
+fih3ex2celadm02.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm02.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm02.emea.nsn-net.net: status:                 warning - predictive failure
+fih3ex2celadm01.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm01.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm01.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm01.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm01.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm01.emea.nsn-net.net: physicalInsertTime:     2016-03-02T13:49:57+02:00
+fih3ex2celadm01.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm01.emea.nsn-net.net: physicalSerial:         EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm01.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# cat cell_group
+fih3ex2celadm03.emea.nsn-net.net
+fih3ex2celadm02.emea.nsn-net.net
+fih3ex2celadm01.emea.nsn-net.net
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# ssh fih3ex2celadm02.emea.nsn-net.net
+Last login: Thu Oct  8 11:52:50 2020 from fih3ex2dbadm01.emea.nsn-net.net
+[root@fih3ex2celadm02 ~]#
+[root@fih3ex2celadm02 ~]#
+[root@fih3ex2celadm02 ~]# cellcli
+CellCLI: Release 18.1.7.0.0 - Production on Thu Oct 08 14:16:47 EEST 2020
+
+Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
+
+CellCLI>
+
+CellCLI>
+
+CellCLI> alter physicaldisk 8:9 serviceled on;
+
+CELL-04591: "alter physicaldisk serviceled on/off" is obsolete. Use "alter physicaldisk drop for replacement" if you want to proactively replace a disk.
+
+CellCLI>
+
+CellCLI>
+
+CellCLI>
+
+CellCLI>
+
+CellCLI> rcit
+         ^
+CELL-01504: Invalid command syntax.
+
+CellCLI> exit
+quitting
+
+[root@fih3ex2celadm02 ~]#
+[root@fih3ex2celadm02 ~]#
+[root@fih3ex2celadm02 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+Error: I/O error(2) on cell_group: No such file or directory
+[root@fih3ex2celadm02 ~]# exit
+logout
+Connection to fih3ex2celadm02.emea.nsn-net.net closed.
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm03.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm03.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm03.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm03.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm03.emea.nsn-net.net: physicalInsertTime:     2016-03-02T11:49:23+02:00
+fih3ex2celadm03.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm03.emea.nsn-net.net: physicalSerial:         EEU70X
+fih3ex2celadm03.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm03.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm02.emea.nsn-net.net: deviceId:               32
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm02.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm02.emea.nsn-net.net: luns:
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm02.emea.nsn-net.net: notPresentSince:        2020-10-08T14:17:42+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm02.emea.nsn-net.net: physicalInsertTime:     2017-09-06T14:05:48+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm02.emea.nsn-net.net: physicalSerial:         EH2HNX
+fih3ex2celadm02.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm02.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm02.emea.nsn-net.net: status:                 not present
+fih3ex2celadm01.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm01.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm01.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm01.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm01.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm01.emea.nsn-net.net: physicalInsertTime:     2016-03-02T13:49:57+02:00
+fih3ex2celadm01.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm01.emea.nsn-net.net: physicalSerial:         EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm01.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm03.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm03.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm03.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm03.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm03.emea.nsn-net.net: physicalInsertTime:     2016-03-02T11:49:23+02:00
+fih3ex2celadm03.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm03.emea.nsn-net.net: physicalSerial:         EEU70X
+fih3ex2celadm03.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm03.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm02.emea.nsn-net.net: deviceId:               32
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm02.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm02.emea.nsn-net.net: luns:
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm02.emea.nsn-net.net: notPresentSince:        2020-10-08T14:17:42+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm02.emea.nsn-net.net: physicalInsertTime:     2017-09-06T14:05:48+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm02.emea.nsn-net.net: physicalSerial:         EH2HNX
+fih3ex2celadm02.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm02.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm02.emea.nsn-net.net: status:                 not present
+fih3ex2celadm01.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm01.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm01.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm01.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm01.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm01.emea.nsn-net.net: physicalInsertTime:     2016-03-02T13:49:57+02:00
+fih3ex2celadm01.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm01.emea.nsn-net.net: physicalSerial:         EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm01.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm03.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm03.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm03.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm03.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm03.emea.nsn-net.net: physicalInsertTime:     2016-03-02T11:49:23+02:00
+fih3ex2celadm03.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm03.emea.nsn-net.net: physicalSerial:         EEU70X
+fih3ex2celadm03.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm03.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm02.emea.nsn-net.net: deviceId:               33
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm02.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm02.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm02.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm02.emea.nsn-net.net: physicalInsertTime:     2020-10-08T14:19:33+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm02.emea.nsn-net.net: physicalSerial:         EL2ZDX
+fih3ex2celadm02.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm02.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm01.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm01.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm01.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm01.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm01.emea.nsn-net.net: physicalInsertTime:     2016-03-02T13:49:57+02:00
+fih3ex2celadm01.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm01.emea.nsn-net.net: physicalSerial:         EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm01.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm03.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm03.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm03.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm03.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm03.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm03.emea.nsn-net.net: lunWriteCacheMode:      "WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm02.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm02.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm02.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm02.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm02.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm02.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm01.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm01.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm01.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm01.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm01.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm01.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -g cell_group -l root /opt/MegaRAID/MegaCli/MegaCli64 -pdlist -a0 | grep -iE "encl|slot|inq|level"
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 0
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EG9TPX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 1
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEUKMX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 2
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGXMAX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 3
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGZG5X
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 4
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EG9BUX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 5
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEXGLX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 6
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEYXZX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 7
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEYX0X
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 8
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEYWZX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 9
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEU70X
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 10
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEZ1HX
+fih3ex2celadm03.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm03.emea.nsn-net.net: Slot Number: 11
+fih3ex2celadm03.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm03.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm03.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEU87X
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 0
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EG8EKX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 1
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EH9Y7X
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 2
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01740E8XHRX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 3
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EHGJLX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 4
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01452ES07WX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 5
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGZ3RX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 6
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGK7KX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 7
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEHKMX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 8
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EHAB7X
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 9
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01450EL2ZDX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 10
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EH9YLX
+fih3ex2celadm02.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm02.emea.nsn-net.net: Slot Number: 11
+fih3ex2celadm02.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm02.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm02.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EHALMX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 0
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGXM4X
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 1
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGAZPX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 2
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EP9BEX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 3
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGNVNX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 4
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01403E8XXKX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 5
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGM5MX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 6
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EE968X
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 7
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EH78MX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 8
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGDUAX
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 9
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 10
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGLA1X
+fih3ex2celadm01.emea.nsn-net.net: Enclosure Device ID: 8
+fih3ex2celadm01.emea.nsn-net.net: Slot Number: 11
+fih3ex2celadm01.emea.nsn-net.net: Enclosure position: 0
+fih3ex2celadm01.emea.nsn-net.net: Device Firmware Level: A3A0
+fih3ex2celadm01.emea.nsn-net.net: Inquiry Data: HGST    H7240AS60SUN4.0TA3A01507EGM64X
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list physicaldisk 8:9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm03.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm03.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm03.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm03.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm03.emea.nsn-net.net: physicalInsertTime:     2016-03-02T11:49:23+02:00
+fih3ex2celadm03.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm03.emea.nsn-net.net: physicalSerial:         EEU70X
+fih3ex2celadm03.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm03.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm02.emea.nsn-net.net: deviceId:               33
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm02.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm02.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm02.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm02.emea.nsn-net.net: physicalInsertTime:     2020-10-08T14:19:33+03:00
+fih3ex2celadm02.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm02.emea.nsn-net.net: physicalSerial:         EL2ZDX
+fih3ex2celadm02.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm02.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   8:9
+fih3ex2celadm01.emea.nsn-net.net: deviceId:               19
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: enclosureDeviceId:      8
+fih3ex2celadm01.emea.nsn-net.net: errOtherCount:          0
+fih3ex2celadm01.emea.nsn-net.net: luns:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: makeModel:              "HGST    H7240AS60SUN4.0T"
+fih3ex2celadm01.emea.nsn-net.net: physicalFirmware:       A3A0
+fih3ex2celadm01.emea.nsn-net.net: physicalInsertTime:     2016-03-02T13:49:57+02:00
+fih3ex2celadm01.emea.nsn-net.net: physicalInterface:      sas
+fih3ex2celadm01.emea.nsn-net.net: physicalSerial:         EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: physicalSize:           3.638694606721401214599609375T
+fih3ex2celadm01.emea.nsn-net.net: slotNumber:             9
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm03.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm03.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm03.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm03.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm03.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm03.emea.nsn-net.net: lunWriteCacheMode:      "WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm02.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm02.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm02.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm02.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm02.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm02.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm01.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm01.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm01.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm01.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm01.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm01.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list celldisk where lun=0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   CD_09_fih3ex2celadm03
+fih3ex2celadm03.emea.nsn-net.net: comment:
+fih3ex2celadm03.emea.nsn-net.net: creationTime:           2017-05-13T09:06:15+03:00
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: devicePartition:        /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm03.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm03.emea.nsn-net.net: id:                     5eed2af4-5ca4-4dd1-ace1-dc142db7a497
+fih3ex2celadm03.emea.nsn-net.net: physicalDisk:           EEU70X
+fih3ex2celadm03.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2020-10-08T14:19:34+03:00
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: devicePartition:        /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm02.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm02.emea.nsn-net.net: id:                     c5939be0-5471-4f47-b12c-560fa5be0b4c
+fih3ex2celadm02.emea.nsn-net.net: physicalDisk:           EL2ZDX
+fih3ex2celadm02.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   CD_09_fih3ex2celadm01
+fih3ex2celadm01.emea.nsn-net.net: comment:
+fih3ex2celadm01.emea.nsn-net.net: creationTime:           2017-05-13T09:06:11+03:00
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: devicePartition:        /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm01.emea.nsn-net.net: freeSpace:              0
+fih3ex2celadm01.emea.nsn-net.net: id:                     35aee959-5f82-4a9c-95d0-4d9a45ea2dfa
+fih3ex2celadm01.emea.nsn-net.net: physicalDisk:           EEZL8X
+fih3ex2celadm01.emea.nsn-net.net: size:                   3.637969970703125T
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list griddisk where celldisk=CD_09_fih3ex2celadm02 detail"
+fih3ex2celadm02.emea.nsn-net.net: name:                   DATA_CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: asmDiskGroupName:       DATAC1
+fih3ex2celadm02.emea.nsn-net.net: asmDiskName:            DATA_CD_09_FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: asmFailGroupName:       FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: availableTo:
+fih3ex2celadm02.emea.nsn-net.net: cachingPolicy:          default
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2020-10-08T14:19:34+03:00
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm02.emea.nsn-net.net: id:                     f5d14815-3f0c-4985-a7b5-167f6df3fd84
+fih3ex2celadm02.emea.nsn-net.net: size:                   2.8837890625T
+fih3ex2celadm02.emea.nsn-net.net: status:                 active
+fih3ex2celadm02.emea.nsn-net.net:
+fih3ex2celadm02.emea.nsn-net.net: name:                   DBFS_DG_CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: asmDiskGroupName:       DBFS_DG
+fih3ex2celadm02.emea.nsn-net.net: asmDiskName:            DBFS_DG_CD_09_FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: asmFailGroupName:       FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: availableTo:
+fih3ex2celadm02.emea.nsn-net.net: cachingPolicy:          default
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2020-10-08T14:19:34+03:00
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm02.emea.nsn-net.net: id:                     0d223a56-1238-4300-87fe-19966cd1fe2a
+fih3ex2celadm02.emea.nsn-net.net: size:                   33.796875G
+fih3ex2celadm02.emea.nsn-net.net: status:                 active
+fih3ex2celadm02.emea.nsn-net.net:
+fih3ex2celadm02.emea.nsn-net.net: name:                   RECO_CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: asmDiskGroupName:       RECOC1
+fih3ex2celadm02.emea.nsn-net.net: asmDiskName:            RECO_CD_09_FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: asmFailGroupName:       FIH3EX2CELADM02
+fih3ex2celadm02.emea.nsn-net.net: availableTo:
+fih3ex2celadm02.emea.nsn-net.net: cachingPolicy:          default
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: comment:
+fih3ex2celadm02.emea.nsn-net.net: creationTime:           2020-10-08T14:19:34+03:00
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: errorCount:             0
+fih3ex2celadm02.emea.nsn-net.net: id:                     b314ee12-e7e6-4f5d-9e0c-9bdba6ac58f8
+fih3ex2celadm02.emea.nsn-net.net: size:                   738.4375G
+fih3ex2celadm02.emea.nsn-net.net: status:                 active
+[root@fih3ex2dbadm01 ~]# dcli -l root -g cell_group cellcli -e "list lun 0_9 detail"
+fih3ex2celadm03.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm03.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm03.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm03.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm03.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm03.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm03.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm03.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm03.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm03.emea.nsn-net.net: lunWriteCacheMode:      "WriteThrough, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm03.emea.nsn-net.net: status:                 normal
+fih3ex2celadm02.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm02.emea.nsn-net.net: cellDisk:               CD_09_fih3ex2celadm02
+fih3ex2celadm02.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm02.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm02.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm02.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm02.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm02.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm02.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm02.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm02.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm02.emea.nsn-net.net: status:                 normal
+fih3ex2celadm01.emea.nsn-net.net: name:                   0_9
+fih3ex2celadm01.emea.nsn-net.net: deviceName:             /dev/sdj
+fih3ex2celadm01.emea.nsn-net.net: diskType:               HardDisk
+fih3ex2celadm01.emea.nsn-net.net: id:                     0_9
+fih3ex2celadm01.emea.nsn-net.net: isSystemLun:            FALSE
+fih3ex2celadm01.emea.nsn-net.net: lunSize:                3.63797855377197265625T
+fih3ex2celadm01.emea.nsn-net.net: lunUID:                 0_9
+fih3ex2celadm01.emea.nsn-net.net: physicalDrives:         8:9
+fih3ex2celadm01.emea.nsn-net.net: raidLevel:              0
+fih3ex2celadm01.emea.nsn-net.net: lunWriteCacheMode:      "WriteBack, ReadAheadNone, Direct, No Write Cache if Bad BBU"
+fih3ex2celadm01.emea.nsn-net.net: status:                 normal
+[root@fih3ex2dbadm01 ~]#
+
+
+
+
+
+
+login as: oracle
+oracle@fih3ex2dbadm02.emea.nsn-net.net's password:
+Last login: Thu Oct  1 19:45:01 2020 from fih3ex2dbadm01.emea.nsn-net.net
+oracle@fih3ex2dbadm02 $
+oracle@fih3ex2dbadm02 $
+oracle@fih3ex2dbadm02 $
+oracle@fih3ex2dbadm02 $
+oracle@fih3ex2dbadm02 $
+oracle@fih3ex2dbadm02 $ ssh fih3ex2dbadm01
+Last login: Wed Oct  7 16:45:31 2020 from fihel1d-pulsemgate-int-fw01.emea.nsn-net.net
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ sudo su -
+[sudo] password for oracle:
+Sorry, try again.
+[sudo] password for oracle:
+Sorry, try again.
+[sudo] password for oracle:
+
+Sorry, try again.
+sudo: 3 incorrect password attempts
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ su -
+Password:
+su: incorrect password
+oracle@fih3ex2dbadm01 $
+You have new mail in /var/spool/mail/oracle
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ . oraenv
+ORACLE_SID = [oracle] ? +ASM1
+The Oracle base has been set to /u01/app/oracle
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ asmcmd
+ASMCMD>
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Block       AU   Total_MB   Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  NORMAL  N         512   4096  4194304  105835520  25940040          3023872        11458084              0             N  DATAC1/
+MOUNTED  NORMAL  N         512   4096  4194304    1003632    991572            34608          478482              0             Y  DBFS_DG/
+MOUNTED  NORMAL  N         512   4096  4194304   26465600  12740060           756160         5991950              0             N  RECOC1/
+ASMCMD>
+ASMCMD>
+ASMCMD> exit
+
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ sqlplus "/as sysasm"
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Oct 8 11:48:46 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Real Application Clusters and Automatic Storage Management options
+
+SQL>
+SQL>
+SQL> select * from gv$asm_operation;
+
+no rows selected
+
+SQL>
+SQL>
+SQL>
+login as: root
+root@fih3ex2dbadm02.emea.nsn-net.net's password:
+Last login: Thu Oct  8 14:09:45 2020 from fihel1d-pulsemgate-int-fw01.emea.nsn-net.net
+[root@fih3ex2dbadm02 ~]#
+[root@fih3ex2dbadm02 ~]#
+[root@fih3ex2dbadm02 ~]# ssh fih3ex2dbadm01.emea.nsn-net.net
+Last login: Thu Oct  8 14:09:57 2020 from fih3ex2dbadm02.emea.nsn-net.net
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]#
+[root@fih3ex2dbadm01 ~]# sudo su - oracle
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ . oraenv
+ORACLE_SID = [oracle] ? +ASM1
+The Oracle base has been set to /u01/app/oracle
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ sqlplus "/as sysasm"
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Oct 8 14:11:27 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Real Application Clusters and Automatic Storage Management options
+
+SQL> select  * from v$asm_operation'^?;
+ERROR:
+ORA-01756: quoted string not properly terminated
+
+
+SQL> select  * from v$asm_operation;
+
+no rows selected
+
+SQL> select  * from v$asm_operation;
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK
+------------ ----- --------- ---- ---------- ---------- ---------- ----------
+  EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         30         30          0          0
+         0           0                                                       0
+
+           1 REBAL RESILVER  DONE         30         30          0          0
+         0           0                                                       0
+
+           1 REBAL REBALANCE RUN          30         30        321     947146
+      1625         582                                                       0
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK
+------------ ----- --------- ---- ---------- ---------- ---------- ----------
+  EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+---------- ----------- -------------------------------------------- ----------
+           1 REBAL COMPACT   WAIT         30         30          0          0
+         0           0                                                       0
+
+           2 REBAL RESYNC    WAIT         30
+                                                                             0
+
+           2 REBAL RESILVER  WAIT         30
+                                                                             0
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK
+------------ ----- --------- ---- ---------- ---------- ---------- ----------
+  EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+---------- ----------- -------------------------------------------- ----------
+           2 REBAL REBALANCE WAIT         30
+                                                                             0
+
+           2 REBAL COMPACT   WAIT         30
+                                                                             0
+
+           3 REBAL RESYNC    DONE         30
+                                                                             0
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK
+------------ ----- --------- ---- ---------- ---------- ---------- ----------
+  EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+---------- ----------- -------------------------------------------- ----------
+           3 REBAL RESILVER  DONE         30
+                                                                             0
+
+           3 REBAL REBALANCE WAIT         30
+                                                                             0
+
+           3 REBAL COMPACT   WAIT         30
+                                                                             0
+
+
+12 rows selected.
+
+SQL> alter diskgroup DATAC1 rebalance power 12;
+
+Diskgroup altered.
+
+SQL> alter diskgroup RECOC1 rebalance power 12;
+
+
+
+Diskgroup altered.
+
+SQL> SQL> SQL> alter diskgroup DBFS_DG rebalance power 12;
+
+Diskgroup altered.
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> set line 200
+SQL> select  * from v$asm_operation;
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0                                                       0
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0                                                       0
+           1 REBAL REBALANCE RUN          12         12        638     945884       1933         489                                                       0
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0                                                       0
+           2 REBAL RESYNC    WAIT         12                                                                                                               0
+           2 REBAL RESILVER  WAIT         12                                                                                                               0
+           2 REBAL REBALANCE WAIT         12                                                                                                               0
+           2 REBAL COMPACT   WAIT         12                                                                                                               0
+           3 REBAL RESYNC    DONE         12                                                                                                               0
+           3 REBAL RESILVER  DONE         12                                                                                                               0
+           3 REBAL REBALANCE WAIT         12                                                                                                               0
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           3 REBAL COMPACT   WAIT         12                                                                                                               0
+
+12 rows selected.
+
+SQL>
+SQL>
+/SQL>
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0                                                       0
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0                                                       0
+           1 REBAL REBALANCE RUN          12         12      13829     945884       1935         481                                                       0
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0                                                       0
+           2 REBAL RESYNC    WAIT         12                                                                                                               0
+           2 REBAL RESILVER  WAIT         12                                                                                                               0
+           2 REBAL REBALANCE WAIT         12                                                                                                               0
+           2 REBAL COMPACT   WAIT         12                                                                                                               0
+           3 REBAL RESYNC    DONE         12                                                                                                               0
+           3 REBAL RESILVER  DONE         12                                                                                                               0
+           3 REBAL REBALANCE WAIT         12                                                                                                               0
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           3 REBAL COMPACT   WAIT         12                                                                                                               0
+
+12 rows selected.
+
+SQL>
+SQL>
+
+SQL> SQL> /
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0                                                       0
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0                                                       0
+           1 REBAL REBALANCE RUN          12         12      20442     945884       2020         458                                                       0
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0                                                       0
+           2 REBAL RESYNC    WAIT         12                                                                                                               0
+           2 REBAL RESILVER  WAIT         12                                                                                                               0
+           2 REBAL REBALANCE WAIT         12                                                                                                               0
+           2 REBAL COMPACT   WAIT         12                                                                                                               0
+           3 REBAL RESYNC    DONE         12                                                                                                               0
+           3 REBAL RESILVER  DONE         12                                                                                                               0
+           3 REBAL REBALANCE WAIT         12                                                                                                               0
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           3 REBAL COMPACT   WAIT         12                                                                                                               0
+
+12 rows selected.
+
+SQL> /
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0                                                       0
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0                                                       0
+           1 REBAL REBALANCE RUN          12         12      20735     945884       1982         466                                                       0
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0                                                       0
+           2 REBAL RESYNC    WAIT         12                                                                                                               0
+           2 REBAL RESILVER  WAIT         12                                                                                                               0
+           2 REBAL REBALANCE WAIT         12                                                                                                               0
+           2 REBAL COMPACT   WAIT         12                                                                                                               0
+           3 REBAL RESYNC    DONE         12                                                                                                               0
+           3 REBAL RESILVER  DONE         12                                                                                                               0
+           3 REBAL REBALANCE WAIT         12                                                                                                               0
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           3 REBAL COMPACT   WAIT         12                                                                                                               0
+
+12 rows selected.
+
+SQL>
+SQL>
+
+SQL> SQL> /
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0                                                       0
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0                                                       0
+           1 REBAL REBALANCE RUN          12         12      23278     945884       2298         401                                                       0
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0                                                       0
+           2 REBAL RESYNC    WAIT         12                                                                                                               0
+           2 REBAL RESILVER  WAIT         12                                                                                                               0
+           2 REBAL REBALANCE WAIT         12                                                                                                               0
+           2 REBAL COMPACT   WAIT         12                                                                                                               0
+           3 REBAL RESYNC    DONE         12                                                                                                               0
+           3 REBAL RESILVER  DONE         12                                                                                                               0
+           3 REBAL REBALANCE WAIT         12                                                                                                               0
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           3 REBAL COMPACT   WAIT         12                                                                                                               0
+
+12 rows selected.
+
+SQL> set linesize 132
+col path format a50
+select group_number,path,header_status,mount_status,name from V$ASM_DISK where path like 'CD_09_fih3ex2celadm02';
+
+SQL> SQL>
+no rows selected
+
+SQL> SQL>
+SQL>
+SQL>
+SQL>
+SQL> select  * from v$asm_operation;
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- -----------
+ERROR_CODE                                       CON_ID
+-------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0
+                                                      0
+
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0
+                                                      0
+
+           1 REBAL REBALANCE RUN          12         12      80245     945884       1190         727
+                                                      0
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- -----------
+ERROR_CODE                                       CON_ID
+-------------------------------------------- ----------
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0
+                                                      0
+
+           2 REBAL RESYNC    WAIT         12
+                                                      0
+
+           2 REBAL RESILVER  WAIT         12
+                                                      0
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- -----------
+ERROR_CODE                                       CON_ID
+-------------------------------------------- ----------
+           2 REBAL REBALANCE WAIT         12
+                                                      0
+
+           2 REBAL COMPACT   WAIT         12
+                                                      0
+
+           3 REBAL RESYNC    DONE         12
+                                                      0
+
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- -----------
+ERROR_CODE                                       CON_ID
+-------------------------------------------- ----------
+           3 REBAL RESILVER  DONE         12
+                                                      0
+
+           3 REBAL REBALANCE WAIT         12
+                                                      0
+
+           3 REBAL COMPACT   WAIT         12
+                                                      0
+
+
+12 rows selected.
+
+SQL> set line 250
+SQL>
+SQL>
+/SQL>
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           1 REBAL RESYNC    DONE         12         12          0          0          0           0                                                       0
+           1 REBAL RESILVER  DONE         12         12          0          0          0           0                                                       0
+           1 REBAL REBALANCE RUN          12         12      80397     945884       1185         730                                                       0
+           1 REBAL COMPACT   WAIT         12         12          0          0          0           0                                                       0
+           2 REBAL RESYNC    WAIT         12                                                                                                               0
+           2 REBAL RESILVER  WAIT         12                                                                                                               0
+           2 REBAL REBALANCE WAIT         12                                                                                                               0
+           2 REBAL COMPACT   WAIT         12                                                                                                               0
+           3 REBAL RESYNC    DONE         12                                                                                                               0
+           3 REBAL RESILVER  DONE         12                                                                                                               0
+           3 REBAL REBALANCE WAIT         12                                                                                                               0
+
+GROUP_NUMBER OPERA PASS      STAT      POWER     ACTUAL      SOFAR   EST_WORK   EST_RATE EST_MINUTES ERROR_CODE                                       CON_ID
+------------ ----- --------- ---- ---------- ---------- ---------- ---------- ---------- ----------- -------------------------------------------- ----------
+           3 REBAL COMPACT   WAIT         12                                                                                                               0
+
+12 rows selected.
+
+SQL> exit
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Real Application Clusters and Automatic Storage Management options
+You have new mail in /var/spool/mail/oracle
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $
+oracle@fih3ex2dbadm01 $ asmcmd
+ASMCMD>
+ASMCMD>
+lsdASMCMD> g
+State    Type    Rebal  Sector  Block       AU   Total_MB   Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  NORMAL  Y         512   4096  4194304  108859392  28963892          3023872        12970010              0             N  DATAC1/
+MOUNTED  NORMAL  Y         512   4096  4194304    1038240   1026168            34608          495780              0             Y  DBFS_DG/
+MOUNTED  NORMAL  Y         512   4096  4194304   27221760  13489788           756160         6366814              0             N  RECOC1/
+ASMCMD>
+ASMCMD>
+
+
+ASMCMD> ASMCMD> ASMCMD>
+
+
+
+
+

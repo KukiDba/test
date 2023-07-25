@@ -1,0 +1,1333 @@
+
+
+https://ittutorial-org.cdn.ampproject.org/c/s/ittutorial.org/restore-oracle-database-controlfile-datafile-archivelog-via-rman-from-tape-backup-how-to/amp/
+
+http://www.inf.ufpr.br/roverli/files/using-oracle-rman.txt--------------RMAN 9i
+
+
+Restoration checkpoint list
+*****************************
+
+Identify level 0 full backup
+oracle@usildb08 $ grep -n  "incremental level 1 " rman_full_TELFAU.*
+incremental level 0
+
+
+RMAN-08013: channel C2: piece 1 created
+RMAN-08503: piece handle=spiritpr_SPIRITPR_a7um3ada_1_1_DB.bck comment=API Version 2.0,MMS Version 5.0.0.0
+RMAN-08525: backup set complete, elapsed time: 00:03:15
+
+RMAN-03022: compiling command: backup
+RMAN-03026: error recovery releasing channel resources
+RMAN-08031: released channel: C1
+RMAN-08031: released channel: C2
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure during compilation of command
+RMAN-03013: command type: backup
+RMAN-06089: archived log /spiritdb2/oracle/admin/spiritpr/arch/arch_1_13403.arc not found or out of sync with catalog
+
+RMAN>
+
+Recovery Manager complete.
+
+incremental level=0 
+
+
+grep: can't open spiritpr.2020.*
+oracle8@usilatlsp01 $ grep -n  "incremental level 0 " ssd25.20200303.*
+spiritpr.20200104.0230.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
+spiritpr.20200104.0230.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
+spiritpr.20200104.1650.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
+spiritpr.20200104.1650.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
+spiritpr.20200111.0230.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
+spiritpr.20200111.0230.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
+spiritpr.20200111.1650.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
+spiritpr.20200111.1650.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
+
+spiritpr.20200118.0230.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
+spiritpr.20200118.0230.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
+spiritpr.20200118.1650.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
+spiritpr.20200118.1650.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
+oracle8@usilatlsp01 $
+
+
+
+*****************************
+
+RMAN List Command
+
+Database
+
+The LIST command allows the backup data to be listed in the RMAN utility 
+
+To list all existing backups use: 
+RMAN> LIST BACKUP;
+
+
+To list all existing database backups use: 
+RMAN> LIST BACKUP OF DATABASE;
+
+
+To list all existing backups of a specific datafile use: 
+RMAN> LIST BACKUP OF DATAFILE <file#>;
+
+
+For example: 
+RMAN> LIST BACKUP OF DATAFILE 4;
+
+
+Alternatively specify the datafile name. For example: 
+RMAN> LIST BACKUP OF DATAFILE '/u01/app/oradata/TEST/users01.dbf';
+
+
+To list all existing archivelog backups use: 
+RMAN> LIST BACKUP OF ARCHIVELOG ALL;
+
+
+To list all existing controfile backups use: 
+RMAN> LIST BACKUP OF CONTROLFILE;
+
+
+To list all existing SPFILE backups use: 
+RMAN> LIST BACKUP OF SPFILE;
+
+
+Archive Logs
+
+To list all archive logs use: 
+RMAN> LIST ARCHIVELOG ALL;
+
+
+Backup sets
+
+To list the contents of an individual backup set use: 
+RMAN> LIST BACKUPSET <key>;
+
+
+For example: 
+RMAN> LIST BACKUPSET 44;
+
+
+Datafile Image Copies
+
+To list all datafile image copies use: 
+RMAN> LIST DATAFILECOPY ALL;
+
+
+To list an individual datafile image copy use: 
+RMAN> LIST DATAFILECOPY <key>;
+
+
+For example: 
+RMAN> LIST DATAFILECOPY 26;
+
+
+Alternatively specify the name of the datafile image copy file: 
+RMAN> LIST DATAFILECOPY '/u01/app/oracle/copy/users01.dbf';
+
+
+Controlfile Image Copies
+
+To list all controlfile copies use 
+RMAN> LIST COPY OF CONTROLFILE;
+
+
+For example: 
+RMAN> LIST COPY OF CONTROLFILE;
+
+List of Control File Copies
+===========================
+
+Key     S Completion Time Ckp SCN    Ckp Time
+------- - --------------- ---------- ---------------
+25      A 15-AUG-15       3324254    15-AUG-15
+        Name: /u01/app/oracle/copy/cf_D-TEST_id-2066695660_23qekadv
+        Tag: TAG20150815T001910
+
+20      A 14-AUG-15       3322965    14-AUG-15
+        Name: /u01/app/oracle/copy/cf_D-TEST_id-2066695660_1tqek8bd
+        Tag: TAG20150814T234341
+
+15      A 14-AUG-15       3322589    14-AUG-15
+        Name: /u01/app/oracle/copy/cf_D-TEST_id-2066695660_1nqek7j8
+        Tag: TAG20150814T232907
+
+
+To list an individual control file copy use: 
+RMAN> LIST CONTROLFILECOPY <key>;
+
+
+For example: 
+RMAN> LIST CONTROLFILECOPY 20;
+
+List of Control File Copies
+===========================
+
+Key     S Completion Time Ckp SCN    Ckp Time
+------- - --------------- ---------- ---------------
+20      A 14-AUG-15       3322965    14-AUG-15
+        Name: /u01/app/oracle/copy/cf_D-TEST_id-2066695660_1tqek8bd
+        Tag: TAG20150814T234341
+
+
+Tablespaces
+
+To list backups of a tablespace use the LIST BACKUP OF TABLESPACE command. For example: 
+RMAN> LIST BACKUP OF TABLESPACE USERS;
+
+
+Incarnations
+
+The LIST INCARNATION command shows the incarnations of the database. Note that multiple incarnations may share the same database ID. 
+RMAN> LIST INCARNATION;
+
+List of Database Incarnations
+DB Key  Inc Key DB Name  DB ID            STATUS  Reset SCN  Reset Time
+------- ------- -------- ---------------- --- ---------- ----------
+1       1       TEST     2066695660       PARENT  1          17-SEP-11
+2       2       TEST     2066695660       PARENT  995548     30-NOV-11
+3       3       TEST     2066695660       ORPHAN  1190860    09-FEB-12
+4       4       TEST     2066695660       CURRENT 1190860    09-FEB-12
+
+
+
+***********************************************
+
+
+-rw-r--r--   1 oracle8  spirit      4.3K Jan 15 16:56 spiritpr.20200115.1650.bck
+-rw-r--r--   1 oracle8  spirit         0 Jan 16 02:33 spiritpr.20200116.0233.syn
+-rw-r--r--   1 oracle8  spirit      4.3K Jan 16 02:33 spiritpr.20200116.0230.bck
+-rw-r--r--   1 oracle8  spirit         0 Jan 16 06:04 spiritpr.20200116.0604.syn
+-rw-r--r--   1 oracle8  spirit      1.6K Jan 16 06:04 spiritpr.20200116.0604.bck
+-rw-r--r--   1 oracle8  spirit         0 Jan 16 11:04 spiritpr.20200116.1104.syn
+-rw-r--r--   1 oracle8  spirit      1.6K Jan 16 11:04 spiritpr.20200116.1104.bck
+-rw-r--r--   1 oracle8  spirit      1.6K Jan 16 14:04 spiritpr.20200116.1404.bck
+-rw-r--r--   1 oracle8  spirit         0 Jan 16 14:04 spiritpr.20200116.1404.syn
+-rw-r--r--   1 oracle8  spirit         0 Jan 16 16:56 spiritpr.20200116.1656.syn
+-rw-r--r--   1 oracle8  spirit      4.3K Jan 16 16:56 spiritpr.20200116.1650.bck
+-rw-r--r--
+spiritpr.20200120.0230.bck
+
+run
+{ 
+  set until time 'Nov 15 2000 09:00:00';
+ 
+  restore database;
+ 
+}
+
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+set until time "to_date('11-Jan-2020 17:06:00','DD-MON-YYYY HH24:MI:SS')";
+restore database;
+release channel C1;
+release channel C2;
+}
+
+
+RMAN-00571: ===========================================================
+RMAN-03002: failure during compilation of command
+RMAN-03013: command type: backup
+RMAN-06089: archived log /spiritdb2/oracle/admin/spiritpr/arch/arch_1_13403.arc not found or out of sync with catalog
+
+
+
+hp-ux------restoration
+
+connect target;
+run {
+resync catalog;
+allocate channel t1 type 'SBT_TAPE';
+setlimit channel t1 kbytes 2097150 maxopenfiles 32;
+restore datafile 7;
+recover datafile 7;
+sql 'alter database datafile 7 online';
+release channel t1;
+}
+
+
+
+NOW CREATE CONTROL FILE FROM SOUCRECE DATABASE IN SOURCE SERVER st-vtdb14.st.statoil.no AND MODIFIED IT 
+•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+ALTER DATABASE BACKUP CONTROLFILE TO TRACE as '/usr1/data1_backup/restore/cre_cntrl_1.sql';
+
+
+
+
+
+14 19:21
+
+oracle@usildb08 $ grep -n  "incremental level 0 " rman_full_comp*.*
+price.20191207.0900.bck:19:channel C1: starting incremental level 0 datafile backupset
+price.20191207.0900.bck:21:channel C2: starting incremental level 0 datafile backupset
+price.20191214.0900.bck:19:channel C1: starting incremental level 0 datafile backupset
+price.20191214.0900.bck:21:channel C2: starting incremental level 0 datafile backupset
+price.20191221.0900.bck:19:channel C1: starting incremental level 0 datafile backupset
+price.20191221.0900.bck:21:channel C2: starting incremental level 0 datafile backupset
+
+1. Identify recent controlfile 
+a. From Tape
+b. oracle_home/dbs--check current date conrol file
+c. c-folder 
+
+2. Restore control file
+
+Tape_location log
+
+cd /usr/openv/netbackup/usr_ops
+
+
+backup server name change(If any issue occur in Tape end)
+
+Backup_All_DB.sh
+
+For different mount point
+
+set head off pages 0 feed off echo off verify off
+
+set lines 200
+spool rename_datafiles.lst
+select 'set newname for datafile ' || file_id || ' to ''/oracle/IT3/sapdata1/system_1/' ||
+substr(file_name,instr(file_name,'/',-1)+1) || ''';'
+from dba_data_files ;
+spool off
+
+
+
+run
+{
+allocate channel 'dev_0' type SBT_TAPE;
+allocate channel 'dev_1' type SBT_TAPE;
+allocate channel 'dev_2' type SBT_TAPE;
+allocate channel 'dev_3' type SBT_TAPE;
+allocate channel 'dev_4' type SBT_TAPE;
+allocate channel 'dev_5' type SBT_TAPE;
+set until time "to_date('20-DEC-2019 02:31:00','DD-MON-YYYY HH24:MI:SS')";
+set newname for datafile 1 to '/oraarch/sr1p/oradata/';
+set newname for datafile 2 to '/oraarch/sr1p/oradata/';
+set newname for datafile 4 to '/oraarch/sr1p/oradata/';
+set newname for datafile 5 to '/oraarch/sr1p/oradata/';
+set newname for datafile 6 to '/oraarch/sr1p/oradata/';
+alter database mount;
+restore database;
+switch datafile all;
+recover database;
+released channel: dev_0
+released channel: dev_1
+released channel: dev_2
+released channel: dev_3
+released channel: dev_4
+released channel: dev_5
+}
+
+
+Check this status when db in mount status
+**********************************************
+
+SQL> select file#,STATUS, CREATION_CHANGE#,FUZZY,RECOVER from v$datafile_header;
+
+     FILE# STATUS  CREATION_CHANGE# FUZ 	
+---------- ------- ---------------- --- ---
+         1 ONLINE                 4 NO
+         3 ONLINE             36355 NO
+         4 ONLINE             36373 NO
+         5 ONLINE             36391 NO
+         6 ONLINE            217151 NO
+         7 ONLINE            231412 NO
+         8 ONLINE            893206 NO
+
+7 rows selected.
+
+SQL> select file#,STATUS, CREATION_CHANGE#,FUZZY,RECOVER,CHECKPOINT_CHANGE# from v$datafile_header;
+
+     FILE# STATUS  CREATION_CHANGE# FUZ REC CHECKPOINT_CHANGE#
+---------- ------- ---------------- --- --- ------------------
+         1 ONLINE                 4 NO               199035720
+         3 ONLINE             36355 NO               199035720
+         4 ONLINE             36373 NO               199035719
+         5 ONLINE             36391 NO               199035719
+         6 ONLINE            217151 NO               199035719
+         7 ONLINE            231412 NO               199035719
+         8 ONLINE            893206 NO               199035720
+
+
+
+
+3. mount the database 
+
+Check the Backup pieces
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+set until time "to_date('15-Jan-2020 16:56:00','DD-MON-YYYY HH24:MI:SS')";
+restore database;
+release channel C1;
+release channel C2;
+}
+
+
+ARC0: Beginning to archive log# 5 seq# 13434
+Wed Jan 15 11:21:47 2020
+ARC0: Completed archiving log# 5 seq# 13434
+Mon Jan 20 03:28:00 2020
+Thread 1 advanced to log sequence 13436
+Mon Ja
+
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+
+set newname for datafile 1 to '/PRD1/data/systemPEQUOTE.dbf';
+set newname for datafile 2 to '/PRD1/data/undoPEQUOTE.dbf';
+RMAN> 2> 3> 4> 5> 6> 7> 8> 9> set newname for datafile 3 to '/PRD1/data/sysauxPEQUOTE.dbf';
+set newname for datafile 4 to '/PRD1/data/data_01.dbf';
+set newname for datafile 5 to '/PRD1/data/pequote_gdat01.dbf';
+set newname for datafile 6 to '/PRD1/data/mqtdata01.dbf';
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+
+
+
+CDP restore
+******************
+
+https://www.datavail.com/blog/how-to-do-a-point-in-time-restore-of-one-pluggable-database-with-multiples/
+
+
+RMAN> run
+
+ {
+
+  SET UNTIL TIME "TO_DATE('24-JAN-2017 22:06:00','DD-MON-YYYY HH24:MI:SS')";
+
+  RESTORE pluggable database pdb2;
+
+  RECOVER pluggable database pdb2 auxiliary destination='/u04/backup/NSNIT31/NSNITPDB/arch';
+
+  ALTER PLUGGABLE DATABASE pdb2 OPEN RESETLOGS;
+
+ }
+
+RMAN> ALTER PLUGGABLE DATABASE NSNITPDB CLOSE;
+
+run
+ {
+ SET UNTIL TIME "TO_DATE('18-OCT-2020 04:29:57','DD-MON-YYYY HH24:MI:SS')";
+  RESTORE pluggable database NSNITPDB;
+  RECOVER pluggable database NSNITPDB auxiliary destination='/u04/backup/NSNIT31/NSNITPDB/arch';
+  ALTER PLUGGABLE DATABASE NSNITPDB OPEN RESETLOGS;
+}
+
+*****************************************************
+
+
+Restore archivelog 
+**********************
+
+13434
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+restore archivelog from logseq 381377 until logseq 381418;
+release channel C1;
+release channel C2;
+}
+
+restore ARCHIVELOG FROM TIME "to_date('01/11/2020 00:00:01','MM/DD/YY HH24:MI:SS')
+UNTIL TIME 'SYSDATE';
+
+
+run
+{
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+RESTORE ARCHIVELOG FROM TIME = "to_date('2020-01-11 16:50:00','YYYY-DD-MM HH24:MI:SS')" UNTIL TIME = "to_date('2020-01-16 16:50:00','YYYY-DD-MM HH24:MI:SS')";
+}
+
+
+09-May-2020 04:19:00
+
+ 1    13428   11000835147954 11000835148102 09-JAN-20       09-JAN-20
+    1    13429   11000835148102 11000835148242 09-JAN-20       09-JAN-20
+    1    13430   11000835148242 11000835148533 09-JAN-20       09-JAN-20
+    1    13431   11000835148533 11000835148983 09-JAN-20       09-JAN-20
+    1    13432   11000835148983 11000835149674 09-JAN-20       09-JAN-20
+	
+    1    13433   11000835149674 11000835157392 09-JAN-20       15-JAN-20
+    1    13434   11000835157392 11000835157941 15-JAN-20       15-JAN-20
+
+
+	
+	
+restore archivelog from time='SYSDATE-6/24' validate;
+
+CATALoG
+
+******************
+CHANGE BACKUPPIECE '/oradata2/oft7qq' UNCATALOG;
+
+
+
+run
+ {
+CATALOG START WITH '/u04/backup/NSNIT31/u04/backup/NSNIT31/' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rgvd8d24_18288_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_revd8d24_18286_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rfvd8d24_18287_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rivd8e6n_18290_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rkvd8eg3_18292_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rjvd8e9c_18291_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rhvd8e5u_18289_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rlvd8eg6_18293_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rnvd8ehp_18295_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rovd8ei8_18296_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rpvd8end_18297_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rqvd8end_18298_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rsvd8enm_18300_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rtvd8ent_18301_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rrvd8ene_18299_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/databasefiles_NSNIT31_rmvd8eh0_18294_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/archivelogs_NSNIT31_s0vd8epu_18304_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/archivelogs_NSNIT31_rvvd8epu_18303_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/archivelogs_NSNIT31_ruvd8epu_18302_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/controlfile_NSNIT31_s1vd8eq2_18305_20201018' NOPROMPT;
+CATALOG BACKUPPIECE '/u04/backup/NSNIT31/u04/backup/NSNIT31/rman_18102020_full/ora_cfc-3998664266-20201018-01' NOPROMPT;
+SET UNTIL TIME "TO_DATE('18-OCT-2020 04:30:00','DD-MON-YYYY HH24:MI:SS')";
+RESTORE pluggable database NSNITPDB;
+RECOVER pluggable database NSNITPDB auxiliary destination='/u04/backup/NSNIT31/NSNITPDB/arch';
+ALTER PLUGGABLE DATABASE NSNITPDB OPEN RESETLOGS;
+}
+
+
+
+
+
+Archivelog containing your SCN
+***********************************
+
+select sequence# from v$archived_log where &scn between FIRST_CHANGE# and NEXT_CHANGE#-1;
+
+******************************************************************************************
+
+
+
+Temp Add
+*****************
+
+ALTER TABLESPACE TEMP ADD TEMPFILE '/data01/db1/oradata/comp/temp01.dbf SIZE 9399M REUSE AUTOEXTEND ON NEXT 104857600  MAXSIZE 5000M;
+
+
+control restore
+*********************
+
+
+list backup of controlfile completed between "to_date('11.09.2020','dd.mm.yyyy hh24')" and "to_date('11.09.2020','dd.mm.yyyy hh24')";
+
+HPDP
+***************
+
+run
+{
+ALLOCATE CHANNEL CH1 DEVICE TYPE 'SBT_TAPE';
+send 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=IPMSI,OB2BARLIST=FIHECDPPDB226_IPMEPM_ONDB_IPMSI_L2_FULL_DLY)';
+set until time "to_date('01-JUL-2020 20:55:00','DD-MON-YYYY HH24:MI:SS')";
+restore controlfile from 'c-3081192390-20200701-01';
+RELEASE CHANNEL CH1;
+}
+
+
+
+send 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=IPMSI,OB2BARLIST=FIHECDPPDB226_IPMEPM_ONDB_IPMSI_L2_FULL_DLY)'
+
+run
+{
+ALLOCATE CHANNEL CH1 DEVICE TYPE 'SBT_TAPE';
+send 'NSR_ENV=(NSR_CLIENT=deveci01.localdomain,NSR_SERVER=TAPE_SERVER.localdomain) ';
+restore controlfile from 'c-3081192390-20200701-01';
+RELEASE CHANNEL CH1;
+}
+
+
+RMAN> run{
+2> allocate channel 'dev_0' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=QIPMSI,OB2BARLIST=FIHECDPQ208_IPM-EPM_ONDB_QIPMSI_L3_FULL_DLY)';
+3> set until sequence = 10978;
+4> restore database;
+5> recover database;
+6> release channel 'dev_0';
+7> }
+8>
+
+
+TSM
+************
+
+likning TSm
+
+ln -s /usr/tivoli/tsm/client/oracle/bin64/libobk64.a $ORACLE_HOME/lib/libobk.a
+
+
+
+run
+{
+allocate channel t1 type 'sbt_tape' parms 'ENV=(TDPO_OPTFILE=/usr/tivoli/tsm/client/oracle/bin64/tdpo_DATAQDR_N.opt)';
+allocate channel t2 type 'sbt_tape' parms 'ENV=(TDPO_OPTFILE=/usr/tivoli/tsm/client/oracle/bin64/tdpo_DATAQDR_N.opt)';
+allocate channel t3 type 'sbt_tape' parms 'ENV=(TDPO_OPTFILE=/usr/tivoli/tsm/client/oracle/bin64/tdpo_DATAQDR_N.opt)';
+allocate channel t4 type 'sbt_tape' parms 'ENV=(TDPO_OPTFILE=/usr/tivoli/tsm/client/oracle/bin64/tdpo_DATAQDR_N.opt)';
+set until time "TO_DATE('2019-09-22 06:15:00','yyyy-mm-dd hh24:mi:ss')";
+SET NEWNAME FOR DATAFILE 18 to '/DATAQ_DR/oradata02/DATAQDR/11g_dbf/18.dbf';
+restore database;
+switch datafile all;
+recover database;
+release channel t1;
+release channel t2;
+release channel t3;
+release channel t4;
+}
+
+
+
+
+
+
+RMAN> restore controlfile from '/dbexab/RMAN_full_backup_U367A/U367A_24_04_2019_i7tvq34a_1_1_L0.bkp';
+
+Add Tempfile
+**************
+
+ALTER TABLESPACE TEMP ADD TEMPFILE '/usr1/data1_new/aux/temp01.dbf' SIZE 2600M;
+
+
+Check SCN which need to be applied
+*************************************
+
+
+RECOVER
+**************************
+
+
+recover database using backup controlfile until cancel;
+
+
+
+list backup of archivelog time between "to_date('18-JAN-2020 00:35:42','DD-MON-YYYY HH24:MI:SS')" and "to_date('18-JAN-2020 17:00:00','DD-MON-YYYY HH24:MI:SS')";
+
+
+RMAN> list backup of database;
+
+RMAN> list backup of archivelog all;
+
+recover database  using backup controlfile until cancel;
+
+
+run {
+allocate channel 'dev_0' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=CDBPROD,OB2BARLIST=FIHECDPPDB052_ONDB_CDPPROD_L3_FULL_DLY)';
+allocate channel 'dev_1' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=CDBPROD,OB2BARLIST=FIHECDPPDB052_ONDB_CDPPROD_L3_FULL_DLY)';
+allocate channel 'dev_2' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=CDBPROD,OB2BARLIST=FIHECDPPDB052_ONDB_CDPPROD_L3_FULL_DLY)';
+allocate channel 'dev_3' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=CDBPROD,OB2BARLIST=FIHECDPPDB052_ONDB_CDPPROD_L3_FULL_DLY)';
+set until time "to_date('01-18-2021:16:00','mm-dd-yyyy:hh24:mi')";
+recover database;
+release channel dev_0;
+release channel dev_1;
+release channel dev_2;
+release channel dev_3;
+}
+
+oracle 8i and 9i  crosshcheck 
+*****************************
+
+RMAN>CHANGE ARCHIVELOG ALL VALIDATE;
+
+Register and change the dbid 
+********************************
+
+Unregister first then register
+
+
+
+EOF
+rman target / catalog rman_us/usrman@rman_bck.alcatel.de <<EOF
+ resync catalog;
+ exit
+EOF
+exit 0
+oracle@usildb08 $ rman target / catalog rman_us/usrman@rman_cat.alcatel.de
+
+Recovery Manager: Release 10.2.0.5.0 - Production on Wed Jan 15 05:15:43 2020
+
+Copyright (c) 1982, 2007, Oracle.  All rights reserved.
+
+unregister connected to target database: PRICE (DBID=511738750)
+databaseconnected to recovery catalog database
+;
+
+RMAN>
+database name is "PRICE" and DBID is 511738750
+
+Do you really want to unregister the database (enter YES or NO)? YES
+database unregistered from the recovery catalog
+
+RMAN> register database;
+
+database registered in recovery catalog
+starting full resync of recovery catalog
+
+full resync complete
+
+
+
+Backup of Database Full L=0
+*******************************
+
+RMAN> run
+  {
+allocate channel C1 type 'SBT_TAPE';
+allocate channel C2 type 'SBT_TAPE';
+SQL 'alter system archive log current';
+backup incremental level=0 database format 'price_%d_%U_DB.bck' tag=price_fullbackup_15Jan2020 include current controlfile;
+backup archivelog all format 'price_%d_%U_AR.bck';
+}
+
+PDB backup level 0
+************************
+RMAN> backup as compressed backupset section size 32G incremental level 0 PLUGGABLE DATABASE "CDB$ROOT","PDB$SEED","TESTBKP" plus archivelog;
+RMAN> backup archivelog all;
+RMAN> list backup of archivelog all;
+
+
+PDB Restoration
+*******************
+
+RMAN> run {
+set until sequence 13866;
+restore pluggable database testbkp;
+recover pluggable database testbkp auxiliary destination='/tmp';
+alter pluggable database testbkp open resetlogs;
+}
+
+
+
+
+Restore session progress query
+************************************
+
+SELECT SYSDATE, CURRENT_TIMESTAMP  FROM DUAL;
+
+
+[oracle@fih3ex1dbadm01 restoration]$ cat monitor.sql
+REM -------------------------------
+REM Script to monitor rman backup/restore operations
+REM To run from sqlplus:   @monitor '[dd-mon-rr hh24:mi:ss]'
+REM Example:
+--SQL>spool monitor.out
+--SQL>@monitor '06-aug-12 16:38:03'
+REM where [date] is the start time of your rman backup or restore job
+REM Run monitor script periodically to confirm rman is progessing
+REM -------------------------------
+
+alter session set nls_date_format='dd-mon-rr hh24:mi:ss';
+set lines 1500
+set pages 100
+col CLI_INFO format a10
+col spid format a5
+col ch format a20
+col seconds format 999999.99
+col filename format a65
+col bfc  format 9
+col "% Complete" format 999.99
+col event format a40
+set numwidth 10
+
+select sysdate from dual;
+
+REM gv$session_longops (channel level)
+
+prompt
+prompt Channel progress - gv$session_longops:
+prompt
+select s.inst_id, o.sid, CLIENT_INFO ch, context, sofar, totalwork,
+                    round(sofar/totalwork*100,2) "% Complete"
+     FROM gv$session_longops o, gv$session s
+     WHERE opname LIKE 'RMAN%'
+     AND opname NOT LIKE '%aggregate%'
+     AND o.sid=s.sid
+     AND totalwork != 0
+     AND sofar <> totalwork;
+
+REM Check wait events (RMAN sessions) - this is for CURRENT waits only
+REM use the following for 11G+
+prompt
+prompt Session progess - CURRENT wait events and time in wait so far:
+prompt
+select inst_id, sid, CLIENT_INFO ch, seq#, event, state, wait_time_micro/1000000 seconds
+from gv$session where program like '%rman%' and
+wait_time = 0 and
+not action is null;
+
+REM use the following for 10G
+--select  inst_id, sid, CLIENT_INFO ch, seq#, event, state, seconds_in_wait secs
+--from gv$session where program like '%rman%' and
+--wait_time = 0 and
+--not action is null;
+
+REM gv$backup_async_io
+prompt
+prompt Disk (file and backuppiece) progress - includes tape backuppiece
+prompt if backup_tape_io_slaves=TRUE:
+prompt
+select s.inst_id, a.sid, CLIENT_INFO Ch, a.STATUS,
+open_time, round(BYTES/1024/1024,2) "SOFAR Mb" , round(total_bytes/1024/1024,2)
+TotMb, io_count,
+round(BYTES/TOTAL_BYTES*100,2) "% Complete" , a.type, filename
+from gv$backup_async_io a,  gv$session s
+where not a.STATUS in ('UNKNOWN')
+and a.sid=s.sid and open_time > to_date('&1', 'dd-mon-rr hh24:mi:ss') order by 2,7;
+
+REM gv$backup_sync_io
+prompt
+prompt Tape backuppiece progress (only if backup_tape_io_slaves=FALSE):
+prompt
+select  a.sid, CLIENT_INFO Ch, filename, a.type, a.status, buffer_size bsz, buffer_count bfc,
+open_time open, io_count
+from gv$backup_sync_io a, gv$session s
+where
+a.sid=s.sid and
+open_time > to_date('&1', 'dd-mon-rr hh24:mi:ss') ;
+REM -------------------------------
+
+**************************************************
+
+Rman restore speed
+
+****************************
+
+TTITLE OFF
+SET HEAD OFF
+SELECT 'Throughput: '||
+       ROUND(SUM(v.value/1024/1024/1024),1) || ' Meg so far @ ' ||
+       ROUND(SUM(v.value     /1024/1024/1024)/NVL((SELECT MIN(elapsed_seconds)
+            FROM v$session_longops
+            WHERE opname          LIKE 'RMAN: aggregate input'
+              AND sofar           != TOTALWORK
+              AND elapsed_seconds IS NOT NULL
+       ),SUM(v.value     /1024/1024/1024)),2) || ' Meg/sec'
+ FROM gv$sesstat v, v$statname n, gv$session s
+WHERE v.statistic# = n.statistic#
+  AND n.name       = 'physical write total bytes'
+  AND v.sid        = s.sid
+  AND v.inst_id    = s.inst_id
+  AND s.program LIKE 'rman@%'
+GROUP BY n.name
+/
+SET HEAD ON
+
+*****************************************
+RESTORE progress
+**********************
+
+	set lines 200 pages 1000
+	col STATUS for a24
+	select SID,START_TIME,END_TIME,STATUS,OPERATION,INPUT_BYTES/1024/1024/1024, OUTPUT_BYTES/1024/1024/1024 from v$rman_status where START_TIME >SYSDATE - 1 and SID!=0;
+	
+	Rman Backup Progress
+	*****************************
+	
+	select SESSION_KEY,INPUT_TYPE,STATUS,START_TIME,END_TIME from v$rman_backup_job_details;
+
+	
+	set linesize 500 pagesize 2000
+	col Hours format 9999.99
+	col STATUS format a10
+	select SESSION_KEY, INPUT_TYPE, STATUS,
+	to_char(START_TIME,'mm-dd-yyyy hh24:mi:ss') as RMAN_Bkup_start_time,
+	to_char(END_TIME,'mm-dd-yyyy hh24:mi:ss') as RMAN_Bkup_end_time,
+	elapsed_seconds/3600 Hours from V$RMAN_BACKUP_JOB_DETAILS
+	order by session_key;
+
+9i
+**********
+
+https://shahiddba.blogspot.com/2015/03/how-to-monitor-rman-backup-through-sql.html
+
+set line 450
+select SID,serial#,opname,START_TIME,TOTALWORK,sofar,(sofar/totalwork)*100 done,
+sysdate + TIME_REMAINING/3600/24 end_at,elapsed_seconds elapsed,username
+from v$session_longops
+where totalwork = sofar
+AND opname NOT LIKE '%aggregate%'
+AND start_time>sysdate-1
+AND opname like 'RMAN%';
+**********************************************
+
+
+TAPE BACKUP SIZE
+*********************
+
+set line 1000
+select ctime "Date"
+, decode(backup_type, 'L', 'Archive Log', 'D', 'Full', 'Incremental') backup_type
+ , bsize "Size GB"
+ from (select trunc(bp.completion_time) ctime
+ , backup_type
+ , round(sum(bp.bytes/1024/1024/1024),2) bsize
+ from v$backup_set bs, v$backup_piece bp
+ where bs.set_stamp = bp.set_stamp
+ and bs.set_count  = bp.set_count
+ and bp.status = 'A'
+ group by trunc(bp.completion_time), backup_type)
+ order by 1, 2;
+*****************************
+
+SELECT SID, SERIAL#, CONTEXT, SOFAR, TOTALWORK,
+       ROUND(SOFAR/TOTALWORK*100,2) "%_COMPLETE"
+FROM   V$SESSION_LONGOPS
+WHERE  OPNAME LIKE 'RMAN%'
+AND    OPNAME NOT LIKE '%aggregate%'
+AND    TOTALWORK != 0
+AND    SOFAR <> TOTALWORK;
+
+
+COLUMN EVENT FORMAT a17
+COLUMN SECONDS_IN_WAIT FORMAT 999
+COLUMN STATE FORMAT a10
+COLUMN CLIENT_INFO FORMAT a30
+SELECT p.SPID, s.EVENT, s.SECONDS_IN_WAIT AS SEC_WAIT, 
+       sw.STATE, s.CLIENT_INFO
+FROM   V$SESSION_WAIT sw, V$SESSION s, V$PROCESS p
+WHERE  sw.EVENT LIKE '%MML%'
+AND    s.SID=sw.SID
+AND    s.PADDR=p.ADDR;
+
+
+
+
+
+****************************
+	
+BACKUP policy HPDP
+********************
+
+set lines 200 pages 1000
+COL BS_REC    FORMAT 99999
+COL BP_REC    FORMAT 99999
+COL MB        FORMAT 9999999
+COL ENCRYPTED FORMAT A7
+COL TAG       FORMAT A25
+col MEDIA_HANDLE for a60
+SELECT S.RECID AS "BS_REC", P.RECID AS "BP_REC", P.ENCRYPTED, 
+       P.TAG, P.HANDLE AS "MEDIA_HANDLE" , P.MEDIA
+FROM   V$BACKUP_PIECE P, V$BACKUP_SET S
+WHERE  P.SET_STAMP = S.SET_STAMP
+AND    P.SET_COUNT = S.SET_COUNT;
+
+inet service --hpdp
+
+
+********************
+
+
+
+Partial RESTORE on RAC
+*************************
+
+RESTORE
+*********************
+
+run {
+allocate channel 'dev_0' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_1' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_2' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_3' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_4' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_a' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_b' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_c' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_d' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_e' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_f' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_g' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+SET UNTIL TIME "to_date ( '14-FEB-2020 08:22:00', 'DD-MON-YYYY HH24:MI:SS')";
+restore tablespace OCT_ODS_P20_DATA,OCT_ODS_BP_DATA,OCT_ODS_QTC_DATA,SYSTEM,SYSAUX,USERS,UNDOTBS1,UNDOTBS2;
+recover tablespace OCT_ODS_P20_DATA,OCT_ODS_BP_DATA,OCT_ODS_QTC_DATA,SYSTEM,SYSAUX,USERS,UNDOTBS1,UNDOTBS2;
+}
+
+
+Recovery
+*******************
+run {
+allocate channel 'dev_0' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_1' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_2' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_3' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_4' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_a' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_b' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_c' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_d' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_e' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_f' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+allocate channel 'dev_g' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)';
+
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+SET UNTIL TIME "to_date ( '14-FEB-2020 18:00:00', 'DD-MON-YYYY HH24:MI:SS')";
+recover tablespace OCT_ODS_P20_DATA,OCT_ODS_BP_DATA,OCT_ODS_QTC_DATA,SYSTEM,SYSAUX,USERS,UNDOTBS1,UNDOTBS2;
+}
+
+
+**********************************************************************************************************************************
+
+DEBUG SSCRIPT TO VALIDATE BACKUP PIECE ON TAPE
+************************************************
+
+[root@fihe5lnxunx restoration]# cat RMAN_25Feb0015_validate_debug.rcv
+run
+{
+allocate channel 'dev_1' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY,OB2OPTS=-debug 1-300 /u01/debug/ORA)'
+;
+allocate channel 'dev_2' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY,OB2OPTS=-debug 1-300 /u01/debug/ORA)'
+;
+allocate channel 'dev_3' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY,OB2OPTS=-debug 1-300 /u01/debug/ORA)'
+;
+allocate channel 'dev_4' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY,OB2OPTS=-debug 1-300 /u01/debug/ORA)'
+;
+allocate channel 'dev_5' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY,OB2OPTS=-debug 1-300 /u01/debug/ORA)'
+;
+allocate channel 'dev_6' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY,OB2OPTS=-debug 1-300 /u01/debug/ORA)'
+;
+SET NEWNAME FOR DATABASE   TO  '/u01/app/oracle/admin/oradata/servcstg/datafile/valdebnew/%b';
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+SET UNTIL TIME "to_date ( '01-FEB-2020 03:25:00', 'DD-MON-YYYY HH24:MI:SS')";
+restore validate datafile 00660,00583,00002,00621,00310,00346;
+restore datafile 00660,00583,00002,00621,00310,00346;
+}
+
+or
+
+[oracle@fihe5lnxunx restoration]$ cat RMAN_26Feb_validate_debug.rcv
+run
+{
+allocate channel 'dev_1' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_2' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_3' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_4' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_5' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_6' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+
+SET NEWNAME FOR DATABASE   TO  '/u01/app/oracle/admin/oradata/servcstg/datafile/valdeb/%b';
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+SET UNTIL TIME "to_date ( '01-FEB-2020 03:25:00', 'DD-MON-YYYY HH24:MI:SS')";
+restore validate datafile 00660,00583,00002,00621,00310,00346;
+restore datafile 00660,00583,00002,00621,00310,00346;
+}
+
+
+or
+
+restore database validate until time "to_date('2010-03-07 22:58:37','YYYY-MM-DD HH24:MI:SS')";
+
+
+un {
+allocate channel d1 type disk;
+allocate channel d2 type disk;
+allocate channel d3 type disk;
+allocate channel d4 type disk;
+backup validate check logical database;
+} 
+
+Rman backup test
+**************************
+
+How to use Rman to Restore Of Single PDB in Multitenant to Alternate Server (Doc ID 2142675.1)
+
+
+RMAN> run
+{
+SET UNTIL TIME "TO_DATE('18-OCT-2020 04:30:00','DD-MON-YYYY HH24:MI:SS')";
+RESTORE PLUGGABLE DATABASE NSNITPDB preview;
+}
+2> 3> 4> 5> 
+
+
+
+Sent logs to backup team for further analysis
+*****************************************************************************************************************************
+
+Partial restore 
+*****************
+
+[root@fihe5lnxunx restoration]# cat RMAN_Restoration_QTC_24Feb.rcv
+run
+{
+allocate channel 'dev_0' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_1' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_2' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_3' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_4' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_5' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_6' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_7' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_8' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_9' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_10' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+allocate channel 'dev_11' type 'sbt_tape'
+ parms
+'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=SERVCSTG1,OB2BARLIST=FIH5EX1DBADM01_EXADATA_ONDB_SERVCSTG1_FRA_FULL_WKLY)'
+;
+SET NEWNAME FOR DATABASE   TO  '/u01/app/oracle/admin/oradata/servcstg/qtc/%b';
+send device type 'sbt_tape' 'OB2BARHOSTNAME=fih5ex1dbadm01-bck.emea.nsn-net.net';
+SET UNTIL TIME "to_date ( '14-FEB-2020 08:24:00', 'DD-MON-YYYY HH24:MI:SS')";
+restore tablespace OCT_ODS_QTC_DATA,SYSTEM,SYSAUX,USERS,UNDOTBS1,UNDOTBS2;
+switch datafile all;
+recover tablespace OCT_ODS_QTC_DATA,SYSTEM,SYSAUX,USERS,UNDOTBS1,UNDOTBS2;
+switch datafile all;
+}
+
+******************************************************************************************
+
+
+
+Full Rman 
+***************
+
+RUN
+{
+configure controlfile autobackup on;
+ALLOCATE CHANNEL c1 DEVICE TYPE disk;
+ALLOCATE CHANNEL c2 DEVICE TYPE disk;
+ALLOCATE CHANNEL c3 DEVICE TYPE disk;
+ALLOCATE CHANNEL c4 DEVICE TYPE disk;
+backup AS COMPRESSED BACKUPSET incremental level 0 database tag DEQUOTE_FULL format '/PRD1/DBbackup/Rman_full_dequote/%d_%T_%s_%p_FULL';
+sql 'alter system archive log current';
+backup tag DEQUOTE_ARCHIVE format '/PRD1/DBbackup/Rman_full_dequote/%d_%T_%s_%p_ARCHIVE' archivelog all delete all input;
+backup tag DEQUOTE_CONTROL current controlfile format '/PRD1/DBbackup/Rman_full_dequote/%d_%T_%s_%p_CONTROL';
+release channel c1;
+release channel c2;
+release channel c3;
+release channel c4;
+}
+
+
+****************************************************
+
+
+
+
+
+
+nohup rman target / cmdfile=RMAN_SCSTGDB_Inc1.rcv>>RMAN_SCSTGDB_Inc25_FEB_2020.log &
+
+expdp
+*************
+
+How to check Export/Import data pump job status
+*********************************************************
+
+set line 190
+col OWNER_NAME for a30
+col JOB_NAME for a30
+col OPERATION for a20
+col JOB_MODE for a20
+select OWNER_NAME,JOB_NAME,OPERATION,JOB_MODE,STATE from dba_datapump_jobs;
+
+
+select to_char(sysdate,'YYYY-MM-DD HH24:MI:SS') "DATE", s.program, s.sid,
+s.status, s.username, d.job_name, p.spid, s.serial#, p.pid
+from v$session s, v$process p, dba_datapump_sessions d
+where p.addr=s.paddr and s.saddr=d.saddr;
+
+
+
+
+To check the waiting status and wait event of the job waiting for:
+*************************************************************************
+SELECT   w.sid, w.event, w.seconds_in_wait
+   FROM   V$SESSION s, DBA_DATAPUMP_SESSIONS d, V$SESSION_WAIT w
+    WHERE   s.saddr = d.saddr AND s.sid = w.sid;
+
+
+col OPNAME for a28
+select OPNAME,SOFAR/TOTALWORK*100 PCT, trunc(TIME_REMAINING/60) MIN_REMAINING,
+trunc(ELAPSED_SECONDS/60) MIN_ELAPSED
+from v$session_longops where TOTALWORK>0 and OPNAME like '%RMAN%' order by 2;
+
+
+
+
+To get the detail information like SID, Serial#, and % of completion:
+*************************************************************************
+
+SELECT 
+OPNAME, 
+SID, 
+SERIAL#, 
+CONTEXT, 
+SOFAR, 
+TOTALWORK,
+    ROUND(SOFAR/TOTALWORK*100,2) "%_COMPLETE"
+FROM 
+V$SESSION_LONGOPS
+WHERE 
+OPNAME in
+(
+select 
+d.job_name
+from 
+v$session s, 
+v$process p, 
+dba_datapump_sessions d
+where 
+p.addr=s.paddr 
+and 
+s.saddr=d.saddr
+)
+AND 
+OPNAME NOT LIKE '%aggregate%'
+AND 
+TOTALWORK != 0
+AND 
+SOFAR <> TOTALWORK;
+
+
+
+To check event event and wait class for a particular SID:
+**************************************************************
+
+select COMMAND,STATE,WAIT_CLASS,EVENT,SECONDS_IN_WAIT from v$session where sid=634 and SERIAL#=41137;
+
+
+
+To monitor and perform various operations from the expdp/impdp prompt:
+**********************************************************************
+
+[oracle@orahow ~]$ expdp attach=Job_name
+expdp / as sysdba attach=job_name
+export>status
+export>stop_job
+export>start_jop
+export>kill_job
+
+
+
+To check the orphaned datapump jobs. For orphaned jobs the state will be NOT RUNNING.
+**************************************************************************************
+
+SET lines 140
+COL owner_name FORMAT a10;
+COL job_name FORMAT a20
+COL state FORMAT a12 
+COL operation LIKE owner_name
+COL job_mode LIKE owner_name
+SELECT owner_name, job_name, operation, job_mode,
+state, attached_sessions
+FROM dba_datapump_jobs;
+
+
+
+To check the alert log and query the DBA_RESUMABLE view.
+************************************************************
+
+select name, sql_text, error_msg from dba_resumable;
+
+To kill the datapump jobs:
+****************************
+
+alter system kill session 'SID,SERIAL#' immediate;
+
+rman_SERVCSTG_LOCAL_DISK_L0.rcv
+rman_SERVCSTG_FRATOTAPE_backup_Team.rcv
+
+nohup rman target / @recoverPDB23oct.rcv >> RecoverPDB23oct.log &
+
+
+
+
+
+
+
+
+

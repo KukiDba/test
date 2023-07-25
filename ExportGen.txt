@@ -1,0 +1,212 @@
+oracle@st-db102 50% more /home/oracle/local/bin/ExportGen
+#!/usr/bin/perl
+#*----------------------------------------------------------------*
+#*------       Statoil  Den norske stats oljeselskap        ------*
+#*------                   Statoil data                     ------*
+#*----------------------------------------------------------------*
+# Applications ...: Oracle
+# File name.......: ExportGen
+# Language .......: perl
+# Created by .....: Helge Kristiansen 
+# Created date ...: 15/12-03
+# SCCS info..: @(#)ExportGen.prg        1.9
+# SCCS update: 07/01/06 %
+#
+#
+# PURPOSE:
+#
+#   Scheduler export of databases.
+#   For test databases:
+#       Export on monday,wednesday and friday with a=60d
+#   For prod databases:
+#       Export on saturday: 1st saturday in each month a=5y
+#                           else                       a=1y
+#                           1st saturday in january    a=15y
+#   
+#   
+#   
+#
+# MODIFICATION HISTORY:
+#
+#       Version Date        Sign  Description
+#       1.0     01/01-04    Hekr   New Script
+#*----------------------------------------------------------------*
+#
+#-----------------------------------------------------------------#
+#
+use Time::Local;
+$Sunday = 0; $Monday = 1; $Tuesday = 2; $Wednesday = 3; $Thursday = 4; $Friday = 5; $Saturday = 6;
+#
+$Medium = $ARGV[0] if $ARGV[0];
+$Medium = '' if $Medium !~ /adsm|disk/;
+chdir();
+chop($cwd = `pwd`);
+$LocalBin = "$cwd/local/bin";
+push(@INC,$LocalBin);
+&parmInclude;
+#
+#
+#  Find time
+#
+($sec,$min,$hour,$day,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+$sec = 0;
+$NowSec = timelocal($sec,$min,$hour,$day,$mon,$year);
+$year = $year + 1900;
+$mon++;
+$FirstThisMonth = sprintf("%04d%02d01", $year,$mon);
+$In4year = sprintf("%04d%02d%02d",$year+4,$mon,$day);
+$Today   = sprintf("%02d.%02d.%04d",$day,$mon,$year);
+
+# open file for export command log
+#
+  open(EXPCMD, "> /home/oracle/local/log/ExportGen_$Today.log");
+
+#
+#  Read ORATAB
+#
+
+   open(ORATAB, "$oraTab") || die("Couldn't open file $oraTab");
+   while ( <ORATAB> ) {
+     chop;
+     next if /^#/;
+     ($oraSID,$sidHome,$auto,$pkg) = split(/:/);
+     next if ($auto !~ /Y/);
+     next if ( ! -e "$sidHome");
+     next if ( ! &setEnv);
+     next if (&expExclude($oraSID));
+     $status = &GetStatus($oraSID);
+     next if (! $status);                                   # Sid not in orasids
+     if ($status eq 'P') {
+       push @prod, $oraSID; 
+     }
+     else                       
+     {
+       push @test,  $oraSID;
+     }
+   }
+   &ProdExport if defined @prod;
+   &TestExport if defined @test;
+
+  close(EXPCMD);
+#
+#
+sub ProdExport { 
+  return if ($wday != $Saturday);    # Only export on saturdays 
+  $a = "a=1y";
+  $a = "a=5y" if $day <= 7;                  # First saturday in each month use 5y
+  $a = "a=15y" if ($mon == 1 && $day <= 7);   #  First weekend in Januar #
+  $a = "a=0"   if $Medium eq 'disk';           #  Export to disk 
+  foreach $oraSID (@prod) {
+      if ($a eq  "a=1y") {
+#
+#     See if  this sid has a 5year export this month 
+#
+        $query = qq{SELECT * FROM BACKUP_INFO 
+                    WHERE SID = '$oraSID' 
+                    AND   BACKUP_TYPE = 'EXP'
+                    AND   BACKUP_STATUS = 'OK'
+                    AND   to_char(BACKUP_COMPLETE,'yyyymmdd') >= '$FirstThisMonth'  
+                    AND   to_char(BACKUP_EXPIRE,'yyyymmdd') > '$In4year';};
+        @sqlArr = ();
+        &sqlSelectCommand($AdmUser,$AdmPass,$AdmDb, $query);
+        $a = "a=5y" if ! @sqlArr;  # No 5years export found so run 5y now
+      }
+      &setEnv;                                     # setEnv to get correct $oraDBA 
+      $ExportCmd = "$LocalBin/osexport $a $oraSID > $oraDBA/$oraSID/log/ExportGen.log 2>&1";
+      printf(EXPCMD "$ExportCmd\n");
+      system("$ExportCmd"); 
+  }
+}
+
+sub TestExport {
+  #
+  #   Export only on  wednesday  
+  #
+  return unless $wday == $Wednesday; 
+  $a = "a=60d";
+  $a = "a=0"   if $Medium eq 'disk';           #  Export to disk
+  $ExportCmd = "$LocalBin/osexport $a";
+#
+# Run MaxConCurrentExp in parallell
+#
+  $exports = 0;
+  for (@test) {
+     while ($exports >=  $MaxConcurrentExp) {
+#
+#    wait 30 sec and check how many exports are running
+#
+         sleep 30;
+         open(PS, "ps -ef|grep bin/osexport|grep -v grep|grep -v sh|");
+         @running =  <PS>;
+         close(PS);
+         $exports  =  @running;
+     }        
+     $exports++;
+     unless (fork) {
+       exec("$ExportCmd $_ "); 
+     }
+  }          
+}    
+
+
+sub setEnv {
+#-----------------------------------------------------------------#
+#   Setter environment for en Oracle database (SID)               #
+
+        if ( &change_ENV ) {
+                $oraHOME        = $ENV{"ORACLE_HOME"};
+                $oraBASE        = $ENV{"ORACLE_BASE"};
+                $oraDBA         = $ENV{"ORACLE_DBA"};
+                return 1;
+        }
+        else {
+                return 0;
+        }
+}
+sub parmInclude {
+        require 'sqlplus.pl';
+        require 'parminc.pl';
+        require 'pdbaenv.pl';
+}
+sub errRpt {
+        for (@sqlErrArr){
+                print "$_\n";
+        }
+        return(0);
+}
+
+sub GetStatus  {
+#-----------------------------------------------------------------#
+#   Henter ut status info fra orasids 
+      local $dbid = shift;
+
+       $ENV{'TWO_TASK'} = $masterDb;
+       chop($dbValues = `orasids -r $dbid`);
+       if (  $? != 0) {
+           return 0;
+       }
+      delete $ENV{'TWO_TASK'};
+      ($status) = ($dbValues =~ /.+status=(\S)/);
+      return $status;
+}
+###############################################################################################
+#
+#   This subroutine check with the AdminDB to find out if this SID should be excluded from export
+#
+##################################################################################################
+sub  expExclude {
+     local ($SID) = shift;
+     return 0 if ( ! $masterDb);
+     $query = qq{
+                select BACKUP_EXCLUDE_EXPORT
+                from SID
+                where SID = '$SID';
+                };
+    @sqlArr = ();
+    &sqlSelectCommand($AdmUser,$AdmPass,$AdmDb,$query);
+    return 0 if ($#sqlErrArr > -1);
+    return 1 if (grep(/Y/i,@sqlArr));
+    return 0;
+
+}
+ 

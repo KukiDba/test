@@ -1,0 +1,16 @@
+col owner for a20
+set line 200
+col segment_name for a40
+col SizeMBS for 999999.99
+col wastedMBS for 999999.99
+select      ds.owner, 
+      ds.segment_name, 
+      round(ds.bytes/1024/1024,0) SIZE_IN_MB, 
+      round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) WASTED_IN_MB
+from dba_segments ds, dba_tables dt
+where       ds.owner=dt.owner 
+and   ds.segment_name = dt.table_name 
+and   ds.segment_type='TABLE' 
+group by ds.owner, ds.segment_name, round(ds.bytes/1024/1024,0) ,round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0)
+having      round(bytes/1024/1024,0) >500
+order by round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) desc ; 

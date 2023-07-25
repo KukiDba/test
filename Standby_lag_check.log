@@ -1,0 +1,82 @@
+
+[oracle@fih3ex1dbadm01 trace]$ crontab -l
+00,30 * * * * /home/oracle/scripts/lag_monitor.sh
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$
+[oracle@fih3ex1dbadm01 trace]$ cat /home/oracle/scripts/lag_monitor.sh
+#!/bin/sh
+
+ORACLE_SID=SCSTGDG1
+ORACLE_BASE=/u01/app/oracle
+ORACLE_HOME=/u01/app/oracle/product/11.2.0.4/dbhome_1
+
+
+LD_LIBRARY_PATH=$ORACLE_HOME/lib
+PATH=$ORACLE_HOME/bin:$PATH
+export ORACLE_SID ORACLE_BASE ORACLE_HOME PATH LD_LIBRARY_PATH
+
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba" @/home/oracle/scripts/lag_command.sql >/home/oracle/scripts/lag_command.log
+Arch_Diff_thread1=`cat /home/oracle/scripts/lag_command.log |awk '{print $4}' |tail -5 | head -1`
+Arch_Diff_thread2=`cat /home/oracle/scripts/lag_command.log |awk '{print $4}' |tail -3 | head -1`
+
+if [ $Arch_Diff_thread1 -gt 2 -o $Arch_Diff_thread2 -gt 2 ] ;then
+
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba" <<EOF
+spool /home/oracle/scripts/standby_lag.html
+@/home/oracle/scripts/lag_command2.sql
+spool off
+exit
+
+EOF
+
+cat /home/oracle/scripts/standby_lag.html | smtp="mailrelay.int.nokia.com:25" mailx -s "Lag at SCSTGDG1 fih3ex1dbadm01" -r EC-Nokia-DBA@groups.nokia.com EC-Nokia-DBA@groups.nokia.com
+
+cat /home/oracle/scripts/lag_output.log
+
+fi
+
+
+******************************************************************
+
+
+
+[oracle@fih3ex1dbadm01 trace]$ cat /home/oracle/scripts/lag_command2.sql
+SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last_in_Sequence", APPL.SEQUENCE# "Last_Applied_Sequence", (ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference"
+FROM
+(SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH,
+(SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL
+WHERE
+ARCH.THREAD# = APPL.THREAD#
+ORDER BY 1;
+
+
+*************************************************************************
+
+
+MRP
+******************
+
+SELECT PROCESS, DELAY_MINS FROM V$MANAGED_STANDBY WHERE PROCESS like 'MRP%';
+
+select max(sequence#) from v$archived_log where applied='YES';
+
+select process,status,sequence# from v$managed_standby;
+
+nohup rman target / cmdfile=RMAN_SCSTGDB_Inc1.rcv>>RMAN_SCSTGDB_Inc_12JUL_2020.log &
+
+RMAN_SCSTGDB_Inc1.rcv
+
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;     stop mrp
+
+alter database recover managed standby database disconnect using current logfile;   strt mrp
+
+
+
+
+https://oracledbwr.com/step-by-step-oracle-11gr2-rac-standby-database-switchover/
+
+
+
+**********************************************************************************
+
+

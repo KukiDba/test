@@ -1,0 +1,17 @@
+SYS at P010RMAN >select db_key, dbid, name from rman.rc_database where dbid = 2644983854;
+
+    DB_KEY       DBID NAME
+---------- ---------- --------
+ 227460185 2644983854 P275
+
+
+
+RMAN at P010RMAN >execute dbms_rcvcat.unregisterdatabase(227460185, 2644983854);
+
+PL/SQL procedure successfully completed.
+
+
+
+
+execute dbms_rcvcat.unregisterdatabase(DBKEY, DBID);
+

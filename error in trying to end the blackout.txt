@@ -1,0 +1,51 @@
+
+
+http://newappsdba.blogspot.com/2009/11/setting-em-blackouts-from-gui-and.html
+=======================================================================================
+
+
+When trying to end the blackout via Enterprise Manager:
+
+
+Error stopping the blackout on "infra10g": ORA-20710: Agent-side blackouts cannot be edited or stopped ORA-06512: at "SYSMAN.MGMT_BLACKOUT_ENGINE", line 501 ORA-06512: at "SYSMAN.MGMT_BLACKOUT_ENGINE", line 3262 ORA-06512: at "SYSMAN.MGMT_BLACKOUT", line 74 ORA-06512: at "SYSMAN.MGMT_BLACKOUT_UI", line 1167 ORA-06512: at line 1 .
+
+
+
+To fix this problem I performed the following:
+1. Shutdown the agent on the target server myserver 
+2. Removed the blackouts.xml file under $AGENT_HOME/sysman/emd 
+3. Used note 421053.1 to install the EMDiag kit 
+4. Logged in as sysman on the Enterprise Managers repository database and executed the following query:
+
+
+select blackout_guid, blackout_name from sysman.mgmt_blackouts;
+
+
+set line 300
+set pages 100
+col BLACKOUT_NAME for a50
+col blackout_desc for a100
+select BLACKOUT_GUID, BLACKOUT_NAME, BLACKOUT_DESC from sysman.mgmt_blackouts order by SCHEDULED_TIME desc;
+
+
+
+
+BLACKOUT_GUID                    BLACKOUT_NAME 
+-------------------------------- ---------------------- 
+30E2956CA329F0E59FBDF50951F2578E alltargets-myserver
+
+
+
+5. Then executed: 
+
+exec sysman.mgmt_diag.KillBlackout(HEXTORAW('568F2B16A8BD99D932C6488E7BD3DBD9')); 
+
+6. Restarted the agent on myserver and when I looked in Enterprise manager the blackout had cleared. 
+
+
+emcli stop_blackout -name="Testing RAC"
+
+emcli delete_blackout -name="Testing RAC" 
+
+
+

@@ -1,0 +1,19 @@
+SELECT DISTINCT TARGET_TYPE FROM MGMT_TARGETS
+
+SELECT TARGET_NAME FROM SYSMAN.MGMT_TARGETS WHERE TARGET_TYPE LIKE '%oracle_database%';
+
+
+
+
+CREATE PUBLIC DATABASE LINK OEM
+ CONNECT TO SYSMAN
+ IDENTIFIED BY pw12Cl0ud
+ USING 'p010oem.statoil.no';
+
+
+
+
+col target_name for a40
+col target_type for a20
+col metric_name for a20
+col value for a50

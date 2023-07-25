@@ -1,0 +1,216 @@
+Configuration of DG_BROKER
+============================
+
+On Standby
+==============
+
+show parameter broker
+
+alter system set dg_broker_config_file1='/prog67/oracle/admin/T372_S/pfile/dr1T372_S.dat' scope=both;
+
+alter system set dg_broker_config_file2='/prog67/oracle/admin/T372_S/pfile/dr2T372_S.dat' scope=both;
+
+alter system set dg_broker_start=true scope=both;
+
+show parameter broker
+
+================================================================================================================
+================================================================================================================
+
+On Primary
+==============
+
+show parameter broker
+
+alter system set dg_broker_config_file1='/prog/oracle/admin/T372_P/pfile/dr1T372_P.dat' scope=both;
+
+alter system set dg_broker_config_file2='/prog/oracle/admin/T372_P/pfile/dr2T372_P.dat' scope=both;
+
+alter system set dg_broker_start=true scope=both;
+
+show parameter broker
+
+
+*****************************************************************************************************************
+=================================================================================================================
+If dg_broker_start=true and trying to change dg_broker configuration file it will throw below error :
+
+SYS at HOU4EGL >
+SYS at HOU4EGL >alter system set dg_broker_config_file2='/prog61/oracle/admin/T372_P/pfile/dr2HOU4EGL.dat' scope=both;
+alter system set dg_broker_config_file2='/prog61/oracle/admin/T372_P/pfile/dr2HOU4EGL.dat' scope=both
+*
+ERROR at line 1:
+ORA-02097: parameter cannot be modified because specified value is invalid
+ORA-16573: attempt to change or access configuration file for an enabled broker
+configuration
+=================================================================================================================
+*****************************************************************************************************************
+
+On Primary
+===========
+
+sid HOU4EGL
+
+orasids -r HOU4EGL
+
+dgmgrl
+
+connect sys/XXXXXXXXX
+
+CREATE CONFIGURATION 'DG_CONFIG' AS PRIMARY DATABASE IS 'T372_P' CONNECT IDENTIFIER IS 'T372_P';
+
+DGMGRL> CREATE CONFIGURATION 'DG_Config' AS PRIMARY DATABASE IS 'HOU4EGL' CONNECT IDENTIFIER IS 'HOU4EGL';
+Configuration "DG_Config" created with primary database "HOU4EGL"
+
+
+*******************************************************************************************************************
+===================================================================================================================
+DGMGRL> CREATE CONFIGURATION 'DG_Config' AS PRIMARY DATABASE IS 'HOU4EGL' CONNECT IDENTIFIER IS 'HOU4EGL';
+Error: ORA-16504: the Data Guard configuration already exists
+
+Failed.
+===================================================================================================================
+*******************************************************************************************************************
+
+DGMGRL> show configuration verbose
+
+Configuration - DG_Config
+
+  Protection Mode: MaxPerformance
+  Databases:
+    HOU4EGL   - Primary database
+    T372_S - Physical standby database
+      Error: ORA-16766: Redo Apply is stopped
+
+  Properties:
+    FastStartFailoverThreshold      = '30'
+    OperationTimeout                = '30'
+    FastStartFailoverLagLimit       = '30'
+    CommunicationTimeout            = '180'
+    FastStartFailoverAutoReinstate  = 'TRUE'
+    FastStartFailoverPmyShutdown    = 'TRUE'
+    BystandersFollowRoleChange      = 'ALL'
+
+Fast-Start Failover: DISABLED
+
+Configuration Status:
+ERROR
+
+
+DGMGRL> add database 'T372_S' as connect identifier is 'T372_S';
+Database "T372_S" added
+
+
+Here configuration status is showing disabled, we have to enable it.
+
+DGMGRL> ENABLE CONFIGURATION;                ---- takes some time
+Enabled.
+
+DGMGRL> show configuration verbose
+
+Configuration - DG_Config
+
+  Protection Mode: MaxPerformance
+  Databases:
+    HOU4RTS   - Primary database
+    HOU4RTS_S - Physical standby database
+
+  Properties:
+    FastStartFailoverThreshold      = '30'
+    OperationTimeout                = '30'
+    FastStartFailoverLagLimit       = '30'
+    CommunicationTimeout            = '180'
+    FastStartFailoverAutoReinstate  = 'TRUE'
+    FastStartFailoverPmyShutdown    = 'TRUE'
+    BystandersFollowRoleChange      = 'ALL'
+
+Fast-Start Failover: DISABLED
+
+Configuration Status:
+SUCCESS
+
+
+alter database recover managed standby database using current logfile disconnect;
+
+=======================================================================================================
+
+
+How to disable dg_broker
+*************************
+
+
+On Standby
+==============
+
+alter system set dg_broker_start=FALSE;
+
+set line 200
+col name for a30
+col value for a80
+select name , value from v$parameter where name like '%dg_broker%';
+
+
+On Primary
+==============
+
+alter system set dg_broker_start=FALSE;
+
+set line 200
+col name for a30
+col value for a80
+select name , value from v$parameter where name like '%dg_broker%';
+
+
+
+On Primary
+==============
+
+DGMGRL> connect sys/password
+
+DGMGRL> remove database T372_S;
+
+DGMGRL> remove database HOU4EGL;
+
+DGMGRL> disable configuration;
+
+DGMGRL> remove configuration;
+
+
+If error in dg broker configuration then use below command
+
+DGMGRL> show database 'HOU4EGL' InconsistentProperties;
+
+DGMGRL> show database 'T372_S' InconsistentProperties; 
+
+EDIT DATABASE 'HOU4EGL' SET PROPERTY 'ArchiveLagTarget'=1800;
+
+=======================================================================================================
+
+show database standby statusreport;
+
+ORA-16714: the value of property LogArchiveMaxProcesses is inconsistent with the database setting
+ 
+standby WARNING 
+ORA-16714: the value of property LogArchiveMinSucceedDest is inconsistent with the database setting
+
+
+SQL> alter system set log_archive_max_processes=4 scope=both;
+
+System altered.
+
+SQL> alter system set archive_lag_target=0 scope=both;
+
+System altered.
+
+SQL> alter system set log_archive_min_succeed_dest=1 scope=both;
+
+
+
+show database 'T372_S' InconsistentProperties;
+
+
+
+
+
+
+

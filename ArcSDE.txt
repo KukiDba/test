@@ -1,0 +1,78 @@
+
+set line 300
+set pages 200
+col filespec for a80
+col agent for a20
+col LEAF_FILENAME for a60
+select * from sys.library$;
+    
+
+
+update sys.library$ set FILESPEC='/prog/arcsde/lib/libst_shapelib.so' where OBJ#='14151';
+                          
+
+CREATE OR REPLACE LIBRARY SDE.ST_SHAPELIB IS '/prog/arcsde/sdeexe/lib/libst_shapelib.so';
+/
+
+
+/dbprog/arcsde/arcsde_ora12c_64bit/lib/libst_shapelib.so
+
+select sde.ST_AsText(SDE.ST_Geometry('POINT (10 10)', 0)) from dual;
+
+SELECT XMLTYPE(XMLELEMENT("A", XMLELEMENT ("B",'š')).getclobval()).GETCLOBVAL() FROM sys.dual;
+
+
+GRANT INHERIT PRIVILEGES ON USER sys to sde; 
+
+
+
+
+
+
+
+**********************************************************************************
+
+
+
+
+
+SYS at T229ASIA >select sde.ST_AsText(SDE.ST_Geometry('POINT (10 10)', 0)) from dual;
+select sde.ST_AsText(SDE.ST_Geometry('POINT (10 10)', 0)) from dual
+       *
+ERROR at line 1:
+ORA-00904: "SDE"."ST_ASTEXT": invalid identifier
+
+
+SYS at T229ASIA >
+SYS at T229ASIA >exit
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning option
+oracle@st-vtdb17 257%
+oracle@st-vtdb17 257%
+oracle@st-vtdb17 257% sid T238MAS
+/dbprog/oracle/admin/T238MAS
+oracle@st-vtdb17 258%
+oracle@st-vtdb17 258%
+oracle@st-vtdb17 258% sqldba
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Jun 1 02:21:17 2017
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning option
+
+SYS at T238MAS >
+SYS at T238MAS >select sde.ST_AsText(SDE.ST_Geometry('POINT (10 10)', 0)) from dual;
+
+SDE.ST_ASTEXT(SDE.ST_GEOMETRY('POINT(1010)',0))
+--------------------------------------------------------------------------------
+POINT  ( 10.00000000 10.00000000)
+
+SYS at T238MAS >
+SYS at T238MAS >
+ 
+
+

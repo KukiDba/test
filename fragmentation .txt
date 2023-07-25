@@ -1,0 +1,874 @@
+
+
+https://orahow.com/how-to-find-and-remove-table-fragmentation-in-oracle-database/
+login as: oracle
+oracle@esdbsq60.emea.nsn-net.net's password:
+Last login: Tue Jan 14 12:30:55 2020 from fihel1d-pulsemgate-int-fw01.emea.nsn-net.net
+
+The list of instances on this node is shown.
+Choose a database by sid N at prompt
+For example, $ sid 1
+
+ORACLE_SID
+1.  FPQA
+2.  FPDEV
+3.  FPDR
+
+-------------------------------------------------
+USER         = oracle
+GROUP        = oinstall dba oper
+MACHINE      = esdbsq60.emea.nsn-net.net
+ORACLE_SID   =
+ORACLE_HOME  =
+-------------------------------------------------
+$
+$
+$
+$
+$ . oraenv
+ORACLE_SID = [oracle] ? FPDEV
+The Oracle base has been changed from /u01/app/oracle to /u06/app/oracle
+$
+$
+$
+$
+$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Jan 14 13:04:52 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL>
+SQL> select username from dba_users;
+
+USERNAME
+------------------------------
+FOCALPOINT
+STRM_ADMIN
+STRMUSER
+MRDWETL
+AUDIT_READ
+IMPPI
+EXPO
+TEMP
+OPS$EEMON
+FNMUSER
+READ
+
+USERNAME
+------------------------------
+TARGETDBA
+EEMON
+FIREWALLTEST
+MGMT_VIEW
+FLEXERA
+SANGAM
+ORACLE_OCM
+XS$NULL
+MDDATA
+DIP
+SPATIAL_CSW_ADMIN_USR
+
+USERNAME
+------------------------------
+SPATIAL_WFS_ADMIN_USR
+DBSNMP
+OVOSPI
+SLORACLERO
+HPDBA
+MDSYS
+ORDSYS
+EXFSYS
+WMSYS
+APPQOSSYS
+ORDDATA
+
+USERNAME
+------------------------------
+ANONYMOUS
+XDB
+ORDPLUGINS
+SI_INFORMTN_SCHEMA
+OLAPSYS
+SYS
+SYSTEM
+OUTLN
+
+41 rows selected.
+
+ select
+ table_name,round((blocks*8),2) "size (kb)" ,
+   round((num_rows*avg_row_len/1024),2) "actual_data (kb)",
+   (round((blocks*8),2) - round((num_rows*avg_row_len/1024),2)) "wasted_space (kb)"
+from
+   dba_tables
+where  owner='FOCALPOINT'
+   (round((blocks*8),2) > round((num_rows*avg_row_len/1024),2))
+order by 4 desc;  3    4    5    6    7    8    9
+   (round((blocks*8),2) > round((num_rows*avg_row_len/1024),2))
+   *
+ERROR at line 8:
+ORA-00933: SQL command not properly ended
+
+
+
+col owner for a20
+set line 200
+col segment_name for a40
+col SizeMBS for 999999.99
+col wastedMBS for 999999.99
+select      ds.owner,
+ds.segment_name,
+round(ds.bytes/1024/1024,0) SIZE_IN_MB,
+round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) WASTED_IN_MB
+from dba_segments ds, dba_tables dt
+where       ds.owner=dt.owner
+and   ds.segment_name = dt.table_name
+and   ds.segment_type='TABLE'
+group by ds.owner, ds.segment_name, round(ds.bytes/1024/1024,0) ,round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0)
+having      round(bytes/1024/1024,0) >500
+order by round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) desc;
+
+
+OWNER                SEGMENT_NAME                             SIZE_IN_MB WASTED_IN_MB
+-------------------- ---------------------------------------- ---------- ------------
+FOCALPOINT           HISTORY1274                                    1152
+FOCALPOINT           FORMULADEPENDSON                               2176          518
+FOCALPOINT           FORMULA38                                       752          226
+FOCALPOINT           FORMULA46                                       936          197
+FOCALPOINT           HISTORY38                                       504          164
+FOCALPOINT           HISTORY334                                      656          141
+FOCALPOINT           FORMULA334                                      784          138
+
+7 rows selected.
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+you have mail in /var/spool/mail/oracle
+$
+$ ps -ef|grep pmon
+oracle    7146     1  0  2019 ?        00:23:07 ora_pmon_FPDR
+oracle   19310 14807  0 14:20 pts/3    00:00:00 grep pmon
+oracle   23517     1  0  2019 ?        01:09:54 ora_pmon_FPQA
+oracle   23670     1  0  2019 ?        01:08:13 ora_pmon_FPDEV
+$
+$
+$ . oraenv
+ORACLE_SID = [FPDEV] ? FPQA
+The Oracle base remains unchanged with value /u06/app/oracle
+$
+$
+$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Jan 14 14:20:56 2020
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL>
+SQL>
+
+col owner for a20
+set line 200
+segment_name for a40
+col SizeMBS for 999999.99
+col wastedMBS for 999999.99
+select      ds.owner,
+      ds.segment_name,
+      round(ds.bytes/1024/1024,0) SIZE_IN_MB,
+      round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) WASTED_IN_MB
+from dba_segments ds, dba_tables dt
+where       ds.owner=dt.owner
+ and   ds.segment_name = dt.table_name
+and   ds.segment_type='TABLE'
+group by ds.owner, ds.segment_name, round(ds.bytes/1024/1024,0) ,round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0)
+having round(bytes/1024/1024,0) >500
+order by round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) 
+  
+
+
+
+OWNER                SEGMENT_NAME                             SIZE_IN_MB WASTED_IN_MB
+-------------------- ---------------------------------------- ---------- ------------
+PERFSTAT             STATS$SQL_SUMMARY                              6589
+FOCALPOINT           FORMULA38                                       776          665
+FOCALPOINT           FORMULADEPENDSON                               2309          507
+FOCALPOINT           FORMULA46                                       944          447
+FOCALPOINT           FORMULA334                                      785          181
+FOCALPOINT           USERLOG                                         527          111
+FOCALPOINT           HISTORY334                                      672           25
+FOCALPOINT           HISTORY38                                       536          -24
+FOCALPOINT           HISTORY1274                                     720         -239
+
+9 rows selected.
+
+SQL> SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+
+SQL> SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> desc dba_indexes
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ OWNER                                                                                                             NOT NULL VARCHAR2(30)
+ INDEX_NAME                                                                                                        NOT NULL VARCHAR2(30)
+ INDEX_TYPE                                                                                                                 VARCHAR2(27)
+ TABLE_OWNER                                                                                                       NOT NULL VARCHAR2(30)
+ TABLE_NAME                                                                                                        NOT NULL VARCHAR2(30)
+ TABLE_TYPE                                                                                                                 VARCHAR2(11)
+ UNIQUENESS                                                                                                                 VARCHAR2(9)
+ COMPRESSION                                                                                                                VARCHAR2(8)
+ PREFIX_LENGTH                                                                                                              NUMBER
+ TABLESPACE_NAME                                                                                                            VARCHAR2(30)
+ INI_TRANS                                                                                                                  NUMBER
+ MAX_TRANS                                                                                                                  NUMBER
+ INITIAL_EXTENT                                                                                                             NUMBER
+ NEXT_EXTENT                                                                                                                NUMBER
+ MIN_EXTENTS                                                                                                                NUMBER
+ MAX_EXTENTS                                                                                                                NUMBER
+ PCT_INCREASE                                                                                                               NUMBER
+ PCT_THRESHOLD                                                                                                              NUMBER
+ INCLUDE_COLUMN                                                                                                             NUMBER
+ FREELISTS                                                                                                                  NUMBER
+ FREELIST_GROUPS                                                                                                            NUMBER
+ PCT_FREE                                                                                                                   NUMBER
+ LOGGING                                                                                                                    VARCHAR2(3)
+ BLEVEL                                                                                                                     NUMBER
+ LEAF_BLOCKS                                                                                                                NUMBER
+ DISTINCT_KEYS                                                                                                              NUMBER
+ AVG_LEAF_BLOCKS_PER_KEY                                                                                                    NUMBER
+ AVG_DATA_BLOCKS_PER_KEY                                                                                                    NUMBER
+ CLUSTERING_FACTOR                                                                                                          NUMBER
+ STATUS                                                                                                                     VARCHAR2(8)
+ NUM_ROWS                                                                                                                   NUMBER
+ SAMPLE_SIZE                                                                                                                NUMBER
+ LAST_ANALYZED                                                                                                              DATE
+ DEGREE                                                                                                                     VARCHAR2(40)
+ INSTANCES                                                                                                                  VARCHAR2(40)
+ PARTITIONED                                                                                                                VARCHAR2(3)
+ TEMPORARY                                                                                                                  VARCHAR2(1)
+ GENERATED                                                                                                                  VARCHAR2(1)
+ SECONDARY                                                                                                                  VARCHAR2(1)
+ BUFFER_POOL                                                                                                                VARCHAR2(7)
+ FLASH_CACHE                                                                                                                VARCHAR2(7)
+ CELL_FLASH_CACHE                                                                                                           VARCHAR2(7)
+ USER_STATS                                                                                                                 VARCHAR2(3)
+ DURATION                                                                                                                   VARCHAR2(15)
+ PCT_DIRECT_ACCESS                                                                                                          NUMBER
+ ITYP_OWNER                                                                                                                 VARCHAR2(30)
+ ITYP_NAME                                                                                                                  VARCHAR2(30)
+ PARAMETERS                                                                                                                 VARCHAR2(1000)
+ GLOBAL_STATS                                                                                                               VARCHAR2(3)
+ DOMIDX_STATUS                                                                                                              VARCHAR2(12)
+ DOMIDX_OPSTATUS                                                                                                            VARCHAR2(6)
+ FUNCIDX_STATUS                                                                                                             VARCHAR2(8)
+ JOIN_INDEX                                                                                                                 VARCHAR2(3)
+ IOT_REDUNDANT_PKEY_ELIM                                                                                                    VARCHAR2(3)
+ DROPPED                                                                                                                    VARCHAR2(3)
+ VISIBILITY                                                                                                                 VARCHAR2(9)
+ DOMIDX_MANAGEMENT                                                                                                          VARCHAR2(14)
+ SEGMENT_CREATED                                                                                                            VARCHAR2(3)
+
+SQL> select OWNER,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where ^C
+
+SQL>
+SQL>
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     VALID
+
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='&TABLE_NAME';
+Enter value for table_name: FORMULADEPENDSON
+old   1: select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='&TABLE_NAME'
+new   1: select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='FORMULADEPENDSON'
+
+no rows selected
+
+SQL>
+SQL>
+SQL> select sum(bytes)/1024/1024/1024 from dba_segments where segment_name='&TABLE_NAME';
+Enter value for table_name: FORMULADEPENDSON
+old   1: select sum(bytes)/1024/1024/1024 from dba_segments where segment_name='&TABLE_NAME'
+new   1: select sum(bytes)/1024/1024/1024 from dba_segments where segment_name='FORMULADEPENDSON'
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+               2.25488281
+
+select table_name,avg_row_len,round(((blocks*16/1024)),2)||'MB' "TOTAL_SIZE",
+round((num_rows*avg_row_len/1024/1024),2)||'Mb' "ACTUAL_SIZE",
+round(((blocks*16/1024)-(num_rows*avg_row_len/1024/1024)),2) ||'MB' "FRAGMENTED_SPACE",
+(round(((blocks*16/1024)-(num_rows*avg_row_len/1024/1024)),2)/round(((blocks*16/1024)),2))*100 "percentage"
+from all_tables WHERE table_name='&TABLE_NAME';
+
+
+Enter value for table_name: FORMULADEPENDSON
+old   5: from all_tables WHERE table_name='&TABLE_NAME'
+new   5: from all_tables WHERE table_name='FORMULADEPENDSON'
+
+TABLE_NAME                     AVG_ROW_LEN TOTAL_SIZE                                 ACTUAL_SIZE                                FRAGMENTED_SPACE                           percentage
+------------------------------ ----------- ------------------------------------------ ------------------------------------------ ------------------------------------------ ----------
+FORMULADEPENDSON                        42 4670.44MB                                  1801.89Mb                                  2868.55MB                                  61.4192667
+
+SQL> select index_name from dba_indexes where table_name='&TABLE_NAME';
+Enter value for table_name: FORMULADEPENDSON
+old   1: select index_name from dba_indexes where table_name='&TABLE_NAME'
+new   1: select index_name from dba_indexes where table_name='FORMULADEPENDSON'
+
+INDEX_NAME
+------------------------------
+FORMULADEPENDSON_IDX_F_ATTR
+FORMULADEPENDSON_IDX_ATTR
+FORMULADEPENDSON_IDX_PATH
+SYS_C00139742
+
+SQL> select name from v$database;
+
+NAME
+---------
+FPQA
+
+SQL>
+SQL> alter table FORMULADEPENDSON move;
+alter table FORMULADEPENDSON move
+*
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL>  alter table FOCALPOINT.FORMULADEPENDSON move;
+
+
+Table altered.
+
+SQL> SQL>
+SQL>
+SQL>
+
+ col "Tablespace" for a22
+ col "Used MB" for 99,999,999
+ col "Free MB" for 99,999,999
+ col "Total MB" for 99,999,999
+ select df.tablespace_name "Tablespace",
+ totalusedspace "Used MB",
+ (df.totalspace - tu.totalusedspace) "Free MB",
+ df.totalspace "Total MB",
+ round(100 * ( (df.totalspace - tu.totalusedspace)/ df.totalspace))"Pct. Free"
+from(select tablespace_name,
+ round(sum(bytes) / 1048576) TotalSpace
+ from dba_data_files
+ group by tablespace_name) df,
+ (select round(sum(bytes)/(1024*1024)) totalusedspace, tablespace_name
+ from dba_segments
+ group by tablespace_name) tu
+ where df.tablespace_name = tu.tablespace_name; 
+
+
+Tablespace                 Used MB     Free MB    Total MB  Pct. Free
+---------------------- ----------- ----------- ----------- ----------
+SYSAUX                      11,117       1,173      12,290         10
+UNDOTBS1                       159      23,581      23,740         99
+FPDW_1                           3       2,045       2,048        100
+UNDOTBS                          1          99         100         99
+SYSTEM                       1,500          80       1,580          5
+FP_DATA                     80,004      16,508      96,512         17
+LOGMNG                          59         965       1,024         94
+FP_INDEX                     9,231      12,835      22,066         58
+PERFSTAT                    12,068         632      12,700          5
+
+9 rows selected.
+
+SQL> desc dba_users;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ USERNAME                                                                                                          NOT NULL VARCHAR2(30)
+ USER_ID                                                                                                           NOT NULL NUMBER
+ PASSWORD                                                                                                                   VARCHAR2(30)
+ ACCOUNT_STATUS                                                                                                    NOT NULL VARCHAR2(32)
+ LOCK_DATE                                                                                                                  DATE
+ EXPIRY_DATE                                                                                                                DATE
+ DEFAULT_TABLESPACE                                                                                                NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                                                                                              NOT NULL VARCHAR2(30)
+ CREATED                                                                                                           NOT NULL DATE
+ PROFILE                                                                                                           NOT NULL VARCHAR2(30)
+ INITIAL_RSRC_CONSUMER_GROUP                                                                                                VARCHAR2(30)
+ EXTERNAL_NAME                                                                                                              VARCHAR2(4000)
+ PASSWORD_VERSIONS                                                                                                          VARCHAR2(8)
+ EDITIONS_ENABLED                                                                                                           VARCHAR2(1)
+ AUTHENTICATION_TYPE                                                                                                        VARCHAR2(8)
+
+SQL> select USERNAME,DEFAULT_TABLESPACE from dba_users order by USERNAME;
+
+USERNAME                       DEFAULT_TABLESPACE
+------------------------------ ------------------------------
+ANONYMOUS                      SYSAUX
+APPQOSSYS                      SYSAUX
+AUDIT_READ                     USERS
+DBSNMP                         SYSAUX
+DIP                            USERS
+EEMON                          USERS
+EXFSYS                         SYSAUX
+EXPO                           USERS
+FIREWALLTEST                   USERS
+FLEXERA                        USERS
+FNMUSER                        USERS
+
+USERNAME                       DEFAULT_TABLESPACE
+------------------------------ ------------------------------
+FOCALPOINT                     FP_DATA
+HPDBA                          SYSAUX
+IMPPI                          USERS
+MDDATA                         USERS
+MDSYS                          SYSAUX
+MGMT_VIEW                      SYSTEM
+MRDWETL                        FPDW_1
+OLAPSYS                        SYSAUX
+OPS$EEMON                      USERS
+OPS$ORACLE                     USERS
+ORACLE_OCM                     USERS
+
+USERNAME                       DEFAULT_TABLESPACE
+------------------------------ ------------------------------
+ORDDATA                        SYSAUX
+ORDPLUGINS                     SYSAUX
+ORDSYS                         SYSAUX
+OUTLN                          SYSTEM
+OVOSPI                         SYSAUX
+PERFSTAT                       PERFSTAT
+READ                           USERS
+SANGAM                         USERS
+SI_INFORMTN_SCHEMA             SYSAUX
+SLORACLERO                     SYSAUX
+SPATIAL_CSW_ADMIN_USR          USERS
+
+USERNAME                       DEFAULT_TABLESPACE
+------------------------------ ------------------------------
+SPATIAL_WFS_ADMIN_USR          USERS
+STRMUSER                       FPDW_1
+STRM_ADMIN                     FPDW_1
+SYS                            SYSTEM
+SYSMAN                         SYSAUX
+SYSTEM                         SYSTEM
+TARGETDBA                      USERS
+TEMP                           USERS
+WMSYS                          SYSAUX
+XDB                            SYSAUX
+XS$NULL                        USERS
+
+44 rows selected.
+
+SQL> SELECT aus.tablespace_name, df.file_name, df.TOTAL_SPACE_MB, NVL(dfs.FREE_SPACE_MB,0) Free_space_MB,
+  2  NVL(TO_CHAR( (free_space_mb*100/total_space_mb),'09.00') ,0)"FREE%",
+TRUNC(df.TOTAL_SPACE_MB-USED_SPACE_MB ) Reclaim_space_MB,
+AUTOEXTENSIBLE, MAXBYTES_MB,INCREMENT_BY_MB
+FROM
+(SELECT  tablespace_name, file_id,SUM(bytes)/1024/1024 AS "FREE_SPACE_MB" FROM DBA_FREE_SPACE GROUP BY tablespace_name, file_id) dfs,
+(SELECT file_id, file_name, SUM(bytes)/1024/1024 AS "TOTAL_SPACE_MB" FROM DBA_DATA_FILES GROUP BY file_id, file_name) df,
+(SELECT DISTINCT f.TABLESPACE_NAME, file_name,((ROUND(f.bytes / 1024 / 1024) - NVL(ROUND(s.bytes / 1024 / 1024),0))) "USED_SPACE_MB",
+f.AUTOEXTENSIBLE, TRUNC(f.MAXBYTES/1024/1024,2) MAXBYTES_MB, TRUNC(f.INCREMENT_BY/(1048576/(select value from v$parameter where name = 'db_block_size')),2) INCREMENT_BY_MB
+  3    4    5    6    7    8    9   10  FROM DBA_DATA_FILES f, DBA_FREE_SPACE s WHERE f.file_id = s.file_id (+)
+AND NVL(s.block_id,0) IN (NVL((SELECT MAX(block_id) FROM DBA_FREE_SPACE WHERE file_id = s.file_id),0))) aus
+WHERE dfs.FILE_ID (+)= df.FILE_ID
+AND aus.file_name (+)= df.file_name
+ORDER BY 1,2;
+  11   12   13   14
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+FPDW_1
+/u02/FPQA/datafiles/FPQA/FPDW_1.dbf
+          2048        2044.5  99.83             2044 NO            0               0
+
+FP_BIGOBJ
+/u02/FPQA/datafiles/FPQA/FP_BIGOBJ_01.dbf
+          1024          1023  99.90             1023 YES    33554432               0
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+
+FP_DATA
+/u02/FPQA/datafiles/FPQA/FP_DATA_01.dbf
+         96512    16507.1875  17.10             1279 YES    33554432               0
+
+FP_INDEX
+/u02/FPQA/datafiles/FPQA/FP_INDEX_01.dbf
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+    22066.3125      12834.25  58.16             2225 YES    33554432               0
+
+LOGMNG
+/u02/FPQA/datafiles/FPQA/LOGMNG01.dbf
+          1024         964.5  94.19              599 NO            0               0
+
+PERFSTAT
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+/u02/FPQA/datafiles/FPQA/perfstat01.dbf
+         12700        631.25  04.97              631 YES       32767              50
+
+SYSAUX
+/u02/FPQA/datafiles/FPQA/sysaux01.dbf
+         12290     1171.8125  09.53              385 YES    32767.98              10
+
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+SYSTEM
+/u02/FPQA/datafiles/FPQA/system01.dbf
+          1580            79  05.00               37 YES    32767.98              10
+
+UNDOTBS
+/u02/FPQA/datafiles/FPQA/undotbs_FPQA01.dbf
+           100         97.75  97.75               98 YES       32767             100
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+
+UNDOTBS1
+/u02/FPQA/datafiles/FPQA/undotbs101.dbf
+         23740     23584.375  99.34             3899 YES    32767.98               5
+
+USERS
+/u02/FPQA/datafiles/FPQA/users01.dbf
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL_SPACE_MB FREE_SPACE_MB FREE%  RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+-------------- ------------- ------ ---------------- --- ----------- ---------------
+          5000          4999  99.98             1031 YES    32767.98            1.25
+
+
+11 rows selected.
+
+SQL> SQL>
+SQL>
+SQL> set pages 400
+set lines 200
+COLUMN tablespace_name format a21
+COLUMN file_name format a60
+COLUMN free% format a12
+break ON tablespace_name SKIP 1
+
+SELECT aus.tablespace_name, df.file_name, df.TOTAL_SPACE_MB, NVL(dfs.FREE_SPACE_MB,0) Free_space_MB,
+NVL(TO_CHAR( (free_space_mb*100/total_space_mb),'09.00') ,0)"FREE%",
+TRUNC(df.TOTAL_SPACE_MB-USED_SPACE_MB ) Reclaim_space_MB,
+AUTOEXTENSIBLE, MAXBYTES_MB,INCREMENT_BY_MB
+SQL> SQL> SQL> SQL> SQL> SQL> SQL>   2    3    4    5  FROM
+(SELECT  tablespace_name, file_id,SUM(bytes)/1024/1024 AS "FREE_SPACE_MB" FROM DBA_FREE_SPACE GROUP BY tablespace_name, file_id) dfs,
+(SELECT file_id, file_name, SUM(bytes)/1024/1024 AS "TOTAL_SPACE_MB" FROM DBA_DATA_FILES GROUP BY file_id, file_name) df,
+(SELECT DISTINCT f.TABLESPACE_NAME, file_name,((ROUND(f.bytes / 1024 / 1024) - NVL(ROUND(s.bytes / 1024 / 1024),0))) "USED_SPACE_MB",
+f.AUTOEXTENSIBLE, TRUNC(f.MAXBYTES/1024/1024,2) MAXBYTES_MB, TRUNC(f.INCREMENT_BY/(1048576/(select value from v$parameter where name = 'db_block_size')),2) INCREMENT_BY_MB
+FROM DBA_DATA_FILES f, DBA_FREE_SPACE s WHERE f.file_id = s.file_id (+)
+AND NVL(s.block_id,0) IN (NVL((SELECT MAX(block_id) FROM DBA_FREE_SPACE WHERE file_id = s.file_id),0))) aus
+  6    7    8    9   10   11   12  WHERE dfs.FILE_ID (+)= df.FILE_ID
+AND aus.file_name (+)= df.file_name
+ORDER BY 1,2; 13   14
+
+TABLESPACE_NAME       FILE_NAME                                                    TOTAL_SPACE_MB FREE_SPACE_MB FREE%        RECLAIM_SPACE_MB AUT MAXBYTES_MB INCREMENT_BY_MB
+--------------------- ------------------------------------------------------------ -------------- ------------- ------------ ---------------- --- ----------- ---------------
+FPDW_1                /u02/FPQA/datafiles/FPQA/FPDW_1.dbf                                    2048        2044.5  99.83                   2044 NO            0               0
+
+FP_BIGOBJ             /u02/FPQA/datafiles/FPQA/FP_BIGOBJ_01.dbf                              1024          1023  99.90                   1023 YES    33554432               0
+
+FP_DATA               /u02/FPQA/datafiles/FPQA/FP_DATA_01.dbf                               96512    16507.1875  17.10                   1279 YES    33554432               0
+
+FP_INDEX              /u02/FPQA/datafiles/FPQA/FP_INDEX_01.dbf                         22066.3125      12834.25  58.16                   2225 YES    33554432               0
+
+LOGMNG                /u02/FPQA/datafiles/FPQA/LOGMNG01.dbf                                  1024         964.5  94.19                    599 NO            0               0
+
+PERFSTAT              /u02/FPQA/datafiles/FPQA/perfstat01.dbf                               12700        631.25  04.97                    631 YES       32767              50
+
+SYSAUX                /u02/FPQA/datafiles/FPQA/sysaux01.dbf                                 12290     1171.8125  09.53                    385 YES    32767.98              10
+
+SYSTEM                /u02/FPQA/datafiles/FPQA/system01.dbf                                  1580            79  05.00                     37 YES    32767.98              10
+
+UNDOTBS               /u02/FPQA/datafiles/FPQA/undotbs_FPQA01.dbf                             100         97.75  97.75                     98 YES       32767             100
+
+UNDOTBS1              /u02/FPQA/datafiles/FPQA/undotbs101.dbf                               23740     23584.375  99.34                   3899 YES    32767.98               5
+
+USERS                 /u02/FPQA/datafiles/FPQA/users01.dbf                                   5000          4999  99.98                   1031 YES    32767.98            1.25
+
+
+11 rows selected.
+
+SQL>
+SQL>
+SQL> ! df -kh .
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/vg03_new-lvol1
+                       48G   43G  1.9G  96% /u01
+
+SQL>
+SQL>
+SQL> alter table FOCALPOINT.FORMULADEPENDSON move tablespace USERS;
+
+Table altered.
+
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     UNUSABLE
+
+SQL>
+SQL>
+SQL> alter index FORMULADEPENDSON.FORMULADEPENDSON_IDX_F_ATTR rebuild online;
+alter index FORMULADEPENDSON.FORMULADEPENDSON_IDX_F_ATTR rebuild online
+*
+ERROR at line 1:
+ORA-01418: specified index does not exist
+
+
+SQL> alter index FORMULADEPENDSON_IDX_F_ATTR rebuild online;
+alter index FORMULADEPENDSON_IDX_F_ATTR rebuild online
+*
+ERROR at line 1:
+ORA-01418: specified index does not exist
+
+
+SQL> alter index FOCALPOINT.FORMULADEPENDSON_IDX_F_ATTR rebuild online;
+
+Index altered.
+
+SQL>
+SQL>
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     UNUSABLE
+
+SQL> alter index FOCALPOINT.FORMULADEPENDSON_IDX_ATTR rebuild online;
+
+Index altered.
+
+SQL>
+SQL>
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     UNUSABLE
+
+SQL> alter index FOCALPOINT.FORMULADEPENDSON_IDX_PATH rebuild online;
+alter index FOCALPOINT.FORMULADEPENDSON_IDX_PATH rebuild online
+*
+ERROR at line 1:
+ORA-00604: error occurred at recursive SQL level 1
+ORA-01450: maximum key length (3215) exceeded
+
+
+SQL>
+SQL>
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     UNUSABLE
+
+SQL> alter index FOCALPOINT.SYS_C00139742 rebuild online;
+
+
+
+
+Index altered.
+
+SQL> SQL> SQL> SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     UNUSABLE
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     VALID
+
+SQL> alter index FOCALPOINT.FORMULADEPENDSON_IDX_PATH rebuild ;
+
+Index altered.
+
+SQL>
+SQL>
+SQL> select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='FORMULADEPENDSON';
+
+OWNER                TABLE_NAME                     INDEX_NAME                     TABLE_OWNER                    STATUS
+-------------------- ------------------------------ ------------------------------ ------------------------------ --------
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_F_ATTR    FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_ATTR      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               FORMULADEPENDSON_IDX_PATH      FOCALPOINT                     VALID
+FOCALPOINT           FORMULADEPENDSON               SYS_C00139742                  FOCALPOINT                     VALID
+
+SQL>
+SQL>
+SQL> select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='&TABLE_NAME';
+Enter value for table_name: FOCALPOINT
+old   1: select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='&TABLE_NAME'
+new   1: select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='FOCALPOINT'
+
+no rows selected
+
+SQL>
+SQL>
+SQL>
+EXEC dbms_stats.gather_table_stats(ownname => 'FOCALPOINT', tabname => 'FORMULA38', method_opt=> 'for all indexed columns size skewonly', granularity => 'ALL', degree => 8 ,cascade => true,estimate_percent => 15);
+
+
+
+PL/SQL procedure successfully completed.
+
+SQL> SQL> SQL>
+SQL>
+SQL>
+
+SQL> SQL> select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='&TABLE_NAME';
+Enter value for table_name: FORMULADEPENDSON
+old   1: select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='&TABLE_NAME'
+new   1: select table_name,last_analyzed,stale_stats from user_tab_statistics where table_name='FORMULADEPENDSON'
+
+no rows selected
+
+SQL>
+SQL> select sum(bytes)/1024/1024/1024 from dba_segments where segment_name='&TABLE_NAME';
+Enter value for table_name: FORMULADEPENDSON
+old   1: select sum(bytes)/1024/1024/1024 from dba_segments where segment_name='&TABLE_NAME'
+new   1: select sum(bytes)/1024/1024/1024 from dba_segments where segment_name='FORMULADEPENDSON'
+
+SUM(BYTES)/1024/1024/1024
+-------------------------
+                     2.25
+
+SQL> select table_name,avg_row_len,round(((blocks*16/1024)),2)||'MB' "TOTAL_SIZE",
+  2  round((num_rows*avg_row_len/1024/1024),2)||'Mb' "ACTUAL_SIZE",
+round(((blocks*16/1024)-(num_rows*avg_row_len/1024/1024)),2) ||'MB' "FRAGMENTED_SPACE",
+(round(((blocks*16/1024)-(num_rows*avg_row_len/1024/1024)),2)/round(((blocks*16/1024)),2))*100 "percentage"
+from all_tables WHERE table_name='&TABLE_NAME';  3    4    5
+Enter value for table_name: FORMULADEPENDSON
+old   5: from all_tables WHERE table_name='&TABLE_NAME'
+new   5: from all_tables WHERE table_name='FORMULADEPENDSON'
+
+TABLE_NAME                     AVG_ROW_LEN TOTAL_SIZE                                 ACTUAL_SIZE                                FRAGMENTED_SPACE                           percentage
+------------------------------ ----------- ------------------------------------------ ------------------------------------------ ------------------------------------------ ----------
+FORMULADEPENDSON                        42 4538.58MB                                  1802.65Mb                                  2735.93MB                                  60.2816299
+
+col owner for a20
+set line 200
+col segment_name for a40
+col SizeMBS for 999999.99
+col wastedMBS for 999999.99
+select      ds.owner,
+      ds.segment_name,
+      round(ds.bytes/1024/1024,0) SIZE_IN_MB,
+      round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) WASTED_IN_MB
+from dba_segments ds, dba_tables dt
+where       ds.owner=dt.owner
+and   ds.segment_name = dt.table_name
+and   ds.segment_type='TABLE'
+group by ds.owner, ds.segment_name, round(ds.bytes/1024/1024,0) ,round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0)
+having      round(bytes/1024/1024,0) >500
+order by round((ds.bytes-(dt.num_rows*dt.avg_row_len))/1024/1024,0) desc ; 
+
+
+  9   10   11
+
+OWNER                SEGMENT_NAME                             SIZE_IN_MB WASTED_IN_MB
+-------------------- ---------------------------------------- ---------- ------------
+PERFSTAT             STATS$SQL_SUMMARY                              6589
+FOCALPOINT           FORMULA38                                       776          665
+FOCALPOINT           FORMULADEPENDSON                               2304          501
+FOCALPOINT           FORMULA46                                       944          447
+FOCALPOINT           FORMULA334                                      785          181
+FOCALPOINT           USERLOG                                         527          111
+FOCALPOINT           HISTORY334                                      672           25
+FOCALPOINT           HISTORY38                                       536          -24
+FOCALPOINT           HISTORY1274                                     720         -239
+
+9 rows selected.
+
+SQL>
+SQL> SELECT NAME FROM V$DATABASE
+  2  ;
+
+NAME
+---------
+FPQA
+
+SQL>
+
+

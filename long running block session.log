@@ -1,0 +1,1853 @@
+https://ittutorial-org.cdn.ampproject.org/c/s/ittutorial.org/oracle-dba-scripts-all-in-one-4-performance-tuning-and-monitoring-scripts/amp/
+
+http://kannan-oracle.blogspot.com/2012/06/shmmax-and-shmall-for-oracle-in-linux.html--------shmax and shmall
+https://srivasu.com/2018/12/21/sga-pga-sizing/
+
+
+
+
+
+
+
+Ask App Team
+
+
+
+2. Logon to Database
+
+select name,open_mode from v$database;
+
+
+
+3. Find Long Running Sessions
+
+/*************************************************************************
+Check the ALL Active/Inactive session
+**************************************************************************/
+
+set linesize 750 pages 9999
+column box format a30
+column spid format a10
+column username format a30 
+column program format a30
+column os_user format a20
+col LOGON_TIME for a20  
+select b.inst_id,b.sid,b.serial#,a.spid, substr(b.machine,1,30) box,to_char (b.logon_time, 'dd-mon-yyyy hh24:mi:ss') logon_time,
+ substr(b.username,1,30) username,
+ substr(b.osuser,1,20) os_user,
+ substr(b.program,1,30) program,status,b.last_call_et AS last_call_et_secs,b.sql_id 
+ from gv$session b,gv$process a 
+ where b.paddr = a.addr 
+ and a.inst_id = b.inst_id  
+ and type='USER'
+ order by logon_time;
+
+/*************************************************************************
+Check the all Active session
+**************************************************************************/
+
+set linesize 750 pages 9999
+column box format a30
+column spid format a10
+column username format a30 
+column program format a30
+column os_user format a20
+col LOGON_TIME for a20  
+select b.inst_id,b.sid,b.serial#,a.spid, substr(b.machine,1,30) box,to_char (b.logon_time, 'dd-mon-yyyy hh24:mi:ss') logon_time,
+ substr(b.username,1,30) username,
+ substr(b.osuser,1,20) os_user,
+ substr(b.program,1,30) program,status,b.last_call_et AS last_call_et_secs,b.sql_id 
+ from gv$session b,gv$process a 
+ where b.paddr = a.addr 
+ and a.inst_id = b.inst_id  
+ and type='USER' and b.status='ACTIVE'
+ order by logon_time;
+
+
+/*************************************************************************
+Check the ALL Active/Inactive sessions by SID
+**************************************************************************/
+
+set linesize 750 pages 9999
+column box format a30
+column spid format a10
+column username format a30 
+column program format a30
+column os_user format a20
+col LOGON_TIME for a20  
+select b.inst_id,b.sid,b.serial#,a.spid, substr(b.machine,1,30) box,to_char (b.logon_time, 'dd-mon-yyyy hh24:mi:ss') logon_time,
+ substr(b.username,1,30) username,
+ substr(b.osuser,1,20) os_user,
+ substr(b.program,1,30) program,status,b.last_call_et AS last_call_et_secs,b.sql_id 
+ from gv$session b,gv$process a 
+ where b.paddr = a.addr 
+ and a.inst_id = b.inst_id  
+-- and type='USER' and b.SID='&SID'
+-- and b.status='ACTIVE'
+-- and b.status='INACTIVE'
+ order by logon_time;
+
+/*************************************************************************
+Check the ALL Active/Inactive sessions by Username
+**************************************************************************/
+
+set linesize 750 pages 9999
+column box format a30
+column spid format a10
+column username format a30 
+column program format a30
+column os_user format a20
+col LOGON_TIME for a20  
+select b.inst_id,b.sid,b.serial#,a.spid, substr(b.machine,1,30) box,to_char (b.logon_time, 'dd-mon-yyyy hh24:mi:ss') logon_time,
+ substr(b.username,1,30) username,
+ substr(b.osuser,1,20) os_user,
+ substr(b.program,1,30) program,status,b.last_call_et AS last_call_et_secs,b.sql_id 
+ from gv$session b,gv$process a 
+ where b.paddr = a.addr 
+ and a.inst_id = b.inst_id  
+ and type='USER' and b.username='&username'
+-- and b.status='ACTIVE'
+-- and b.status='INACTIVE'
+ order by logon_time;
+
+
+/*************************************************************************
+SQL Monitor
+**************************************************************************/
+set lines 1000 pages 9999 
+column sid format 9999 
+column serial for 999999
+column status format a15
+column username format a10 
+column sql_text format a80
+column module format a30
+col program for a30
+col SQL_EXEC_START for a20
+SELECT * FROM
+       (SELECT status,inst_id,sid,SESSION_SERIAL# as Serial,username,sql_id,SQL_PLAN_HASH_VALUE,
+     MODULE,program,
+         TO_CHAR(sql_exec_start,'dd-mon-yyyy hh24:mi:ss') AS sql_exec_start,
+         ROUND(elapsed_time/1000000)                      AS "Elapsed (s)",
+         ROUND(cpu_time    /1000000)                      AS "CPU (s)",
+         substr(sql_text,1,30) sql_text
+       FROM gv$sql_monitor where status='EXECUTING' and module not like '%emagent%' 
+       ORDER BY sql_exec_start  desc
+       );
+
+/*************************************************************************
+---- Sql-Monitor report for a sql_id         ( Like OEM report)
+**************************************************************************/
+column text_line format a254
+set lines 750 pages 9999
+set long 20000 longchunksize 20000
+select 
+ dbms_sqltune.report_sql_monitor_list() text_line 
+from dual;
+
+select 
+ dbms_sqltune.report_sql_monitor() text_line 
+from dual;
+
+
+
+4. Blocking sessions
+
+**** To find Blocking GOOD query 
+
+set lines 750 pages 9999
+col blocking_status for a100 
+ select s1.inst_id,s2.inst_id,s1.username || '@' || s1.machine
+ || ' ( SID=' || s1.sid || ' )  is blocking '
+ || s2.username || '@' || s2.machine || ' ( SID=' || s2.sid || ' ) ' AS blocking_status
+  from gv$lock l1, gv$session s1, gv$lock l2, gv$session s2
+  where s1.sid=l1.sid and s2.sid=l2.sid and s1.inst_id=l1.inst_id and s2.inst_id=l2.inst_id
+  and l1.BLOCK=1 and l2.request > 0
+  and l1.id1 = l2.id1
+  and l2.id2 = l2.id2
+order by s1.inst_id;
+
+or 
+
+select blocking_session, sid, serial#, wait_class, seconds_in_wait from v$session where blocking_session is not NULL order by blocking_session;
+
+
+
+**** Check who is blocking who in RAC, including objects
+
+SELECT DECODE(request,0,'Holder: ','Waiter: ') || gv$lock.sid sess, machine, do.object_name as locked_object,id1, id2, lmode, request, gv$lock.type
+FROM gv$lock join gv$session on gv$lock.sid=gv$session.sid and gv$lock.inst_id=gv$session.inst_id
+join gv$locked_object lo on gv$lock.SID = lo.SESSION_ID and gv$lock.inst_id=lo.inst_id
+join dba_objects do on lo.OBJECT_ID = do.OBJECT_ID 
+WHERE (id1, id2, gv$lock.type) IN (
+  SELECT id1, id2, type FROM gv$lock WHERE request>0)
+ORDER BY id1, request;
+
+
+
+5. Kill Sessions
+
+select 'alter system kill session ' || '''' || sid || ',' || serial# ||',@'|| inst_id || '''' || ' immediate;' from gv$session where sid='&sid';
+
+
+
+
+Lock on table
+***************
+
+
+select table_name, stattype_locked from dba_tab_statistics where table_name='ERM_F_PROPOSAL_DISTRIBUTION';
+*
+ERROR at line 1:
+ORA-20005: object statistics are locked (stattype = ALL)
+ORA-06512: at "SYS.DBMS_STATS", line 24571
+ORA-06512: at "SYS.DBMS_STATS", line 24629
+ORA
+
+
+exec dbms_stats.unlock_table_stats('SHARED_AREA', 'ERM_F_PROPOSAL_DISTRIBUTION');
+
+
+set line 650
+column oracle_username format a15;
+column os_user_name format a15;
+column object_name format a37;
+column object_type format a37;
+select a.session_id,a.oracle_username, a.os_user_name, b.owner "OBJECT OWNER", b.object_name,b.object_type,a.locked_mode from 
+(select object_id, SESSION_ID, ORACLE_USERNAME, OS_USER_NAME, LOCKED_MODE from v$locked_object) a, 
+(select object_id, owner, object_name,object_type from dba_objects) b
+where a.object_id=b.object_id;
+
+
+Query 1: To find sid, serial# and process of locked object.
+
+select a.sid||'|'|| a.serial#||'|'|| a.process
+ from v$session a, v$locked_object b, dba_objects c
+ where b.object_id = c.object_id
+ and a.sid = b.session_id
+ and OBJECT_NAME=upper('&TABLE_NAME');
+
+ Note: if you don't have dba_objects privilege replace it by user_objects.
+In RAC use GV$locked_object 
+
+
+Query 2: To find process holding the lock by passing table name.
+
+select distinct a.process
+ from v$session a, v$locked_object b, dba_objects c
+ where b.object_id = c.object_id
+ and a.sid = b.session_id
+ and OBJECT_NAME=upper('&TABLE_NAME');
+
+ Note: if you don't have dba_objects privilege replace it by user_objects.
+In RAC use GV$locked_object 
+
+
+
+QUERY 3: To find blocking locks into the database.
+
+select 
+    (select username from v$session where sid=a.sid) blocker,
+    a.sid,
+    ' is blocking ',
+    (select username from v$session where sid=b.sid) blockee,
+    b.sid
+ from 
+    v$lock a, 
+    v$lock b
+ where 
+    a.block = 1
+ and 
+    b.request > 0
+ and 
+    a.id1 = b.id1
+ and 
+    a.id2 = b.id2;
+
+
+QUERY 4: To find blocking session and type of lock.
+
+select l1.inst_id,l1.sid, ' IS BLOCKING ', l2.sid,l1.type,l2.type,l1.lmode,l2.lmode,l2.inst_id
+ from gv$lock l1, gv$lock l2
+ where l1.block =1 and l2.request > 0
+ and l1.id1=l2.id1
+ and l1.id2=l2.id2; 
+
+
+QUERY 5: To get the detailed information in RAC.
+
+SELECT 'Instance '||s1.INST_ID||' '|| s1.username || '@' || s1.machine
+    || ' ( SID=' || s1.sid || ','|| s1.serial#||s1.status||  '  )  is blocking '
+    || s2.username || '@' || s2.machine || ' ( SID=' || s2.sid || ' ) ' ||s2.sql_id
+     FROM gv$lock l1, gv$session s1, gv$lock l2, gv$session s2
+    WHERE s1.sid=l1.sid AND
+     s1.inst_id=l1.inst_id AND
+     s2.sid=l2.sid AND
+     s2.inst_id=l2.inst_id AND
+     l1.BLOCK=1 AND
+    l2.request > 0 AND
+    l1.id1 = l2.id1 AND
+    l2.id2 = l2.id2 ;
+
+
+To find sql_id from sid
+SQL> select sql_id from v$session where sid=&sid;
+
+To find sql_full text from sql_id
+SQL > select sql_fulltext from gv$sql where sql_id ="&SLQ_ID";
+
+To kill sessions:
+SQL> alter session kill session 'sid,serial#' immediate;
+
+
+
+
+6. SQL History
+
+set lines 1000 pages 9999
+COL instance_number FOR 9999 HEA 'Inst';
+COL end_time HEA 'End Time';
+COL plan_hash_value HEA 'Plan|Hash Value';
+COL executions_total FOR 999,999 HEA 'Execs|Total';
+COL rows_per_exec HEA 'Rows Per Exec';
+COL et_secs_per_exec HEA 'Elap Secs|Per Exec';
+COL cpu_secs_per_exec HEA 'CPU Secs|Per Exec';
+COL io_secs_per_exec HEA 'IO Secs|Per Exec';
+COL cl_secs_per_exec HEA 'Clus Secs|Per Exec';
+COL ap_secs_per_exec HEA 'App Secs|Per Exec';
+COL cc_secs_per_exec HEA 'Conc Secs|Per Exec';
+COL pl_secs_per_exec HEA 'PLSQL Secs|Per Exec';
+COL ja_secs_per_exec HEA 'Java Secs|Per Exec';
+SELECT 'gv$dba_hist_sqlstat' source,h.instance_number,
+       TO_CHAR(CAST(s.begin_interval_time AS DATE), 'DD-MM-YYYY HH24:MI') snap_time,
+       TO_CHAR(CAST(s.end_interval_time AS DATE), 'DD-MM-YYYY HH24:MI') end_time,
+       h.sql_id,
+       h.plan_hash_value, 
+       h.executions_total,
+       TO_CHAR(ROUND(h.rows_processed_total / h.executions_total), '999,999,999,999') rows_per_exec,
+       TO_CHAR(ROUND(h.elapsed_time_total / h.executions_total / 1e6, 3), '999,990.000') et_secs_per_exec,
+       TO_CHAR(ROUND(h.cpu_time_total / h.executions_total / 1e6, 3), '999,990.000') cpu_secs_per_exec,
+       TO_CHAR(ROUND(h.iowait_total / h.executions_total / 1e6, 3), '999,990.000') io_secs_per_exec,
+       TO_CHAR(ROUND(h.clwait_total / h.executions_total / 1e6, 3), '999,990.000') cl_secs_per_exec,
+       TO_CHAR(ROUND(h.apwait_total / h.executions_total / 1e6, 3), '999,990.000') ap_secs_per_exec,
+       TO_CHAR(ROUND(h.ccwait_total / h.executions_total / 1e6, 3), '999,990.000') cc_secs_per_exec,
+       TO_CHAR(ROUND(h.plsexec_time_total / h.executions_total / 1e6, 3), '999,990.000') pl_secs_per_exec,
+       TO_CHAR(ROUND(h.javexec_time_total / h.executions_total / 1e6, 3), '999,990.000') ja_secs_per_exec
+  FROM dba_hist_sqlstat h, 
+       dba_hist_snapshot s
+ WHERE h.sql_id = '&sql_id'
+   AND h.executions_total > 0 
+   AND s.snap_id = h.snap_id
+   AND s.dbid = h.dbid
+   AND s.instance_number = h.instance_number
+UNION ALL  
+SELECT 'gv$sqlarea_plan_hash' source,h.inst_id, 
+       TO_CHAR(sysdate, 'DD-MM-YYYY HH24:MI') snap_time,
+       TO_CHAR(sysdate, 'DD-MM-YYYY HH24:MI') end_time,
+       h.sql_id,
+       h.plan_hash_value, 
+       h.executions,
+       TO_CHAR(ROUND(h.rows_processed / h.executions), '999,999,999,999') rows_per_exec,
+       TO_CHAR(ROUND(h.elapsed_time / h.executions / 1e6, 3), '999,990.000') et_secs_per_exec,
+       TO_CHAR(ROUND(h.cpu_time / h.executions / 1e6, 3), '999,990.000') cpu_secs_per_exec,
+       TO_CHAR(ROUND(h.USER_IO_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') io_secs_per_exec,
+       TO_CHAR(ROUND(h.CLUSTER_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') cl_secs_per_exec,
+       TO_CHAR(ROUND(h.APPLICATION_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') ap_secs_per_exec,
+       TO_CHAR(ROUND(h.CLUSTER_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') cc_secs_per_exec,
+       TO_CHAR(ROUND(h.PLSQL_EXEC_TIME / h.executions / 1e6, 3), '999,990.000') pl_secs_per_exec,
+       TO_CHAR(ROUND(h.JAVA_EXEC_TIME / h.executions / 1e6, 3), '999,990.000') ja_secs_per_exec
+  FROM gv$sqlarea_plan_hash h 
+ WHERE h.sql_id = '&sql_id'
+   AND h.executions > 0 
+order by source ;
+
+
+
+7. Find Force Matching Signature
+
+col exact_matching_signature for 99999999999999999999999999
+col sql_text for a50
+set long 20000
+set  lines 750 pages 9999
+select sql_id, exact_matching_signature, force_matching_signature, SQL_TEXT from v$sqlarea where sql_id='&sql_id';
+UNION ALL
+select sql_id,force_matching_signature,SQL_TEXT from dba_hist_sqltext where sql_id='&sql_id'
+/
+
+-- If you want to find Bind variable for SQL_ID
+
+col VALUE_STRING for a50  
+SELECT NAME,POSITION,DATATYPE_STRING,VALUE_STRING FROM gv$sql_bind_capture WHERE sql_id='&sql_id';
+
+
+
+8. SQL Tuning Advisor
+
+http://www.br8dba.com/sql-tuning-advisor-manually/
+
+
+9. SQLT
+
+http://www.br8dba.com/sqlt/
+
+
+
+10. SQL Health Check
+
+SQL Tuning Health-Check Script (SQLHC) (Doc ID 1366133.1)
+
+
+
+11. SQL Plan Flip
+
+set lines 1000 pages 9999
+COL instance_number FOR 9999 HEA 'Inst';
+COL end_time HEA 'End Time';
+COL plan_hash_value HEA 'Plan|Hash Value';
+COL executions_total FOR 999,999 HEA 'Execs|Total';
+COL rows_per_exec HEA 'Rows Per Exec';
+COL et_secs_per_exec HEA 'Elap Secs|Per Exec';
+COL cpu_secs_per_exec HEA 'CPU Secs|Per Exec';
+COL io_secs_per_exec HEA 'IO Secs|Per Exec';
+COL cl_secs_per_exec HEA 'Clus Secs|Per Exec';
+COL ap_secs_per_exec HEA 'App Secs|Per Exec';
+COL cc_secs_per_exec HEA 'Conc Secs|Per Exec';
+COL pl_secs_per_exec HEA 'PLSQL Secs|Per Exec';
+COL ja_secs_per_exec HEA 'Java Secs|Per Exec';
+SELECT 'gv$dba_hist_sqlstat' source,h.instance_number,
+       TO_CHAR(CAST(s.begin_interval_time AS DATE), 'DD-MM-YYYY HH24:MI') snap_time,
+       TO_CHAR(CAST(s.end_interval_time AS DATE), 'DD-MM-YYYY HH24:MI') end_time,
+       h.sql_id,
+       h.plan_hash_value, 
+       h.executions_total,
+       TO_CHAR(ROUND(h.rows_processed_total / h.executions_total), '999,999,999,999') rows_per_exec,
+       TO_CHAR(ROUND(h.elapsed_time_total / h.executions_total / 1e6, 3), '999,990.000') et_secs_per_exec,
+       TO_CHAR(ROUND(h.cpu_time_total / h.executions_total / 1e6, 3), '999,990.000') cpu_secs_per_exec,
+       TO_CHAR(ROUND(h.iowait_total / h.executions_total / 1e6, 3), '999,990.000') io_secs_per_exec,
+       TO_CHAR(ROUND(h.clwait_total / h.executions_total / 1e6, 3), '999,990.000') cl_secs_per_exec,
+       TO_CHAR(ROUND(h.apwait_total / h.executions_total / 1e6, 3), '999,990.000') ap_secs_per_exec,
+       TO_CHAR(ROUND(h.ccwait_total / h.executions_total / 1e6, 3), '999,990.000') cc_secs_per_exec,
+       TO_CHAR(ROUND(h.plsexec_time_total / h.executions_total / 1e6, 3), '999,990.000') pl_secs_per_exec,
+       TO_CHAR(ROUND(h.javexec_time_total / h.executions_total / 1e6, 3), '999,990.000') ja_secs_per_exec
+  FROM dba_hist_sqlstat h, 
+       dba_hist_snapshot s
+ WHERE h.sql_id = '&sql_id'
+   AND h.executions_total > 0 
+   AND s.snap_id = h.snap_id
+   AND s.dbid = h.dbid
+   AND s.instance_number = h.instance_number
+UNION ALL  
+SELECT 'gv$sqlarea_plan_hash' source,h.inst_id, 
+       TO_CHAR(sysdate, 'DD-MM-YYYY HH24:MI') snap_time,
+       TO_CHAR(sysdate, 'DD-MM-YYYY HH24:MI') end_time,
+       h.sql_id,
+       h.plan_hash_value, 
+       h.executions,
+       TO_CHAR(ROUND(h.rows_processed / h.executions), '999,999,999,999') rows_per_exec,
+       TO_CHAR(ROUND(h.elapsed_time / h.executions / 1e6, 3), '999,990.000') et_secs_per_exec,
+       TO_CHAR(ROUND(h.cpu_time / h.executions / 1e6, 3), '999,990.000') cpu_secs_per_exec,
+       TO_CHAR(ROUND(h.USER_IO_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') io_secs_per_exec,
+       TO_CHAR(ROUND(h.CLUSTER_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') cl_secs_per_exec,
+       TO_CHAR(ROUND(h.APPLICATION_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') ap_secs_per_exec,
+       TO_CHAR(ROUND(h.CLUSTER_WAIT_TIME / h.executions / 1e6, 3), '999,990.000') cc_secs_per_exec,
+       TO_CHAR(ROUND(h.PLSQL_EXEC_TIME / h.executions / 1e6, 3), '999,990.000') pl_secs_per_exec,
+       TO_CHAR(ROUND(h.JAVA_EXEC_TIME / h.executions / 1e6, 3), '999,990.000') ja_secs_per_exec
+  FROM gv$sqlarea_plan_hash h 
+ WHERE h.sql_id = '&sql_id'
+   AND h.executions > 0 
+order by source ;
+
+
+
+12. Find Stale Stats
+
+http://www.br8dba.com/statistics/
+
+exec DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO;
+select OWNER,TABLE_NAME,LAST_ANALYZED,STALE_STATS from DBA_TAB_STATISTICS where STALE_STATS='YES' and OWNER='&owner;
+
+*** statistics of objects of a specific sql id 
+
+set lines 300 set pages 300
+col table_name for a40
+col owner for a30 
+select distinct owner, table_name, STALE_STATS, last_analyzed, stattype_locked
+  from dba_tab_statistics
+  where (owner, table_name) in
+  (select distinct owner, table_name
+          from dba_tables
+          where ( table_name)
+          in ( select object_name
+                  from gv$sql_plan
+                  where upper(sql_id) = upper('&sql_id') and object_name is not null))
+  --and STALE_STATS='YES'
+/
+
+
+
+13. Gather Stats
+
+http://www.br8dba.com/statistics/
+http://www.br8dba.com/oracle-histograms/
+
+
+14. PIN Optimal Plan
+
+-- Run below script, you can download this script from SQLT
+-- Reference: http://www.br8dba.com/how-to-create-custom-sql-profile/
+@coe_xfr_sql_monitor.sql <sql_id> <plan_hash_value> -- to create SQL profile
+The coe_xfr_sql_profile.sql script would create another sql file, which should be run to create manual sql profile for the sql 
+The new sql file created.
+
+
+ls -ltr coe_xfr_sql_profile_<sql_id>_<plan_hash_value>.sql
+cat coe_xfr_sql_profile_<sql_id>_<plan_hash_value>.sql
+
+@coe_xfr_sql_profile_<sql_id>_<plan_hash_value>.sql
+
+
+
+15. Find Fragmentation
+
+*** Table Fragmentation
+
+select 
+   table_name,round((blocks*8),2) "size (kb)" , 
+   round((num_rows*avg_row_len/1024),2) "actual_data (kb)",
+   (round((blocks*8),2) - round((num_rows*avg_row_len/1024),2)) "wasted_space (kb)"
+from 
+   dba_tables
+where  owner='&OWNER' and table_name='&TABLE_NAME' and 
+   (round((blocks*8),2) > round((num_rows*avg_row_len/1024),2))
+order by 4 desc;
+
+
+
+16. De-Fragmentation
+
+*** There are many methods.
+
+Option 1: Shrink command
+
+alter table  enable row movement;
+/*
+Using the enable row movement clause can reduce the clustering_factor for a primary access index, causing excessive I/O.  Oracle introduced the sorted gash cluster as a way to keep an index in-order with the table rows, a technique that greatly reduces I/O for common queries. 
+Beware that using "enable row movement" can cause Oracle to move rows to discontinuous data blocks, causing a performance problem.  Remember, the physical placement of rows on data blocks can still make a huge difference in query performance. 
+*/
+alter table  shrink space compact;
+alter table  shrink space cascade;
+
+
+************************************
+
+Query to check OS PID from SID in Oracle.
+*******************************************
+
+Set lines 200
+col sid format 99999
+col username format a15
+col osuser format a15
+select a.sid, a.serial#,a.username, a.osuser, b.spid
+from v$session a, v$process b
+where a.paddr= b.addr
+and a.sid='&sid'
+order by a.sid;
+
+**********************************************
+
+Query To Check SID From OS PID
+
+col sid format 99999
+col username format a20
+col osuser format a15
+select p.spid,s.sid, s.serial#,s.username, s.osuser
+from gv$session s, gv$process p
+where s.paddr= p.addr
+and p.spid='&spid'
+order by p.spid;
+
+
+
+
+
+Check SQL Text from V$SQL in Oracle
+**********************************
+
+select sql_fulltext from v$sql where sql_id ='xxxxx';
+
+
+How to find sql text from a sid
+***************************************
+
+ 
+col sql_text form a80
+set lines 120
+select sql_text from gv$sqltext where hash_value=
+(select sql_hash_value from gv$session where sid=&1) 
+order by piece
+/
+ 
+ 
+SQL> SQL>   2    3    4  
+Enter value for 1: 285
+old   2: (select sql_hash_value from gv$session where sid=&1)
+new   2: (select sql_hash_value from gv$session where sid=285)
+ 
+SQL_TEXT
+--------------------------------------------------------------------------------
+select sql_text from gv$sqltext where hash_value= (select sql_ha
+sh_value from gv$session where sid=285) order by piece
+ 
+2 rows selected.
+
+ 
+***********************************************************************
+
+ Generate AWR Report :-
+======================
+Generate AWR report for current and before to compare
+
+SQL> @?/rdbms/admin/awrrpt.sql        (For RAC,  @?/rdbms/admin/awrrpti.sql - for each instance)
+
+If Required,
+SQL> @?/rdbms/admin/awrddrpt.sql ---->   Produces Workload Repository Compare Periods Report
+
+
+Generate ADDM Report :-
+=======================
+Generate ADDM report for current and before to compare.
+
+ADDM report provides Findings and Recommendations to fix the issue.
+
+SQL> @?/rdbms/admin/addmrpt.sql     (For RAC,  @?/rdbms/admin/addmrpti.sql - for each instance)
+
+
+
+
+col program format a20
+set lines 180
+col sql_text format a50
+select b.sid,b.status,b.last_call_et,b.program,c.sql_id,c.sql_text from v$session b,v$sqlarea c where b.sql_id=c.sql_id;
+
+
+SQL> @?/rdbms/admin/sqltrpt
+
+
+15 Most expensive SQL in the cursor cache
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SQL_ID           ELAPSED SQL_TEXT_FRAGMENT
+------------- ---------- -------------------------------------------------------
+07kgngh6m6rcs ########## UPDATE ITEM_RELATIONS SET ETL_TRANS_TYPE = :1, ETL_TRAN
+9tkxkzmdfu4bt  33,706.76 SELECT COUNT(*) AS ROWCOUNT FROM V_CAT_EXPORT_C1 WHERE
+fmsgkgd81g0f7  18,472.05 SELECT COUNT(*) AS ROWCOUNT FROM V_CAT_EXPORT_C1 WHERE
+fxr70z9un71zy   7,190.04 SELECT /*+ no_parallel("V_CAT_EXPORT_C1") */  * FROM "H
+4psd9p9bg7uga   2,179.87 SELECT COUNT(*) AS ROWCOUNT FROM HWS_CAT.V_CAT_EXPORT_C
+cb07pprh356ph   2,152.37 SELECT DISTINCT PUMA_LCM AS val FROM V_REQ_REQUEST_DATA
+b1wfyn80auj9p   1,931.88  select count(*) from "HWS_CAT"."V_CAT_EXPORT_C1"
+f9ym1nvt567yd   1,713.42 SELECT COUNT(*) AS ROWCOUNT FROM V_CAT_EXPORT_C1 WHERE
+cm5vu20fhtnq1   1,402.37 select /*+ connect_by_filtering */ privilege#,level fro
+8r4322qu1fn30   1,392.67 SELECT PROXY_ADPT.V_CAT_PROD_TP_PRICES.PRICE_REF, PROXY
+b6usrg82hwsa3   1,351.73 call dbms_stats.gather_database_stats_job_proc (  )
+
+
+
+
+http://select-star-from.blogspot.com/2013/09/query-is-running-slow-for-long-time-for.html
+
+
+Oracle DBA scripts: Active Session History Queries
+*******************************************************
+
+-- TOP events
+select event,
+sum(wait_time +time_waited) ttl_wait_time
+from v$active_session_history
+where sample_time between sysdate - 60/2880 and sysdate
+group by event
+order by 2
+
+
+select event, WAIT_CLASS, sum(wait_time +time_waited) ttl_wait_time
+from v$active_session_history
+where sample_time between sysdate - 60/2880 and sysdate
+group by event
+order by 2
+
+SELECT NVL(a.event, 'ON CPU') AS event,
+       COUNT(*) AS total_wait_time
+FROM   v$active_session_history a
+WHERE  a.sample_time > SYSDATE - 5/(24*60) -- 5 mins
+GROUP BY a.event
+ORDER BY total_wait_time DESC;
+
+
+current session wait activity using the new wait classes using the following query: 
+*********************************************
+
+select a.sid,
+ b.username,
+ a.wait_class,
+ a.total_waits,
+ round((a.time_waited / 100),2) time_waited_secs
+ from sys.v_$session_wait_class a,
+ sys.v_$session b
+ where b.sid = a.sid and
+ b.username is not null and
+ a.wait_class != 'Idle'
+ order by 5 desc;
+
+Active Sessions running for more than 1 hour
+---------------------------------------------
+
+set pages 50000 lines 32767
+col USERNAME for a15
+col MACHINE for a15
+col PROGRAM for a40
+
+SELECT USERNAME,machine,inst_id,sid,serial#,PROGRAM,
+to_char(logon_time,'dd-mm-yy hh:mi:ss AM')"Logon Time",
+ROUND((SYSDATE-LOGON_TIME)*(24*60),1) as MINUTES_LOGGED_ON,
+ROUND(LAST_CALL_ET/60,1) as Minutes_FOR_CURRENT_SQL
+From gv$session
+where USERNAME='SHARED_AREA';
+AND USERNAME IS NOT NULL and ROUND((SYSDATE-LOGON_TIME)*(24*60),1) > 60
+ORDER BY MINUTES_LOGGED_ON DESC;
+
+
+
+Session details associated with Oracle SID
+-------------------------------------------
+set head off
+set verify off
+set echo off
+set pages 1500
+set linesize 100
+set lines 120
+prompt
+prompt Details of SID / SPID / Client PID
+prompt ==================================
+select /*+ CHOOSE*/
+'Session  Id.............................................: '||s.sid,
+'Serial Num..............................................: '||s.serial#,
+'User Name ..............................................: '||s.username,
+'Session Status .........................................: '||s.status,
+'Client Process Id on Client Machine ....................: '||'*'||s.process||'*'  Client,
+'Server Process ID ......................................: '||p.spid Server,
+'Sql_Address ............................................: '||s.sql_address,
+'Sql_hash_value .........................................: '||s.sql_hash_value,
+'Schema Name ..... ......................................: '||s.SCHEMANAME,
+'Program  ...............................................: '||s.program,
+'Module .................................................: '|| s.module,
+'Action .................................................: '||s.action,
+'Terminal ...............................................: '||s.terminal,
+'Client Machine .........................................: '||s.machine,
+'LAST_CALL_ET ...........................................: '||s.last_call_et,
+'S.LAST_CALL_ET/3600 ....................................: '||s.last_call_et/3600
+from v$session s, v$process p
+where p.addr=s.paddr and
+s.sid=nvl('&sid',s.sid)
+/
+set head on
+
+
+
+
+
+response times in oracle
+*****************************
+
+select case db_stat_name
+ when 'parse time elapsed' then 
+ 'soft parse time'
+ else db_stat_name
+ end db_stat_name,
+ case db_stat_name
+ when 'sql execute elapsed time' then 
+ time_secs - plsql_time 
+ when 'parse time elapsed' then 
+ time_secs - hard_parse_time
+ else time_secs
+ end time_secs,
+ case db_stat_name
+ when 'sql execute elapsed time' then 
+ round(100 * (time_secs - plsql_time) / db_time,2)
+ when 'parse time elapsed' then 
+ round(100 * (time_secs - hard_parse_time) / db_time,2) 
+ else round(100 * time_secs / db_time,2) 
+ end pct_time
+ from
+ (select stat_name db_stat_name,
+ round((value / 1000000),3) time_secs
+ from sys.v_$sys_time_model
+ where stat_name not in('DB time','background elapsed time',
+ 'background cpu time','DB CPU')),
+ (select round((value / 1000000),3) db_time 
+ from sys.v_$sys_time_model 
+ where stat_name = 'DB time'),
+ (select round((value / 1000000),3) plsql_time 
+ from sys.v_$sys_time_model 
+ where stat_name = 'PL/SQL execution elapsed time'),
+ (select round((value / 1000000),3) hard_parse_time 
+ from sys.v_$sys_time_model 
+ where stat_name = 'hard parse elapsed time')
+ order by 2 desc;
+
+
+Current response time
+************************
+
+select to_char(begin_time,'hh24:mi') time,  value "Response Time"
+from v$sysmetric
+where metric_name='SQL Service Response Time'
+/
+
+**************************
+
+
+
+***********************************
+
+-- Top sessions
+select sesion.sid,
+sesion.username,
+sum(ash.wait_time + ash.time_waited)/1000000/60 ttl_wait_time_in_minutes
+from v$active_session_history ash, v$session sesion
+where sample_time between sysdate - 60/2880 and sysdate
+and ash.session_id = sesion.sid
+group by sesion.sid, sesion.username
+order by 3 desc
+
+***************************************
+
+--Top queries
+SELECT active_session_history.user_id,
+dba_users.username,
+sqlarea.sql_text,
+SUM(active_session_history.wait_time +
+active_session_history.time_waited)/1000000 ttl_wait_time_in_seconds
+FROM v$active_session_history active_session_history,
+v$sqlarea sqlarea,
+dba_users
+WHERE active_session_history.sample_time BETWEEN SYSDATE - 1 AND SYSDATE
+AND active_session_history.sql_id = sqlarea.sql_id
+AND active_session_history.user_id = dba_users.user_id
+and dba_users.username <>'SYS'
+GROUP BY active_session_history.user_id,sqlarea.sql_text, dba_users.username
+ORDER BY 4 DESC
+
+******************************************
+
+
+-- Top segments
+SELECT dba_objects.object_name,
+dba_objects.object_type,
+active_session_history.event,
+SUM(active_session_history.wait_time +
+active_session_history.time_waited) ttl_wait_time
+FROM v$active_session_history active_session_history,
+dba_objects
+WHERE active_session_history.sample_time BETWEEN SYSDATE - 1 AND SYSDATE
+AND active_session_history.current_obj# = dba_objects.object_id
+GROUP BY dba_objects.object_name, dba_objects.object_type, active_session_history.event
+ORDER BY 4 DESC
+
+*********************************************
+
+-- Most IO
+SELECT sql_id, COUNT(*)
+FROM gv$active_session_history ash, gv$event_name evt
+WHERE ash.sample_time > SYSDATE - 1/24
+AND ash.session_state = 'WAITING'
+AND ash.event_id = evt.event_id
+AND evt.wait_class = 'User I/O'
+GROUP BY sql_id
+ORDER BY COUNT(*) DESC;
+
+SELECT * FROM TABLE(dbms_xplan.display_cursor('&SQL_ID'));
+
+************************************************************
+
+
+-- Top 10 CPU consumers in last 60 minutes
+select * from
+(
+select session_id, session_serial#, count(*)
+from v$active_session_history
+where session_state= 'ON CPU' and
+ sample_time > sysdate - interval '60' minute
+group by session_id, session_serial#
+order by count(*) desc
+)
+where rownum <= 10;
+
+
+********************************************************
+
+
+-- Top 10 waiting sessions in last 60 minutes
+select * from
+(
+select session_id, session_serial#,count(*)
+from v$active_session_history
+where session_state='WAITING'  and
+ sample_time >  sysdate - interval '60' minute
+group by session_id, session_serial#
+order by count(*) desc
+)
+where rownum <= 10;
+
+******************************************************
+
+-- Find session detail of top sid by passing sid
+select  serial#,
+ username,
+ osuser,
+ machine,
+ program,
+ resource_consumer_group,
+ client_info
+from v$session where sid=&sid;
+
+***************************************************************
+
+How to find which wait event related to which object ?
+
+set lin 150
+col OWNER.OBJECT_NAME.OBJECT_TYPE for a50
+select * from (select inst_id, event, count(*),(select OWNER||'.'||OBJECT_NAME||'.'||OBJECT_TYPE from dba_objects where OBJECT_ID=CURRENT_OBJ#) "OWNER.OBJECT_NAME.OBJECT_TYPE"
+  from gv$active_session_history
+  where event not in (
+'HS message to agent',
+'SQL*Net break/reset to client',
+'SQL*Net message from client',
+'SQL*Net message to client',
+'jobq slave wait',
+'pipe get',
+'pmon timer',
+'queue messages',
+'rdbms ipc message',
+'smon timer',
+'wait for unread message on broadcast channel',
+'wakeup time manager',
+'ASM background timer',
+'DIAG idle wait',
+'PX Deq: Execute Reply',
+'PX Deq: Execution Msg',
+'PX Deq: reap credit',
+'Streams AQ: qmn coordinator idle wait',
+'Streams AQ: qmn slave idle wait',
+'Streams AQ: waiting for messages in the queue',
+'Streams AQ: waiting for time management or cleanup tasks',
+'class slave wait'
+)
+group by inst_id, event,CURRENT_OBJ#
+order by 3 desc) where rownum<30 
+
+
+*****************************************************************
+
+
+
+
+********************************************************
+
+-- Find different sql_ids of queries executed in above  top session by-passing sid
+select distinct sql_id, session_serial# from v$active_session_history
+where sample_time >  sysdate - interval '60' minute
+and session_id=&sid
+
+--Find full sqltext (CLOB) of above sql
+select sql_fulltext from v$sql where sql_id='&sql_id'
+
+--find session wait history of above found top sessionselect * from v$session_wait_history where sid=&sid
+
+--find all wait events for above top session
+select event, total_waits, time_waited/100/60 time_waited_minutes,
+       average_wait*10 aw_ms, max_wait/100 max_wait_seconds
+from v$session_event
+where sid=&sid
+order by 5 desc
+
+--session statistics for above particular top session :
+select s.sid,s.username,st.name,se.value
+from v$session s, v$sesstat se, v$statname st
+where s.sid=se.SID and se.STATISTIC#=st.STATISTIC#
+--and st.name ='CPU used by this session'
+--and s.username='&USERNAME'
+and s.sid='&SID'
+order by s.sid,se.value desc
+******************************************************
+
+
+
+stats
+select owner,table_name,partition_name,last_analyzed,STALE_STATS from dba_tab_statistics where owner='IPMSI';
+
+Index
+select OWNER,TABLE_NAME,INDEX_NAME,TABLE_OWNER,STATUS from dba_indexes where TABLE_NAME='WORKITEM';
+
+Table size
+
+select segment_name,sum(bytes)/1024/1024/1024 GB from dba_segments where segment_type='TABLE' and OWNER=upper('&OWNER') group by segment_name 
+
+
+Cpu vise session detail
+***************************
+https://www.oraclenext.com/2015/07/finding-sessions-with-high-cpu-usage_23.html?m=1
+Script for 11g and bellow 
+
+you can remove column "round((sess_cpu.value/100)/round((sysdate - sess_cpu.logon_time)*1440*60)*100,2) Percent, " from this query and I hope this will resolve your problem
+
+alter session set nls_date_format='Dd-MON-YY HH24:MI:SS';
+set lines 250
+set pages 2000
+col name format a26
+col username format a15
+col program format a40
+col SESS_CPU_SECS wra format 999,999,999.99
+col LAST_CPU_SECS wra format 999,999,999.99
+col logon_secs  wra format 999,999,999
+col Percent  wra format 999.99
+select sess_cpu.sid, NVL(sess_cpu.username, 'Oracle Process') username, sess_cpu.status, sess_cpu.logon_time, round((sysdate - sess_cpu.logon_time)*1440*60) logon_SECS, sess_cpu.value/100 SESS_CPU_SECS, 
+(sess_cpu.value - call_cpu.value)/100 LAST_CPU_SECS, 
+round ((sess_cpu.value/100)/round((sysdate - sess_cpu.logon_time)*1440*60)*100,2) Percent, sess_cpu.sql_id          
+from
+(select se.sql_id,ss.statistic#,se.sid, se.username, se.status, se.program, se.logon_time, sn.name, ss.value from v$session se, v$sesstat ss,
+v$statname sn
+where se.sid=ss.sid
+and sn.statistic#=ss.statistic#
+and sn.name in ('CPU used by this session') ) sess_cpu,
+(select ss.statistic#,se.sid, ss.value, value/100 seconds from v$session se, v$sesstat ss, v$statname sn
+where se.sid=ss.sid
+and sn.statistic#=ss.statistic#
+and sn.name in ('CPU used when call started') ) call_cpu
+where sess_cpu.sid=call_cpu.sid
+order by SESS_CPU_SECS ;
+
+
+
+ psrinfo -v   processor 
+
+or
+
+
+alter session set nls_date_format='Dd-MON-YY HH24:MI:SS';
+set lines 250
+set pages 2000
+col name format a26
+col username format a15
+col program format a40
+col SESS_CPU_SECS wra format 999,999,999.99
+col LAST_CPU_SECS wra format 999,999,999.99
+col logon_secs  wra format 999,999,999
+select sess_cpu.sid, NVL(sess_cpu.username, 'Oracle Process') username, sess_cpu.status, sess_cpu.logon_time, round((sysdate - sess_cpu.logon_time)*1440*60) logon_SECS, sess_cpu.value/100 SESS_CPU_SECS, 
+(sess_cpu.value - call_cpu.value)/100 LAST_CPU_SECS, sess_cpu.sql_id          
+from
+(select se.sql_id,ss.statistic#,se.sid, se.username, se.status, se.program, se.logon_time, sn.name, ss.value from v$session se, v$sesstat ss,
+v$statname sn
+where se.sid=ss.sid
+and sn.statistic#=ss.statistic#
+and sn.name in ('CPU used by this session') ) sess_cpu,
+(select ss.statistic#,se.sid, ss.value, value/100 seconds from v$session se, v$sesstat ss, v$statname sn
+where se.sid=ss.sid
+and sn.statistic#=ss.statistic#
+and sn.name in ('CPU used when call started') ) call_cpu
+where sess_cpu.sid=call_cpu.sid
+order by SESS_CPU_SECS ;
+
+or
+
+SELECT se.username, ss.sid, ROUND (value/100) "CPU Usage"
+FROM v$session se, v$sesstat ss, v$statname st
+WHERE ss.statistic# = st.statistic#
+   AND name LIKE  '%CPU used by this session%'
+   AND se.sid = ss.SID
+   AND se.username IS NOT NULL
+  ORDER BY value DESC; 
+
+
+
+
+********************
+
+select
+inst_id,
+                                                                              sid,
+                                                                              serial#,
+                                                                              status,
+                                                                              username,
+                                                                              last_call_et,
+                                                                              command,
+                                                                              machine,
+                                                                              osuser,
+                                                                              module,
+                                                                              action,
+                                                                              resource_consumer_group,
+                                                                              client_info,
+                                                                              client_identifier,
+                                                                              type,
+                                                                              terminal,
+                                                                              sql_id,
+                                                                              sql_child_number
+                                                                         from gv$session where status='ACTIVE'
+                                                                         and username='SHARED_AREA';
+
+
+
+
+
+Script for 12c and above 
+
+Column CON_ID is added in the script to list the container id where sessions are connected. If CON_ID is 0, it would mean that this is an internal process/session. If value is 1, it would mean that this session is from container database. Any value other than 0 or 1 would represent a pluggable database sessions. Check v$containers to match container ID with your pluggable database.
+
+alter session set nls_date_format='Dd-MON-YY HH24:MI:SS';
+set lines 250
+set pages 2000
+col name format a26
+col username format a15
+col program format a40
+col SESS_CPU_SECS wra format 999,999,999.99
+col LAST_CPU_SECS wra format 999,999,999.99
+col logon_secs  wra format 999,999,999
+col Percent  wra format 999.99
+select sess_cpu.con_id, sess_cpu.sid, NVL(sess_cpu.username, 'Oracle Process') username,
+sess_cpu.status, sess_cpu.logon_time,  round ((sysdate-sess_cpu.logon_time)*1440*60) logon_SECS,
+sess_cpu.value/100 SESS_CPU_SECS, (sess_cpu.value - call_cpu.value)/100 LAST_CPU_SECS,
+round((sess_cpu.value/100)/round((sysdate - sess_cpu.logon_time)*1440*60)*100,2) Percent, 
+sess_cpu.sql_id          
+from
+(select se.con_id,se.sql_id,ss.statistic#,se.sid, se.username, 
+se.status, se.program, se.logon_time, sn.name, ss.value from v$session se, v$sesstat ss, v$statname sn
+where se.sid=ss.sid
+and sn.statistic#=ss.statistic#
+and sn.name in ('CPU used by this session') ) sess_cpu,
+(select se.con_id, ss.statistic#,se.sid, ss.value, value/100 seconds from v$session se, 
+v$sesstat ss, v$statname sn
+where se.sid=ss.sid
+and sn.statistic#=ss.statistic#
+and sn.name in ('CPU used when call started') ) call_cpu
+where sess_cpu.sid=call_cpu.sid
+and sess_cpu.con_id=call_cpu.con_id
+order by SESS_CPU_SECS ;
+
+Query to check OS PID from SID in Oracle.
+*********************************************
+
+Set lines 200
+col sid format 99999
+col username format a15
+col osuser format a15
+select a.sid, a.serial#,a.username, a.osuser, b.spid
+from v$session a, v$process b
+where a.paddr= b.addr
+and a.sid='&sid'
+order by a.sid;
+
+
+
+
+Memory Vise detail
+*************************
+Query for checking session wise memory details in oracle database 
+
+How to check session wise memory details in oracle database:
+
+SET lines 300
+SET pages 9999
+col SESSION format a80
+col PID_THREAD format a10
+col CURRENT_SIZE format a20
+col MAXIMUM_SIZE format a20
+SELECT to_char(ssn.sid, '9999') || ' - ' || nvl(ssn.username, nvl(bgp.name, 'background')) ||
+ nvl(lower(ssn.machine), ins.host_name) "SESSION",
+ to_char(prc.spid, '999999999') "PID_THREAD",
+ to_char((se1.value/1024)/1024, '999G999G990D00') || ' MB' "CURRENT_SIZE",
+ to_char((se2.value/1024)/1024, '999G999G990D00') || ' MB' "MAXIMUM_SIZE"
+FROM v$sesstat se1, v$sesstat se2, v$session ssn, v$bgprocess bgp, v$process prc,
+ v$instance ins, v$statname stat1, v$statname stat2
+WHERE se1.statistic# = stat1.statistic# and stat1.name = 'session pga memory'
+ AND se2.statistic# = stat2.statistic# and stat2.name = 'session pga memory max'
+ AND se1.sid = ssn.sid
+ AND se2.sid = ssn.sid
+ AND ssn.paddr = bgp.paddr (+)
+ AND ssn.paddr = prc.addr (+) order by MAXIMUM_SIZE;
+
+Memory on Solaris server
+****************************
+
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $ prctl -n project.max-shm-memory $$
+process: 14631: -bash
+NAME    PRIVILEGE       VALUE    FLAG   ACTION                       RECIPIENT
+project.max-shm-memory
+        privileged      50.0GB      -   deny                                 -
+        system          16.0EB    max   deny      
+
+***********************************
+
+
+
+
+LAST_CPU_SECS column shows the CPU taken by last execution call – a single SQL may call CPU several times during its execution.
+PERCENT column shows the percent of time this session has spent using CPU since this session has connect to the database.
+  
+Points to note
+While on CPU, LAST_CPU_SECS would show zero (session status would be ACTIVE). During execution of SQL(s), session may be switching between CPU and IO - and hence we can see value changing under SESS_CPU_SECS and LAST_CPU_SECS columns as soon as session switches from CPU to IO.
+If a session is on CPU, status would be ACTIVE and SESS_CPU_SECS would be showing last value captured for this session, and LAST_CPU_DECS would be 0.
+If a session is on IO, status would be ACTIVE and SESS_CPU_SECS would be showing total seconds of CPU taken by the session until now.
+LAST_CPU_SECS would show CPU seconds taken during last call to the CPU. I have also seen value of zero under this column even if session is not ACTIVE. I can't figure it out why, but most important thing is total time of CPU taken by the session which is under SESS_CPU_SECS.
+See the following example where I have used ORDER BY SESS_CPU_SECS to display sessions which are at the top CPU consumption since log in.
+
+If you see session bellow highlighted in red, it is connected to the database for 799 seconds and out of which it has spent 260 seconds on CPU which accounts to 32.55 percent of total session time.
+
+
+
+In real time scenario, if you see a session spending huge amount time on CPU, have a look at the SQL(s) it is executing (last column showing SQL_ID) and investigate further.
+You can modify this script to “ORDER BY PERCENT” to see which session has spent most of its connected time on CPU.
+
+
+*********************************************************************************************************************
+
+    How to check Memory setting in oracle:
+*********************************************
+col Parameter format a25
+select
+        con_id, name as Parameter,
+        value/1024/1024 as Mbytes
+from v$parameter
+where name in
+        ('pga_aggregate_target',
+        'memory_target',
+        'memory_max_target',
+        'sga_max_size',
+        'sga_target',
+        'pga_aggregate_limit')
+order by name;
+
+or 
+
+
+11g
+
+col Parameter format a25
+select
+       name as Parameter,
+        value/1024/1024 as Mbytes
+from v$parameter
+where name in
+        ('pga_aggregate_target',
+        'memory_target',
+        'memory_max_target',
+        'sga_max_size',
+        'sga_target',
+        'pga_aggregate_limit')
+order by name;
+
+************************************************************
+
+
+If many objects exist in the recycle bin, then this can cause the query to run slow.
+
+
+SQL> select count(*) from recyclebin;
+
+
+
+SQL> connect / as sysdba
+SQL> purge recyclebin;
+
+
+
+if the query is still slow, then check the statistics on the fixed table 'X$KTFBUE' are up to date:
+
+
+SQL> column owner format a6
+SQL> column table_name format a10
+SQL> column last_anal format a10
+
+SELECT owner,  table_name,  last_analyzed
+FROM dba_tab_statistics
+WHERE table_name='X$KTFBUE';
+
+OWNER TABLE_NAME LAST_ANAL
+------ ---------- ---------
+SYS X$KTFBUE
+
+
+If the table was not analyzed at all (as above) or if the date of last analyze is too far in the past, then please run the following command to accurately gather the statistics for this fixed table:
+
+
+SQL> EXEC DBMS_STATS.GATHER_TABLE_STATS(OWNNAME =>'SYS', TABNAME => 'X$KTFBUE',ESTIMATE_PERCENT=>100);
+
+
+
+Query Against Dictionary Views Extracting Tablespace Information is Slow or Appears to Hang (Doc ID 1292253.1)
+
+
+http://kb.ictbanking.net/article.php?id=272&oid=10-------oswatcher analysis
+
+
+
+Prior to 11g, whenever optimizer goes for full table scan, Oracle used to show “db file scattered read” as wait event. But starting from 11g, a full table scan can show (depending on certain conditions) “direct path read” wait event.
+
+db file scattered read – happens when blocks for a table is read from datafile into buffer cache in SGA
+
+direct path read – happens when blocks for a table is read from datafile into PGA
+
+
+https://avdeo.com/2015/05/25/direct-path-read-behavior-in-oracle-11-2/
+
+
+ITASK2386215
+
+OASIPR01 database first execution is fine , but after that it hungs
+
+
+
+There is oracle bug , I have suggested a work around hint for queries.
+/*+ opt_param('_optimizer_use_feedback' 'false') */ 
+
+
+**************************************************************
+
+Install Oracle Trace File Analyzer (TFA)
+
+
+cd /u01/software
+unzip TFA-LINUX_v18.2.1.zip
+
+mkdir -p $ORACLE_HOME/tfa
+./installTFA-LINUX -local -tfabase $ORACLE_HOME/tfa
+
+
+cd $ORACLE_HOME/tfa/bin/
+
+# Gather diagnostic information about TFA itself.
+./tfactl diagnosetfa -local
+
+# Gather information about errors. You are prompted to select a specific incident.
+./tfactl diagcollect -srdc ORA-00600
+./tfactl diagcollect -srdc ORA-07445
+
+# Collect data for all components for a specific time period.
+./tfactl diagcollect -from "2018-06-16 13:00:00" -to "2018-06-16 13:00:00"
+
+# Collect data for all components for the last 12 hours.
+./tfactl diagcollect
+
+
+
+
+racle@fihecdpp046 11.2.0.4 OASIPR01 $
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $ cd /usr1/apl/oracle/tfa/
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $ ls -lrth
+total 1152027
+-rwxrwxrwx   1 oracle   dba         562M Jul  2 13:09 AHF-SOLARIS-X64_v20.2.0.zip
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $ unzip AHF-SOLARIS-X64_v20.2.0.zip
+Archive:  AHF-SOLARIS-X64_v20.2.0.zip
+  inflating: README.txt
+  inflating: ahf_setup
+
+
+
+oracle@fihecdpp046 11.2.0.4 OASIPR01 $ ./ahf_setup -local -ahf_loc /usr1/apl/oracle/tfa
+AHF Installer for Platform SunOS Architecture x86_64
+
+AHF Installation Log : /tmp/ahf_install_202000_19335_2020_07_02-13_22_46.log
+
+Starting Autonomous Health Framework (AHF) Installation
+
+
+https://oracledbwr.com/oracle-trace-file-analyzer-tips-and-tricks/
+
+https://oracledbwr.com/analyze-oracle-server-diagnostic-information-using-oswatcher-tool/
+
+
+
+
+$ tfactl –diagcollect –database hrdb,fdb –last 1d
+
+tfactl diagcollect –node list of nodes
+
+
+
+**************************************************************
+
+solaris health check commands
+
+
+https://docs.oracle.com/cd/E23824_01/html/821-1451/spmonitor-8.html
+
+How to Check Queue Activity (sar -q)
+Use the sar -q command to report the following information:
+The Average queue length while the queue is occupied.
+
+The percentage of time that the queue is occupied.
+
+$ sar -q
+00:00:00 runq-sz %runocc swpq-sz %swpocc
+The following list describes the output from the -q option.
+
+runq-sz
+The number of kernel threads in memory that are waiting for a CPU to run. 
+Typically, this value should be less than 2. Consistently higher values mean that the system might be CPU-bound.
+
+%runocc
+The percentage of time that the dispatch queues are occupied.
+
+swpq-sz
+The average number of swapped out processes.
+
+%swpocc
+The percentage of time in which the processes are swapped o
+
+oracle@fihecdpp071 12.2.0.1.180116 IPMREP $ sar -q
+
+SunOS fihecdpp071 5.11 11.3 i86pc    07/13/2020
+
+00:00:00 runq-sz %runocc swpq-sz %swpocc
+01:00:01     5.1      99     0.0       0
+02:00:00     5.3     100     0.0       0
+03:00:00     5.3      99     0.0       0
+04:00:01    95.8     100     0.0       0
+05:00:00    88.2     100     0.0       0
+06:00:04    75.8     100     0.0       0
+07:00:01    90.9     100     0.0       0
+08:00:00    92.3     100     0.0       0
+08:20:01    70.4     100     0.0       0
+08:40:00    66.7     100     0.0       0
+09:00:01    78.9     100     0.0       0
+09:20:01    84.8     100     0.0       0
+09:40:01    84.8     100     0.0       0
+10:00:00    65.3     100     0.0       0
+10:20:00    68.6     100     0.0       0
+10:40:01    79.0     100     0.0       0
+11:00:01    82.2     100     0.0       0
+11:20:00    85.8     100     0.0       0
+11:40:00    73.6     100     0.0       0
+12:00:00    83.3     100     0.0       0
+12:20:01   105.9     100     0.0       0
+12:40:01    94.6     100     0.0       0
+13:00:02    99.7     100     0.0       0
+13:20:00    92.3     100     0.0       0
+13:40:00    71.1     100     0.0       0
+14:00:00    59.3     100     0.0       0
+14:20:00    56.9     100     0.0       0
+14:40:00    43.8     100     0.0       0
+15:00:00    36.3     100     0.0       0
+15:20:00    34.1     100     0.0       0
+15:40:01    22.1     100     0.0       0
+16:00:00    11.4      98     0.0       0
+16:20:00    18.6      98     0.0       0
+16:40:00    13.3     100     0.0       0
+17:00:00    10.7     100     0.0       0
+17:20:00    15.7     100     0.0       0
+17:40:00     7.9      97     0.0       0
+18:00:00     1.3      36     0.0       0
+19:00:00     1.3      41     0.0       0
+20:00:00     1.3      37     0.0       0
+21:00:01     1.3      34     0.0       0
+22:00:01     1.3      40     0.0       0
+23:00:01     1.3      46     0.0       0
+
+Average     52.4      86     0.0       0
+
+
+after increasing CPU 
+
+oracle@fihecdpp071 12.2.0.1.180116 IPMREP $ sar -q
+
+SunOS fihecdpp071 5.11 11.3 i86pc    07/15/2020
+
+00:00:00 runq-sz %runocc swpq-sz %swpocc
+01:00:00     5.0      98     0.0       0
+02:00:00     5.1     100     0.0       0
+03:00:00     5.5     100     0.0       0
+04:00:00    62.4     100     0.0       0
+05:00:00    54.4     100     0.0       0
+06:00:01    37.7      94     0.0       0
+07:00:00     4.2      37     0.0       0
+08:00:01     1.5      40     0.0       0
+08:20:01     1.3      34     0.0       0
+08:40:00     1.4      40     0.0       0
+09:00:00     1.7      51     0.0       0
+09:20:01     2.5      37     0.0       0
+09:40:01     1.3      27     0.0       0
+10:00:00     1.6      28     0.0       0
+10:20:01     1.7      22     0.0       0
+10:40:00     1.7      30     0.0       0
+11:00:00     1.2      29     0.0       0
+11:20:00     1.6      45     0.0       0
+11:40:00     1.3      43     0.0       0
+12:00:01     1.4      39     0.0       0
+12:20:01     7.0      58     0.0       0
+12:40:00     1.4      32     0.0       0
+13:00:00     1.6      31     0.0       0
+13:20:00     1.9      52     0.0       0
+13:40:00     1.7      45     0.0       0
+14:00:00     1.3      40     0.0       0
+14:20:00     5.7      43     0.0       0
+14:40:00     3.0      39     0.0       0
+15:00:00     1.2      24     0.0       0
+15:20:00     2.3      40     0.0       0
+15:40:01     1.5      28     0.0       0
+16:00:00     1.3      46     0.0       0
+16:20:00     5.1      44     0.0       0
+16:40:00     1.5      31     0.0       0
+17:00:00     1.3      32     0.0       0
+17:20:00     5.8      55     0.0       0
+17:40:01     1.4      42     0.0       0
+18:00:00     1.3      46     0.0       0
+19:00:00     1.5      35     0.0       0
+20:00:00     1.4      34     0.0       0
+
+Average     16.1      56     0.0       0
+
+
+
+
+
+CPU data from dba_hist_osstat
+
+
+col c1 heading '#|CPUs'        format 999
+col c2 heading '#|CPU|Cores'   format 999
+col c3 heading '#|CPU|Sockets' format 999
+select
+   (select max(value) from dba_hist_osstat 
+    where stat_name = 'NUM_CPUS')        c1,
+   (select max(value) from dba_hist_osstat 
+    where stat_name = 'NUM_CPU_CORES')   c2,
+   (select max(value) from dba_hist_osstat 
+    where stat_name = 'NUM_CPU_SOCKETS') c3
+from dual;
+
+*********************************************************************
+
+memory
+
+ESTIMATED TOTAL MEMORY REQUIREMENT
+
+
+
+SGA + PGA = EST MEMORY REQUIREMENT FOR CURRENT CONNECTIONS
+
+                       
+SGA + PGA + UNCONNECTED SESSIONS = EST MEMORY REQUIREMENT AT MAXIMUM PROCESS UTILIZATION
+
+where:
+
+Unconnected Sessions (MB) = (processes - connected sessions) * pga max memory of user session
+
+****************************************************************************************
+
+MOUNT POINT SIZE
+*****************
+
+select unique 'df -k '||a.MTPOINT MOUNT_POINT
+from ( select substr(FILE_NAME,0,instr(FILE_NAME,'/',1,2)-1) MTPOINT
+from dba_data_files union
+select substr(FILE_NAME,0,instr(FILE_NAME,'/',1,2)-1) MTPOINT
+from dba_temp_files
+union
+select substr(MEMBER,0,instr(MEMBER,'/',1,2)-1) MTPOINT
+from v$logfile
+union
+select substr(NAME,0,instr(NAME,'/',1,2)-1) MTPOINT
+from v$controlfile) a;
+
+
+--- Query the database directories for mount points
+
+
+select 'df -k '||substr(DIRECTORY_PATH,0,instr(DIRECTORY_PATH,'/',1,2)-1) MTPOINT from dba_directories;
+
+
+************************************************************************************
+
+
+
+
+https://oracledbwr.com/sql-health-check-sqlhc-tips-and-tricks/
+
+https://geekflare.com/linux-performance-commands/
+
+https://likegeeks.com/linux-process-management/#Process-types
+
+https://unixutils.com/monitoring-disk-iops-in-linux/
+
+To display various statistics for processes and projects that are currently running on your system, use the prstat command with the -J option:
+
+prstat -J
+
+To display various statistics for processes and tasks that are currently running on your system, use the prstat command with the -T option:
+prstat -T
+
+
+Activated by the -m option (prstat -m), this option will show you lots of columns with percentage numbers confirming how and what exactly each process (or LWP thread) is doing.
+
+prstat -m
+prstat -a
+
+prstat -c 2 > prstat.txt)
+
+
+
+
+**************************************************************************
+
+
+SELECT V1"Total Commits",
+       V2"Total Rollbacks",
+       V3"Total User Calls",
+       T1"Uptime in days",
+       S1 / T1 "Avg Daily DML Transactions",
+       V3 / T1  "Avg Daily User Calls"
+  FROM (SELECT VALUE     V1
+          FROM V$SYSSTAT
+         WHERE NAME = 'user commits'),
+       (SELECT VALUE     V2
+          FROM V$SYSSTAT
+         WHERE NAME = 'user rollbacks'),
+       (SELECT SUM (VALUE)     S1
+          FROM V$SYSSTAT
+         WHERE NAME IN ('user commits', 'user rollbacks')),
+       (SELECT VALUE     V3
+          FROM V$SYSSTAT
+         WHERE NAME = 'user calls'),
+       (SELECT SYSDATE - STARTUP_TIME T1 FROM V$INSTANCE);
+
+
+Total Commits Total Rollbacks Total User Calls Uptime in days Avg Daily DML Transactions Avg Daily User Calls
+------------- --------------- ---------------- -------------- -------------------------- --------------------
+        94145             234          4988909     205.597778                  459.04679           24265.3839
+
+
+
+
+*******************************************************
+
+Query To Check SID From OS PID
+col sid format 99999
+col username format a20
+col osuser format a15
+select p.spid,s.sid, s.serial#,s.username, s.osuser
+from gv$session s, gv$process p
+where s.paddr= p.addr
+and p.spid='&spid'
+order by p.spid;
+
+******************************************************
+
+ 
+
+1. Run as root on the cell server:
+
+# /opt/oracle.SupportTools/sundiag.sh 
+Execution will create a date stamped tar.bz2 file in /tmp/sundiag_/tar.bz2
+
+Upload this file to the Service Request.
+
+sudo psn -G syscall,wchan,kstack
+
+
+
+****************************************
+
+https://techgoeasy.com/how-to-find-which-sid-is-doing-fu/
+
+
+
+Query to find the wait history for the particular SID
+
+
+set lines 120 trimspool on
+col event head "Waited for" format a30
+col total_waits head "Total|Waits" format 999,999
+col tw_ms head "Waited|for (ms)" format 999,999.99
+col aw_ms head "Average|Wait (ms)" format 999,999.99
+col mw_ms head "Max|Wait (ms)" format 999,999.99
+select event, total_waits, time_waited*10 tw_ms,
+average_wait*10 aw_ms, max_wait*10 mw_ms
+from v$session_event
+where sid = &1
+/
+
+
+**********************************************
+
+How to check whether stats is current for the objects involved in SQL query
+set line 1000
+set verify off
+col owner format a15
+col object_name format a25
+col object_type format a12
+col "LAST ANALYZED" format a13
+select do.OWNER,do.OBJECT_NAME,OBJECT_TYPE,
+decode (OBJECT_TYPE,'TABLE' , (Select LAST_ANALYZED from dba_tables where owner=do.owner and TABLE_NAME=do.object_name) ,
+'INDEX' , (Select LAST_ANALYZED from dba_indexes where owner=do.owner and INDEX_NAME=do.object_name) ,
+'UNKNOWN') "LAST ANALYZED",STATUS
+from DBA_OBJECTS do
+where OBJECT_TYPE in ('TABLE','INDEX')
+and (OWNER,OBJECT_NAME) in (select OBJECT_OWNER,OBJECT_NAME from V$SQL_PLAN where HASH_VALUE=&1)
+/
+
+**************************************************************
+
+1. Check and monitor if any process memory allocation increases over time abnormally or there are many inactive processes:
+
+1.1 To check for PGA allocation for each process, run following query:
+
+SET LINESIZE 120
+SET PAGESIZE 120
+COLUMN spid HEADING 'OSpid' FORMAT a8
+COLUMN pid HEADING 'Orapid' FORMAT 999999
+COLUMN sid HEADING 'Sess id' FORMAT 99999
+COLUMN serial# HEADING 'Serial#' FORMAT 999999
+COLUMN status HEADING 'Status' FORMAT a8
+COLUMN pga_alloc_mem HEADING 'PGA alloc' FORMAT 99,999,999,999
+COLUMN pga_used_mem HEADING 'PGA used' FORMAT 99,999,999,999
+COLUMN username HEADING 'Oracle user' FORMAT a12
+COLUMN osuser HEADING 'OS user' FORMAT a12
+COLUMN program HEADING 'Program' FORMAT a20
+
+SELECT p.spid,
+p.pid,
+s.sid,
+s.serial#,
+s.status,
+p.pga_alloc_mem,
+p.pga_used_mem,
+s.username,
+s.osuser,
+s.program
+FROM v$process p, v$session s
+WHERE s.paddr( + ) = p.addr
+ORDER BY p.pga_alloc_mem DESC;
+
+1.2 You can list process with largest PGA memory allocated by running following query:
+
+select pid,spid,substr(username,1,20) "USER" ,program,
+PGA_USED_MEM, PGA_ALLOC_MEM, PGA_FREEABLE_MEM, PGA_MAX_MEM
+from v$process where pga_alloc_mem=
+(select max(pga_alloc_mem) from v$process
+where program not like '%LGWR%');
+
+213 Check total PGA:
+
+SELECT SUM(value)/1024/1024 AS Mbytes
+FROM v$sesstat s, v$statname n
+WHERE n.STATISTIC# = s.STATISTIC#
+AND n.name = 'session pga memory';
+
+and
+
+Check the max PGA memory usage over the life of the instance
+(in V$PGASTAT) and see if the PGA is pushing limits on the OS.
+
+select * from v$pgastat;
+
+For example:
+total PGA inuse 183505920 bytes ~ 183M <-- currently in use
+total PGA allocated 383851520 bytes ~ 383M <-- memory allocated but not released
+maximum PGA allocated 9087268864 bytes ~ 9G <== over the life of instance
+
+
+2. If there any inactive sessions, check spool results of step 1.1, that consume a lot of memory, as indicated in Note 206007.1 , you can setup IDLE_TIME, as shown in following document, to clean up inactive session(s) which have been inactive for greater than no_of_minutes, to be disconnected from the database.
+
+Reference:
+
+( Doc ID 206007.1 ) How To Automate Cleanup Of Dead Connections And INACTIVE Sessions 
+
+
+******************************************************************
+Monitor long running sessions in Oracle using below queries:
+
+set lines 300
+col TARGET for a40
+col SQL_ID for a20
+select SID,TARGET||OPNAME TARGET, TOTALWORK, SOFAR,TIME_REMAINING/60 Mins_Remaining,ELAPSED_SECONDS,SQL_ID from v$session_longops where TIME_REMAINING>0 order by TIME_REMAINING; 
+
+******************************************************************
+
+TO find out sql_id for the above sid:
+SQL> select sql_id from v$session where sid='&SID';
+
+To find sql text for the above sql_id:
+SQL> select sql_fulltext from V$sql where sql_id='bgf07y9xn8grx';
+
+To find wait event of the query for which it is waiting for:
+SQL>select sql_id, state, last_call_et, event, program, osuser from v$session where sql_id='&sql_id';
+
+To kill session in Oracle:
+ https://orahow.com/4-best-ways-to-find-blocking-sessions-in-oracle-11g/ 
+
+
+****************************************************************
+
+To determine which job is holding the conflicting enqueue:
+
+*******************************************************
+SELECT s.SID,
+       USERNAME   AS "User",
+       PROGRAM,
+       MODULE,
+       ACTION,
+       LOGON_TIME "Logon",
+       l.*,
+       'alter system kill session '||''''||s.SID||','||s.SERIAL#||','||'@'||s.INST_ID||''''||' immediate;'
+  FROM GV$SESSION s, GV$ENQUEUE_LOCK l
+ WHERE l.SID = s.SID
+   AND l.TYPE = 'CF'
+   AND l.ID1 = 0
+   AND l.ID2 = 2;
+
+********************************************************
+
+
+       SID User                           PROGRAM                                          MODULE                                                           ACTION                                                           Logon        INST_ID ADDR                  KADDR                   SID TY        ID1
+---------- ------------------------------ ------------------------------------------------ ---------------------------------------------------------------- ---------------------------------------------------------------- --------- ---------- ---------------- ---------------- ---------- -- ----------
+       ID2      LMODE    REQUEST      CTIME      BLOCK 'ALTERSYSTEMKILLSESSION'||''''||S.SID||','||S.SERIAL#||','||'@'||S.INST_ID||''''||'IMMEDIATE;'
+---------- ---------- ---------- ---------- ---------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+       120 SYS                            rman@fih5ex1dbadm01.emea.nsn-net.net (TNS V1-V3) backup archivelog                                                0000318 STARTED111                                               12-FEB-21      1 0000000B18DEAB48 0000000B18DEABA0         120 CF          0
+         2          4          0      39178          2 alter system kill session '120,23239,@1' immediate;
+
+
+
+**********************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

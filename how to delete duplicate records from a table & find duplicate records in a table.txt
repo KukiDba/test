@@ -1,0 +1,28 @@
+
+---Deletes duplicate records ---
+
+
+DELETE FROM NIRAJIEC n
+      WHERE ROWID > (SELECT   MIN (ROWID)
+                         FROM NIRAJIEC d
+                        WHERE n.iec = d.iec)
+				 
+
+
+-----Gives the Count of duplicate records -----
+
+SELECT iec, iename,  COUNT(*)
+FROM NIRAJIEC
+HAVING COUNT(*) > 1
+GROUP BY iec, iename
+
+
+
+----Deletes duplicate records -----
+
+
+DELETE FROM NIRAJIEC
+WHERE ROWID NOT IN
+    (SELECT MAX(ROWID) FROM NIRAJIEC
+     GROUP BY iec, iename
+     HAVING COUNT(*)>=1)

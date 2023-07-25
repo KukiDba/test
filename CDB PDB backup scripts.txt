@@ -1,0 +1,207 @@
+
+
+oracle@esenoatp61.emea.nsn-net.net>cat /etc/redhat-release
+Red Hat Enterprise Linux Server release 7.4 (Maipo)
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+ora
+oracle@esenoatp61.emea.nsn-net.net>crontab -l
+0 4 * * 0 sh /u04/backup/rman/rman_full_backup.sh 2>&1
+0 3,9,15,21 * * * sh /u04/backup/rman/rman_arch_backup.sh 2>&1
+0 6 * * 1,2,3,4,5,6 sh /u04/backup/rman/rman_inc_backup.sh 2>&1
+00 * * * * /var/user/oracle/scripts/Housekeep.ksh -d 15 > /var/user/oracle/scripts/logs/HouseKeep.log 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nsnit31/NSNIT31;purge -age 129600 -type ALERT"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nsnit31/NSNIT31;purge -age 43200  -type INCIDENT"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nsnit31/NSNIT31;purge -age 43200  -type CDUMP"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nsnit31/NSNIT31;purge -age 43200  -type TRACE"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nsnit31/NSNIT31;purge -age 43200  -type HM"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/tnslsnr/esenoatp61/nsnit31;purge -age 43200"' >/dev/null 2>&1
+00 06 * * *  'find /u01/oracle/admin/NSNIT31/adump/ -name '*.aud' -mtime +60 -exec rm -f {} \;'
+oracle@esenoatp61.emea.nsn-net.net>cat /u04/backup/rman/rman_full_backup.sh
+#!/bin/bash
+# description : run rman full backup
+# Created by: Nishtha Sharma
+##########################
+##### Variables #######
+##########################
+RUNTIME=`date '+%H:%M:%S_%d%m%Y'`
+RUNDATE=`date '+%d%m%Y'`
+export LD_LIBRARY_PATH=/u01/oracle/app/product/12.2.0.1/dbhome_1/lib:/lib:/usr/lib
+export ORACLE_SID=NSNIT31
+export ORACLE_BASE=/u01/oracle/app
+export ORACLE_HOME=/u01/oracle/app/product/12.2.0.1/dbhome_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export LOGDIR=/u04/backup/rman
+export BACKUP_BASE=/u04/backup
+#########################################
+# Specific settings #
+#########################################
+LOGFILE=${LOGDIR}/${ORACLE_SID}_${RUNTIME}_full.log
+BACKUPDIR=${BACKUP_BASE}/${ORACLE_SID}/rman_${RUNDATE}_full
+############################################################
+Creating directory
+############################################################
+mkdir -p ${BACKUP_BASE}/${ORACLE_SID}/rman_${RUNDATE}_full
+#############################
+# Cleaning old files#
+#############################
+find ${LOGDIR}/${ORACLE_SID}_*_full.log -mtime +7 -exec rm -f {} \; > /dev/null 2>&1
+
+# Start the rman commands
+rman target / msglog=${LOGFILE} << EOF
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CROSSCHECK ARCHIVELOG ALL;
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '${BACKUPDIR}/snapcf_${ORACLE_SID}.f';
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '${BACKUPDIR}/ora_cf%F';
+run{
+ALLOCATE CHANNEL ch1 DEVICE TYPE DISK;
+ALLOCATE CHANNEL ch2 DEVICE TYPE DISK;
+ALLOCATE CHANNEL ch3 DEVICE TYPE DISK;
+backup AS COMPRESSED BACKUPSET INCREMENTAL LEVEL 0 DATABASE format '${BACKUPDIR}/databasefiles_%d_%u_%s_%T';
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL FORMAT '${BACKUPDIR}/archivelogs_%d_%u_%s_%T';
+BACKUP AS COMPRESSED BACKUPSET CURRENT CONTROLFILE FORMAT '${BACKUPDIR}/controlfile_%d_%u_%s_%T';
+release channel ch1;
+release channel ch2;
+release channel ch3;
+}
+EXIT;
+EOF
+echo......... 'End of Backup at $RUNTIME'................
+#############################
+# Zipping the Backup folder#
+#############################
+tar -cpzf  $BACKUPDIR.tar.gz $BACKUPDIR
+find ${BACKUP_BASE}/${ORACLE_SID}/rman_*_full -exec rm -rf {} \;
+##############################
+#deleting old backup
+###############################################
+find ${BACKUP_BASE}/${ORACLE_SID}/rman_*_full.tar.gz -mtime +6 -exec rm -rf {} \;
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>cat /u04/backup/rman/rman_arch_backup.sh
+#!/bin/bash
+# description : run rman archive backup
+# Created by : Nishtha Sharma
+##########################
+##### Variables #######
+##########################
+RUNTIME=`date '+%H:%M:%S_%d%m%Y'`
+RUNDATE=`date '+%d%m%Y'`
+export LD_LIBRARY_PATH=/u01/oracle/app/product/12.2.0.1/dbhome_1/lib:/lib:/usr/lib
+export ORACLE_SID=NSNIT31
+export ORACLE_BASE=/u01/oracle/app
+export ORACLE_HOME=/u01/oracle/app/product/12.2.0.1/dbhome_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export LOGDIR=/u04/backup/rman
+export BACKUP_BASE=/u04/backup
+#########################################
+# Specific settings #
+#########################################
+LOGFILE=${LOGDIR}/${ORACLE_SID}_${RUNTIME}_arch.log
+BACKUPDIR=${BACKUP_BASE}/${ORACLE_SID}/rman_${RUNTIME}_arch
+############################################################
+#Creating directory
+############################################################
+mkdir -p ${BACKUP_BASE}/${ORACLE_SID}/rman_${RUNTIME}_arch
+#############################
+# Cleaning old files#
+#############################
+find ${LOGDIR}/${ORACLE_SID}_*_arch.log -mtime +7 -exec rm -f {} \; > /dev/null 2>&1
+
+
+# Start the rman commands
+rman target / msglog=${LOGFILE} << EOF
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '${BACKUPDIR}/snapcf_${ORACLE_SID}.f';
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '${BACKUPDIR}/ora_cf%F';
+CROSSCHECK ARCHIVELOG ALL;
+run{
+ALLOCATE CHANNEL ch1 DEVICE TYPE DISK;
+ALLOCATE CHANNEL ch2 DEVICE TYPE DISK;
+ALLOCATE CHANNEL ch3 DEVICE TYPE DISK;
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL NOT BACKED UP 1 TIMES DELETE INPUT FORMAT '${BACKUPDIR}/archivelogs_%d_%u_%s_%T';
+BACKUP AS COMPRESSED BACKUPSET CURRENT CONTROLFILE FORMAT '${BACKUPDIR}/controlfile_%d_%u_%s_%T';
+BACKUP SPFILE FORMAT '${BACKUPDIR}/spfile_${ORACLE_SID}_%d_%u_%s_%T';
+release channel ch1;
+release channel ch2;
+release channel ch3;
+}
+EXIT;
+EOF
+echo......... 'End of Backup at $RUNTIME'................
+#############################
+# Zipping and deleting the old files#
+#############################
+tar -cpzf $BACKUPDIR.tar.gz $BACKUPDIR
+find ${BACKUP_BASE}/${ORACLE_SID}/rman_*_arch -exec rm -rf {} \;
+########################################
+#delete old archives backup
+########################################
+find ${BACKUP_BASE}/${ORACLE_SID}/rman_*_arch.tar.gz -mtime +2 -exec rm -rf {} \;
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>cat /u04/backup/rman/rman_inc_backup.sh
+#!/bin/bash
+# description : run rman inc backup
+# Created by : Nishtha Sharma
+##########################
+##### Variables #######
+##########################
+RUNTIME=`date '+%H:%M:%S_%d%m%Y'`
+RUNDATE=`date '+%d%m%Y'`
+export LD_LIBRARY_PATH=/u01/oracle/app/product/12.2.0.1/dbhome_1/lib:/lib:/usr/lib
+export ORACLE_SID=NSNIT31
+export ORACLE_BASE=/u01/oracle/app
+export ORACLE_HOME=/u01/oracle/app/product/12.2.0.1/dbhome_1
+export PATH=$PATH:${ORACLE_HOME}/bin
+export LOGDIR=/u04/backup/rman
+export BACKUP_BASE=/u04/backup
+#########################################
+# Specific settings #
+#########################################
+LOGFILE=${LOGDIR}/${ORACLE_SID}_${RUNTIME}_inc.log
+BACKUPDIR=${BACKUP_BASE}/${ORACLE_SID}/rman_${RUNDATE}_inc
+############################################################
+Creating directory
+############################################################
+mkdir -p ${BACKUP_BASE}/${ORACLE_SID}/rman_${RUNDATE}_inc
+#############################
+# Cleaning old files#
+#############################
+find ${LOGDIR}/${ORACLE_SID}_*_inc.log -mtime +7 -exec rm -f {} \; > /dev/null 2>&1
+
+# Start the rman commands
+rman target / msglog=${LOGFILE} << EOF
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CROSSCHECK ARCHIVELOG ALL;
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '${BACKUPDIR}/snapcf_${ORACLE_SID}.f';
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '${BACKUPDIR}/ora_cf%F';
+run{
+ALLOCATE CHANNEL ch1 DEVICE TYPE DISK;
+ALLOCATE CHANNEL ch2 DEVICE TYPE DISK;
+ALLOCATE CHANNEL ch3 DEVICE TYPE DISK;
+BACKUP AS COMPRESSED BACKUPSET incremental level 1 database format '${BACKUPDIR}/databasefiles_inc_%d_%u_%s_%T';
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL FORMAT '${BACKUPDIR}/archivelogs_%d_%u_%s_%T';
+BACKUP AS COMPRESSED BACKUPSET CURRENT CONTROLFILE FORMAT '${BACKUPDIR}/controlfile_%d_%u_%s_%T';
+release channel ch1;
+release channel ch2;
+release channel ch3;
+}
+EXIT;
+EOF
+echo......... 'End of Backup at $RUNTIME'................
+#############################
+# Zipping the Backup folder#
+#############################
+tar -cpzf  $BACKUPDIR.tar.gz $BACKUPDIR
+find ${BACKUP_BASE}/${ORACLE_SID}/rman_*_inc -exec rm -rf {} \;
+##############################
+#delete old inc  backup
+########################################
+find ${BACKUP_BASE}/${ORACLE_SID}/rman_*_inc.tar.gz -mtime +4 -exec rm -rf {} \;
+oracle@esenoatp61.emea.nsn-net.net>
+oracle@esenoatp61.emea.nsn-net.net>

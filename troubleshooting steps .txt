@@ -1,0 +1,354 @@
+
+Step 1. Check the status of capture,apply and propagation process in out of sync site as below.
+Step 2. Start the required process as give below query.
+
+select capture_name, status from dba_capture;----------------------caputure process
+select apply_name, status, status_change_time from dba_apply;------APPLY process
+select propagation_name, status, error_date from dba_propagation;--PROPAGATION process
+
+Check the sync and out of sync below query.
+********************************************
+
+sqlplus "/as sysdba"
+
+conn STRMADMIN/cx6hya1g
+
+select 'Replication from ' || site || ' to RASEMEA.NSNNET.COM ' ||
+        case when modifieddate < netras.local2gmt(sysdate) - 20/1440 then 'out of sync from ' || to_char(modifieddate, 'DD.MM.YYYY HH24:MI:SS') else 'in sync' end as status
+    from netras.dbuser@rasemea.nsnnet.com
+    where id in (1371913662,825162735,1269559391,749153436,1000000004)
+        and site <> 'RASEMEA.NSNNET.COM'
+union all
+select 'Replication from ' || site || ' to RASDALL.NSNNET.COM ' ||
+        case when modifieddate < netras.local2gmt(sysdate) - 20/1440 then 'out of sync from ' || to_char(modifieddate, 'DD.MM.YYYY HH24:MI:SS') else 'in sync' end
+    from netras.dbuser@rasdall.nsnnet.com
+    where id in (1371913662,825162735,1269559391,749153436,1000000004)
+        and site <> 'RASDALL.NSNNET.COM'
+union all
+select 'Replication from ' || site || ' to RASSING.NSNNET.COM ' ||
+        case when modifieddate < netras.local2gmt(sysdate) - 20/1440 then 'out of sync from ' || to_char(modifieddate, 'DD.MM.YYYY HH24:MI:SS') else 'in sync' end
+    from netras.dbuser@rassing.nsnnet.com
+    where id in (1371913662,825162735,1269559391,749153436,1000000004)
+        and site <> 'RASSING.NSNNET.COM'
+union all
+select 'Replication from ' || site || ' to RASCHEN.NSNNET.COM ' ||
+        case when modifieddate < netras.local2gmt(sysdate) - 20/1440 then 'out of sync from ' || to_char(modifieddate, 'DD.MM.YYYY HH24:MI:SS') else 'in sync' end
+    from netras.dbuser@raschen.nsnnet.com
+    where id in (1371913662,825162735,1269559391,749153436,1000000004)
+        and site <> 'RASCHEN.NSNNET.COM'
+union all
+select 'Replication from ' || site || ' to RASBEIJ.NSNNET.COM ' ||
+        case when modifieddate < netras.local2gmt(sysdate) - 20/1440 then 'out of sync from ' || to_char(modifieddate, 'DD.MM.YYYY HH24:MI:SS') else 'in sync' end
+    from netras.dbuser@rasbeij.nsnnet.com
+    where id in (1371913662,825162735,1269559391,749153436,1000000004)
+        and site <> 'RASBEIJ.NSNNET.COM';
+
+**********************************************************************************************************************************************
+
+
+Db link name               Database name
+***********************************************
+
+RASCHEN.NSNNET.COM--------->NSNRAS6
+RASEMEA.NSNNET.COM--------->NSNRAS1
+RASBEIJ.NSNNET.COM--------->NSNRAS4
+RASDALL.NSNNET.COM--------->NSNRAS3
+RASSING.NSNNET.COM--------->NSNRAS6
+
+
+
+select apply_name, status, status_change_time from dba_apply;
+
+APPLY_NAME                                                                                                                       STATUS   STATUS_CH
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+APPLY_FROM_RASSING                                                                                                               ENABLED  22-APR-20
+APPLY_FROM_RASDALL                                                                                                               ENABLED  22-APR-20
+APPLY_FROM_RASBEIJ                                                                                                               ENABLED  22-APR-20
+APPLY_FROM_RASEMEA                                                                                                               ENABLED  22-APR-20
+
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  02-MAY-20
+PROP_TO_RASEMEA                                                                                                                  ENABLED  02-MAY-20
+PROP_TO_RASSING                                                                                                                  ABORTED  02-MAY-20
+PROP_TO_RASDALL                                                                                                                  ABORTED  02-MAY-20
+
+SQL> ! hostname
+incvcdpp005
+
+SQL> select name from v$database;
+
+NAME
+---------
+NSNRAS6
+
+SQL> select capture_name, status from dba_capture;
+
+CAPTURE_NAME                                                                                                                     STATUS
+-------------------------------------------------------------------------------------------------------------------------------- --------
+STREAMS_CAPTURE                                                                                                                  ENABLED
+
+
+exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASSING');
+exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASDALL');
+
+
+
+
+
+SQL> select name,open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+NSNRAS2   READ WRITE
+
+CAPTURE_NAME                                                                                                                     STATUS
+-------------------------------------------------------------------------------------------------------------------------------- --------
+STREAMS_CAPTURE                                                                                                                  ENABLED
+
+SQL> select apply_name, status, status_change_time from dba_apply;
+
+APPLY_NAME                                                                                                                       STATUS   STATUS_CH
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+APPLY_FROM_RASDALL                                                                                                               ENABLED  28-NOV-19
+APPLY_FROM_RASBEIJ                                                                                                               ENABLED  18-JAN-20
+APPLY_FROM_RASCHEN                                                                                                               ENABLED  28-NOV-19
+APPLY_FROM_RASEMEA                                                                                                               ENABLED  28-NOV-19
+
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASDALL                                                                                                                  ENABLED  26-APR-20
+PROP_TO_RASCHEN                                                                                                                  ABORTED  02-MAY-20
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASEMEA                                                                                                                  ENABLED
+
+
+SQL> exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASCHEN');
+
+PL/SQL procedure successfully completed.
+
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASDALL                                                                                                                  ENABLED  26-APR-20
+PROP_TO_RASCHEN                                                                                                                  ENABLED  02-MAY-20
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASEMEA                                                                                                                  ENABLED
+
+
+
+
+*******************************************************************
+
+
+SQL> select name,open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+NSNRAS3   READ WRITE
+
+SQL>
+SQL>
+SQL> set line 200
+SQL>
+SQL> select capture_name, status from dba_capture;
+
+CAPTURE_NAME                                                                                                                     STATUS
+-------------------------------------------------------------------------------------------------------------------------------- --------
+STREAMS_CAPTURE                                                                                                                  ENABLED
+
+SQL> select apply_name, status, status_change_time from dba_apply;
+
+APPLY_NAME                                                                                                                       STATUS   STATUS_CH
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+APPLY_FROM_RASSING                                                                                                               ENABLED  14-NOV-19
+APPLY_FROM_RASEMEA                                                                                                               ENABLED  14-NOV-19
+APPLY_FROM_RASBEIJ                                                                                                               ENABLED  18-JAN-20
+APPLY_FROM_RASCHEN                                                                                                               ENABLED  16-APR-20
+
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASEMEA                                                                                                                  ENABLED
+PROP_TO_RASCHEN                                                                                                                  ABORTED  02-MAY-20
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  26-APR-20
+PROP_TO_RASSING                                                                                                                  ENABLED  26-APR-20
+
+SQL> SQL> exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASCHEN');
+
+PL/SQL procedure successfully completed.
+
+SQL>
+SQL>
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASEMEA                                                                                                                  ENABLED
+PROP_TO_RASCHEN                                                                                                                  ENABLED  02-MAY-20
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  26-APR-20
+PROP_TO_RASSING                                                                                                                  ENABLED  26-APR-20
+
+
+*******************************************************************************************************************************
+
+SQL> select name,open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+NSNRAS4   READ WRITE
+
+SQL> set line 200
+SQL>
+SQL> select capture_name, status from dba_capture;
+
+CAPTURE_NAME                                                                                                                     STATUS
+-------------------------------------------------------------------------------------------------------------------------------- --------
+STREAMS_CAPTURE                                                                                                                  ENABLED
+
+SQL> select apply_name, status, status_change_time from dba_apply;
+
+APPLY_NAME                                                                                                                       STATUS   STATUS_CH
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+APPLY_FROM_RASCHEN                                                                                                               ENABLED  14-APR-20
+APPLY_FROM_RASEMEA                                                                                                               ENABLED  14-APR-20
+APPLY_FROM_RASSING                                                                                                               ENABLED  14-APR-20
+APPLY_FROM_RASDALL                                                                                                               ENABLED  14-APR-20
+
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASSING                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASDALL                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASEMEA                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASCHEN                                                                                                                  ABORTED  02-MAY-20
+
+SQL> exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASCHEN');
+
+PL/SQL procedure successfully completed.
+
+SQL>
+
+SQL> SQL>
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DAT
+-------------------------------------------------------------------------------------------------------------------------------- -------- ---------
+PROP_TO_RASSING                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASDALL                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASEMEA                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASCHEN                                                                                                                  ENABLED  02-MAY-20
+
+SQL>
+
+
+************************************************************************************************************************
+
+
+
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+NSNRAS1   READ WRITE           ARCHIVELOG
+
+SQL>
+SQL>
+SQL> set line 200
+SQL> select capture_name, status from dba_capture;
+
+CAPTURE_NAME                                                                                                                     STATUS
+-------------------------------------------------------------------------------------------------------------------------------- --------
+STREAMS_CAPTURE                                                                                                                  ENABLED
+
+SQL> select apply_name, status, status_change_time from dba_apply;
+
+APPLY_NAME                                                                                                                       STATUS   STATUS_CHANGE_TIME
+-------------------------------------------------------------------------------------------------------------------------------- -------- ------------------
+APPLY_FROM_RASSING                                                                                                               ENABLED  13-APR-20
+APPLY_FROM_RASDALL                                                                                                               ENABLED  13-APR-20
+APPLY_FROM_RASBEIJ                                                                                                               ENABLED  13-APR-20
+APPLY_FROM_RASCHEN                                                                                                               ENABLED  13-APR-20
+
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DATE
+-------------------------------------------------------------------------------------------------------------------------------- -------- ------------------
+PROP_TO_RASDALL                                                                                                                  ENABLED  26-APR-20
+PROP_TO_RASCHEN                                                                                                                  ABORTED  02-MAY-20
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASSING                                                                                                                  ENABLED
+
+SQL> exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASCHEN');
+
+PL/SQL procedure successfully completed.
+
+SQL>
+SQL>
+SQL> select propagation_name, status, error_date from dba_propagation;
+
+PROPAGATION_NAME                                                                                                                 STATUS   ERROR_DATE
+-------------------------------------------------------------------------------------------------------------------------------- -------- ------------------
+PROP_TO_RASDALL                                                                                                                  ENABLED  26-APR-20
+PROP_TO_RASCHEN                                                                                                                  ENABLED  02-MAY-20
+PROP_TO_RASBEIJ                                                                                                                  ENABLED  21-APR-20
+PROP_TO_RASSING                                                                                                                  ENABLED
+
+
+
+Start and stopping process in stream
+******************************************
+
+
+
+  Stop Streams Processes
+1. Stop CHANGE CAPTURE on source
+
+$ sqlplus streamadm/*****@PROD.EXAMPLE.COM
+SQL> exec DBMS_CAPTURE_ADM.STOP_CAPTURE('STREAMS_CAPTURE');
+
+2. Stop PROPAGATION on source
+
+exec DBMS_PROPAGATION_ADM.STOP_PROPAGATION('PROP_TO_RASDALL');
+
+$ sqlplus streamadm/*****@PROD.EXAMPLE.COM
+SQL> exec DBMS_PROPAGATION_ADM.STOP_PROPAGATION('PROP_TO_RASEMEA');
+
+3. Stop APPLY on destination
+
+$ sqlplus streamadm/*****@REPL.EXAMPLE.COM
+SQL> exec DBMS_APPLY_ADM.STOP_APPLY('APPLY_FROM_RASEMEA');
+
+
+
+ Start Streams Processes
+1. Start CHANGE CAPTURE on source
+
+$ sqlplus streamadm/*****@PROD.EXAMPLE.COM
+SQL> exec DBMS_CAPTURE_ADM.START_CAPTURE('STREAMS_CAPTURE');
+
+2. Start PROPAGATION on source
+
+$ sqlplus streamadm/*****@PROD.EXAMPLE.COM
+exec DBMS_PROPAGATION_ADM.START_PROPAGATION('PROP_TO_RASEMEA');
+
+3. Start APPLY on destination
+
+$ sqlplus streamadm/*****@REPL.EXAMPLE.COM
+SQL> exec DBMS_APPLY_ADM.START_APPLY('APPLY_FROM_RASEMEA');
+
+
+
+
+
+
+
+
+
