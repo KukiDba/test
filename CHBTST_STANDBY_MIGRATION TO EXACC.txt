@@ -1,0 +1,519 @@
+Source : uusdfw23db33v/CHBTST
+Target :  usdfw23db02vcn1/2/CHBTST
+CDB: COLNP033
+PDB : CHBTST
+Cluster : MGTI-DFW-XD-INTERNAL01-DEV-CL02
+Host Nodes : usdfw23db02vcn1/2
+
+DB usdfw23db02vcn1_2/CHBTST migration is completed 
+
+
+Target Diskgroups - 
+DATAC2
+RECOC2
+
+1) check db is in sync ..
+alter system switch logfile; make sure the log file appplied on new stand by  .. chekc using below command
+==================================
+2)SELECT ARCH.THREAD#"Thread",ARCH.SEQUENCE#"LastSequenceReceived",APPL.SEQUENCE#"LastSequenceApplied",(ARCH.SEQUENCE#-APPL.SEQUENCE#)"Difference"
+FROM
+(SELECT THREAD#,SEQUENCE# FROM V$ARCHIVED_LOG WHERE(THREAD#,FIRST_TIME)IN(SELECT THREAD#,MAX(FIRST_TIME)FROM V$ARCHIVED_LOG GROUP BY THREAD#))ARCH,
+(SELECT THREAD#,SEQUENCE# FROM V$LOG_HISTORY WHERE(THREAD#,FIRST_TIME)IN(SELECT THREAD#,MAX(FIRST_TIME)FROM V$LOG_HISTORY GROUP BY THREAD#))APPL
+WHERE ARCH.THREAD#=APPL.THREAD#
+ORDER BY 1;
+
+select name,open_mode,database_role from gv$database;
+set lines 200 pages 100
+select process,status,thread#,sequence# from gv$managed_standby;
+==================================
+3) stop recovery 
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+==================================
+4) Check db_recovery_file_dest_size and db_recovery_file_dest is present or not . if not exists use below
+==================================
+SQL> show parameter db_recover
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+db_recovery_file_dest                string                           +RECOC2
+db_recovery_file_dest_size           big integer                      200G
+
+alter system db_recovery_file_dest_size=100g scope=both;
+alter system db_recovery_file_dest=+RECOC2 scope=both;
+==================================
+5)
+CREATE RESTORE POINT grp_b4activity GUARANTEE FLASHBACK DATABASE;
+==================================
+
+6) Activate standby (alter database activate standby database;)
+==================================
+
+show parameter max_string
+show parameter undo
+
+SQL> show parameter max_string
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+max_string_size                      string                           STANDARD
+SQL>
+SQL> show parameter undo
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+temp_undo_enabled                    boolean                          FALSE
+undo_management                      string                           AUTO
+undo_retention                       integer                          3600
+undo_tablespace                      string
+SQL>
+
+SQL> alter system set undo_tablespace='UNDOTBS1' scope=spfile sid='*';
+
+System altered.
+
+
+7)shut immediate;startup open read write .
+=================== NOT REQUIRED FOR CHBTST START ===================
+alter system set undo_tablespace='UNDOTBS1' scope=spfile sid='*';
+
+==================================
+8) Drop apex users if  any 
+
+SQL> select username from dba_users where username like '%APEX%';
+
+USERNAME
+--------------------------------------------------------------------------------
+APEX_PUBLIC_USER
+APEX_050000
+APEX_040200
+
+
+SQL> drop user APEX_050000 cascade;
+
+User dropped.
+
+SQL> drop user APEX_040200 cascade;
+
+User dropped.
+
+SQL> drop user APEX_PUBLIC_USER cascade;
+
+User dropped.
+
+drop package sys.wwv_dbms_sql;
+
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+
+SQL>
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+
+[oracle@usdfw23db02vcn1 ~]$ cd $ORACLE_HOME/OPatch
+[oracle@usdfw23db02vcn1 OPatch]$ ./datapatch -verbose
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+drop package sys.wwv_dbms_sql;
+
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+
+
+Check registry components status should be valid:
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+
+
+SQL>
+SQL>
+
+shut immediate and 
+startup open read only
+verify using 
+SQL> select name,open_mode,database_role from gv$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+CHBTST   READ ONLY            PRIMARY
+
+
+SQL>
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Verify the directory
+ls -ld /var/oracle/export/CHBTST/migrate
+mkdir -p /var/oracle/export/CHBTST/migrate
+
+SQL> exec DBMS_PDB.DESCRIBE('/var/oracle/export/CHBTSTmigrate/CHBTST.xml');
+
+PL/SQL procedure successfully completed.
+
+SQL>shut immediate
+
++++++++++++++++++++++++++++++++++++++++++
+In Container database:
+
+. ~/COLNP033.env
+
+SQL>
+SET SERVEROUTPUT ON
+DECLARE
+ compatible CONSTANT VARCHAR2(3) :=
+ CASE DBMS_PDB.CHECK_PLUG_COMPATIBILITY(
+  pdb_descr_file => '/var/oracle/export/CHBTST/migrate/CHBTST.xml',
+ pdb_name => 'CHBTST')
+ WHEN TRUE THEN 'YES'
+ ELSE 'NO'
+  END;
+  BEGIN
+ DBMS_OUTPUT.PUT_LINE(compatible);
+END;
+/
+
+YES
+
+PL/SQL procedure successfully completed.
+
+SQL>
+SQL> select cause, type, action, status from pdb_plug_in_violations where name = 'CHBTST' and type like '%ERR%';
+
+no rows selected
+
+SQL>
+SQL> select cause, type, action, status from pdb_plug_in_violations where name = 'CHBTST' and status  like '%ERR%';
+
+no rows selected
+
+
+DB name: COLNP033
+
+===================================================
+
+shut (old OCI standby-primary) before execute create pluggable statement ...
+
+
+check default encryption algorithm on cdb
+
+select encryptionalg from v$encrypted_tablespaces;
+
+SHOW PARAMETER TABLESPACE_ENCRYPTION_DEFAULT_ALGORITHM
+
+ALTER SYSTEM SET "_TABLESPACE_ENCRYPTION_DEFAULT_ALGORITHM"=AES256 scope=both sid='*';
+
+## restart the CDB if its an empty 
+
+## srvctl status database -d COLNP033
+## srvctl stop database -d COLNP033
+## srvctl start database -d COLNP033
+## srvctl status database -d COLNP033
+
+SELECT name, encryptionalg 
+              FROM v$tablespace t, v$encrypted_tablespaces v 
+              WHERE t.ts#=v.ts#;
+
+
+SQL> create pluggable database CHBTST as clone using '/var/oracle/export/CHBTSTmigrate/CHBTST.xml' COPY file_name_convert=('+DATAC2','+DATAC2');
+
+
+Pluggable database created.
+
+
+
+SQL> SQL>
+
+========================================================================
+
+SQL> SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CHBTST                       MOUNTED
+
+SQL>
+
+=================================================
+
+13)this is new PDB created and this PDB should be mount state...>>>>show pdbs 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[oracle@usdfw23db02vcn1 migrate]$ cat CHBTST_noncdb_pdb.sh
+export ORACLE_SID=COLNP0331
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1
+export PATH=$ORACLE_HOME/bin:$PATH
+sqlplus / as sysdba << EOF > /var/oracle/export/CHBTST/migrate/CHBTST_noncdb_to_pdb.out
+spool /var/oracle/export/CHBTST/migrate/CHBTST_noncdb_to_pdb.log
+select name, open_mode from v\$database;
+set time on timing on feedback on verify on head on echo on
+SELECT name, open_mode FROM v\$pdbs WHERE name = 'CHBTST';
+ALTER SESSION SET CONTAINER=CHBTST;
+show con_name
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/noncdb_to_pdb.sql
+alter pluggable database CHBTST open instances=all;
+alter pluggable database CHBTST save state instances=all;
+select time,name,cause,status,message,type from PDB_PLUG_IN_VIOLATIONS where status= 'PENDING' order by name;
+spool off
+EOF
+[oracle@usdfw23db02vcn1 migrate]$ echo $ORACLE_SID
+COLNP0331
+
+./CHBTST_noncdb_pdb.sh |tee -a /tmp/CHBTST.log
+
+[oracle@usdfw23db02vcn1 migrate]$ echo $?
+0
+[oracle
+=======================================================
+
+set pages 999 lines 200
+col cause for a10
+col name for a10
+col message for a35 word_wrapped
+select name,cause,type,message,status from PDB_PLUG_IN_VIOLATIONS where name='CHBTST' and type='ERROR';
+
+select name,cause,type,message,status from PDB_PLUG_IN_VIOLATIONS where name='CHBTST' and type='ERROR';
+
+
+SQL>
+
+ alter session set container=CHBTST;
+SQL>
+
+===================================================================
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CHBTST.MRSHMC.COM
+
+ alter session set container=CHBTST;
+
+SQL> update global_name set global_name='CHBTST';
+
+1 row updated.
+
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CHBTST
+
+SQL> commit;
+
+Commit complete.
+
+usfkl23db39vcn1
+oid_scripts
+update_tns_allnodes.sh
+usfkl21db137vcn1
+PDB save sate once alter session to PDB and execute alter pluggable database <name> save state instances=all;
+========================================================================
+
+CHBTST=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=usdfw23db42v-sca)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME=CHBTST.mrshmc.com)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))
+		  
+datapatch -prereq -verbose
+
+ sysman password for https://usdfw21db83vcn1.mrshmc.com:7803/em ?
+
+
+
+make sure tnsping and sqlplus abc/abc@tnsentry are working (sqlplus should give invalid username/password)
+================================================
+
+SQL> alter session set container=CHBTST;
+
+Session altered.
+
+SQL> ADMINISTER KEY  MANAGEMENT SET KEY FORCE KEYSTORE IDENTIFIED BY "MMC_Prod_Mar312022"  WITH BACKUP ;
+
+keystore altered.
+
+SQL>
+
+=============================================
+SQL>  select * from gv$encryption_wallet;
+
+   INST_ID WRL_TYPE
+---------- --------------------
+WRL_PARAMETER
+--------------------------------------------------------------------------------
+STATUS                         WALLET_TYPE          WALLET_OR KEYSTORE FULLY_BAC
+------------------------------ -------------------- --------- -------- ---------
+    CON_ID
+----------
+         1 FILE
+
+OPEN                           AUTOLOGIN            SINGLE    UNITED   NO
+         4
+
+
+   INST_ID WRL_TYPE
+---------- --------------------
+WRL_PARAMETER
+--------------------------------------------------------------------------------
+STATUS                         WALLET_TYPE          WALLET_OR KEYSTORE FULLY_BAC
+------------------------------ -------------------- --------- -------- ---------
+    CON_ID
+----------
+         2 FILE
+
+OPEN                           AUTOLOGIN            SINGLE    UNITED   NO
+         4
+
+
+SQL>
+
+===============================================================
+
+
+
+===============================================================
+19)db timezone change is not required for IPAS DBs. It is only required for WebCas application databases.
+
+SQL> alter session set container=CHBTST;
+
+Session altered.
+
+SQL>
+SQL>
+SQL> select dbtimezone from dual;
+
+DBTIME
+------
++00:00
+
+select dbtimezone,sessiontimezone,systimestamp from dual;
+
+
+SQL>
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-MON-YYHH24:MI:SS')
+--------------------------------------------------------------------------------
+30-MAY-22 09:59:05
+
+
+TZ=EST5EDT
+
+
+env|grep TZ - at source
+Change through "srvctl setenv" command
+
+srvctl getenv database -d COLNP033 
+srvctl setenv database -d COLNP033 -t 'TZ=EST5EDT'
+Add export TZ=EST5EDT in environment file.
+
+===============================================================================================   
+
+SQL> alter session set container=CHBTST;
+
+Session altered.
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-MON-YYHH24:MI:SS')
+---------------------------------------------------------------------------
+19-MAY-22 11:14:38
+
+SQL>
+SQL> select dbtimezone,sessiontimezone from dual;
+
+SQL> select dbtimezone,sessiontimezone from dual;
+
+DBTIME
+------
+SESSIONTIMEZONE
+---------------------------------------------------------------------------
+-04:00
+-05:00
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'D
+------------------
+09-JUN-22 07:22:17
+
+SQL> !date
+Thu Jun  9 07:22:20 CDT 2022
+
+
+
+SELECT name, encryptionalg 
+              FROM v$tablespace t, v$encrypted_tablespaces v 
+              WHERE t.ts#=v.ts# and v.con_id=3;
+
+SQL> !cat gen_encrypt_ts.sql
+set echo off termout off feedback off pagesize 0 head off
+spool  /var/oracle/export/CHBTST/migrate/encrypt_ts.sql
+select 'set  echo on feedback on timing on' from dual;
+select 'spool /var/oracle/export/CHBTST/migrate/encrypt_ts_out.log' from dual;
+select 'alter tablespace ' || tablespace_name || ' encryption online encrypt ;'
+from dba_tablespaces where tablespace_name not like '%UNDO%' and tablespace_name not like '%TEMP%';
+select 'spool off' from dual;
+spool off
+
+after encryption all tablespaces eccept undo and temp should be in encrypted mode, can be verified using below
+
+SQL> select tablespace_name from dba_tablespaces where encrypted='NO';
+UNDOTBS1
+TEMP
+PSTEMP
+PSGTT01
+UNDO_2
+
+5 rows selected.
+
+
+vi CHBTST_encrypt_ts.sh
+export ORACLE_SID=COLNP0331
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1
+export PATH=$ORACLE_HOME/bin:$PATH
+sqlplus / as sysdba << EOF > /var/oracle/export/CHBTST/migrate/CHBTST_encrypt_ts.out
+spool /var/oracle/export/CHBTST/migrate/CHBTST_encrypt_ts.log
+select name, open_mode from v\$database;
+set time on timing on feedback on verify on head on
+SELECT name, open_mode FROM v\$pdbs WHERE name = 'CHBTST';
+show con_name
+ALTER SESSION SET CONTAINER=CHBTST;
+@/var/oracle/export/CHBTST/migrate/encrypt_ts.sql
+select tablespace_name from dba_tablespaces where encrypted='NO';
+spool off
+EOF
+
+
+
+Update the TNS entries and check the connection:
+
+CHBTST=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=usdfw23db02v-sca)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME=CHBTST.mrshmc.com)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))

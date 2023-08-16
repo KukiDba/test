@@ -1,0 +1,199 @@
+oragrid@aumel21db17vcn2:NOSID>cd /opt/oragrid/product/19/grid/deinstall/
+oragrid@aumel21db17vcn2:NOSID>ls -ltr
+total 172
+-rw-r----- 1 oragrid dba   401 Feb 10  2012 readme.txt
+-rwxr-x--- 1 oragrid dba 33333 Jan  7  2015 sshUserSetup.sh*
+-rw-r----- 1 oragrid dba  8479 Sep 19  2017 deinstall.xml
+-rwxr-x--- 1 oragrid dba 33171 Apr 17  2019 deinstall.pl*
+-rwxr-x--- 1 oragrid dba 14927 Apr 17  2019 bootstrap.pl*
+-rw-r----- 1 oragrid dba 55480 Apr 17  2019 bootstrap_files.lst
+drwxr-xr-x 2 oragrid dba    32 Apr 17  2019 response/
+drwxr-xr-x 2 oragrid dba    33 Apr 17  2019 utl/
+-rwxr-x--- 1 oragrid dba 11232 Feb 11  2020 deinstall*
+drwxr-xr-x 2 oragrid dba   102 Mar 23  2020 jlib/
+oragrid@aumel21db17vcn2:NOSID>./deinstall
+Checking for required files and bootstrapping ...
+Please wait ...
+Location of logs /opt/oracle/oraInventory/logs/
+
+############ ORACLE DECONFIG TOOL START ############
+
+
+######################### DECONFIG CHECK OPERATION START #########################
+## [START] Install check configuration ##
+
+
+Checking for existence of the Oracle home location /opt/oragrid/product/19/grid
+Oracle Home type selected for deinstall is: Oracle Grid Infrastructure for a Standalone Server
+Oracle Base selected for deinstall is: /opt/oragrid/base
+Checking for existence of central inventory location /opt/oracle/oraInventory
+Checking for existence of the Oracle Grid Infrastructure home /opt/oragrid/product/19/grid
+
+## [END] Install check configuration ##
+
+Traces log file: /opt/oracle/oraInventory/logs//crsdc_2021-03-23_06-08-15-PM.log
+
+Network Configuration check config START
+
+Network de-configuration trace file location: /opt/oracle/oraInventory/logs/netdc_check2021-03-23_06-08-17PM.log
+
+Specify all Oracle Restart enabled listeners that are to be de-configured. Enter .(dot) to deselect all. [LISTENER]:.
+
+Network Configuration check config END
+
+Asm Check Configuration START
+
+ASM de-configuration trace file location: /opt/oracle/oraInventory/logs/asmcadc_check2021-03-23_06-08-17PM.log
+
+Automatic Storage Management (ASM) instance is detected in this Oracle home /opt/oragrid/product/19/grid.
+ASM Diagnostic Destination : /opt/oragrid/base
+ASM Diskgroups :
+ASM diskstring : <Default>
+Diskgroups will not be dropped
+ If you want to retain the existing diskgroups and associated ASM filter driver labels or if any of the information detected is incorrect, you can modify by entering 'y'. Do you  want to modify above information (y|n) [n]: n
+Database Check Configuration START
+
+Database de-configuration trace file location: /opt/oracle/oraInventory/logs/databasedc_check2021-03-23_06-08-17PM.log
+
+Database Check Configuration END
+
+######################### DECONFIG CHECK OPERATION END #########################
+
+
+####################### DECONFIG CHECK OPERATION SUMMARY #######################
+Oracle Grid Infrastructure Home is: /opt/oragrid/product/19/grid
+Oracle Home selected for deinstall is: /opt/oragrid/product/19/grid
+Inventory Location where the Oracle home registered is: /opt/oracle/oraInventory
+ASM instance will be de-configured from this Oracle home
+Do you want to continue (y - yes, n - no)? [n]: y
+A log of this session will be written to: '/opt/oracle/oraInventory/logs/deinstall_deconfig2021-03-23_06-08-13-PM.out'
+Any error messages from this session will be written to: '/opt/oracle/oraInventory/logs/deinstall_deconfig2021-03-23_06-08-13-PM.err'
+
+######################## DECONFIG CLEAN OPERATION START ########################
+Database de-configuration trace file location: /opt/oracle/oraInventory/logs/databasedc_clean2021-03-23_06-08-17PM.log
+ASM de-configuration trace file location: /opt/oracle/oraInventory/logs/asmcadc_clean2021-03-23_06-08-17PM.log
+ASM Clean Configuration START
+ASM Clean Configuration END
+
+Network Configuration clean config START
+
+Network de-configuration trace file location: /opt/oracle/oraInventory/logs/netdc_clean2021-03-23_06-08-17PM.log
+
+The network configuration has been cleaned up successfully.
+
+Network Configuration clean config END
+
+
+---------------------------------------->
+
+Run the following command as the root user or the administrator on node "aumel21db17vcn2".
+
+/opt/oragrid/product/19/grid/crs/install/roothas.sh -force  -deconfig -paramfile "/tmp/deinstall2021-03-23_06-07-05PM/response/deinstall_OraGI19Home1.rsp"
+
+Press Enter after you finish running the above commands
+
+<----------------------------------------
+
+
+######################### DECONFIG CLEAN OPERATION END #########################
+
+
+####################### DECONFIG CLEAN OPERATION SUMMARY #######################
+ASM instance was de-configured successfully from the Oracle home
+Oracle Restart was already stopped and de-configured on node "aumel21db17vcn2"
+Oracle Restart is stopped and de-configured successfully.
+#######################################################################
+
+
+############# ORACLE DECONFIG TOOL END #############
+
+Using properties file /tmp/deinstall2021-03-23_06-07-05PM/response/deinstall_2021-03-23_06-08-13-PM.rsp
+Location of logs /opt/oracle/oraInventory/logs/
+
+############ ORACLE DEINSTALL TOOL START ############
+
+
+
+
+
+####################### DEINSTALL CHECK OPERATION SUMMARY #######################
+A log of this session will be written to: '/opt/oracle/oraInventory/logs/deinstall_deconfig2021-03-23_06-08-13-PM.out'
+Any error messages from this session will be written to: '/opt/oracle/oraInventory/logs/deinstall_deconfig2021-03-23_06-08-13-PM.err'
+
+######################## DEINSTALL CLEAN OPERATION START ########################
+## [START] Preparing for Deinstall ##
+Setting LOCAL_NODE to aumel21db17vcn2
+Setting CRS_HOME to true
+Setting oracle.installer.invPtrLoc to /tmp/deinstall2021-03-23_06-07-05PM/oraInst.loc
+Setting oracle.installer.local to false
+
+## [END] Preparing for Deinstall ##
+
+Setting the force flag to false
+Setting the force flag to cleanup the Oracle Base
+Oracle Universal Installer clean START
+
+Detach Oracle home '/opt/oragrid/product/19/grid' from the central inventory on the local node : Done
+
+Delete directory '/opt/oragrid/product/19/grid' on the local node : Done
+
+The Oracle Base directory '/opt/oragrid/base' will not be removed on local node. The directory is not empty. User needs to manually cleanup this directory.
+
+Oracle Universal Installer cleanup was successful.
+
+Oracle Universal Installer clean END
+
+
+## [START] Oracle install clean ##
+
+
+## [END] Oracle install clean ##
+
+
+######################### DEINSTALL CLEAN OPERATION END #########################
+
+
+####################### DEINSTALL CLEAN OPERATION SUMMARY #######################
+Successfully detached Oracle home '/opt/oragrid/product/19/grid' from the central inventory on the local node.
+Successfully deleted directory '/opt/oragrid/product/19/grid' on the local node.
+Oracle Universal Installer cleanup was successful.
+
+Review the permissions and contents of '/opt/oragrid/base' on nodes(s) 'aumel21db17vcn2'.
+If there are no Oracle home(s) associated with '/opt/oragrid/base', manually delete '/opt/oragrid/base' and its contents.
+Oracle deinstall tool successfully cleaned up temporary directories.
+#######################################################################
+
+
+############# ORACLE DEINSTALL TOOL END #############
+
+oragrid@aumel21db17vcn2:NOSID>cd /opt/oragrid/base
+oragrid@aumel21db17vcn2:NOSID>ls -ltra
+total 0
+drwxr-xr-x 5 oragrid dba 48 Nov 15  2017 ../
+drwxr-xr-x 2 oragrid dba 45 Feb 10  2018 bin/
+drwxr-xr-x 2 oragrid dba 45 Feb 21  2020 asm/
+drwxr-xr-x 4 oragrid dba 28 Mar 23 18:12 ./
+
+
+    oracle@iedub22db01v:NOSID>cd /opt/oracle
+oracle@iedub22db01v:NOSID>ls -ltra
+total 860
+drwxr-xr-x  16 oracle dba     328 Jun  9  2017 scripts/
+-rwxr-xr-x   1 oracle dba  880640 Nov 14  2017 scripts_12cR2.tar*
+drwxr-xr-x   3 root   root     16 Jan 19  2020 extapi/
+drwxr-xr-x. 16 root   root    261 Jun 21 08:26 ../
+drwxr-xr-x   3 oracle dba      20 Jul  2 15:07 product/
+drwxr-xr-x   5 oracle dba      75 Jul  2 15:07 ./
+ 
+
+    oracle@iedub22db01v:NOSID>ls -ltra
+total 860
+drwxrwxr-x  16 oracle dba     328 Jun  9  2017 scripts/
+-rwxrwxr-x   1 oracle dba  880640 Nov 14  2017 scripts_12cR2.tar*
+drwxr-xr-x   3 root   root     16 Jan 19  2020 extapi/
+drwxr-xr-x. 16 root   root    261 Jun 21 08:26 ../
+drwxrwxr-x   3 oracle dba      20 Jul  2 15:07 product/
+drwxrwxr-x   5 oracle dba      75 Jul  2 15:07 ./
+oracle@iedub22db01v:NOSID>
+ 
+

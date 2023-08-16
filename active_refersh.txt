@@ -1,0 +1,340 @@
+oracle@usdfw23db02vcn1:>cat ACTIVE_PDB_REFRESH_CASWWC1Q.sh
+#!/bin/sh
+#Author: Sanjeeb Kumar Parida (SKP)
+#Released :Sept 2022
+# Pre Req: We should have Tns Entry on both nodes of target  CDB for Source CDB
+#          SYS and SYSTEM account unlocked for Target CDB
+#          On Target Database CDB :           alter system set global_names=false;
+#          TDE password for  Source and Target CDB will be same.<We are already keeping Same>
+#          Copy ACTIVE_PDB_REFRESH.sh to Target Servers
+#
+# Usage:         ACTIVE_PDB_REFRESH.sh <SOURCE_CDB> <TARGET_CDB> <SOURCE_PDB> <TARGET_PDB> <SOURCE_DG> <TARGET_DG> <TARGET_system_PWD> <TARGET_TDE_PASS>
+#                Check refresh.log for any issues                                                                                                                                            #
+# Example:       /var/oracle/scripts/refresh/ACTIVE_PDB_REFRESH_CASWWC1Q.sh COLPR015 COLNP048 CASWWC1P CASWWC1Q +DATAC1 +DATAC2 MMC_Prod_Mar312022 MMC_Prod_Mar312022
+#
+###########################################################################################################################################################
+
+SCDB=$1
+TCDB=$2
+SPDB=$3
+TPDB=$4
+SDG=$5
+TDG=$6
+TPWD=$7
+TDEPWD=$8
+RP_NAME=before_refresh_rp_$TCDB
+DB_NAME=COLPRTST
+host=`hostname`
+echo $host
+dt=`date`
+echo $dt
+DB_LINK=clone_$SPDB
+DIR=/var/oracle/scripts/refresh/WEBCAS_REFRESH/$TPDB
+mkdir -p $DIR
+maillist='#MMCGLATODBSOracle@mercer.com,#MMCGLATODBSCOPS@mercer.com'
+#maillist='sanjeeb.parida@mmc.com'
+#maillist='#mercerhrmfsproductionsupport@mercer.com,#MercerCorporateITDevelopmentGroup@mercer.com,#MercerCorporateITWebCASProductTeam@hub.wmmercer.com,#MMCGLATODBSOracle@mercer.com'
+###############################################################
+#########       REMOVING OLD LOG FILES       ##################
+###############################################################
+
+mv $DIR/refresh.log $DIR/refresh.txt
+rm $DIR/*.log
+
+echo "START_TIME" > $DIR/refresh_target.log
+date >> $DIR/refresh_target.log
+
+
+
+##############################################################
+###########          PRE-REQUISITS CHECK           ###########
+##############################################################
+
+function PREREQUISITS_CHK
+{
+STEP2='STEP2 :: Source db ::: check for DATABASE  OPEN or NOT'
+echo $STEP2 >> $DIR/refresh.log
+echo $STEP2
+##############################################################################################
+###########           Source db ::: check for standby DB ROLE               ##################
+##############################################################################################
+. /home/oracle/$TCDB.env
+sqlplus -S /nolog <<TRD    > $DIR/source_dbstatus.log
+connect sys/$TPWD@$SCDB as sysdba;
+set pages 1000
+set line 200
+select name,open_mode,database_role  from v\$database;
+set heading off
+set feedback off
+set heading off
+set echo off
+spool $DIR/DB_ROLE.log
+select name, open_mode,database_role from v\$database;
+spool off;
+spool $DIR/job_queue.log
+show parameter job_queue_processes
+spool off;
+TRD
+sed 1d $DIR/DB_ROLE.log > $DIR/DB_ROLE1.log
+cat $DIR/DB_ROLE1.log |awk '{print $4}' > $DIR/DB_ROLE.log
+sed 1d $DIR/job_queue.log > $DIR/job_queue1.log
+cat $DIR/job_queue1.log |awk '{print $4}' > $DIR/job_queue.log
+_ROLE=PRIMARY
+db=`cat $DIR/DB_ROLE.log`
+if [ "$db" != "$_ROLE" ] ; then
+echo "Not A Primary DB"
+echo `cat $DIR/source_dbstatus.log  | mailx -s " PDB REFRESH ERROR ON $TPDB at $host : STEP2: Given database is primary DB, Please check  "  $maillist`
+exit;
+fi
+cat $DIR/source_dbstatus.log >> $DIR/refresh.log
+var=`cat $DIR/source_dbstatus.log  | grep ORA-`
+if [ "$var" ]; then
+echo `cat $DIR/source_dbstatus.log  | mailx -s " PDB REFRESH ERROR ON $TPDB at $host : STEP2 :PRIMARY  DATABASE is shutdown, Please check  "  $maillist`
+exit;
+else
+echo "GO TO create_db_link"
+fi
+}
+
+
+
+#############################################################
+#############################################################
+function create_db_link
+{
+STEP5='STEP5 :: Target db : SET cluster_database=false'
+echo $STEP5 >> $DIR/refresh.log
+echo $STEP5
+sqlplus -S /nolog <<EOF2    > $DIR/pre_chk_target.log
+connect / as sysdba;
+set pages 1000
+set line 200
+select name, open_mode from v\$database;
+select name,open_mode from v\$pdbs;
+col file_name for a130
+EOF2
+cat $DIR/pre_chk_target.log >> $DIR/refresh.log
+DB_LINK=clone_$SPDB
+var2=`cat $DIR/pre_chk_target.log  | grep ORA-`
+if [ "$var2" ]; then
+echo `cat $DIR/pre_chk_target.log  | mailx -s " PDB REFRESH ERROR ON $TPDB at $host : STEP5:  $STEP5, Please check "  $maillist`
+exit;
+else
+#--check db link
+sqlplus -S /nolog <<DBL1    > $DIR/create_dblink.log
+connect / as sysdba;
+drop  database link clone_$SPDB;
+create database link clone_$SPDB connect to system  identified by $TPWD using '$SCDB';
+alter session set container=CASWWC1Q;
+@$DIR/gen_db_link.sql
+DBL1
+fi
+
+########## END OF PRE-REQUISITS CHECK ###########
+}
+####################################################
+###########         DROP PDB DB         ############
+####################################################
+function DROP_DB
+{
+STEP6='STEP6 :: DROP PDB DB'
+echo $STEP6 >> $DIR/refresh.log
+echo $STEP6
+. /home/oracle/$TCDB.env
+sqlplus -S /nolog <<EOF8    > $DIR/drop.log
+connect / as sysdba;
+ALTER PLUGGABLE DATABASE $TPDB close immediate instances=all;
+DROP PLUGGABLE DATABASE $TPDB INCLUDING DATAFILES;
+commit;
+EOF8
+sed 's/ORA-01109:/IGNORE:/g' $DIR/drop.log > $DIR/drop2.log
+sed 's/ORA-65011:/IGNORE:/g' $DIR/drop2.log > $DIR/drop1.log
+sed 's/ORA-01034:/IGNORE:/g' $DIR/drop1.log > $DIR/drop2.log
+sed 's/ORA-01435:/IGNORE:/g' $DIR/drop2.log > $DIR/drop1.log
+sed 's/ORA-01403:/IGNORE:/g' $DIR/drop1.log > $DIR/drop2.log
+sed 's/ORA-06512:/IGNORE:/g' $DIR/drop2.log > $DIR/drop1.log
+sed 's/ORA-65020:/IGNORE:/g' $DIR/drop1.log > $DIR/drop2.log
+sed 's/ORA-06550:/IGNORE:/g' $DIR/drop2.log > $DIR/drop1.log
+sed 's/ORA-32004:/IGNORE:/g' $DIR/drop1.log > $DIR/drop2.log
+sed 's/ORA-65090:/IGNORE:/g' $DIR/drop2.log > $DIR/drop1.log
+sed 's/ORA-01081:/IGNORE:/g' $DIR/drop1.log > $DIR/drop2.log
+sed 's/ORA-12514:/IGNORE:/g' $DIR/drop2.log > $DIR/drop1.log
+var5=`cat $DIR/drop1.log  | grep ORA-`
+cat $DIR/drop1.log >> $DIR/refresh.log
+if [ "$var5" ]; then
+echo `cat $DIR/drop1.log  | mailx -s " PDB REFRESH ERROR ON $TPDB at $host : STEP6: ORA- WHILE DROP DATABASE FOR REFRESH DATABASE, Please check "  $maillist`
+exit;
+fi
+}
+######## END OF DROP PDB #########
+
+#############################################################
+###########        REFRESHSING DATABASE           ###########
+#############################################################
+function REFRESHSING_DB
+{
+STEP7='STEP7 :: REFRESHSING DATABASE'
+echo $STEP7 >> $DIR/refresh.log
+echo $STEP7
+JOB=`cat $DIR/job_queue.log`
+. /home/oracle/$TCDB.env
+sqlplus -S /nolog <<EOF3    >> $DIR/refresh_target.log
+connect / as sysdba;
+commit;
+create pluggable database $TPDB from $SPDB@$DB_LINK storage unlimited tempfile reuse file_name_convert=('$SDG','$TDG') parallel 4 keystore identified by $TDEPWD including shared key ;
+alter pluggable database $TPDB open instances=all;
+alter pluggable database $TPDB close immediate  instances=all;
+alter pluggable database $TPDB open instances=all;
+select name, open_mode from v\$database;
+select name,open_mode from v\$pdbs;
+exec dbms_scheduler.set_scheduler_attribute('SCHEDULER_DISABLED','TRUE');
+show parameter job_queue_processes;
+show parameter job_queue_processes;
+EOF3
+sqlplus -S /nolog <<PDB1    >> $DIR/refresh_target.log
+connect / as sysdba;
+exec dbms_scheduler.set_scheduler_attribute('SCHEDULER_DISABLED','FALSE');
+alter session set container=$TPDB;
+spool $DIR/db_status.log
+update global_name set global_name='CASWWC1Q.MERCER.COM';
+commit;
+alter system set job_queue_processes=70  scope=both sid='*' ;
+--exec inquire.w_job.mv_refresh_start;
+select INSTANCE_NAME, open_mode,LOGINS from gv\$instance, v\$database;
+select name, open_mode from v\$database;
+select name,open_mode from v\$pdbs;
+connect / as sysdba;
+show parameter job_queue_processes;
+alter system set job_queue_processes=70  scope=both sid='*' ;
+show parameter job_queue_processes;
+alter pluggable database $TPDB close immediate  instances=all;
+alter pluggable database $TPDB open instances=all;
+spool off;
+PDB1
+echo "S1"
+sleep 10
+echo "S2"
+}
+
+
+
+function EOF
+{
+echo "END_TIME" >> $DIR/refresh_target.log
+date >> $DIR/refresh_target.log
+date >> $DIR/refresh_target.log
+cat $DIR/refresh_target.log >> $DIR/refresh.log
+cat $DIR/refresh_target.log  | grep ORA- > $DIR/error6.log
+FILE=$DIR/error6.log
+if [[ -s $FILE ]] ; then
+echo "$FILE has data."
+echo `cat $DIR/refresh_target.log  | mailx -s "ERROR: $TPDB at $dt on $host -- PDB REFRESH ERROR ON STEP7 Please check "  $maillist`
+exit;
+else
+echo "$FILE is empty."
+echo `cat $DIR/db_status.log  | mailx -s "OK: Refreshed $TPDB   from $SPDB of $SCDB to $SPDB of $TCDB at $dt on $host(NEW EXACC by SKP) "  $maillist`
+fi
+
+
+echo "ALL OK"
+
+
+###########  END OF REFRESH DATABASE ###########
+
+}
+
+
+
+
+
+
+
+
+###########################################################
+###########        post_privs FUNCTION          ###########
+###########################################################
+
+function pdb_grants
+{
+echo "function pdb_grants called" >> $DIR/post_grants.log
+. /home/oracle/$TCDB.env
+sqlplus ' / as sysdba' <<eof  >>  $DIR/post_grants.log
+alter session set container=$TPDB;
+@$DIR/core_appl_password_pkg.sql;
+@$DIR/reset_webserv.sql;
+@$DIR/drop_db_links.sql;
+@$DIR/reset_passwords.sql;
+@$DIR/upd_app_profile.sql;
+@$DIR/disable_rt_cron.sql;
+@$DIR/create_db_links.sql;
+@$DIR/drop_CASWWC1D_C1Q_users.sql;
+alter system set job_queue_processes=70 scope=both sid='*' ;
+eof
+}
+function post_privs
+{
+. /home/oracle/$TCDB.env
+sqlplus -S /nolog <<PDB2 >>  $DIR/post_privs.log
+connect /  as sysdba;
+COLUMN con_name FORMAT A20
+COLUMN instance_name FORMAT A20
+SELECT con_name, instance_name, state FROM dba_pdb_saved_states;
+ALTER PLUGGABLE DATABASE $TPDB SAVE STATE instances=all;
+SELECT con_name, instance_name, state FROM dba_pdb_saved_states;
+PDB2
+cat $DIR/post_privs.log >> $DIR/refresh.log
+var3=`cat $DIR/post_privs.log | grep ORA-`
+echo "/*"   >> $DIR/post_privs.log
+echo "Solution :::::::: " >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo "grant inherit privileges on user SYS to APP_SUPER;" >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo "exec app_super.util_server_refresh.refresh;" >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo "revoke inherit privileges on user SYS from APP_SUPER;" >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo " SELECT con_name, instance_name, state FROM dba_pdb_saved_states;" >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo " ALTER PLUGGABLE DATABASE WRGPC1T SAVE STATE instances=all;"  >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo "SELECT con_name, instance_name, state FROM dba_pdb_saved_states; " >> $DIR/post_privs.log
+echo "  " >>  $DIR/post_privs.log
+echo "*/"  >> $DIR/refresh.log
+if [ "$var3" ]; then
+echo `cat $DIR/post_privs.log  | mailx -s " ERROR on post_privs but PDB REFRESH done on $TPDB at $host :, Please Perform below steps"  $maillist`
+fi
+#grants
+}
+
+
+function ACCOUNT
+{
+echo $SCDB | rev | cut -c 3- | rev > $DIR/prim.log
+_VAR9=`cat $DIR/prim.log`
+. /opt/oracle/bin/$SCDB
+echo $_VAR9
+sqlplus -S /nolog <<EOF    > $DIR/account_lock.log
+#connect / as sysdba;
+connect sys/$TPWD@$_VAR9 as sysdba
+set echo on;
+alter user system account lock;
+alter system set job_queue_processes=120  scope =both  sid='*';
+commit;
+EOF
+sleep 10
+}
+
+
+#########################################
+###########        MAIN           ###########
+#############################################
+PREREQUISITS_CHK
+create_db_link
+DROP_DB
+REFRESHSING_DB
+#SKP not neededpost_privs
+pdb_grants
+#This is what Sanjeeb will test pdb_grants
+#ACCOUNT
+EOF
+

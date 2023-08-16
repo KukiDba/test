@@ -1,0 +1,406 @@
+https://doyensys.com/blogs/23276-2/
+https://oracledbwr.com/apply-patching-on-oracle-19c-database-release-update-19-6-0-0-200114/
+=============================================
+    
+sudo /opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/jan22_psu/19c_linux/GI_DB/33509923 -analyze
+sudo /opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/32545008/
+
+
+
+
+/opt/oragrid/product/19/grid
+/opt/oragrid/product/19/grid/OPatch/opatch lsinventory|grep applied
+/opt/oragrid/product/19/grid/OPatch/opatch lsinventory|grep -i release
+
+
+/opt/oracle/product/19/db/OPatch/opatch lsinventory|grep applied
+/opt/oracle/product/19/db/OPatch/opatch lsinventory|grep -i release
+
+
+/opt/oracle/product/1220/db_1/OPatch/opatch lsinventory|grep applied
+
+/opt/oracle/product/19/db/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+
+/opt/oragrid/product/1220/grid
+
+
+
+/var/oracle/export/patch/october_2021_patches/19
+
+/var/oracle/export/patch/october_2021_patches/19/19c_DB+OJVM/33248420
+
+/var/oracle/export/patch/october_2021_patches/19/19c_DB+OJVM/33248420/33192694
+
+/var/oracle/export/patch/october_2021_patches/19/19c_DB+OJVM/33248420/33192793
+
+
+ 
+
+
+
+
+oragrid@iedub26db01v:NOSID>opatch lsinventory|grep -i release
+Patch description:  "DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572)"
+Patch description:  "TOMCAT RELEASE UPDATE 19.0.0.0.0 (32584670)"
+Patch description:  "OCW RELEASE UPDATE 19.11.0.0.0 (32579761)"
+Patch description:  "ACFS RELEASE UPDATE 19.11.0.0.0 (32576499)"
+Patch description:  "Database Release Update : 19.11.0.0.210420 (32545013)"
+oragrid@iedub26db01v:NOSID>
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+#/opt/oragrid/product/19/grid/bin/relink all
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+
+root@usdfw26db09vcn2 ~]# /opt/oragrid/product/19/grid/bin/clscfg -localpatch
+clscfg: EXISTING configuration version 0 detected.
+Creating OCR keys for user 'root', privgrp 'root'..
+Operation successful.
+
+
+[root@usdfw26db09vcn2 ~]# /opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/usdfw26db09vcn2/crsconfig/crslock_usdfw26db09vcn2_2021-08-14_04-10-21AM.log
+2021/08/14 04:10:25 CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+
+
+
+root@usdfw26db09vcn2 ~]# /opt/oragrid/product/19/grid/bin/crsctl start crs
+CRS-4123: Oracle High Availability Services has been started.
+[root@usdfw26db09vcn2 ~]#
+
+
+
+12.2
+
+cd /opt/oragrid/product/1220/grid/rdbms/install/
+./rootadd_rdbms.sh
+
+cd /opt/oragrid/product/1220/grid/crs/install/
+./rootcrs.sh -postpatch
+
+
+
+
+
+
+
+
+
+==============================================================================================================
+
+Create ACFS Command:
+/sbin/mkfs -t acfs /dev/asm/acfs_admin-131
+
+
+Following commands should be run as privileged user :
+
+/opt/oragrid/product/19/grid/bin/srvctl add filesystem -d /dev/asm/acfs_admin-131 -m /var/oracle/admin -u oracle -fstype ACFS -description 'Oracle admin directory' -autostart ALWAYS
+
+/opt/oragrid/product/19/grid/bin/srvctl start filesystem -d /dev/asm/acfs_admin-131
+
+chown oracle:dba /var/oracle/admin
+
+chmod 775 /var/oracle/admin
+
+/opt/oragrid/base/cfgtoollogs/asmca/scripts/acfs_script.sh
+
+===============================================
+
+Create ACFS Command:
+/sbin/mkfs -t acfs /dev/asm/acfs_admin-439
+
+
+Following commands should be run as privileged user :
+
+/opt/oragrid/product/19/grid/bin/srvctl add filesystem -d /dev/asm/acfs_admin-439 -m /var/oracle/admin/ -u oracle -fstype ACFS -description 'Oracle admin directory' -autostart ALWAYS
+
+/opt/oragrid/product/19/grid/bin/srvctl start filesystem -d /dev/asm/acfs_admin-439
+
+/opt/oragrid/product/19/grid/bin/srvctl status filesystem -d /dev/asm/acfs_admin-251
+
+srvctl status  filesystem -d /dev/asm/acfs_admin-251 -n usdfw21db78vcn1
+
+srvctl status  filesystem -d /dev/asm/acfs_vol01-153 -n 
+
+chown oracle:dba /var/oracle/admin/
+
+chmod 775 /var/oracle/admin/
+
+======================================================================
+
+oracle@gbbed21db73v:SDYES1P> /opt/oracle/product/19/db/OPatch/opatch lsinventory|grep applied
+Patch  32399816     : applied on Sat May 29 20:17:08 BST 2021
+Patch  32579761     : applied on Sat May 01 19:15:52 BST 2021
+Patch  32545013     : applied on Sat May 01 19:09:24 BST 2021
+oracle@gbbed21db73v:SDYES1P>
+Patch  32399816     : applied on Sat May 29 20:17:08 BST 2021
+Patch  32579761     : applied on Sat May 01 19:15:52 BST 2021
+Patch  32545013     : applied on Sat May 01 19:09:24 BST 2021
+oracle@gbbed21db73v:SDYES1P> /opt/oracle/pro
+Patch description:  "OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816)"
+Patch description:  "OCW RELEASE UPDATE 19.11.0.0.0 (32579761)"
+Patch description:  "Database Release Update : 19.11.0.0.210420 (32545013)"
+oracle@gbbed21db73v:SDYES1P>
+
+==========================================================================
+
+
+oragrid@iedub22db01v:+ASM>
+Patch  32585572     : applied on Thu Jul 15 07:55:10 IST 2021
+Patch  32584670     : applied on Thu Jul 15 07:54:41 IST 2021
+Patch  32579761     : applied on Thu Jul 15 07:54:07 IST 2021
+Patch  32576499     : applied on Thu Jul 15 07:53:28 IST 2021
+Patch  32545013     : applied on Thu Jul 15 07:52:00 IST 2021
+oragrid@iedub22db01v:+ASM>/opt/oragrid/product/19/grid/OPatch/opatch lsinventory|grep -i release
+Patch description:  "DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572)"
+Patch description:  "TOMCAT RELEASE UPDATE 19.0.0.0.0 (32584670)"
+Patch description:  "OCW RELEASE UPDATE 19.11.0.0.0 (32579761)"
+Patch description:  "ACFS RELEASE UPDATE 19.11.0.0.0 (32576499)"
+Patch description:  "Database Release Update : 19.11.0.0.210420 (32545013)"
+
+=================================================
+
+
+19c
+
+cd /opt/oragrid/product/19/grid/bin
+
+./crsctl start crs
+
+#./crsctl stop cluster -all
+
+#./crsctl start cluster -all
+
+
+cd /opt/oragrid/product/19/grid/crs/install/
+perl rootcrs.pl -unlock
+
+
+/opt/oragrid/product/19/grid/bin/relink all
+
+cd /opt/oragrid/product/19/grid/rdbms/install/
+./rootadd_rdbms.sh
+
+cd /opt/oragrid/product/19/grid/crs/install/
+./rootcrs.sh -lock
+
+or
+
+oragrid@usfkl23db39vcn2:+ASM2>cat /opt/oracle/product/10.2.0/root.sh
+cd /opt/oragrid/product/19/grid/
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -unlock
+/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+
+-------------------------
+
+19c HAS
+================
+
+
+/opt/oragrid/product/19/grid/crs/install/roothas.sh -prepatch
+
+/opt/oragrid/product/19/grid/crs/install/roothas.sh -postpatch
+
+cd /opt/oragrid/product/19/grid/crs/install/
+./rootcrs.sh -lock
+
+oracle@aumel22db05vcn1:+ASM1>crsctl query crs activeversion -f
+Oracle Clusterware active version on the cluster is [19.0.0.0.0]. The cluster upgrade state is [ROLLING PATCH]. 
+The cluster active patch level is [4111062950].
+
+https://dbalifeeasy.com/2018/08/20/ora-15137-the-asm-cluster-is-in-rolling-patch-state/
+
+==========================================================================
+
+oracle@usdfw23db36v:dssd06>/opt/oracle/product/19/db/OPatch/jre/bin/java -version
+java version "1.8.0_311"
+Java(TM) SE Runtime Environment (build 1.8.0_311-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.311-b11, mixed mode)
+
+
+oracle@usdfw23db36v:dssd06>opatch apply
+Oracle Interim Patch Installer version 12.2.0.1.27
+Copyright (c) 2021, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /opt/oracle/product/19/db
+Central Inventory : /opt/oracle/oraInventory
+   from           : /opt/oracle/product/19/db/oraInst.loc
+OPatch version    : 12.2.0.1.27
+OUI version       : 12.2.0.7.0
+Log file location : /opt/oracle/product/19/db/cfgtoollogs/opatch/opatch2021-11-28_07-32-45AM_1.log
+
+Verifying environment and performing prerequisite checks...
+OPatch continues with these patches:   33197296
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+All checks passed.
+Backing up files...
+Applying interim patch '33197296' to OH '/opt/oracle/product/19/db'
+ApplySession: Optional component(s) [ oracle.jdk, 1.8.0.191.0 ]  not present in the Oracle Home or a higher version is found.
+
+Patching component oracle.jdk, 1.8.0.201.0...
+Patch 33197296 successfully applied.
+Log file location: /opt/oracle/product/19/db/cfgtoollogs/opatch/opatch2021-11-28_07-32-45AM_1.log
+
+OPatch succeeded.
+
+=================================================================
+
+Then execute below steps 
+
+
+-----------DB---
+cd /opt/oracle/product/19/db/OPatch/
+tar -czvf jre.tar.gz jre
+rm -rf jre
+cd /opt/oracle/product/19/db/jdk
+cp -rp jre /opt/oracle/product/19/db/OPatch/
+
+
+
+/opt/oracle/product/19/db/OPatch/jre/bin/java -version
+
+After
+
+oracle@usdfw23db36v:NOSID>/opt/oracle/product/19/db/OPatch/jre/bin/java -version
+java version "1.8.0_311"
+Java(TM) SE Runtime Environment (build 1.8.0_311-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.311-b11, mixed mode)
+
+
+========================================================================
+
+
+
+
+
+------Grid----------
+cd /opt/oragrid/product/19/grid/OPatch/
+tar -czvf jre.tar.gz jre
+rm -rf jre
+cd /opt/oragrid/product/19/grid/jdk
+cp -rp jre /opt/oragrid/product/19/grid/OPatch/
+
+
+
+
+
+/opt/oragrid/product/19/grid/OPatch/jre/bin/java -version
+
+oracle@usdfw23db36v:dssd06>/opt/oracle/product/19/db/OPatch/jre/bin/java -version
+java version "1.8.0_301"
+Java(TM) SE Runtime Environment (build 1.8.0_301-b09)
+Java HotSpot(TM) 64-Bit Server VM (build 25.301-b09, mixed mode)
+
+
+
+
+
+
+set lin 1000
+col action form a12
+col version form a40
+col description form a85
+col action_date form a20
+select description, action, to_char(action_time,'DD/MM/RR HH24:MI:SS') action_date, ' ' version
+from dba_registry_sqlpatch;
+
+
+oragrid@gbbed21db82vcn1:NOSID>cat root.sh
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/JAN22_PATCH2/january_2022_patches/19c_linux/GI+DB/33509923/33239955
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/JAN22_PATCH2/january_2022_patches/19c_linux/GI+DB/33509923/33515361
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/JAN22_PATCH2/january_2022_patches/19c_linux/GI+DB/33509923/33529556
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/JAN22_PATCH2/january_2022_patches/19c_linux/GI+DB/33509923/33534448
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/JAN22_PATCH2/january_2022_patches/19c_linux/GI+DB/33509923/33575402
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/JAN22_PATCH2/january_2022_patches/19c_linux/JDK/33497160
+
+=============================================================
+
+
+oragrid@gbbed21db82vcn1:NOSID>
+Patch  33575402     : applied on Fri Jan 28 16:36:19 GMT 2022
+Patch  33534448     : applied on Fri Jan 28 16:28:24 GMT 2022
+Patch  33529556     : applied on Fri Jan 28 16:19:02 GMT 2022
+Patch  33515361     : applied on Fri Jan 28 16:06:08 GMT 2022
+Patch  33239955     : applied on Fri Jan 28 15:55:52 GMT 2022
+Patch  33497160     : applied on Fri Jan 28 15:35:52 GMT 2022
+oragrid@gbbed21db82vcn1:NOSID>/opt/oragri
+Patch description:  "DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402)"
+Patch description:  "ACFS RELEASE UPDATE 19.14.0.0.0 (33534448)"
+Patch description:  "OCW RELEASE UPDATE 19.14.0.0.0 (33529556)"
+Patch description:  "Database Release Update : 19.14.0.0.220118 (33515361)"
+Patch description:  "TOMCAT RELEASE UPDATE 19.0.0.0.0 (33239955)"
+
+=================================================================
+
+
+./runInstaller -silent -attachHome ORACLE_HOME="/opt/oragrid/product/19/grid" ORACLE_HOME_NAME="OraGI19Home1"
+
+./runInstaller -silent -attachHome ORACLE_HOME="/opt/oracle/product/19/db" ORACLE_HOME_NAME="Ora19Home2"
+
+./runInstaller -silent -attachHome ORACLE_HOME="/u02/app/18.0.0/db" ORACLE_HOME_NAME="Ora18gHome“
+
+/u01/app/oracle/product/11.1.0/db_1/oui/bin/runInstaller -attachHome -noClusterEnabled ORACLE_HOME=/u01/app/oracle/product/11.1.0/db_1 ORACLE_HOME_NAME=OraDb11g_home1 CLUSTER_NODES=rac1,rac2 "INVENTORY_LOCATION=/u01/app/oraInventory" LOCAL_NODE=<node on which command is to be run>.
+
+
+CLUSTER_NODES=gbbed21db76vcn1,gbbed21db76vcn2 "INVENTORY_LOCATION=/opt/oracle/oraInventory/" LOCAL_NODE=gbbed21db76vcn1
+
+cd $ORACLE_HOME/oui/bin
+./runInstaller -silent -ignoreSysPrereqs -attachHome ORACLE_HOME="/opt/oracle/product/19/db" ORACLE_HOME_NAME="Ora19c3"
+
+ ../oui/bin/runInstaller -silent -ignoreSysPrereqs -attachHome  ORACLE_HOME="/u01/app/grid" 
+
+
+================================================================
+
+Rolling to Normal clusterware state
+===============================================
+
+
+oragrid@gbbed21db77vcn1:NOSID>cat /opt/oracle/product/10.2.0/root.sh
+#/etc/init.d/init.tfa disable
+#/etc/init.d/init.tfa stop
+#/opt/oracle.ahf/bin/tfactl status
+#/opt/oracle.ahf/bin/tfactl uninstall -local
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -prepatch
+
+#/opt/oragrid/product/19/grid/bin/patchgen commit -rb 33810130
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -postpatch
+
+=========================================================================
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -prepatch
+#/opt/oragrid/product/19/grid/bin/patchgen commit -rb 33192793
+#/opt/oragrid/product/19/grid/bin/patchgen commit -rb 33197296
+#/opt/oragrid/product/19/grid/bin/patchgen commit -rb 33208107
+#/opt/oragrid/product/19/grid/bin/patchgen commit -rb 33208123
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -postpatch
+
+
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/apr_psu_patches2022/33803476  -analyze
+
+
+
+
+========================================================================
+
+
+
+
+
+
+
+

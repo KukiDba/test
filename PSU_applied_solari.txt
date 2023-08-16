@@ -1,0 +1,470 @@
+
+
+NPRD:oracle@usdfw34db06v:oltt253>/opt/oracle/product/19/db/OPatch/opatch apply
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>ls -lrth
+total 67
+drwxrwxrwx   5 oracle   dba            7 Sep 18 06:43 32904851/
+-rwxrwxrwx   1 oracle   dba        21.7K Sep 18 06:43 README.html*
+-rwxrwxrwx   1 oracle   dba        7.05K Sep 18 06:43 PatchSearch.xml*
+drwxrwxrwx   4 oracle   dba            9 Sep 18 07:52 32876380/
+NPRD:oracle@usdfw34db06v:oltt253>cd 32904851/
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>pwd
+/var/oracle/export/SOLARIS_JUL2021_PSU/Combo_DB_RU/32900021/32904851
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>/opt/oracle/product/19/db/OPatch/opatch apply
+Oracle Interim Patch Installer version 12.2.0.1.27
+Copyright (c) 2021, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /opt/oracle/product/19/db
+Central Inventory : /opt/oracle/oraInventory
+   from           : /opt/oracle/product/19/db/oraInst.loc
+OPatch version    : 12.2.0.1.27
+OUI version       : 12.2.0.7.0
+Log file location : /opt/oracle/product/19/db/cfgtoollogs/opatch/opatch2021-09-18_07-55-37AM_1.log
+
+Verifying environment and performing prerequisite checks...
+OPatch continues with these patches:   32904851
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+All checks passed.
+
+Please shutdown Oracle instances running out of this ORACLE_HOME on the local system.
+(Oracle Home = '/opt/oracle/product/19/db')
+
+
+Is the local system ready for patching? [y|n]
+y
+User Responded with: Y
+Backing up files...
+Applying interim patch '32904851' to OH '/opt/oracle/product/19/db'
+ApplySession: Optional component(s) [ oracle.network.gsm, 19.0.0.0.0 ] , [ oracle.rdbms.ic, 19.0.0.0.0 ] , [ oracle.rdbms.tg4db2, 19.0.0.0.0 ] , [ oracle.tfa, 19.0.0.0.0 ] , [ oracle.oid.client, 19.0.0.0.0 ] , [ oracle.network.cman, 19.0.0.0.0 ] , [ oracle.options.olap, 19.0.0.0.0 ] , [ oracle.options.olap.api, 19.0.0.0.0 ] , [ oracle.xdk.companion, 19.0.0.0.0 ] , [ oracle.rdbms.tg4ifmx, 19.0.0.0.0 ] , [ oracle.ons.eons.bwcompat, 19.0.0.0.0 ] , [ oracle.rdbms.tg4tera, 19.0.0.0.0 ] , [ oracle.ons.cclient, 19.0.0.0.0 ] , [ oracle.rdbms.tg4sybs, 19.0.0.0.0 ] , [ oracle.net.cman, 19.0.0.0.0 ] , [ oracle.rdbms.tg4msql, 19.0.0.0.0 ] , [ oracle.jdk, 1.8.0.191.0 ]  not present in the Oracle Home or a higher version is found.
+
+
+Patching component oracle.perlint, 5.28.1.0.0...
+
+Patching component oracle.rdbms.locator, 19.0.0.0.0...
+
+Patching component oracle.rdbms.rsf, 19.0.0.0.0...
+
+Patching component oracle.rdbms.util, 19.0.0.0.0...
+
+Patching component oracle.rdbms, 19.0.0.0.0...
+
+Patching component oracle.assistants.acf, 19.0.0.0.0...
+
+Patching component oracle.assistants.deconfig, 19.0.0.0.0...
+
+Patching component oracle.assistants.server, 19.0.0.0.0...
+
+Patching component oracle.buildtools.rsf, 19.0.0.0.0...
+
+Patching component oracle.ctx, 19.0.0.0.0...
+
+Patching component oracle.dbjava.ic, 19.0.0.0.0...
+
+Patching component oracle.dbjava.jdbc, 19.0.0.0.0...
+
+Patching component oracle.dbjava.ucp, 19.0.0.0.0...
+
+Patching component oracle.duma, 19.0.0.0.0...
+
+Patching component oracle.javavm.client, 19.0.0.0.0...
+
+Patching component oracle.ldap.owm, 19.0.0.0.0...
+
+Patching component oracle.ldap.rsf, 19.0.0.0.0...
+
+Patching component oracle.marvel, 19.0.0.0.0...
+
+Patching component oracle.network.rsf, 19.0.0.0.0...
+
+Patching component oracle.oracore.rsf, 19.0.0.0.0...
+
+Patching component oracle.precomp.common.core, 19.0.0.0.0...
+
+Patching component oracle.rdbms.dbscripts, 19.0.0.0.0...
+
+Patching component oracle.rdbms.deconfig, 19.0.0.0.0...
+
+Patching component oracle.rdbms.oci, 19.0.0.0.0...
+
+Patching component oracle.rhp.db, 19.0.0.0.0...
+
+Patching component oracle.sdo, 19.0.0.0.0...
+
+Patching component oracle.sdo.locator.jrf, 19.0.0.0.0...
+
+Patching component oracle.sqlplus, 19.0.0.0.0...
+
+Patching component oracle.sqlplus.rsf, 19.0.0.0.0...
+
+Patching component oracle.sqlplus.ic, 19.0.0.0.0...
+
+Patching component oracle.wwg.plsql, 19.0.0.0.0...
+
+Patching component oracle.odbc, 19.0.0.0.0...
+
+Patching component oracle.rdbms.drdaas, 19.0.0.0.0...
+
+Patching component oracle.xdk.parser.java, 19.0.0.0.0...
+
+Patching component oracle.dbtoolslistener, 19.0.0.0.0...
+
+Patching component oracle.ctx.atg, 19.0.0.0.0...
+
+Patching component oracle.javavm.server, 19.0.0.0.0...
+
+Patching component oracle.ldap.security.osdt, 19.0.0.0.0...
+
+Patching component oracle.rdbms.hs_common, 19.0.0.0.0...
+
+Patching component oracle.ons, 19.0.0.0.0...
+
+Patching component oracle.precomp.rsf, 19.0.0.0.0...
+
+Patching component oracle.oraolap.api, 19.0.0.0.0...
+
+Patching component oracle.ons.ic, 19.0.0.0.0...
+
+Patching component oracle.rdbms.install.common, 19.0.0.0.0...
+
+Patching component oracle.xdk, 19.0.0.0.0...
+
+Patching component oracle.rdbms.dv, 19.0.0.0.0...
+
+Patching component oracle.ldap.rsf.ic, 19.0.0.0.0...
+
+Patching component oracle.rdbms.scheduler, 19.0.0.0.0...
+
+Patching component oracle.rdbms.lbac, 19.0.0.0.0...
+
+Patching component oracle.nlsrtl.rsf, 19.0.0.0.0...
+
+Patching component oracle.rdbms.rman, 19.0.0.0.0...
+
+Patching component oracle.oraolap, 19.0.0.0.0...
+
+Patching component oracle.rdbms.crs, 19.0.0.0.0...
+
+Patching component oracle.dbdev, 19.0.0.0.0...
+
+Patching component oracle.rdbms.hsodbc, 19.0.0.0.0...
+
+Patching component oracle.network.client, 19.0.0.0.0...
+
+Patching component oracle.xdk.xquery, 19.0.0.0.0...
+
+Patching component oracle.ldap.client, 19.0.0.0.0...
+
+Patching component oracle.rdbms.install.plugins, 19.0.0.0.0...
+
+Patching component oracle.ctx.rsf, 19.0.0.0.0...
+
+Patching component oracle.oraolap.dbscripts, 19.0.0.0.0...
+
+Patching component oracle.xdk.rsf, 19.0.0.0.0...
+
+Patching component oracle.network.listener, 19.0.0.0.0...
+
+Patching component oracle.ovm, 19.0.0.0.0...
+
+Patching component oracle.sdo.locator, 19.0.0.0.0...
+
+Patching component oracle.mgw.common, 19.0.0.0.0...
+
+Patching component oracle.rdbms.rsf.ic, 19.0.0.0.0...
+
+Patching component oracle.precomp.common, 19.0.0.0.0...
+
+Patching component oracle.precomp.lang, 19.0.0.0.0...
+
+Patching component oracle.jdk, 1.8.0.201.0...
+Patch 32904851 successfully applied.
+Sub-set patch [32545013] has become inactive due to the application of a super-set patch [32904851].
+Please refer to Doc ID 2161861.1 for any possible further required actions.
+Log file location: /opt/oracle/product/19/db/cfgtoollogs/opatch/opatch2021-09-18_07-55-37AM_1.log
+
+OPatch succeeded.
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>pwd
+/var/oracle/export/SOLARIS_JUL2021_PSU/Combo_DB_RU/32900021/32904851
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>pwd
+/var/oracle/export/SOLARIS_JUL2021_PSU/Combo_DB_RU/32900021/32904851
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>cd ../
+NPRD:oracle@usdfw34db06v:oltt253>ls -lrth
+total 67
+drwxrwxrwx   5 oracle   dba            7 Sep 18 06:43 32904851/
+-rwxrwxrwx   1 oracle   dba        21.7K Sep 18 06:43 README.html*
+-rwxrwxrwx   1 oracle   dba        7.05K Sep 18 06:43 PatchSearch.xml*
+drwxrwxrwx   4 oracle   dba            9 Sep 18 07:52 32876380/
+NPRD:oracle@usdfw34db06v:oltt253>cd 32876380/
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>/opt/oracle/product/19/db/OPatch/opatch apply
+Oracle Interim Patch Installer version 12.2.0.1.27
+Copyright (c) 2021, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /opt/oracle/product/19/db
+Central Inventory : /opt/oracle/oraInventory
+   from           : /opt/oracle/product/19/db/oraInst.loc
+OPatch version    : 12.2.0.1.27
+OUI version       : 12.2.0.7.0
+Log file location : /opt/oracle/product/19/db/cfgtoollogs/opatch/opatch2021-09-18_08-12-19AM_1.log
+
+Verifying environment and performing prerequisite checks...
+OPatch continues with these patches:   32876380
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+All checks passed.
+
+Please shutdown Oracle instances running out of this ORACLE_HOME on the local system.
+(Oracle Home = '/opt/oracle/product/19/db')
+
+
+Is the local system ready for patching? [y|n]
+y
+User Responded with: Y
+Backing up files...
+Applying interim patch '32876380' to OH '/opt/oracle/product/19/db'
+
+Patching component oracle.javavm.server, 19.0.0.0.0...
+
+Patching component oracle.javavm.server.core, 19.0.0.0.0...
+
+Patching component oracle.rdbms.dbscripts, 19.0.0.0.0...
+
+Patching component oracle.rdbms, 19.0.0.0.0...
+
+Patching component oracle.javavm.client, 19.0.0.0.0...
+Patch 32876380 successfully applied.
+Log file location: /opt/oracle/product/19/db/cfgtoollogs/opatch/opatch2021-09-18_08-12-19AM_1.log
+
+OPatch succeeded.
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+NPRD:oracle@usdfw34db06v:oltt253>
+
+
+NPRD:oracle@usdfw34db06v:db01>sqlplus "/as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Sep 18 08:32:46 2021
+Version 19.12.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL>
+SQL>
+
+SQL> SQL> startup
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 13602792 bytes
+Variable Size            8254390272 bytes
+Database Buffers         2449473536 bytes
+Redo Buffers               19947520 bytes
+Database mounted.
+Database opened.
+SQL> set lin 1000
+col action form a12
+col version form a40
+col description form a85
+col action_date form a20
+select description, action, to_char(action_time,'DD/MM/RR HH24:MI:SS') action_date, ' ' version
+from dba_registry_sqlpatch;
+
+SQL> SQL> SQL> SQL> SQL>   2
+DESCRIPTION                                                                           ACTION       ACTION_DATE          VERSION
+------------------------------------------------------------------------------------- ------------ -------------------- ----------------------------------------
+Database Release Update : 19.8.0.0.200714 (31281355)                                  APPLY        25/09/20 20:35:44
+Database Release Update : 19.9.0.0.201020 (31771877)                                  APPLY        22/11/20 18:44:08
+Database Release Update : 19.10.0.0.210119 (32218454)                                 APPLY        21/02/21 04:26:15
+Database Release Update : 19.11.0.0.210420 (32545013)                                 APPLY        27/05/21 08:25:08
+
+SQL> SQL>
+SQL>
+SQL> exit
+
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.12.0.0.0
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>pwd
+/opt/oracle/product/19/db/OPatch
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>./datapatch -verbose
+SQL Patching tool version 19.12.0.0.0 Production on Sat Sep 18 08:33:31 2021
+Copyright (c) 2012, 2021, Oracle.  All rights reserved.
+
+Log file for this invocation: /opt/oracle/cfgtoollogs/sqlpatch/sqlpatch_14104_2021_09_18_08_33_31/sqlpatch_invocation.log
+
+Connecting to database...OK
+Gathering database info...done
+Bootstrapping registry and package to current versions...done
+Determining current state...done
+
+Current state of interim SQL patches:
+Interim patch 32876380 (OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380)):
+  Binary registry: Installed
+  SQL registry: Not installed
+
+Current state of release update SQL patches:
+  Binary registry:
+    19.12.0.0.0 Release_Update 210720020545: Installed
+  SQL registry:
+    Applied 19.11.0.0.0 Release_Update 210415071715 successfully on 27-MAY-21 08.25.08.551624 AM
+
+Adding patches to installation queue and performing prereq checks...done
+Installation queue:
+  No interim patches need to be rolled back
+  Patch 32904851 (Database Release Update : 19.12.0.0.210720 (32904851)):
+    Apply from 19.11.0.0.0 Release_Update 210415071715 to 19.12.0.0.0 Release_Update 210720020545
+  The following interim patches will be applied:
+    32876380 (OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380))
+
+Installing patches...
+Patch installation complete.  Total patches installed: 2
+
+Validating logfiles...done
+Patch 32904851 apply: SUCCESS
+  logfile: /opt/oracle/cfgtoollogs/sqlpatch/32904851/24354769/32904851_apply_DB01_2021Sep18_08_35_20.log (no errors)
+Patch 32876380 apply: SUCCESS
+  logfile: /opt/oracle/cfgtoollogs/sqlpatch/32876380/24326386/32876380_apply_DB01_2021Sep18_08_34_28.log (no errors)
+SQL Patching tool complete on Sat Sep 18 08:38:07 2021
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+
+
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>./datapatch -verbose
+SQL Patching tool version 19.12.0.0.0 Production on Sat Sep 18 08:33:31 2021
+Copyright (c) 2012, 2021, Oracle.  All rights reserved.
+
+Log file for this invocation: /opt/oracle/cfgtoollogs/sqlpatch/sqlpatch_14104_2021_09_18_08_33_31/sqlpatch_invocation.log
+
+Connecting to database...OK
+Gathering database info...done
+Bootstrapping registry and package to current versions...done
+Determining current state...done
+
+Current state of interim SQL patches:
+Interim patch 32876380 (OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380)):
+  Binary registry: Installed
+  SQL registry: Not installed
+
+Current state of release update SQL patches:
+  Binary registry:
+    19.12.0.0.0 Release_Update 210720020545: Installed
+  SQL registry:
+    Applied 19.11.0.0.0 Release_Update 210415071715 successfully on 27-MAY-21 08.25.08.551624 AM
+
+Adding patches to installation queue and performing prereq checks...done
+Installation queue:
+  No interim patches need to be rolled back
+  Patch 32904851 (Database Release Update : 19.12.0.0.210720 (32904851)):
+    Apply from 19.11.0.0.0 Release_Update 210415071715 to 19.12.0.0.0 Release_Update 210720020545
+  The following interim patches will be applied:
+    32876380 (OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380))
+
+Installing patches...
+Patch installation complete.  Total patches installed: 2
+
+Validating logfiles...done
+Patch 32904851 apply: SUCCESS
+  logfile: /opt/oracle/cfgtoollogs/sqlpatch/32904851/24354769/32904851_apply_DB01_2021Sep18_08_35_20.log (no errors)
+Patch 32876380 apply: SUCCESS
+  logfile: /opt/oracle/cfgtoollogs/sqlpatch/32876380/24326386/32876380_apply_DB01_2021Sep18_08_34_28.log (no errors)
+SQL Patching tool complete on Sat Sep 18 08:38:07 2021
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>
+NPRD:oracle@usdfw34db06v:db01>sqlplus "/as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Sep 18 08:42:39 2021
+Version 19.12.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.12.0.0.0
+
+SQL> set lin 1000
+col action form a12
+col version form a40
+col description form a85
+col action_date form a20
+select description, action, to_char(action_time,'DD/MM/RR HH24:MI:SS') action_date, ' ' version
+from dba_registry_sqlpatch;
+
+SQL> SQL> SQL> SQL> SQL>   2
+DESCRIPTION                                                                           ACTION       ACTION_DATE          VERSION
+------------------------------------------------------------------------------------- ------------ -------------------- ----------------------------------------
+Database Release Update : 19.8.0.0.200714 (31281355)                                  APPLY        25/09/20 20:35:44
+Database Release Update : 19.9.0.0.201020 (31771877)                                  APPLY        22/11/20 18:44:08
+Database Release Update : 19.10.0.0.210119 (32218454)                                 APPLY        21/02/21 04:26:15
+Database Release Update : 19.11.0.0.210420 (32545013)                                 APPLY        27/05/21 08:25:08
+OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380)                                      APPLY        18/09/21 08:38:07
+Database Release Update : 19.12.0.0.210720 (32904851)                                 APPLY        18/09/21 08:38:07
+
+6 rows selected.
+
+
+NPRD:oracle@usdfw34db06v:oltt253>lsnrctl status LISTENER
+
+LSNRCTL for Solaris: Version 19.0.0.0.0 - Production on 18-SEP-2021 08:45:30
+
+Copyright (c) 1991, 2021, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=usdfw34db06v)(PORT=1521)))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Solaris: Version 19.0.0.0.0 - Production
+Start Date                18-SEP-2021 08:44:21
+Uptime                    0 days 0 hr. 1 min. 8 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /opt/oracle/product/19/grid/network/admin/listener.ora
+Listener Log File         /var/oracle/admin/db01/diag/tnslsnr/usdfw34db06v/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=usdfw34db06v.mrshmc.com)(PORT=1521)))
+Services Summary...
+Service "OLTT253.world" has 1 instance(s).
+  Instance "OLTT253", status READY, has 1 handler(s) for this service...
+Service "OLTT253XDB.world" has 1 instance(s).
+  Instance "OLTT253", status READY, has 1 handler(s) for this service...
+Service "PLSExtProc" has 1 instance(s).
+  Instance "PLSExtProc", status UNKNOWN, has 1 handler(s) for this service...
+Service "db01.world" has 1 instance(s).
+  Instance "db01", status UNKNOWN, has 1 handler(s) for this service...
+The command completed successfully
+

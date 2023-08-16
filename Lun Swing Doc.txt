@@ -1,0 +1,78 @@
+
+2021-07-21T09:40:23.118267-05:00
+Errors in file /opt/oragrid/base/diag/asm/+asm/+ASM1/trace/+ASM1_ora_14969.trc  (incident=37746):
+ORA-00600: internal error code, arguments: [kffFdRead00], [3], [], [], [], [], [], [], [], [], [], []
+Incident details in: /opt/oragrid/base/diag/asm/+asm/+ASM1/incident/incdir_37746/+ASM1_ora_14969_i37746.trc
+Use ADRCI or Support Workbench to package the incident.
+See Note 411.1 at My Oracle Support for error and packaging details.
+2021-07-21T09:44:18.564837-05:00
+Restarting dead background process DIAG
+Starting
+
+NAME                                 TYPE                              VALUE
+------------------------------------ --------------------------------- ------------------------------
+spfile                               string                            +CLUSTER_DATA01/usdfw25db12v-c
+                                                                       l/ASMPARAMETERFILE/registry.25
+                                                                       3.1077704483
+SQL>
+SQ
+
+
+acfs_admin-439
+KFED-00303: file not found; arguments: [acfs_admin-439]
+LEM-00031: file not found; arguments: [lempgmh] [lmserr]
+
+
+ALTER SYSTEM SET thread=1  SCOPE=SPFILE SID='dsst27n1';
+ALTER SYSTEM SET thread=2  SCOPE=SPFILE SID='dsst27n2';
+ALTER SYSTEM SET undo_tablespace=DSSP06_UNDO01 SCOPE=SPFILE SID='dsst27n1';
+ALTER SYSTEM SET undo_tablespace=DSSP06_UNDO02 SCOPE=SPFILE SID='dsst27n2';
+ALTER SYSTEM SET instance_number=1 SCOPE=SPFILE SID='dsst27n1';
+ALTER SYSTEM SET instance_number=2 SCOPE=SPFILE SID='dsst27n2';
+ALTER SYSTEM SET instance_name=dsst27n1 SCOPE=SPFILE SID='dsst27n1';
+ALTER SYSTEM SET instance_name=dsst27n2 SCOPE=SPFILE SID='dsst27n2';
+ALTER SYSTEM SET cluster_database=true SCOPE=SPFILE;
+srvctl add database -d dsst27 -o /opt/oracle/product/19/db -spfile '+VTEDSST27_PERF_DATA/dsst27/PARAMETERFILE/spfile.797.1078483345'
+srvctl add instance -d dsst27 -i dsst27n1 -n usdfw25db12vcn1
+srvctl add instance -d dsst27 -i dsst27n2 -n usdfw25db12vcn2
+srvctl start database -d dsst27
+
+ 
+
+alter database add logfile thread 2 group 7 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 8 ('+VTEOLTT71_PERF_DATA','+VTEOLTT71_PERF_FRA') size 1024m reuse;
+alter database add logfile thread 2 group 9 ('+VTEOLTT71_PERF_DATA','+VTEOLTT71_PERF_FRA') size 250m reuse;
+alter database add logfile thread 2 group 10 ('+VTEOLTT71_PERF_DATA','+VTEOLTT71_PERF_FRA') size 250m reuse;
+alter database add logfile thread 2 group 11 ('+VTEOLTT71_PERF_DATA','+VTEOLTT71_PERF_FRA') size 250m reuse;
+alter database add logfile thread 2 group 12 ('+VTEOLTT71_PERF_DATA','+VTEOLTT71_PERF_FRA') size 250m reuse;
+
+ 
+
+
+alter database add logfile thread 2 group 4 '+VTEGEN_UAT_DATA' size 256m reuse;
+alter database add logfile thread 2 group 14 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 15 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 16 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 17 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 18 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 19 '+VTEGEN_PERF_FRA' size 1024m reuse;
+alter database add logfile thread 2 group 20 '+VTEGEN_PERF_FRA' size 1024m reuse;
+
+alter database add logfile thread 2 group 11 '+VTEGEN_UAT_DATA' size 256m reuse;
+
+ 
+
+ 
+Database altered.
+ 
+alter database enable  thread 2;
+ 
+Database altered.
+
+ 
+
+create undo tablespace DSSP06_UNDO02 datafile  '+VTEDSST27_PERF_DATA' size 30g;
+
+
+
+

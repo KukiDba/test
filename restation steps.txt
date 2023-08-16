@@ -3,6 +3,13 @@
 https://ittutorial-org.cdn.ampproject.org/c/s/ittutorial.org/restore-oracle-database-controlfile-datafile-archivelog-via-rman-from-tape-backup-how-to/amp/
 
 http://www.inf.ufpr.br/roverli/files/using-oracle-rman.txt--------------RMAN 9i
+http://www.br8dba.com/rman-database-restore-rac-rac/
+https://smarttechways.com/2019/03/12/restore-pluggable-database-from-rman-cdb-backup-in-oracle/-------cdb/pdb
+
+https://www.dbarj.com.br/en/2015/01/resume-oracle-duplicate-database-failed-recovery-datafiles/----restore duplicate
+https://yasinyazici.wordpress.com/2015/10/17/bypass-rman-08137-error-on-primary-database/--------arc deletion issue
+https://www.virtual-dba.com/blog/refreshing-physical-standby-using-recover-from-service-on-12c------recover as service
+https://all-database-soultions.blogspot.com/2021/12/oracle-block-corruption-detection-and.html
 
 
 Restoration checkpoint list
@@ -51,6 +58,9 @@ spiritpr.20200118.0230.bck:48:RMAN-08008: channel C2: starting incremental level
 spiritpr.20200118.1650.bck:35:RMAN-08008: channel C1: starting incremental level 0 datafile backupset
 spiritpr.20200118.1650.bck:48:RMAN-08008: channel C2: starting incremental level 0 datafile backupset
 oracle8@usilatlsp01 $
+
+
+https://dbtut.com/index.php/2018/12/13/how-to-restore-rac-database-from-rman-backup/
 
 
 
@@ -255,7 +265,7 @@ release channel t1;
 NOW CREATE CONTROL FILE FROM SOUCRECE DATABASE IN SOURCE SERVER st-vtdb14.st.statoil.no AND MODIFIED IT 
 •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
-ALTER DATABASE BACKUP CONTROLFILE TO TRACE as '/usr1/data1_backup/restore/cre_cntrl_1.sql';
+ALTER DATABASE BACKUP CONTROLFILE TO TRACE as '/home/oracle/OLTP192.sql';
 
 
 
@@ -297,6 +307,14 @@ select 'set newname for datafile ' || file_id || ' to ''/oracle/IT3/sapdata1/sys
 substr(file_name,instr(file_name,'/',-1)+1) || ''';'
 from dba_data_files ;
 spool off
+
+
+run
+{
+
+set archivelog destination to '/backup/rmantemp/archivelog/';
+restore archivelog from logseq=97 until logseq=#####;
+}
 
 
 
@@ -355,6 +373,8 @@ SQL> select file#,STATUS, CREATION_CHANGE#,FUZZY,RECOVER,CHECKPOINT_CHANGE# from
          6 ONLINE            217151 NO               199035719
          7 ONLINE            231412 NO               199035719
          8 ONLINE            893206 NO               199035720
+
+
 
 
 
@@ -460,9 +480,74 @@ UNTIL TIME 'SYSDATE';
 
 run
 {
+allocate channel t1 type 'sbt_tape'
+PARMS='ENV=(NB_ORA_SERV=usfkl31bs01cl, NB_ORA_POLICY=BK_DLY_USDFW21DB50VCN2_EUROPE_P1_ARCH2NB)';
+allocate channel t2 type 'sbt_tape'
+PARMS='ENV=(NB_ORA_SERV=usfkl31bs01cl, NB_ORA_POLICY=BK_DLY_USDFW21DB50VCN2_EUROPE_P1_ARCH2NB)';
+restore archivelog from logseq 3431 until logseq 3470;
+release channel t1;
+release channel t2;
+}
+
+====================
+
+
+ run {
+ allocate channel oem_backup_sbt1 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt2 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+ _RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt3 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+ allocate channel oem_backup_sbt4 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+ _RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt5 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt6 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+backup archivelog all not backed up tag 'BACKUP_EUROPE_20220205T161801' format 'RMAN_ARC_DAILY_%d_%T_%s_%p';
+release channel oem_backup_sbt1;
+release channel oem_backup_sbt2;
+release channel oem_backup_sbt3;
+release channel oem_backup_sbt4;
+release channel oem_backup_sbt5;
+release channel oem_backup_sbt6;
+ }
+
+
+
+ run {
+ allocate channel oem_backup_sbt1 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt2 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+ _RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt3 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+ allocate channel oem_backup_sbt4 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+ _RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt5 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+allocate channel oem_backup_sbt6 type 'sbt' format '%U' parms 'ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usdfw21bs01cl,NB_ORA_CLIENT=usdfw21db50vcn2bu,NB_ORA_POLICY=USDFW
+_RMAN_DAILY_PROD_LINUX_EXTERNAL_TAPE,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)' maxpiecesize 20 G;
+restore archivelog from logseq 53010 until logseq 53190;
+release channel oem_backup_sbt1;
+release channel oem_backup_sbt2;
+release channel oem_backup_sbt3;
+release channel oem_backup_sbt4;
+release channel oem_backup_sbt5;
+release channel oem_backup_sbt6;
+}
+
+
+
+
+=============
+
+run
+{
 allocate channel C1 type 'SBT_TAPE';
 allocate channel C2 type 'SBT_TAPE';
-RESTORE ARCHIVELOG FROM TIME = "to_date('2020-01-11 16:50:00','YYYY-DD-MM HH24:MI:SS')" UNTIL TIME = "to_date('2020-01-16 16:50:00','YYYY-DD-MM HH24:MI:SS')";
+RESTORE ARCHIVELOG FROM TIME = "to_date('2020-01-09 14:00:00','YYYY-DD-MM HH24:MI:SS')" UNTIL TIME = "to_date('2022-09-16 1:05:00','YYYY-DD-MM HH24:MI:SS')";
 }
 
 
@@ -542,7 +627,8 @@ control restore
 *********************
 
 
-list backup of controlfile completed between "to_date('11.09.2020','dd.mm.yyyy hh24')" and "to_date('11.09.2020','dd.mm.yyyy hh24')";
+list backup of controlfile completed between "to_date('01.09.2022','dd.mm.yyyy hh24')" and "to_date('01.09.2022','dd.mm.yyyy hh24')";
+list backup summary completed between "to_date('01.09.2022','dd.mm.yyyy hh24')" and "to_date('03.10.2022','dd.mm.yyyy hh24')";
 
 HPDP
 ***************
@@ -570,7 +656,10 @@ RELEASE CHANNEL CH1;
 
 
 RMAN> run{
-2> allocate channel 'dev_0' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=QIPMSI,OB2BARLIST=FIHECDPQ208_IPM-EPM_ONDB_QIPMSI_L3_FULL_DLY)';
+2> allocate channel 'dev_0' type 'sbt_tape' parms 'ENV=(OB2BARTYPE=Oracle8,OB2APPNAME=QIPMSI,OB2BARLIST=FIHECDPQ208_IPM-EPM_ON
+
+
+DB_QIPMSI_L3_FULL_DLY)';
 3> set until sequence = 10978;
 4> restore database;
 5> recover database;
@@ -630,7 +719,22 @@ recover database using backup controlfile until cancel;
 
 
 
-list backup of archivelog time between "to_date('18-JAN-2020 00:35:42','DD-MON-YYYY HH24:MI:SS')" and "to_date('18-JAN-2020 17:00:00','DD-MON-YYYY HH24:MI:SS')";
+list backup of archivelog time between "to_date('01-SEP-2022 14:00:00','DD-MON-YYYY HH24:MI:SS')" and "to_date('01-SEP-2022 23:00:00','DD-MON-YYYY HH24:MI:SS')";
+
+
+timestamp arc sequence
+
+select sequence#, name,creator, to_char(first_time,'dd-mm-yyyy hh24:mi:ss'), first_change#, next_change#
+from v$archived_log
+where first_time > sysdate- 10
+order by 1
+
+
+select sequence#, name,creator, to_char(first_time,'dd-mm-yyyy hh24:mi:ss'), first_change#, next_change#
+from v$archived_log
+where 192451 between first_change# and next_change#;
+==========================================================
+
 
 
 RMAN> list backup of database;
@@ -652,6 +756,54 @@ release channel dev_1;
 release channel dev_2;
 release channel dev_3;
 }
+
+
+mercer
+==============
+
+
+run {
+ALLOCATE CHANNEL c1 DEVICE TYPE SBT_TAPE PARMS="ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usfkl21bs100v550,NB_ORA_CLIENT=usfkl21db137vcn2bu,NB_ORA_POLICY=US
+FKL_RMAN_MONTHLY_PROD_LINUX_EXTERNAL,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)";
+ALLOCATE CHANNEL c2 DEVICE TYPE SBT_TAPE PARMS="ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usfkl21bs100v550,NB_ORA_CLIENT=usfkl21db137vcn2bu,NB_ORA_POLICY=US
+FKL_RMAN_MONTHLY_PROD_LINUX_EXTERNAL,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)";
+ALLOCATE CHANNEL c3 DEVICE TYPE SBT_TAPE PARMS="ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usfkl21bs100v550,NB_ORA_CLIENT=usfkl21db137vcn2bu,NB_ORA_POLICY=US
+FKL_RMAN_MONTHLY_PROD_LINUX_EXTERNAL,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)";
+ALLOCATE CHANNEL c4 DEVICE TYPE SBT_TAPE PARMS="ENV=(NB_ORA_CLASS=RMAN_MHRS,NB_ORA_SERV=usfkl21bs100v550,NB_ORA_CLIENT=usfkl21db137vcn2bu,NB_ORA_POLICY=US
+FKL_RMAN_MONTHLY_PROD_LINUX_EXTERNAL,NLS_LANG=AMERICAN_AMERICA.AL32UTF8)";
+restore controlfile from 'c-130472067-20210622-00';
+}
+
+
+
+
+Redo logs checking
+-------------------------
+
+https://deveshdba.wordpress.com/2016/08/22/find-redo-log-members-redo-log-file-size-redo-log-status/
+
+col member format a50
+select GROUP#,TYPE,MEMBER from v$logfile;
+
+
+select GROUP#,THREAD#,SEQUENCE#,bytes/1024/1024,
+MEMBERS,STATUS from v$log;
+
+
+ column REDOLOG_FILE_NAME format a50
+ SELECT
+ a.GROUP#,
+ a.THREAD#,
+ a.SEQUENCE#,
+ a.ARCHIVED,
+ a.STATUS,
+ b.MEMBER AS REDOLOG_FILE_NAME,
+ (a.BYTES/1024/1024) AS SIZE_MB
+FROM v$log a
+JOIN v$logfile b ON a.Group#=b.Group#
+ORDER BY a.GROUP# ;
+
+
 
 oracle 8i and 9i  crosshcheck 
 *****************************
@@ -848,6 +1000,46 @@ RESTORE progress
 	set lines 200 pages 1000
 	col STATUS for a24
 	select SID,START_TIME,END_TIME,STATUS,OPERATION,INPUT_BYTES/1024/1024/1024, OUTPUT_BYTES/1024/1024/1024 from v$rman_status where START_TIME >SYSDATE - 1 and SID!=0;
+
+or
+
+set lines 300
+col MESSAGE format a60
+set pages 99
+SELECT SID, SERIAL#, MESSAGE, CONTEXT, SOFAR, TOTALWORK, ROUND(SOFAR/TOTALWORK*100,2) "%_COMPLETE" FROM V$SESSION_LONGOPS
+WHERE OPNAME LIKE 'RMAN%' AND OPNAME NOT LIKE '%aggregate%' AND TOTALWORK != 0 AND SOFAR <> TOTALWORK;
+
+col OPNAME format a70
+select OPNAME,SOFAR/TOTALWORK*100 PCT, trunc(TIME_REMAINING/60) MIN_RESTANTES,
+trunc(ELAPSED_SECONDS/60) MIN_ATEAGORA from v$session_longops where TOTALWORK>0 and OPNAME like '%RMAN%'
+
+Rman datafile status'
+=======================
+
+set line 190 pages 190
+column FILENAME format a70
+select sid,serial,filename,status,bytes/total_bytes*100 "Completed",EFFECTIVE_BYTES_PER_SECOND/1024/1024 "MB/S" from
+V$BACKUP_ASYNC_IO where type = 'OUTPUT' order by status;
+
+
+
+=======================================================
+
+select to_char(start_time, 'dd-mon-yyyy@hh24:mi:ss') "Date", 
+status, 
+operation,
+mbytes_processed
+from v$rman_status vs
+where start_time >  sysdate -1
+order by start_time
+/
+
+
+
+
+
+
+
 	
 	Rman Backup Progress
 	*****************************
@@ -864,6 +1056,26 @@ RESTORE progress
 	elapsed_seconds/3600 Hours from V$RMAN_BACKUP_JOB_DETAILS
 	order by session_key;
 
+or
+
+set serveroutput on
+set linesize 150
+set pagesize 300
+COL SESSION_KEY FORMAT 99999999
+col time_taken_display for a9
+col output_bytes_display for a12
+col status for a10
+select session_key,
+       input_type,
+       status,
+        to_char(start_time,'yyyy-mm-dd hh24:mi')   start_time,
+       --to_char(end_time,'yyyy-mm-dd hh24:mi')   end_time,
+       output_bytes_display,
+       time_taken_display
+from v$rman_backup_job_details
+order by session_key asc;
+
+================================
 9i
 **********
 
@@ -879,6 +1091,19 @@ AND start_time>sysdate-1
 AND opname like 'RMAN%';
 **********************************************
 
+arc restore
+
+run
+{
+set archivelog destination to '/usr/tmp';
+restore archivelog from logseq=112710 until logseq=112720 thread 2;
+}
+
+run
+{
+set archivelog destination to '/usr/tmp';
+restore archivelog from logseq=112710 until logseq=112720 thread 1;
+}
 
 TAPE BACKUP SIZE
 *********************
@@ -1072,13 +1297,39 @@ restore validate datafile 00660,00583,00002,00621,00310,00346;
 restore datafile 00660,00583,00002,00621,00310,00346;
 }
 
+or
+
+run
+{
+allocate channel d1 type disk format '/backup1/EDWH/df_%t_%s_%p';
+allocate channel d2 type disk format '/backup1/EDWH/df_%t_%s_%p';
+allocate channel d3 type disk format '/backup1/EDWH/df_%t_%s_%p';
+allocate channel d4 type disk format '/backup1/EDWH/df_%t_%s_%p';
+allocate channel d5 type disk format '/backup2/EDWH/df_%t_%s_%p';
+allocate channel d6 type disk format '/backup2/EDWH/df_%t_%s_%p';
+allocate channel d7 type disk format '/backup2/EDWH/df_%t_%s_%p';
+allocate channel d8 type disk format '/backup2/EDWH/df_%t_%s_%p';
+backup filesperset 10 (database);
+release channel d1;
+release channel d2;
+release channel d3;
+release channel d4;
+release channel d5;
+release channel d6;
+release channel d7;
+release channel d8;
+BACKUP tag CTLBkp_oltp143_Comp_10112021 format '/backup2/EDWH/CTL_%t_%s_%p' current CONTROLFILE for standby;
+BACKUP tag SPFBkp_oltp143_Comp_10112021 format '/backup2/EDWH/SPF_%d_%T_%s_%p' spfile;
+BACKUP archivelog from time = 'sysdate -1' tag ARC_BK_oltp143_Comp_10112021 format '/backup2/EDWH/ARC_%d_%T_%s_%p';
+}
+
 
 or
 
 restore database validate until time "to_date('2010-03-07 22:58:37','YYYY-MM-DD HH24:MI:SS')";
 
 
-un {
+run {
 allocate channel d1 type disk;
 allocate channel d2 type disk;
 allocate channel d3 type disk;
@@ -1098,6 +1349,51 @@ SET UNTIL TIME "TO_DATE('18-OCT-2020 04:30:00','DD-MON-YYYY HH24:MI:SS')";
 RESTORE PLUGGABLE DATABASE NSNITPDB preview;
 }
 2> 3> 4> 5> 
+
+
+=============================================
+run
+{
+allocate channel c1 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=SYD_MAR_EXT_NONPROD_Oracle_Daily,
+               NB_ORA_SERV=ausyd21bs100v550,
+               NB_ORA_CLIENT=ausyd23db02vcn1bu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+allocate channel c2 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=SYD_MAR_EXT_NONPROD_Oracle_Daily,
+               NB_ORA_SERV=ausyd21bs100v550,
+               NB_ORA_CLIENT=ausyd23db02vcn1bu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+allocate channel c3 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=SYD_MAR_EXT_NONPROD_Oracle_Daily,
+               NB_ORA_SERV=ausyd21bs100v550,
+               NB_ORA_CLIENT=ausyd23db02vcn1bu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+allocate channel c4 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=SYD_MAR_EXT_NONPROD_Oracle_Daily,
+               NB_ORA_SERV=ausyd21bs100v550,
+               NB_ORA_CLIENT=ausyd23db02vcn1bu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+allocate channel c5 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=SYD_MAR_EXT_NONPROD_Oracle_Daily,
+               NB_ORA_SERV=ausyd21bs100v550,
+               NB_ORA_CLIENT=ausyd23db02vcn1bu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+allocate channel c6 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=SYD_MAR_EXT_NONPROD_Oracle_Daily,
+               NB_ORA_SERV=ausyd21bs100v550,
+               NB_ORA_CLIENT=ausyd23db02vcn1bu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+restore archivelog from sequence 1970 until sequence 1975;
+}
+
+=================================================================
 
 
 
@@ -1174,6 +1470,10 @@ switch datafile all;
 Full Rman 
 ***************
 
+130472067
+
+
+
 RUN
 {
 configure controlfile autobackup on;
@@ -1181,17 +1481,22 @@ ALLOCATE CHANNEL c1 DEVICE TYPE disk;
 ALLOCATE CHANNEL c2 DEVICE TYPE disk;
 ALLOCATE CHANNEL c3 DEVICE TYPE disk;
 ALLOCATE CHANNEL c4 DEVICE TYPE disk;
-backup AS COMPRESSED BACKUPSET incremental level 0 database tag DEQUOTE_FULL format '/PRD1/DBbackup/Rman_full_dequote/%d_%T_%s_%p_FULL';
+ALLOCATE CHANNEL c5 DEVICE TYPE disk;
+ALLOCATE CHANNEL c6 DEVICE TYPE disk;
+backup AS COMPRESSED BACKUPSET incremental level 0 database tag cordysp_FULL format '/orabackup01/backup/test1/%d_%T_%s_%p_FULL';
 sql 'alter system archive log current';
-backup tag DEQUOTE_ARCHIVE format '/PRD1/DBbackup/Rman_full_dequote/%d_%T_%s_%p_ARCHIVE' archivelog all delete all input;
-backup tag DEQUOTE_CONTROL current controlfile format '/PRD1/DBbackup/Rman_full_dequote/%d_%T_%s_%p_CONTROL';
+backup tag cordysp_ARCHIVE format '/orabackup01/backup/test1/%d_%T_%s_%p_ARCHIVE' archivelog all;
+backup tag cordysp_CONTROL current controlfile format '/orabackup01/backup/test1/%d_%T_%s_%p_CONTROL';
 release channel c1;
 release channel c2;
 release channel c3;
 release channel c4;
+release channel c5;
+release channel c6;
 }
 
 
+nohup rman cmdfile=restore_new.rcv log=oltt184_standby.log &
 ****************************************************
 
 
@@ -1199,7 +1504,7 @@ release channel c4;
 
 
 
-nohup rman target / cmdfile=RMAN_SCSTGDB_Inc1.rcv>>RMAN_SCSTGDB_Inc25_FEB_2020.log &
+nohup rman target / cmdfile=restore_new.rcv>>Restore_new_bcak21Feb_2022a.log &
 
 expdp
 *************
@@ -1321,7 +1626,832 @@ alter system kill session 'SID,SERIAL#' immediate;
 rman_SERVCSTG_LOCAL_DISK_L0.rcv
 rman_SERVCSTG_FRATOTAPE_backup_Team.rcv
 
-nohup rman target / @recoverPDB23oct.rcv >> RecoverPDB23oct.log &
+nohup rman target / @restore.rcv >> RecoverFPPROD26May2021.log &
+
+===================================================================
+
+
+
+
+connect catalog rman_user/WellRman2020_Pwd@RMANDC1P;
+run {
+allocate channel c1 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=USDFW_RMAN_WEEKLY_NON_PROD_LINUX_EXTERNAL,
+               NB_ORA_SERV=usdfw21bs100v550,
+               NB_ORA_CLIENT=usdfw36db06vbu,
+               NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+               format 'hot_%d_%U_%t';
+allocate channel c2 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=USDFW_RMAN_WEEKLY_NON_PROD_LINUX_EXTERNAL,
+               NB_ORA_SERV=usdfw21bs100v550,
+               NB_ORA_CLIENT=usdfw36db06vbu,
+               NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+               format 'hot_%d_%U_%t';
+allocate channel c3 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=USDFW_RMAN_WEEKLY_NON_PROD_LINUX_EXTERNAL,
+               NB_ORA_SERV=usdfw21bs100v550,
+               NB_ORA_CLIENT=usdfw36db06vbu,
+               NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+               format 'hot_%d_%U_%t';
+allocate channel c4 type 'sbt_tape'
+       PARMS= 'ENV=(NB_ORA_CLASS=USDFW_RMAN_WEEKLY_NON_PROD_LINUX_EXTERNAL,
+               NB_ORA_SERV=usdfw21bs100v550,
+               NB_ORA_CLIENT=usdfw36db06vbu,
+               NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+               format 'hot_%d_%U_%t';
+SET NEWNAME FOR DATABASE TO '/var/oradata/oltt205/data/%f';
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+release channel c1;
+release channel c2;
+release channel c3;
+release channel c4;
+}
+
+
+
+
+run
+{
+configure controlfile autobackup on;
+ALLOCATE CHANNEL c1 DEVICE TYPE disk;
+ALLOCATE CHANNEL c2 DEVICE TYPE disk;
+ALLOCATE CHANNEL c3 DEVICE TYPE disk;
+ALLOCATE CHANNEL c4 DEVICE TYPE disk;
+ALLOCATE CHANNEL c5 DEVICE TYPE disk;
+ALLOCATE CHANNEL c6 DEVICE TYPE disk;
+backup AS COMPRESSED BACKUPSET incremental level 0 database tag cordysp_FULL format '/orabackup01/backup/test1/%d_%T_%s_%p_FULL';
+sql 'alter system archive log current';
+backup tag cordysp_ARCHIVE format '/orabackup01/backup/test1/%d_%T_%s_%p_ARCHIVE' archivelog all;
+backup tag cordysp_CONTROL current controlfile format '/orabackup01/backup/test1/%d_%T_%s_%p_CONTROL';
+release channel c1;
+release channel c2;
+release channel c3;
+release channel c4;
+release channel c5;
+release channel c6;
+}
+
+RMAN> restore controlfile from '/orabackup01/backup/testbackup/CORDYSP2_backup_controlfile_c-130472067-20210701-05.bkp';
+
+----- ---- -- ---------- ----------- ------------ --------------------
+248     Full    314.73M    DISK        00:00:02     Jul 01 2021 08:58:40
+        BP Key: 248   Status: AVAILABLE  Compressed: NO  Tag: TAG20210701T085838
+        Piece Name: /orabackup01/backup/cs_rest/CORDYSP2_backup_controlfile_c-130472067-20210701-05.bkp
+  Control File Included: Ckp SCN: 6543443048048   Ckp time: Jul 01 2021 08:58:38
+
+RMAN>
+
+
+catalog start with '/orabackup01/backup/testbackup';
+
+
+
+log information
+==================
+
+col member for a70
+set pagesize 299
+set lines 299
+select l.group#, l.thread#,
+f.member,
+l.archived,
+l.status,
+(bytes/1024/1024) "Size (MB)"
+from
+v$log l, v$logfile f
+where f.group# = l.group#
+order by 1,2
+/
+
+Standby redo logs
+=======================
+col member for a70
+SELECT group#, type, member FROM v$logfile WHERE type = 'STANDBY' order by group#;
+
+============================
+
+
+
+Dynamic SQL to which generates extra standby redo log following the naming convention, stdby_redo0Group#.rdo
+==================================================================================
+
+select 'alter database add standby logfile '''||
+regexp_substr(MEMBER,'/.+/')||'stdby_'||
+regexp_replace(member,regexp_substr(MEMBER,'/.+/'),'')||
+''' size '||bytes||';' "Create Standby redo"
+from v$logfile lf , v$log l
+where l.group# = lf.group#
+union all
+select 'alter database add standby logfile '''||
+regexp_substr(MEMBER,'/.+/')||'stdby_redo0'||(select max(group#)+1 from v$log)||'.rdo'||
+''' size '||bytes||';' "Create Standby redo"
+from v$logfile lf , v$log l
+where l.group# = lf.group#
+and rownum <=2
+/
+
+
+=================================================
+=================================
+
+Now re-name the logfile to target DG
+******************************************
+
+
+SYS at U752 >alter database rename file '/dblogn/ORACLE/U752/redo_01.log' to '+EXADATA';
+
+Database altered.
+
+SYS at U752 >alter database rename file '/dblogn/ORACLE/U752/redo_02.log' to '+EXADATA';
+
+Database altered.
+
+SYS at U752 >alter database rename file '/dblogn/ORACLE/U752/redo_03.log' to '+EXADATA';
+
+=============================================
+
+
+NOW POST STEPS TO CREATE TEMP FILE-
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+SET NEWNAME FOR DATABASE TO '+DG_DATA06';
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+
+
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+SET NEWNAME FOR DATABASE TO 'DG_DATA06';
+restore database;
+switch datafile all;
+switch tempfile all;
+recover database;
+}
+
+
+create temporary tablespace temp1 tempfile '/var/oradata/oltt205/data/temp1.dbf'size 2g;
+ALTER DATABASE DEFAULT TEMPORARY TABLESPACE temp1;
+drop tablespace DEF_TEMP including contents and datafiles;
+create temporary tablespace def_temp tempfile '/var/oradata/oltt205/data/def_temp_01.dbf' size 5g;
+drop tablespace TEMP including contents and datafiles;
+create temporary tablespace TEMP tempfile '/var/oradata/oltt205/data/temp_01.dbf' size 5g;
+ALTER DATABASE DEFAULT TEMPORARY TABLESPACE temp;
+drop tablespace TEMP1 including contents and datafiles;
+
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+set archivelog destination to '/orabackup01/backup/test1/newarc/';
+restore archivelog from logseq=98 until logseq=153 thread=1;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+set archivelog destination to '/orabackup01/backup/test1/newarc/';
+restore archivelog from logseq=99 until logseq=201 thread=2;
+restore archivelog from logseq=98 until logseq=153 thread=1;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+
+
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+recover database;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+
+run
+{
+backup archivelog all format'/orabackup01/backup/test1/newarc/%d_%s_%p_%c_%t.arc1.bkp';
+backup archivelog from logseq=98 until logseq=153 thread=1;
+}
+
+
+select status, checkpoint_change#,
+to_char(checkpoint_time, ‘DD-MON-YYYY HH24:MI:SS’) as checkpoint_time,
+count(*) from v$datafile_header
+group by status, checkpoint_change#, checkpoint_time
+order by status, checkpoint_change#, checkpoint_time;
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+backup archivelog all format'/orabackup01/backup/test1/newarc/%d_%s_%p_%c_%t.arc1.bkp';
+backup archivelog from logseq=98 until logseq=153 thread=1;
+release channel C1;
+release channel C2;
+release channel C3;
+release channel C4;
+}
+
+/opt/oracle/product/12.1.0.2/dbhome_1/bin
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+backup format '/archive/%d_%s_%p_%c_%t.arc.bkp' 
+archivelog from sequence 2500 until sequence 3000 thread 2;
+
+run {
+allocate channel a1 type disk;
+
+backup archivelog all format '/orabackup01/backup/test1/arch_%d_%u_%s';
+release channel a1;
+}
+
+SELECT A.*,
+Round(A.Count#*B.AVG#/1024/1024) Daily_Avg_Mb
+FROM
+(
+SELECT
+To_Char(First_Time,'YYYY-MM-DD') DAY,
+Count(1) Count#,
+Min(RECID) Min#,
+Max(RECID) Max#
+FROM
+v$log_history
+GROUP
+BY To_Char(First_Time,'YYYY-MM-DD')
+ORDER
+BY 1 DESC
+) A,
+(
+SELECT
+Avg(BYTES) AVG#,
+Count(1) Count#,
+Max(BYTES) Max_Bytes,
+Min(BYTES) Min_Bytes
+FROM
+v$log
+) B;
+
+
+run {
+allocate channel ch1 type disk;
+allocate channel ch2 type disk;
+allocate channel ch3 type disk;
+allocate channel ch4 type disk;
+allocate channel ch5 type disk;
+allocate channel ch6 type disk;
+backup incremental level 0 database format '/orabackup01/backup/test1/newarc/FULL_%d_%u_%s';
+}
+sql 'alter system archive log current';
+run {
+allocate channel a1 type disk;
+backup archivelog all format '/orabackup01/backup/test1/newarc/arch_%d_%u_%s';
+release channel a1;
+}
+run {
+allocate channel c1 type disk;
+backup current controlfile format '/orabackup01/backup/test1/newarc/Control_%d_%u_%s';
+release channel c1;
+}
+
+------- ---- -- ---------- ----------- ------------ --------------------
+342     Full    315.02M    DISK        00:00:02     Jul 02 2021 06:35:00
+        BP Key: 342   Status: AVAILABLE  Compressed: NO  Tag: TAG20210702T063458
+        Piece Name: /orabackup01/backup/cs_rest/CORDYSP2_backup_controlfile_c-130472067-20210702-06.bkp
+  Control File Included: Ckp SCN: 6543465951075   Ckp time: Jul 02 2021 06:34:58
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ --------------------
+343     Full    1.50M      DISK        00:00:05     Jul 02 2021 06:35:07
+        BP Key: 343   Status: AVAILABLE  Compressed: YES  Tag: TAG20210702T063502
+        Piece Name: /orabackup01/backup/test1/newarc/Control_CORDYSP2_bd02u4om_365
+  Control File Included: Ckp SCN: 6543465951109   Ckp time: Jul 02 2021 06:35:02
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ --------------------
+344     Full    315.02M    DISK        00:00:02     Jul 02 2021 06:35:10
+        BP Key: 344   Status: AVAILABLE  Compressed: NO  Tag: TAG20210702T063508
+        Piece Name: /orabackup01/backup/cs_rest/CORDYSP2_backup_controlfile_c-130472067-20210702-07.bkp
+  Control File Included: Ckp SCN: 6543465951136   Ckp time: Jul 02 2021 06:35:08
+
+RMAN>
+
+
+/orabackup01/testbackup
+
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ --------------------
+344     Full    315.02M    DISK        00:00:02     Jul 02 2021 06:35:10
+        BP Key: 344   Status: AVAILABLE  Compressed: NO  Tag: TAG20210702T063508
+        Piece Name: /orabackup01/backup/cs_rest/CORDYSP2_backup_controlfile_c-130472067-20210702-07.bkp
+  Control File Included: Ckp SCN: 6543465951136   Ckp time: Jul 02 2021 06:35:08
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ --------------------
+349     Full    315.25M    SBT_TAPE    00:00:11     Jul 02 2021 12:31:03
+        BP Key: 349   Status: AVAILABLE  Compressed: NO  Tag: TAG20210702T123052
+        Handle: c-130472067-20210702-08   Media: @aaaeR
+  Co
+
+
+RMAN> restore controlfile from '/orabackup01/testbackup/Control_CORDYSP2_bd02u4om_365';
+
+
+RMAN> restore controlfile from '/orabackup01/testbackup/control1_20210704_dj033gqo_1_1.ctl';
+
+Starting restore at 04-JUL-21
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=758 device type=DISK
+
+channel ORA_DISK_1: restoring control file
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:07
+output file name=+DG_DATA06/NEW_TEST_1/CONTROLFILE/current.346.1076991771
+output file name=+DG_FRA01/NEW_TEST_1/CONTROLFILE/current.5831.1076991775
+Finished restore at 04-JUL-21
+
+RMAN>
+
+
+
+catalog start with '/orabackup01/testbackup';
+
+
+SQL "ALTER DATABASE RENAME FILE ''+DATA/w5005pr/onlinelog/group_2.262.904560961'' to ''+TEST''" ;
+
+run
+{
+# allocate a channel to the tape device
+allocate channel ch1 type disk;
+allocate channel ch2 type disk;
+allocate channel ch3 type disk;
+allocate channel ch4 type disk;
+allocate channel ch5 type disk;
+allocate channel ch6 type disk;
+# rename the datafiles and online redo logs
+SET NEWNAME FOR DATABASE TO '+DG_DATA06';
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CS_REST/ONLINELOG/group_1.1193.1075912053''  to ''+DG_FRA01''" ; 
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_2.1313.1075948839'' to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_3.1192.1075948845'' to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CS_REST/ONLINELOG/group_4.1784.1075912053''  to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_5.1163.1075948869'' to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_6.932.1075948959''  to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_7.1181.1075948889'' to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_8.1295.1075948891'' to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_9.1314.1075949025'' to ''+DG_FRA01''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DG_DATA01/CORDYSP2/ONLINELOG/group_10.971.1075949027'' to ''+DG_FRA01''" ;
+# Do a SET UNTIL to prevent recovery of the online logs
+SET UNTIL SEQUENCE 209;
+# restore the database and switch the datafile names
+RESTORE DATABASE;
+SWITCH DATAFILE ALL;
+# recover the database
+ RECOVER DATABASE;
+}
+
+SQL> SQL> SQL>   2    3    4    5    6    7    8    9   10
+    GROUP#    THREAD# MEMBER                                                   ARC STATUS            Size (MB)
+---------- ---------- -------------------------------------------------------- --- ---------------- ----------
+         1          1 +DG_DATA01/CS_REST/ONLINELOG/group_1.1193.1075912053     YES INACTIVE                500
+         2          1 +DG_DATA01/CORDYSP2/ONLINELOG/group_2.1313.1075948839    YES ACTIVE                  500
+         3          1 +DG_DATA01/CORDYSP2/ONLINELOG/group_3.1192.1075948845    NO  CURRENT                 500
+         4          1 +DG_DATA01/CS_REST/ONLINELOG/group_4.1784.1075912053     YES ACTIVE                  500
+         5          1 +DG_DATA01/CORDYSP2/ONLINELOG/group_5.1163.1075948869    YES INACTIVE                500
+         6          2 +DG_DATA01/CORDYSP2/ONLINELOG/group_6.932.1075948959     YES INACTIVE                500
+         7          2 +DG_DATA01/CORDYSP2/ONLINELOG/group_7.1181.1075948889    YES ACTIVE                  500
+         8          2 +DG_DATA01/CORDYSP2/ONLINELOG/group_8.1295.1075948891    YES ACTIVE                  500
+         9          2 +DG_DATA01/CORDYSP2/ONLINELOG/group_9.1314.1075949025    NO  CURRENT                 500
+        10          2 +DG_DATA01/CORDYSP2/ONLINELOG/group_10.971.1075949027    YES INACTIVE                500
+
+10 rows selected.
+
+
+recover database using backup controlfile until cancel;
+SQL> ORA-00279: change 6543494952087 generated at 07/04/2021 07:30:38 needed for thread 2
+ORA-00289: suggestion : +DG_FRA01
+ORA-00280: change 6543494952087 for thread 2 is in sequence #232
+
+
+Specify log: {<RET>=suggested | filename | AUTO | CANCEL}
+CANCEL
+Media recovery cancelled.
+SQL>
+SQL>
+SQL>
+
+
+
+
+alter database rename file '+DG_DATA01/CS_REST/ONLINELOG/group_1.1193.1075912053' to '+DG_FRA01';
+
+
+
+
+nohup rman target / @restore_new1.rcv >> Full_restore_July2021.log &
+
+.:/opt/oracle/bin>cd /orabackup01/testbackup
+.:/orabackup01/testbackup>ls -lrth
+total 71G
+-rw-r----- 1 oracle oinstall 801M Jul  3 04:57 arch_CORDYSP2_ba02u4kf_362
+-rwxr-xr-x 1 oracle oinstall  105 Jul  3 04:59 copy.sh
+-rw-r----- 1 oracle oinstall 1.6M Jul  3 04:59 Control_CORDYSP2_bd02u4om_365
+-rw-r----- 1 oracle oinstall 745M Jul  3 04:59 arch_CORDYSP2_bb02u4mh_363
+-rw-r----- 1 oracle oinstall 1.1M Jul  3 04:59 FULL_CORDYSP2_at02u2sm_349
+-rw-r----- 1 oracle oinstall  17G Jul  3 05:27 FULL_CORDYSP2_au02u2sn_350
+-rw-r----- 1 oracle oinstall  20G Jul  3 06:02 FULL_CORDYSP2_av02u2sn_351
+-rw-r----- 1 oracle oinstall 8.8G Jul  3 06:20 FULL_CORDYSP2_b002u2sn_352
+-rw-r----- 1 oracle oinstall 7.6G Jul  3 06:35 FULL_CORDYSP2_b102u2sn_353
+-rw-r----- 1 oracle oinstall 7.5G Jul  3 06:50 FULL_CORDYSP2_b202u2sn_354
+-rw-r--r-- 1 oracle oinstall 1.3K Jul  3 07:10 log.out
+-rw-r----- 1 oracle oinstall 9.8G Jul  3 07:10 FULL_CORDYSP2_b302u2sn_355
+-rw-r--r-- 1 
+
+run
+{
+
+run
+{
+# allocate a channel to the tape device
+allocate channel ch1 type disk;
+allocate channel ch2 type disk;
+allocate channel ch3 type disk;
+allocate channel ch4 type disk;
+allocate channel ch5 type disk;
+allocate channel ch6 type disk;
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_b302u2sn_355';  
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_b202u2sn_354';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_b102u2sn_353';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_b002u2sn_352';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_av02u2sn_351';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_au02u2sn_350';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/FULL_CORDYSP2_at02u2sm_349';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/arch_CORDYSP2_ba02u4kf_362';
+CATALOG BACKUPPIECE '/orabackup01/testbackup/arch_CORDYSP2_bb02u4mh_363';
+# rename the datafiles and online redo logs
+SET NEWNAME FOR DATABASE TO '+DG_DATA06';
+# Do a SET UNTIL to prevent recovery of the online logs
+SET UNTIL SEQUENCE 209;
+# restore the database and switch the datafile names
+RESTORE DATABASE;
+SWITCH DATAFILE ALL;
+# recover the database
+ RECOVER DATABASE;
+}
+
+
+RMAN-00571: ===========================================================
+RMAN-03002: failure of restore command at 07/04/2021 05:22:36
+RMAN-06026: some targets not found - aborting restore
+RMAN-06100: no channel to restore a backup or copy of datafile 22
+RMAN-06100: no channel to restore a backup or copy of datafile 16
+RMAN-06100: no channel to restore a backup or copy of datafile 12
+RMAN-06100: no channel to restore a backup or copy of datafile 5
+
+RMAN> list backup of datafile 16;
+
+
+List 
+
+
+
+run {
+allocate channel t1 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t2 device type disk format '//orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t3 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t4 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t5 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t6 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t7 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+allocate channel t8 device type disk format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak';
+backup AS compressed BACKUPSET  tag 'full_backup' format '/orabackup01/backup/test1/newarc/%d_S%s_p%p_%T_%U.bak' database;
+sql 'alter system archive log current';
+crosscheck  archivelog all;
+backup AS compressed BACKUPSET  tag 'archive_log' archivelog all format '/orabackup01/backup/test1/newarc/arcbive_logs_%U.bak';
+backup current controlfile format '/orabackup01/backup/test1/newarc/control1_%T_%U.ctl';
+crosscheck backup;
+release channel t1;
+release channel t2;
+release channel t3;
+release channel t4;
+release channel t5;
+release channel t6;
+release channel t7;
+release channel t8;
+}
+ 
+
+
+SQL>
+SQL>
+SQL> recover database using backup controlfile until cancel;
+ORA-00279: change 6543494952087 generated at 07/04/2021 07:30:38 needed for thread 2
+ORA-00289: suggestion : +DG_FRA01
+ORA-00280: change 6543494952087 for thread 2 is in sequence #232
+
+
+nid target=sys dbname=new_test_1
+
+create spfile='+DG_DATA06' from pfile='/opt/oracle/bin/temp2.ora';
+
++DG_DATA06/NEW_TEST/PARAMETERFILE/spfile.286.1077088021
+
+srvctl add database -d U572 -oraclehome '/dbprog1/oracle/product/12.1.0.2' -spfile '+EXADATA/U752/PARAMETERFILE/spfile.1766.1006954425' -role PRIMARY
+srvctl add database -d U752 -oraclehome '/dbprog1/oracle/product/12.1.0.2' -spfile '+EXADATA/U752/PARAMETERFILE/spfile.1766.1006954425' -role PRIMARY
+
+srvctl add instance -d U752 -i U7521  -node st-dbadm142
+srvctl add instance -d U752 -i U7522  -node st-dbadm143
+
+
+
+
+RMAN> restore controlfile from '/orabackup01/testbackup/control1_20210704_dj033gqo_1_1.ctl';
+
+Starting restore at 05-JUL-21
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=758 device type=DISK
+
+channel ORA_DISK_1: restoring control file
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:07
+output file name=+DG_DATA06/NEW_TEST_1/CONTROLFILE/current.346.1077080203
+output file name=+DG_FRA01/NEW_TEST_1/CONTROLFILE/current.5831.1077080207
+Finished restore at 05-JUL-21
+
+RMAN>
+
+RMAN>
+
+RMAN>
+
+RMAN> catalog start with '/orabackup01/testbackup';
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of catalog command at 07/05/2021 04:57:07
+ORA-01507: database not mounted
+
+RMAN> alter database mount;
+
+Statement processed
+released channel: ORA_DISK_1
+
+RMAN>
+
+RMAN>
+
+RMAN> catalog start with '/orabackup01/testbackup';
+
+Starting implicit crosscheck backup at 05-JUL-21
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=758 device type=DISK
+allocated channel: ORA_DISK_2
+channel ORA_DISK_2: SID=1514 device type=DISK
+allocated channel: ORA_DISK_3
+channel ORA_DISK_3: SID=1703 device type=DISK
+allocated channel: ORA_DISK_4
+channel ORA_DISK_4: SID=1892 device type=DISK
+allocated channel: ORA_DISK_5
+channel ORA_DISK_5: SID=2081 device type=DISK
+allocated channel: ORA_DISK_6
+channel ORA_DISK_6: SID=2270 device type=DISK
+allocated channel: ORA_DISK_7
+channel ORA_DISK_7: SID=2459 device type=DISK
+allocated channel: ORA_DISK_8
+channel ORA_DISK_8: SID=2648 device type=DISK
+Crosschecked 17 objects
+Crosschecked 18 objects
+Crosschecked 22 objects
+Crosschecked 20 objects
+Crosschecked 17 objects
+Crosschecked 20 objects
+Crosschecked 18 objects
+Crosschecked 19 objects
+Finished implicit crosscheck backup at 05-JUL-21
+
+Starting implicit crosscheck copy at 05-JUL-21
+using channel ORA_DISK_1
+using channel ORA_DISK_2
+using channel ORA_DISK_3
+using channel ORA_DISK_4
+using channel ORA_DISK_5
+using channel ORA_DISK_6
+using channel ORA_DISK_7
+using channel ORA_DISK_8
+Finished implicit crosscheck copy at 05-JUL-21
+
+searching for all files in the recovery area
+cataloging files...
+no files cataloged
+
+searching for all files that match the pattern /orabackup01/testbackup
+
+List of Files Unknown to the Database
+=====================================
+File Name: /orabackup01/testbackup/arcbive_logs_dh033gpt_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_di033gpu_1_1.bak
+File Name: /orabackup01/testbackup/control1_20210704_dj033gqo_1_1.ctl
+File Name: /orabackup01/testbackup/CORDYSP2_S414_p1_20210704_cu033dt7_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S415_p1_20210704_cv033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S416_p1_20210704_d0033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S417_p1_20210704_d1033efn_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_d8033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_d9033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_da033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_db033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_dc033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_dd033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_de033gp2_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_df033gp2_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_dg033gpr_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S418_p1_20210704_d2033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S419_p1_20210704_d3033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S420_p1_20210704_d4033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S421_p1_20210704_d5033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S422_p1_20210704_d6033efn_1_1.bak
+
+Do you really want to catalog the above files (enter YES or NO)? YES
+cataloging files...
+cataloging done
+
+List of Cataloged Files
+=======================
+File Name: /orabackup01/testbackup/arcbive_logs_dh033gpt_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_di033gpu_1_1.bak
+File Name: /orabackup01/testbackup/control1_20210704_dj033gqo_1_1.ctl
+File Name: /orabackup01/testbackup/CORDYSP2_S414_p1_20210704_cu033dt7_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S415_p1_20210704_cv033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S416_p1_20210704_d0033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S417_p1_20210704_d1033efn_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_d8033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_d9033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_da033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_db033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_dc033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_dd033gp1_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_de033gp2_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_df033gp2_1_1.bak
+File Name: /orabackup01/testbackup/arcbive_logs_dg033gpr_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S418_p1_20210704_d2033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S419_p1_20210704_d3033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S420_p1_20210704_d4033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S421_p1_20210704_d5033efn_1_1.bak
+File Name: /orabackup01/testbackup/CORDYSP2_S422_p1_20210704_d6033efn_1_1.bak
+
+RMAN>
+
+RMAN>
+
+RMAN> EXIT
+
+spfile                               string
+
++DG_DATA06/NEW_TEST/PARAMETERFILE/spfile.286.1077090253
++DG_DATA06/NEW_TEST/PARAMETERFILE/spfile.286.1077182871
+
++DG_DATA06/CORDY_1/PARAMETERFILE/spfile.835.1077242013
+
+
+create spfile='+DG_DATA06' from pfile='/opt/oracle/bin/temp2.ora';
+
+
+ +DG_DATA06/NEW_TEST/CONTROLFILE/Current.346.1077087551
+ +DG_FRA01/NEW_TEST/CONTROLFILE/Current.5831.1077087551
+
+(ADDRESS=(PROTOCOL=TCP)(HOST=10.2.189.176)(PORT=1530))
+ALTER SYSTEM SET LOCAL_LISTENER='(ADDRESS=(PROTOCOL=TCP)(HOST=10.2.189.176)(PORT=1530))' SCOPE=BOTH;
+
+
+
+*.audit_file_dest='/opt/oracle/admin/newtest/adump'
+*.audit_trail='db'
+*.cluster_database=false
+*.compatible='12.1.0'
+*.control_files='+DG_DATA06/NEW_TEST/CONTROLFILE/Current.346.1077087551','+DG_FRA01/NEW_TEST/CONTROLFILE/Current.5831.1077087551'
+*.cursor_sharing='FORCE'
+*.db_block_size=8192
+*.db_create_file_dest='+DG_DATA06'
+*.db_create_online_log_dest_1='+DG_DATA06'
+*.db_create_online_log_dest_2='+DG_FRA01'
+*.db_domain=''
+*.db_name='new_test'
+#*.db_recovery_file_dest_size=53687091200
+#*.db_unique_name='new_test_1'
+#*.db_name='bwprod44'
+*.db_recovery_file_dest='+DG_FRA01'
+*.log_archive_dest_1='location=USE_DB_RECOVERY_FILE_DEST'
+*.db_recovery_file_dest_size=1503238553600
+*.diagnostic_dest='/opt/oracle'
+#*.dispatchers='(PROTOCOL=TCP) (SERVICE=bwprod44XDB)'
+#*.local_listener='-oraagent-dummy-'
+#*.local_listener='(ADDRESS=(PROTOCOL=TCP)(HOST=10.2.189.176)(PORT=1530))'
+*.nls_language='AMERICAN'
+*.nls_territory='AMERICA'
+*.open_cursors=300
+*.pga_aggregate_target=4096m
+*.processes=4000
+*.redo_transport_user='DBSNMP'
+*.remote_login_passwordfile='exclusive'
+#*.remote_listener='usfkl21db88-sca.mercer.com:1530'
+*.sga_target=20480m
+*.sql_trace=FALSE
+*.timed_statistics=TRUE
+*.undo_tablespace=''
+undo_tablespace='UNDOTBS1'
+undo_tablespace='UNDOTBS2'
+#cordysp2_1.instance_name='cordysp2_1'
+#cordysp2_2.instance_name='cordysp2_2'
+#cordysp2_1.instance_number=1
+#cordysp2_2.instance_number=2
+
+
+
+Dynamic SQL to which generates extra standby redo log following the naming convention, stdby_redo0Group#.rdo
+============================================================================================================
+
+select 'alter database add standby logfile '''||
+regexp_substr(MEMBER,'/.+/')||'stdby_'||
+regexp_replace(member,regexp_substr(MEMBER,'/.+/'),'')||
+''' size '||bytes||';' "Create Standby redo"
+from v$logfile lf , v$log l
+where l.group# = lf.group#
+union all
+select 'alter database add standby logfile '''||
+regexp_substr(MEMBER,'/.+/')||'stdby_redo0'||(select max(group#)+1 from v$log)||'.rdo'||
+''' size '||bytes||';' "Create Standby redo"
+from v$logfile lf , v$log l
+where l.group# = lf.group#
+and rownum <=2
+/
+
+================================================================================================
+Validate Rman backup
+
+
+$ rman target / log=corruption_check.log
+RMAN>run
+{
+allocate channel c1 device type disk;
+allocate channel c2 device type disk;
+allocate channel c3 device type disk;
+allocate channel c4 device type disk;
+backup validate check logical database;
+}
+RMAN>exit;
+==================================================
+
+change archivelog all crosscheck;
+
+===========================================
+
+select sequence#, first_change#, next_change# from v$archived_log
+ where FIRST_CHANGE# <= 2955419 and NEXT_CHANGE# >= 2955419;
+
+=========================================
+
 
 
 

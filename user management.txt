@@ -805,15 +805,6 @@ Size in GB
 587.265259
 
 
-How To Find When A Table Was Last Modified In Oracle
-
-*******************************************************
-
-
-exec DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO;
-select INSERTS,UPDATES,DELETES,TRUNCATED,TIMESTAMP from dba_tab_modifications where TABLE_NAME='TEST' and TABLE_OWNER='SCOTT';
-
-********************************************************
 
 
 

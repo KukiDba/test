@@ -1,0 +1,1042 @@
+usdfw21db59v/OLTP83  <> Bharat
+usdfw21db59v/UPRUS1P   <>bharat
+
+========================================================================
+
+
+MGTI-DFW-XD-INTERNAL01-UAT-CL03 Cluster - usdfw24db36vcn1/2
+MGTI-DFW-XD-EXTERNAL01-DEV-CL04 Cluster - usdfw23db42vcn1/2
+MGTI-ASH-XD-EXTERNAL01-STG-CL03 Cluster - usash23db01vcn1/2
+
+Cloud Premigration Advisor Tool (CPAT) Analyzes Databases for Suitability of Cloud Migration (Doc ID 2758371.1)
+
+
+
+Resource list
+=====================
+
+http://usdfw21db83vcn1.mrshmc.com:8080/ords/mmc_apex_ws2/r/cdb-size-info/home?session=103559958588729
+
+====================
+
+select mkloc from x$kcbdbk;
+
+
+usdfw21db59v/OLTP83 <> Bharat  <> COLPR014
+usdfw21db59v/UPRUS1P <> Bharat  <> COLPR014
+
+
+Source : usdfw23db30v/IPASDM02
+Target : Usdfw23db02vcn1/2/IPASDM02
+CDB: COLPR014
+PDB : IPASDM02
+Cluster : MGTI-DFW-XD-INTERNAL01-DEV-CL02
+MGTI-DFW-XD-INTERNAL01-DEV-CL02
+Host Nodes : usdfw23db02vcn1/2
+
+usdfw23db30v/IPASDM02
+
+
+
+
+Target Diskgroups - 
+
+DATAC2                         CONNECTED             100662912   18670908 HIGH
+RECOC2                         CONNECTED              25165440   21528180 HIGH
+
+
+
+1) check db is in sync ..
+alter system switch logfile; make sure the log file appplied on new stand by  .. chekc using below command
+==================================
+2)SELECT ARCH.THREAD#"Thread",ARCH.SEQUENCE#"LastSequenceReceived",APPL.SEQUENCE#"LastSequenceApplied",(ARCH.SEQUENCE#-APPL.SEQUENCE#)"Difference"
+FROM
+(SELECT THREAD#,SEQUENCE# FROM V$ARCHIVED_LOG WHERE(THREAD#,FIRST_TIME)IN(SELECT THREAD#,MAX(FIRST_TIME)FROM V$ARCHIVED_LOG GROUP BY THREAD#))ARCH,
+(SELECT THREAD#,SEQUENCE# FROM V$LOG_HISTORY WHERE(THREAD#,FIRST_TIME)IN(SELECT THREAD#,MAX(FIRST_TIME)FROM V$LOG_HISTORY GROUP BY THREAD#))APPL
+WHERE ARCH.THREAD#=APPL.THREAD#
+ORDER BY 1;
+
+select name,open_mode,database_role from gv$database;
+set lines 200 pages 100
+select process,status,thread#,sequence# from gv$managed_standby;
+==================================
+3) stop recovery 
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+==================================
+4) Check db_recovery_file_dest_size and db_recovery_file_dest is present or not . if not exists use below
+==================================
+SQL> show parameter db_recover
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+db_recovery_file_dest                string                           +RECOC3
+db_recovery_file_dest_size           big integer                      200G
+
+alter system set db_recovery_file_dest_size=10g scope=both;
+alter system set db_recovery_file_dest=+RECOC1 scope=both;
+==================================
+5)
+CREATE RESTORE POINT grp_OLTP83 GUARANTEE FLASHBACK DATABASE;
+==================================
+
+6) Activate standby (alter database activate standby database;)
+
+alter database activate standby database;
+
+
+==================================
+
+show parameter max_string
+show parameter undo
+
+SQL> show parameter max_string
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+max_string_size                      string                           STANDARD
+SQL>
+SQL> show parameter undo
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+temp_undo_enabled                    boolean                          FALSE
+undo_management                      string                           AUTO
+undo_retention                       integer                          3600
+undo_tablespace                      string
+SQL>
+
+SQL> alter system set undo_tablespace='UNDOTBS1' scope=spfile sid='*';
+
+System altered.
+
+
+7)shut immediate;startup open read write .
+=================== NOT REQUIRED FOR OLTP83 START ===================
+alter system set undo_tablespace='UNDOTBS1' scope=spfile sid='*';
+
+
+col owner for a30
+col TRIGGER_NAME for a40
+col TABLE_NAME for a20
+col TABLE_OWNER for a30
+select OWNER,TRIGGER_NAME,TABLE_OWNER,TABLE_NAME,STATUS from dba_triggers where trigger_name like '%LOGON%';
+Alter trigger <schema_name>.trigger_name disable;
+
+
+==================================
+8) Drop apex users if  any 
+
+SQL> select username from dba_users where username like '%APEX%';
+
+USERNAME
+--------------------------------------------------------------------------------
+APEX_PUBLIC_USER
+APEX_050000
+APEX_040200
+
+
+SQL> drop user APEX_050000 cascade;
+
+User dropped.
+
+SQL> drop user APEX_040200 cascade;
+
+User dropped.
+
+SQL> drop user APEX_PUBLIC_USER cascade;
+
+User dropped.
+
+drop package sys.wwv_dbms_sql;
+
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+
+SQL>
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+========xxxxx=======================================
+To verfiy SQL patch
+==============================
+
+set lines 300 pages 100
+column status for a20
+column ACTION_TIME for a45
+column VERSION for a15
+set linesize 1000
+column action_time for a30
+select PATCH_ID,patch_uid,STATUS,ACTION,SOURCE_VERSION ,ACTION_TIME,description from dba_registry_sqlpatch order by 6;
+
+=======================================
+
+
+select dbms_java.get_jdk_version() from dual;  
+@?/javavm/install/update_javavm_db.sql  
+@$ORACLE_HOME/rdbms/admin/prvtmeta.plb
+select dbms_java.get_jdk_version() from dual;  
+@?/javavm/install/initjvm.sql
+@?/xdk/admin/initxml.sql
+@?/xdk/admin/xmlja.sql
+@?/rdbms/admin/catjava.sql 
+select dbms_java.get_jdk_version() from dual;  
+@?/javavm/install/initjvm.sql
+@?/xdk/admin/initxml.sql
+@?/xdk/admin/xmlja.sql
+@?/rdbms/admin/catjava.sql 
+======or==================
+execute sys.dbms_registry.loaded('JAVAVM');
+execute sys.dbms_registry.loaded('CATJAVA');
+execute sys.dbms_registry.valid('JAVAVM');
+execute sys.dbms_registry.valid('CATJAVA');
+======================================================
+
+
+
+[oracle@Usdfw23db02vcn1 ~]$ cd $ORACLE_HOME/OPatch
+[oracle@Usdfw23db02vcn1 OPatch]$ ./datapatch -verbose
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+drop package sys.wwv_dbms_sql;
+
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+
+
+Check registry components status should be valid:
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+col comp_name for a60
+ set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+SQL>
+
+COMP_ID                        COMP_NAME                                                    VERSION                        STATUS      VERSION_FULL
+------------------------------ ------------------------------------------------------------ ------------------------------ ----------- ------------------------------
+CATALOG                        Oracle Database Catalog Views                                19.0.0.0.0                     VALID       19.15.0.0.0
+CATPROC                        Oracle Database Packages and Types                           19.0.0.0.0                     VALID       19.15.0.0.0
+JAVAVM                         JServer JAVA Virtual Machine                                 19.0.0.0.0                     VALID       19.15.0.0.0
+XML                            Oracle XDK                                                   19.0.0.0.0                     VALID       19.15.0.0.0
+CATJAVA                        Oracle Database Java Packages                                19.0.0.0.0                     VALID       19.15.0.0.0
+RAC                            Oracle Real Application Clusters                             19.0.0.0.0                     VALID       19.15.0.0.0
+OWM                            Oracle Workspace Manager                                     19.0.0.0.0                     VALID       19.15.0.0.0
+XDB                            Oracle XML Database                                          19.0.0.0.0                     VALID       19.15.0.0.0
+ORDIM                          Oracle Multimedia                                            19.0.0.0.0                     VALID 
+
+SQL>
+SQL>
+
+
+To rerun the Oracle Spatial validation procedure, run the following as SYSDBA
+
+
+startup upgrade
+
+EXECUTE dbms_registry_sys.validate_components;
+
+set serveroutput on
+exec sys.VALIDATE_SDO();
+
+Query the DBA_REGISTRY to verify Oracle Spatial has been set to VALID
+
+
+Select comp_name, version, status from DBA_REGISTRY where comp_id = 'SDO';
+
+@?/rdbms/admin/xdbrelod.sql
+
+
+
+open db in read only before describe
+=========================================
+
+shut immediate and 
+startup open read only
+
+verify using
+================ 
+
+select name,open_mode,database_role from gv$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+OLTP83READ ONLY            PRIMARY
+
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Verify the directory
+ls -ld /var/oracle/export/OLTP83/migrate
+mkdir -p /var/oracle/export/OLTP83/migrate
+
+
+*** Before Describing  DB should be in Read only Mode 
+==========================================================
+
+
+
+SQL> exec DBMS_PDB.DESCRIBE('/var/oracle/export/OLTP83/migrate/OLTP83.xml');
+
+PL/SQL procedure successfully completed.
+
+ Shut immediate and can be read only -----shutdown only
+
++++++++++++++++++++++++++++++++++++++++++
+In Container database:
+
+. ~/COLNP029.env
+
+SQL>
+
+SET SERVEROUTPUT ON
+DECLARE
+ compatible CONSTANT VARCHAR2(3) :=
+ CASE DBMS_PDB.CHECK_PLUG_COMPATIBILITY(
+  pdb_descr_file => '/var/oracle/export/OLTP83/migrate/OLTP83.xml',
+ pdb_name => 'OLTP83')
+ WHEN TRUE THEN 'YES'
+ ELSE 'NO'
+  END;
+  BEGIN
+ DBMS_OUTPUT.PUT_LINE(compatible);
+END;
+/
+
+YES
+
+PL/SQL procedure successfully completed.
+
+SQL>
+SQL> select cause, type, action, status from pdb_plug_in_violations where name = 'OLTP83' and type like '%ERR%';
+
+no rows selected
+
+SQL>
+SQL> select cause, type, action, status from pdb_plug_in_violations where name = 'OLTP83' and status  like '%ERR%';
+
+no rows selected
+
+
+DB name: COLNP029
+
+===================================================
+
+shut (old OCI standby-primary) before execute create pluggable statement ...
+
+
+check default encryption algorithm on cdb
+
+select encryptionalg from v$encrypted_tablespaces;
+
+SHOW PARAMETER TABLESPACE_ENCRYPTION_DEFAULT_ALGORITHM
+
+ALTER SYSTEM SET "_TABLESPACE_ENCRYPTION_DEFAULT_ALGORITHM"=AES256 scope=both sid='*';
+
+## restart the CDB if its an empty 
+
+## srvctl status database -d COLNP029
+## srvctl stop database -d COLNP029
+## srvctl start database -d COLNP029
+## srvctl status database -d COLNP029
+
+SELECT name, encryptionalg 
+              FROM v$tablespace t, v$encrypted_tablespaces v 
+              WHERE t.ts#=v.ts#;
+
+
+
+Down STandby database
+======================
+
+
+Create Pluggable database
+==============================
+
+create pluggable database OLTP83 as clone using '/var/oracle/export/OLTP83/migrate/OLTP83.xml' move file_name_convert=('+DATAC5','+DATAC5');
+
+
+Pluggable database created.
+
+
+spool pdbOLTP83.log
+set echo on;
+show parameter db_name;
+create pluggable database OLTP83  using '/var/oracle/export/OLTP83/migrate/OLTP83.xml' move file_name_convert=('+DATAC3','+DATAC3');
+echo off;
+spool off;
+exit
+
+OLTP83
+OLTP83
+
+
+OLTP83
+
+
+
+SQL> SQL>
+
+========================================================================
+
+SQL> SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 OLTP83                    MOUNTED
+
+SQL>
+
+=================================================
+
+13)this is new PDB created and this PDB should be mount state...>>>>show pdbs 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[oracle@usdfw23db02vcn1 migrate]$ cat OLTP83_noncdb_pdb.sh
+export ORACLE_SID=COLPR0181
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1
+export PATH=$ORACLE_HOME/bin:$PATH
+sqlplus / as sysdba << EOF > /var/oracle/export/OLTP83/migrate/OLTP83_noncdb_to_pdb.out
+spool /var/oracle/export/OLTP83/migrate/OLTP83_noncdb_to_pdb.log
+select name, open_mode from v\$database;
+set time on timing on feedback on verify on head on echo on
+SELECT name, open_mode FROM v\$pdbs WHERE name = 'OLTP83';
+ALTER SESSION SET CONTAINER=OLTP83;
+show con_name
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/noncdb_to_pdb.sql
+alter pluggable database OLTP83 open instances=all;
+alter pluggable database OLTP83 save state instances=all;
+select time,name,cause,status,message,type from PDB_PLUG_IN_VIOLATIONS where status= 'PENDING' order by name;
+spool off
+EOF
+[oracle@usdfw23db02vcn1 migrate]$ echo $ORACLE_SID
+COLNP0291
+
+./OLTP83_noncdb_pdb.sh |tee -a /tmp/OLTP83.log
+
+[oracle@usdfw23db02vcn1 migrate]$ echo $?
+0
+[oracle
+=======================================================
+
+set pages 999 lines 200
+col cause for a10
+col name for a10
+col message for a35 word_wrapped
+select name,cause,type,message,status from PDB_PLUG_IN_VIOLATIONS where name='OLTP83' and type='ERROR';
+
+select name,cause,type,message,status from PDB_PLUG_IN_VIOLATIONS where name='OLTP83' and type='ERROR';
+
+
+SQL>
+
+ alter session set container=OLTP83;
+SQL>
+
+===================================================================
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+OLTP83.MRSHMC.COM
+
+ alter session set container=OLTP83;
+
+SQL> update global_name set global_name='OLTP83';
+
+1 row updated.
+
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+OLTP83
+
+SQL> commit;
+
+Commit complete.
+
+
+PDB save sate once alter session to PDB and execute alter pluggable database OLTP83 save state instances=all;
+========================================================================
+
+OLTP83=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=usash21db06v-sca)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME=OLTP83)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))
+		  
+datapatch -prereq -verbose
+
+
+
+make sure tnsping and sqlplus abc/abc@tnsentry are working (sqlplus should give invalid username/password)
+================================================
+
+SQL> alter session set container=OLTP83;
+
+Session altered.
+
+SQL> ADMINISTER KEY  MANAGEMENT SET KEY FORCE KEYSTORE IDENTIFIED BY "MMC_Prod_Mar312022"  WITH BACKUP ;
+
+keystore altered.
+
+SQL>
+
+=============================================
+SQL>  select * from gv$encryption_wallet;
+
+   INST_ID WRL_TYPE
+---------- --------------------
+WRL_PARAMETER
+--------------------------------------------------------------------------------
+STATUS                         WALLET_TYPE          WALLET_OR KEYSTORE FULLY_BAC
+------------------------------ -------------------- --------- -------- ---------
+    CON_ID
+----------
+         1 FILE
+
+OPEN                           AUTOLOGIN            SINGLE    UNITED   NO
+         4
+
+
+   INST_ID WRL_TYPE
+---------- --------------------
+WRL_PARAMETER
+--------------------------------------------------------------------------------
+STATUS                         WALLET_TYPE          WALLET_OR KEYSTORE FULLY_BAC
+------------------------------ -------------------- --------- -------- ---------
+    CON_ID
+----------
+         2 FILE
+
+OPEN                           AUTOLOGIN            SINGLE    UNITED   NO
+         4
+
+
+SQL>
+
+===============================================================
+
+
+
+===============================================================
+19)db timezone change is not required for IPAS DBs. It is only required for WebCas application databases.
+
+SQL> alter session set container=OLTP83;
+
+Session altered.
+
+SQL>
+SQL>
+
+
+
+Verify TZ
+============
+select current_timestamp from dual;
+select dbtimezone,sessiontimezone from dual;
+
+
+SQL>
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-MON-YYHH24:MI:SS')
+--------------------------------------------------------------------------------
+30-MAY-22 09:59:05
+
+
+TZ=EST5EDT
+
+
+env|grep TZ - at source
+Change through "srvctl setenv" command
+
+srvctl getenv database -d COLNP029 
+srvctl setenv database -d COLNP029 -t 'TZ=US/Eastern'
+Add export TZ=US/Eastern in environment file.
+
+===============================================================================================   
+
+SQL> alter session set container=OLTP83;
+
+Session altered.
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-MON-YYHH24:MI:SS')
+---------------------------------------------------------------------------
+19-MAY-22 11:14:38
+
+SQL>
+SQL> select dbtimezone from dual;
+
+DBTIME
+------
++00:00
+
+20)
+
+
+
+SELECT 'ALTER SYSTEM KILL SESSION '||''''||sid ||','|| serial#||''''||' immediate;'
+ FROM v$session
+ WHERE type != 'BACKGROUND' and username='ARU';
+
+
+
+
+SELECT name, encryptionalg 
+              FROM v$tablespace t, v$encrypted_tablespaces v 
+              WHERE t.ts#=v.ts# and v.con_id=4;
+
+
+Connect to pdb and run below 
+==================================
+
+SQL> !cat gen_encrypt_ts.sql
+set echo off termout off feedback off pagesize 0 head off
+spool  /var/oracle/export/OLTP83/migrate/encrypt_ts.sql
+select 'set  echo on feedback on timing on' from dual;
+select 'spool /var/oracle/export/OLTP83/migrate/encrypt_ts_out.log' from dual;
+select 'alter tablespace ' || tablespace_name || ' encryption online encrypt ;'
+from dba_tablespaces where tablespace_name not like '%UNDO%' and tablespace_name not like '%TEMP%';
+select 'spool off' from dual;
+spool off
+
+after encryption all tablespaces eccept undo and temp should be in encrypted mode, can be verified using below
+
+SQL> select tablespace_name from dba_tablespaces where encrypted='NO';
+UNDOTBS1
+TEMP
+PSTEMP
+PSGTT01
+UNDO_2
+
+Verify Encryption
+=============================
+
+alter session set container=OLTP83;
+
+select tablespace_name from dba_tablespaces where encrypted='NO';
+set lines 300 pages 99
+col TABLESPACE_NAME for a20
+col STATUS for a10
+col CONTENTS for a10
+col ENCRYPTED for a10
+ select TABLESPACE_NAME,ENCRYPTED,CONTENTS from dba_tablespaces order by 3;
+select * from v$tablespace;
+select TABLESPACE_NAME, STATUS, ENCRYPTED from DBA_TABLESPACES;
+
+select t.name, e.ts#, e.encryptionalg, e.encryptedts, e.key_version, e.status from v$tablespace t, v$encrypted_tablespaces e where t.ts#=e.ts#;
+
+select * from v$encrypted_tablespaces
+
+
+
+
+
+
+Verify State of PDB across all nodes
+=======================================
+
+SELECT con_name, instance_name, state FROM cdb_pdb_saved_states;
+set lines 333 pages 100
+col name for a30
+select name,open_mode from gv$pdbs;
+
+
+
+
+
+5 rows selected.
+
+vi OLTP83_encrypt_ts.sh
+export ORACLE_SID=COLNP0291
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1
+export PATH=$ORACLE_HOME/bin:$PATH
+sqlplus / as sysdba << EOF > /var/oracle/export/OLTP83/migrate/OLTP83_encrypt_ts.out
+spool /var/oracle/export/OLTP83/migrate/OLTP83_encrypt_ts.log
+select name, open_mode from v\$database;
+set time on timing on feedback on verify on head on
+SELECT name, open_mode FROM v\$pdbs WHERE name = 'OLTP83';
+show con_name
+ALTER SESSION SET CONTAINER=OLTP83;
+@/var/oracle/export/OLTP83/migrate/encrypt_ts.sql
+select tablespace_name from dba_tablespaces where encrypted='NO';
+spool off
+EOF
+
+
+:%s/CNNNN999/COLNP029/g
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Locking Of SYS password  error
+==================================
+
+
+srvctl modify database -d COLNP029 -pwfile
+orapwd file=+DATAC3/COLNP029/PASSWORD/pwdCOLNP029 password=MMC_Prod_Mar312022 format=12.2 dbuniquename=COLNP029
+
+
+srvctl modify database -d COLNP029 -pwfile +DATAC3/COLNP029/PASSWORD/pwdCOLNP029
+srvctl config database -d COLNP029
+
+
+
+
+
+oracle@usdfw23db02vcn1:COLNP0291>srvctl modify database -d COLNP029 -pwfile +DATAC3/COLNP029/PASSWORD/pwdCOLNP029
+oracle@usdfw23db02vcn1:COLNP0291>srvctl config database -d COLNP029 | grep -i password                                                                       Password file: +DATAC3/COLNP029/PASSWORD/pwdCOLNP029
+oracle@usdfw23db02vcn1:COLNP0291>
+
+
+
+srvctl  config database –d COLNP029 |grep –I password
+srvctl modify database -d COLNP029 -pwfile orapwd dbuniquename=COLNP029 file='+<DG>/<CDB NAME>/pwd<CDB NAME> format=12.2
+srvctl  config database –d COLNP029 | grep –I password
+
+srvctl modify database -d COLNP029 -pwfile orapwd dbuniquename=COLNP029 file='+DATAC3/COLNP029/PASSWORD/pwdCOLNP029' format=12.2
+
+
+[6/10/2022 8:53 PM] Kushwaha, Pankaj DBA
+srvctl modify database -d COLNP028 -pwfile
+orapwd dbuniquename=COLNP028 file='+DATAC3/COLNP028/PASSWORD/pwdcolnp028.296.1106829805' format=12.2
+
+
+srvctl modify database -d COLNP028 -pwfile orapwd dbuniquename=COLNP028 file='+DATAC3/COLNP028/PASSWORD/pwdcolnp028' format=12.2
+
+srvctl modify database -d COLNP029 -pwfile orapwd dbuniquename=COLNP029 file='+DATAC3/COLNP029/PASSWORD/pwdCOLNP029' format=12.2
+
++DATAC3/COLNP029/PASSWORD/pwdCOLNP029
+
+
+oracle@usdfw23db02vcn1:COLNP0291>srvctl modify database -d COLNP029 -pwfile +DATAC3/COLNP029/PASSWORD/pwdCOLNP029^C
+oracle@usdfw23db02vcn1:COLNP0291>
+oracle@usdfw23db02vcn1:COLNP0291>srvctl modify database -d COLNP029 -pwfile
+oracle@usdfw23db02vcn1:COLNP0291>orapwd file=+DATAC3/COLNP029/PASSWORD/pwdCOLNP029 dbuniquename=COLNP029 password=MMC_Prod_Mar312022 format=12.2
+oracle@usdfw23db02vcn1:COLNP0291>srvctl modify database -d COLNP029 -pwfile orapwd dbuniquename=COLNP029 file='+DATAC3/COLNP028/PASSWORD/pwdCOLNP029' format=12.2^C
+oracle@usdfw23db02vcn1:COLNP0291>
+oracle@usdfw23db02vcn1:COLNP0291>srvctl modify database -d COLNP029 -pwfile +DATAC3/COLNP029/PASSWORD/pwdCOLNP029
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Set the CDB Environment
+. /home/oracle/<<CDBNAME>>.env
+
+e.g. (. /home/oracle/COLNP020.env)
+
+
+
+‘Verify password file location:
+
+
+srvctl config database -d ${ORACLE_UNQNAME} | grep Password | cut -c16-
+
+
+
+srvctl config database -d ${ORACLE_UNQNAME} | grep Password | cut -c16- | cut -d'.' -f 1
+
+
+
+Save location to environment variable
+
+
+export PWDFILELOC=`srvctl config database -d ${ORACLE_UNQNAME} | grep Password | cut -c16- | cut -d'.' -f 1`
+
+
+
+echo ${PWDFILELOC}
+
+
+
+Create password and modify location to match the location identified in step 1
+
+
+srvctl modify database -d ${ORACLE_UNQNAME} -pwfile
+
+
+orapwd file=${PWDFILELOC} password=<<PASSWORD>> format=12.2 dbuniquename=${ORACLE_UNQNAME}
+
+
+srvctl modify database -d ${ORACLE_UNQNAME} -pwfile ${PWDFILELOC}
+
+
+
+srvctl config database -d ${ORACLE_UNQNAME} | grep Password | cut -c16-
+
+
+------------------------------------------------------------------
+
+SETUP CONFIG FILE for CDBNAME
+======================================
+
+Edit the cdb configuration file
+cd /var/oracle/scripts/config
+vi /var/oracle/scripts/config/CDBList.cfg
+
+CDB STEPS
+================
+
+cd /var/oracle/scripts/configure_auditing/cdb
+. /var/oracle/admin/<CDBNAME>/.<CDBNAME>_env
+sqlplus / as sysdba
+@initial_config_std_profiles_cdb.sql
+@config_admin_users_cdb.sql
+@create_verify_functions_cdb.sql
+@final_config_std_profiles_cdb.sql
+View the /var/oracle/scripts/.server_passwords file to obtain the proper password for creating the C##DBA_ADMIN user by looking at the CDB_DBADMINPWD parameter being set
+!cat /var/oracle/scripts/.server_passwords
+@create_dba_admin_cdb.sql
+At the &pwd prompt enter the password you viewed above
+@set_up_auditing_cdb.sql
+There will be an error regarding not being able to lock the SYS password when this is executed. A fix is being worked on and can be safely ignored.
+
+ALTER USER DBSNMP   IDENTIFIED  BY   “< DBSNMPPWD>”  ; 
+
+
+catalog register
+=======================
+
+/var/oracle/scripts/rman/rman_register.sh /var/oracle/admin/COLNP047 COLNP047 DEV
+
+
+Backup Jobs
+==================
+
+###################COLNP047######################
+03 22 * * * /var/oracle/scripts/wrappers/backup_COLNP047.sh >/dev/null 2>&1
+20 2,4,6,8,15,17,19,21 * * * /var/oracle/scripts/wrappers/backup_COLNP047_arch.sh >/dev/null 2>&1
+#
+#
+#
+#
+
+
+==================================================   PDB POST STEPS ======================================================
+
+NEW PDB STEPS updated
+
+==========================
+
+vi /var/oracle/scripts/config/PDBList.cfg
+
+
+NEW PDB STEPS
+==========================
+
+Directory structure
+======================
+
+cd /var/oracle/admin/COLPR018/
+
+cp -rp PDBNAME OLTP88
+
+
+
+cd /var/oracle/scripts/configure_auditing/pdb
+. /var/oracle/admin/<CDBNAME>/.<CDBNAME>_env
+sqlplus / as sysdba
+alter session set container=OLTP83;
+@initial_config_std_profiles_pdb.sql
+@config_admin_users_pdb.sql
+@create_verify_functions_pdb.sql
+@final_config_std_profiles_pdb.sql
+view the /var/oracle/scripts/.server_passwords file to obtain the proper password for the DBA_ADMIN user by looking at the PDB_DBADMINPWD parameter being set
+!cat /var/oracle/scripts/.server_passwords
+
+@create_dba_admin_pdb.sql
+At the &pwd prompt enter the password you viewed above
+
+If the above statement fails due to the dba_admin account already existing then manually set the password to the proper value based on what was viewed above
+
+
+alter user dba_admin identified by “&pwd “;
+
+@set_up_auditing_pdb.sql
+An error will be thrown regarding locking of the SYS password.  This is being investigated and can be safely ignored at this time.
+
+
+=======================================================================
+
+Make sure Environment Config files are set for PDB  before running below 
+
+cd /var/oracle/scripts/config
+vi /var/oracle/scripts/config/PDBList.cfg
+
+then add pdb name corresponding to it container .
+
+
+Run below scripts
+========================
+
+/var/oracle/scripts/wrappers/run_audit_cleanup_process.sh COLPR018 OLTP83
+
+/var/oracle/scripts/wrappers/run_drop_user_process.sh COLPR018 OLTP83
+
+/var/oracle/scripts/stats/gather_schema_stats_pdb.sh COLPR018 OLTP83
+
+/var/oracle/scripts/stats/gather_schema_stats_pdb.sh /var/oracle/admin/COLPR018 COLPR018 OLTP83 PROD
+
+
+
+/var/oracle/scripts/wrappers/run_report_migration.sh COLNP029 OLTP83
+
+/var/oracle/scripts/mig_report_data/mig_report_data_pdb/mig_report_data_pdb.sh /var/oracle/admin/COLPR018   COLPR018  OLTP83 PROD
+
+
+OEM TASKS
+===============
+
+https://usdfw21db83vcn1.mrshmc.com:7803/em/faces/db-list-dbList   YourDBAatCanada22
+https://ato_oem_01.mrshmc.com:7803/em   YourDBAatCanada22
+
+
+alter system set "_fix_control" ='12433153:off' scope=both sid='*';
+
+alter system set "_unnest_subquery"=FALSE  scope=both sid='*';
+
+===============================
+
+
+PDB Refresh
+
+======================
+
+PDB refresh;
+
+ 
+
+
+Pre Task:
+=============================
+column property_name format a30
+column property_value format a30
+select property_name, property_value
+from   database_properties
+where  property_name = 'LOCAL_UNDO_ENABLED';
+
+ 
+
+no rows selected
+
+ 
+
+srvctl status database -d CUNITAUD
+srvctl stop database -d CUNITAUD
+sqlplus / as sysdba
+startup nomount;
+alter system set cluster_database=FALSE scope=spfile sid='*';
+shu immediate
+stratup upgrade
+ALTER DATABASE LOCAL UNDO ON;
+alter system set cluster_database=true scope=spfile sid='*';
+shu immediate
+
+ 
+
+column property_name format a30
+column property_value format a30
+select property_name, property_value
+from   database_properties
+where  property_name = 'LOCAL_UNDO_ENABLED';
+
+ 
+
+PROPERTY_NAME                  PROPERTY_VALUE
+------------------------------ ------------------------------
+LOCAL_UNDO_ENABLED             TRUE
+=====================================
+On Both : CDB to PDB
+select username from dba_users where username like '%APEX%';
+alter session set "_oracle_script"=TRUE;
+drop user APEX_050000 cascade;
+@$ORACLE_HOME/rdbms/admin/utlrp.sql
+
+ 
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+======================================
+
+ 
+
+Create DB Link:(Target)
+===============
+alter system set global_names=FALSE scope=both sid='*';
+sho parameter global_name
+
+ 
+
+Alter user system identified by "MMC_Prod_Mar312022" account unlock container=all;
+
+ 
+
+create or replace database link clone_UNITPAUD connect to system  identified by "MMC_Prod_Mar312022" using 
+'(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = ausyd26db02vcn1-vip.mrshmc.com)(PORT = 1565))) 
+(CONNECT_DATA = (SERVICE_NAME = UNITPAUD_SRVC.mercer.com)))';
+
+ 
+
+
+create pluggable database UNITPAUD from UNITPAUD@TEST_LINK  storage unlimited tempfile reuse file_name_convert=('+DG_DATADW','+DATAC4') parallel 4  keystore identified by "MMC_Prod_Mar312022" including shared key;
+
+

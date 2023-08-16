@@ -1,0 +1,200 @@
+oltt240n1
+
+static listener entry on standby
+
+(SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = oltt240)
+          (ORACLE_HOME = /opt/oracle/product/1210/db)
+      (SID_NAME = oltt240n1)
+    )
+)
+
+2. tns entry for on each node of srouce and target servers.
+
+oltt240p=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST =  gbexe22db61vcn1-vip.mrshmc.com)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = oltt240) (UR = A) (HS = OK)))
+oltt240s=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST =  iedub26db02vcn1-vip.mrshmc.com)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = oltt240) (UR = A) (HS = OK)))
+
+
+3. copy the password file from source to target.
+
+4. start the database on standby (no mount)with pfile from soruce ( modify parameter as per env)
+
+*.audit_file_dest='/opt/oracle/base/admin/oltt240/adump'
+*.audit_trail='DB'
+*.cluster_database=false
+*.compatible='12.1.0.2.0'
+*.control_files='+VTEGEN_UAT_DATA/oltt240/controlfile/control_1.ctl','+VTEGEN_UAT_FRA/oltt240/controlfile/control_2.ctl'
+*.db_block_size=8192
+*.db_create_file_dest='+VTEGEN_UAT_DATA'
+*.db_domain=''
+*.db_name='oltt240'
+*.db_recovery_file_dest='+VTEGEN_UAT_FRA'
+*.db_recovery_file_dest_size=32212254720
+*.db_unique_name='oltt240'
+*.diagnostic_dest='/opt/oracle/base'
+*.event=''
+oltt240n1.instance_number=1
+oltt240n2.instance_number=2
+*.open_cursors=300
+*.pga_aggregate_limit=2147483648
+*.pga_aggregate_target=6727663616
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sga_target=20199768064
+oltt240n1.thread=1
+oltt240n2.thread=2
+
+or
+
+oracle@usdfw21db78vcn1:NOSID>cat initdssp10s1.ora
+dssp101.__data_transfer_cache_size=0
+dssp101.__db_cache_size=17582522368
+dssp101.__inmemory_ext_roarea=0
+dssp101.__inmemory_ext_rwarea=0
+dssp101.__java_pool_size=0
+dssp101.__large_pool_size=134217728
+dssp101.__oracle_base='/opt/oracle/base'#ORACLE_BASE set from environment
+dssp101.__pga_aggregate_target=6777995264
+dssp101.__sga_target=20266876928
+dssp101.__shared_io_pool_size=134217728
+dssp101.__shared_pool_size=2348810240
+dssp101.__streams_pool_size=0
+dssp101.__unified_pga_pool_size=0
+*.audit_file_dest='/opt/oracle/base/admin/dssp101/adump'
+*.audit_trail='db'
+*.compatible='19.0.0'
+*.control_files='+DSSP10_PROD_DATA/DSSP10S/CONTROLFILE/current.260.1081310151'
+*.db_block_size=16384
+*.db_create_file_dest='+DSSp10_PROD_DATA'
+*.db_name='dssp10'
+*.db_unique_name='dssp10s'
+*.diagnostic_dest='/opt/oracle/base'
+*.log_archive_config='DG_CONFIG=(dssp10s,dssp10)'
+*.log_archive_dest_1='LOCATION=+DSSP10_PROD_FRA VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=dssp10s'
+*.log_archive_dest_2='SERVICE=dssp10 VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=dssp10'
+*.fal_server='dssp10s1,dssp10s2'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=dssp101XDB)'
+*.local_listener='LISTENER_DSSP101'
+*.nls_language='AMERICAN'
+*.nls_territory='AMERICA'
+*.open_cursors=300
+*.pga_aggregate_target=6427m
+*.processes=640
+*.remote_login_passwordfile='EXCLUSIVE'
+*.service_names=''
+*.sga_target=19278m
+*.undo_tablespace='UNDOTBS1'
+
+
+=============================================
+
+
+orapwoltt240n1
+
+orapwd file=orapwoltt240n1 password=Q2_K33pDistanc3_2021 entries=10 force=y
+orapwd file=orapwoltt240n2 password=Q2_K33pDistanc3_2021 entries=10 force=y
+
+
+5. check the connection from each node (srouce and target)
+sqlplus sys/Q2_K33pDistanc3_2021@oltt240p as sysdba
+sqlplus sys/Q2_K33pDistanc3_2021@oltt240s as sysdba
+
+6. setup the connection with below.
+
+rman target sys/Q2_K33pDistanc3_2021@oltt240p auxiliary sys/Q2_K33pDistanc3_2021@oltt240s
+
+7. run below in rman prompt
+run {
+allocate channel prmy1 type disk;
+allocate channel prmy2 type disk;
+allocate channel prmy3 type disk;
+allocate channel prmy4 type disk;
+allocate auxiliary channel stby3 type disk;
+allocate auxiliary channel stby4 type disk;
+duplicate target database for standby from active database;
+} 
+
+run {
+allocate channel prmy1 type disk;
+allocate channel prmy2 type disk;
+allocate auxiliary channel stby3 type disk;
+allocate auxiliary channel stby4 type disk;
+duplicate target database for standby from active database nofilenamecheck;
+}
+
+
+or
+
+run
+{
+allocate channel p1 type disk;
+allocate channel p2 type disk;
+allocate channel p3 type disk;
+allocate channel p4 type disk;
+allocate auxiliary channel s1 type disk;
+allocate auxiliary channel s2 type disk;
+allocate auxiliary channel s3 type disk;
+allocate auxiliary channel s4 type disk;
+set newname for database to '+VTEGEN_UAT_DATA';
+duplicate target database for standby from active database nofilenamecheck;
+}
+
+
+GEN_UAT_DATA
+
+run
+{
+allocate channel p1 type disk;
+allocate channel p2 type disk;
+allocate channel p3 type disk;
+allocate channel p4 type disk;
+allocate auxiliary channel s1 type disk;
+allocate auxiliary channel s2 type disk;
+allocate auxiliary channel s3 type disk;
+allocate auxiliary channel s4 type disk;
+set newname for database to '+GEN_UAT_DATA';
+duplicate target database for standby from active database nofilenamecheck;
+}
+
+
+
+
+*.log_archive_config='dg_config=(oltt245std,oltt245)'
+*.log_archive_dest_1='LOCATION=USE_DB_RECOVERY_FILE_DEST VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=oltt245std'
+*.log_archive_dest_2='SERVICE=oltt245 VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=oltt245'
+
+
+
+
+
+8. once duplicate complete 
+
+create spfile='+VTEGEN_UAT_DATA/oltt240/PARAMETERFILE/spfileorapwoltt240.ora' from pfile='/opt/oracle/product/1210/db/dbs/initoltt240n1.ora';
+
+9. start with spfile with cluster database=true.
+
+10. add the database in srvctl 
+
+srvctl add database -d oltt240 -o /opt/oracle/product/1210/db -spfile +VTEGEN_UAT_DATA/oltt240/PARAMETERFILE/spfileorapwoltt240.ora -startoption mount
+
+srvctl add instance -d oltt240 -i oltt240n1 -n iedub26db02vcn1
+srvctl add instance -d oltt240 -i oltt240n2 -n iedub26db02vcn2
+
+
+11. in source  add dest_2 
+
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='SERVICE=oltt240s LGWR ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=oltt240' scope=both sid='*';
+
+12. 
+ALTER SYSTEM SET log_archive_dest_state_2='DEFER' SCOPE=BOTH sid='*';
+
+ ALTER SYSTEM SET log_archive_dest_state_2='ENABLE' SCOPE=BOTH sid='*';
+
+ 13. check the RFS on standby
+
+
+srvctl add database -d oltt240 -o /opt/oracle/product/1210/db -spfile +VTEGEN_UAT_DATA/oltt240/PARAMETERFILE/spfileorapwoltt240.ora -startoption mount
+
+srvctl add instance -d oltt240 -i oltt240n1 -n iedub26db02vcn1
+srvctl add instance -d oltt240 -i oltt240n2 -n iedub26db02vcn2

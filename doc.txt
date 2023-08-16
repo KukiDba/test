@@ -1,0 +1,121 @@
+
+1] oracle binary permission from both GRID and DB Home
+
+=========================================================================
+
+
+oracle@iedub26db02vcn1:oltt231s1>
+oracle@iedub26db02vcn1:oltt231s1>cd /opt/oracle/product/1210/db/bin/
+oracle@iedub26db02vcn1:oltt231s1>
+oracle@iedub26db02vcn1:oltt231s1>ls -lrta oracle*
+-rwsr-s--x 1 oracle dba 323613256 Jul 12 09:06 oracleO*
+-rwsr-s--x 1 oracle dba 323613256 Aug 16 21:57 oracle*
+oracle@iedub26db02vcn1:oltt231s1>
+
+racle@iedub26db02vcn1:oltt245stdn1>ls -lrta /opt/oracle/product/1210/db/bin/oracle
+-rwsr-s--x 1 oracle dba 323613256 Aug 28 12:23 /opt/oracle/product/1210/db/bin/oracle*
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub
+
+
+
+oracle@iedub26db02vcn1:oltt245stdn1>cd /opt/oragrid/product/19/grid
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>cd bin/
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>ls -ltr oracle*
+-rwsr-s--x 1 oragrid dba 425031728 Aug 16 10:39 oracle*
+oracle@iedub26db02vcn1:oltt245stdn1>
+
+
+oracle@iedub26db02vcn1:oltt245stdn1>ls -lrta /opt/oragrid/product/19/grid/bin/oracle*
+-rwsr-s--x 1 oragrid dba 425031728 Aug 28 12:11 /opt/oragrid/product/19/grid/bin/oracle*
+or
+
+
+
+
+===================================================
+
+2] kfod disks=all output from grid home
+
+
+oragrid@iedub26db02vcn1:+ASM1>
+oragrid@iedub26db02vcn1:+ASM1>
+oragrid@iedub26db02vcn1:+ASM1>kfod disks=all
+--------------------------------------------------------------------------------
+ Disk          Size Path                                     User     Group
+================================================================================
+   1:      16386 MB /dev/oracleasm/disks/GEN_UAT_CLUSTER_16_01 oragrid  dba
+   2:      32770 MB /dev/oracleasm/disks/GEN_UAT_DATA_32_01  oragrid  dba
+   3:      32770 MB /dev/oracleasm/disks/GEN_UAT_DATA_32_02  oragrid  dba
+   4:      32770 MB /dev/oracleasm/disks/GEN_UAT_DATA_32_03  oragrid  dba
+   5:      32770 MB /dev/oracleasm/disks/GEN_UAT_DATA_32_04  oragrid  dba
+   6:      32770 MB /dev/oracleasm/disks/GEN_UAT_FRA_32_01   oragrid  dba
+   7:      32770 MB /dev/oracleasm/disks/GEN_UAT_FRA_32_02   oragrid  dba
+   8:      32770 MB /dev/oracleasm/disks/GEN_UAT_FRA_32_03   oragrid  dba
+   9:      16386 MB /dev/oracleasm/disks/GEN_UAT_TEMP_16_01  oragrid  dba
+  10:      16386 MB /dev/oracleasm/disks/GEN_UAT_TEMP_16_02  oragrid  dba
+  11:      16386 MB /dev/oracleasm/disks/GEN_UAT_TEMP_16_03  oragrid  dba
+  12:      16386 MB /dev/oracleasm/disks/GEN_UAT_TEMP_16_04  oragrid  dba
+  13:    1048577 MB /dev/oracleasm/disks/VTEGEN_UAT_DATA_1024_01 oragrid  dba
+  14:    1048577 MB /dev/oracleasm/disks/VTEGEN_UAT_DATA_1024_02 oragrid  dba
+  15:    1048577 MB /dev/oracleasm/disks/VTEGEN_UAT_DATA_1024_03 oragrid  dba
+  16:    1048577 MB /dev/oracleasm/disks/VTEGEN_UAT_DATA_1024_04 oragrid  dba
+  17:     131074 MB /dev/oracleasm/disks/VTEGEN_UAT_FRA_128_01 oragrid  dba
+  18:     131074 MB /dev/oracleasm/disks/VTEGEN_UAT_FRA_128_02 oragrid  dba
+  19:     131074 MB /dev/oracleasm/disks/VTEGEN_UAT_FRA_128_03 oragrid  dba
+  20:     131074 MB /dev/oracleasm/disks/VTEGEN_UAT_FRA_128_04 oragrid  dba
+  21:      65537 MB /dev/oracleasm/disks/VTEGEN_UAT_TEMP_64_01 oragrid  dba
+  22:      65537 MB /dev/oracleasm/disks/VTEGEN_UAT_TEMP_64_02 oragrid  dba
+  23:      65537 MB /dev/oracleasm/disks/VTEGEN_UAT_TEMP_64_03 oragrid  dba
+  24:      65537 MB /dev/oracleasm/disks/VTEGEN_UAT_TEMP_64_04 oragrid  dba
+  25:    1048577 MB /dev/oracleasm/disks/VTET231_UAT_DATA_1024_01 oragrid  dba
+  26:    1048577 MB /dev/oracleasm/disks/VTET231_UAT_DATA_1024_02 oragrid  dba
+  27:    1048577 MB /dev/oracleasm/disks/VTET231_UAT_DATA_1024_03 oragrid  dba
+  28:      32770 MB /dev/oracleasm/disks/VTET231_UAT_FRA_32_01 oragrid  dba
+  29:      32770 MB /dev/oracleasm/disks/VTET231_UAT_FRA_32_02 oragrid  dba
+  30:      32770 MB /dev/oracleasm/disks/VTET231_UAT_FRA_32_03 oragrid  dba
+  31:      16386 MB AFD:DG_CRS1
+--------------------------------------------------------------------------------
+ORACLE_SID ORACLE_HOME
+=====================================================================
+
+
+
+==============================================================
+
+
+
+3] asmcmd lsdg output
+
+
+
+oracle@iedub26db02vcn1:+ASM1>asmcmd
+ASMCMD>
+ASMCMD>
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Logical_Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512             512   4096  4194304     16384    16016                0           16016              0             Y  DG_CRS/
+MOUNTED  EXTERN  N         512             512   4096  1048576    131080   130979                0          130979              0             N  GEN_UAT_DATA/
+MOUNTED  EXTERN  N         512             512   4096  1048576     98310    98211                0           98211              0             N  GEN_UAT_FRA/
+MOUNTED  EXTERN  N         512             512   4096  1048576     65544    65443                0           65443              0             N  GEN_UAT_TEMP/
+MOUNTED  EXTERN  N         512             512   4096  1048576   4194308  2588279                0         2588279              0             N  VTEGEN_UAT_DATA/
+MOUNTED  EXTERN  N         512             512   4096  1048576    524296   267326                0          267326              0             N  VTEGEN_UAT_FRA/
+MOUNTED  EXTERN  N         512             512   4096  1048576    262148   262047                0          262047              0             N  VTEGEN_UAT_TEMP/
+MOUNTED  EXTERN  N         512             512   4096  1048576   3145731   656100                0          656100              0             N  VTET231_UAT_DATA/
+MOUNTED  EXTERN  N         512             512   4096  1048576     98310    98140                0           98140              0             N  VTET231_UAT_FRA/
+ASMCMD> exit
+oracle@iedub26db02vcn1:+ASM1>
+oracle@iedub26db02vcn1:+ASM1>
+oracle@iedub26db02vcn1:+ASM1>
+oracle@iedub26db02vcn1:+ASM1>
+
+
+
+4] asm metadata information from as per below documentation------------Pending will share in a while
+
+
+2] kfod disks=all output from grid home
+
+3] asmcmd lsdg output

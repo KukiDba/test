@@ -1,0 +1,529 @@
+Source : uusdfw23db33vcn1/QACNTR11
+Target :  usdfw23db42vcn1/2/QACNTR11
+CDB: COLNP026
+PDB : QACNTR11
+Cluster : MGTI-DFW-XD-EXTERNAL01-DEV-CL04
+Host Nodes : usdfw23db42vcn1/2
+
+
+Target Diskgroups - 
+DATAC3
+RECOC3
+
+1) check db is in sync ..
+alter system switch logfile; make sure the log file appplied on new stand by  .. chekc using below command
+==================================
+2)SELECT ARCH.THREAD#"Thread",ARCH.SEQUENCE#"LastSequenceReceived",APPL.SEQUENCE#"LastSequenceApplied",(ARCH.SEQUENCE#-APPL.SEQUENCE#)"Difference"
+FROM
+(SELECT THREAD#,SEQUENCE# FROM V$ARCHIVED_LOG WHERE(THREAD#,FIRST_TIME)IN(SELECT THREAD#,MAX(FIRST_TIME)FROM V$ARCHIVED_LOG GROUP BY THREAD#))ARCH,
+(SELECT THREAD#,SEQUENCE# FROM V$LOG_HISTORY WHERE(THREAD#,FIRST_TIME)IN(SELECT THREAD#,MAX(FIRST_TIME)FROM V$LOG_HISTORY GROUP BY THREAD#))APPL
+WHERE ARCH.THREAD#=APPL.THREAD#
+ORDER BY 1;
+
+select name,open_mode,database_role from gv$database;
+set lines 200 pages 100
+select process,status,thread#,sequence# from gv$managed_standby;
+==================================
+3) stop recovery 
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+==================================
+4) Check db_recovery_file_dest_size and db_recovery_file_dest is present or not . if not exists use below
+==================================
+SQL> show parameter db_recover
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+db_recovery_file_dest                string                           +RECOC3
+db_recovery_file_dest_size           big integer                      200G
+
+alter system db_recovery_file_dest_size=100g scope=both;
+alter system db_recovery_file_dest=+RECOC3 scope=both;
+==================================
+5)
+CREATE RESTORE POINT grp_b4activity GUARANTEE FLASHBACK DATABASE;
+==================================
+
+6) Activate standby (alter database activate standby database;)
+==================================
+
+show parameter max_string
+show parameter undo
+
+SQL> show parameter max_string
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+max_string_size                      string                           STANDARD
+SQL>
+SQL> show parameter undo
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+temp_undo_enabled                    boolean                          FALSE
+undo_management                      string                           AUTO
+undo_retention                       integer                          3600
+undo_tablespace                      string
+SQL>
+
+SQL> alter system set undo_tablespace='UNDOTBS1' scope=spfile sid='*';
+
+System altered.
+
+
+7)shut immediate;startup open read write .
+=================== NOT REQUIRED FOR QACNTR11 START ===================
+alter system set undo_tablespace='UNDOTBS1' scope=spfile sid='*';
+
+==================================
+8) Drop apex users if  any 
+
+SQL> select username from dba_users where username like '%APEX%';
+
+USERNAME
+--------------------------------------------------------------------------------
+APEX_PUBLIC_USER
+APEX_050000
+APEX_040200
+
+
+SQL> drop user APEX_050000 cascade;
+
+User dropped.
+
+SQL> drop user APEX_040200 cascade;
+
+User dropped.
+
+SQL> drop user APEX_PUBLIC_USER cascade;
+
+User dropped.
+
+drop package sys.wwv_dbms_sql;
+
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+
+SQL>
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+
+[oracle@usdfw23db42vcn1 ~]$ cd $ORACLE_HOME/OPatch
+[oracle@usdfw23db42vcn1 OPatch]$ ./datapatch -verbose
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+drop package sys.wwv_dbms_sql;
+
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+
+
+Check registry components status should be valid:
+
+col comp_name for a60
+set lines 300 pages 300
+select comp_id, comp_name, version, status, version_full from dba_registry;
+
+COMP_ID                        COMP_NAME                                                    VERSION                        STATUS      VERSION_FULL
+------------------------------ ------------------------------------------------------------ ------------------------------ ----------- ------------------------------
+CATALOG                        Oracle Database Catalog Views                                19.0.0.0.0                     VALID       19.15.0.0.0
+CATPROC                        Oracle Database Packages and Types                           19.0.0.0.0                     VALID       19.15.0.0.0
+JAVAVM                         JServer JAVA Virtual Machine                                 19.0.0.0.0                     VALID       19.15.0.0.0
+XML                            Oracle XDK                                                   19.0.0.0.0                     VALID       19.15.0.0.0
+CATJAVA                        Oracle Database Java Packages                                19.0.0.0.0                     VALID       19.15.0.0.0
+RAC                            Oracle Real Application Clusters                             19.0.0.0.0                     VALID       19.15.0.0.0
+APS                            OLAP Analytic Workspace                                      19.0.0.0.0                     VALID       19.15.0.0.0
+OWM                            Oracle Workspace Manager                                     19.0.0.0.0                     VALID       19.15.0.0.0
+CONTEXT                        Oracle Text                                                  19.0.0.0.0                     VALID       19.15.0.0.0
+XDB                            Oracle XML Database                                          19.0.0.0.0                     VALID       19.15.0.0.0
+SDO                            Spatial                                                      19.0.0.0.0                     INVALID     19.15.0.0.0
+XOQ                            Oracle OLAP API                                              19.0.0.0.0                     VALID       19.15.0.0.0
+AMD                            OLAP Catalog                                                 10.2.0.5.0                     OPTION OFF  19.15.0.0.0
+ORDIM                          Oracle Multimedia                                            19.0.0.0.0                     VALID       19.15.0.0.0
+
+14 rows selected.
+
+SQL>
+SQL>
+To rerun the Oracle Spatial validation procedure, run the following as SYSDBA
+
+
+startup upgrade
+
+EXECUTE dbms_registry_sys.validate_components;
+
+set serveroutput on
+exec sys.VALIDATE_SDO();
+
+Query the DBA_REGISTRY to verify Oracle Spatial has been set to VALID
+
+
+Select comp_name, version, status from DBA_REGISTRY where comp_id = 'SDO';
+
+@?/rdbms/admin/xdbrelod.sql
+
+
+
+shut immediate and 
+startup open read only
+verify using 
+SQL> select name,open_mode,database_role from gv$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+QACNTR11   READ ONLY            PRIMARY
+
+
+SQL>
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Verify the directory
+ls -ld /var/oracle/export/QACNTR11/migrate
+mkdir -p /var/oracle/export/QACNTR11/migrate
+
+SQL> exec DBMS_PDB.DESCRIBE('/var/oracle/export/QACNTR11/migrate/QACNTR11.xml');
+
+PL/SQL procedure successfully completed.
+
+SQL>shut immediate
+
++++++++++++++++++++++++++++++++++++++++++
+In Container database:
+
+. ~/COLNP026.env
+
+SQL>
+SET SERVEROUTPUT ON
+DECLARE
+ compatible CONSTANT VARCHAR2(3) :=
+ CASE DBMS_PDB.CHECK_PLUG_COMPATIBILITY(
+  pdb_descr_file => '/var/oracle/export/QACNTR11/migrate/QACNTR11.xml',
+ pdb_name => 'QACNTR11')
+ WHEN TRUE THEN 'YES'
+ ELSE 'NO'
+  END;
+  BEGIN
+ DBMS_OUTPUT.PUT_LINE(compatible);
+END;
+/
+
+YES
+
+PL/SQL procedure successfully completed.
+
+SQL>
+SQL> select cause, type, action, status from pdb_plug_in_violations where name = 'QACNTR11' and type like '%ERR%';
+
+no rows selected
+
+SQL>
+SQL> select cause, type, action, status from pdb_plug_in_violations where name = 'QACNTR11' and status  like '%ERR%';
+
+no rows selected
+
+
+DB name: COLNP026
+
+===================================================
+
+shut (old OCI standby-primary) before execute create pluggable statement ...
+
+
+check default encryption algorithm on cdb
+
+select encryptionalg from v$encrypted_tablespaces;
+
+SHOW PARAMETER TABLESPACE_ENCRYPTION_DEFAULT_ALGORITHM
+
+ALTER SYSTEM SET "_TABLESPACE_ENCRYPTION_DEFAULT_ALGORITHM"=AES256 scope=both sid='*';
+
+## restart the CDB if its an empty 
+
+## srvctl status database -d COLNP026
+## srvctl stop database -d COLNP026
+## srvctl start database -d COLNP026
+## srvctl status database -d COLNP026
+
+SELECT name, encryptionalg 
+              FROM v$tablespace t, v$encrypted_tablespaces v 
+              WHERE t.ts#=v.ts#;
+
+
+SQL> create pluggable database QACNTR11 as clone using '/var/oracle/export/QACNTR11/migrate/QACNTR11.xml' COPY file_name_convert=('+DATAC3','+DATAC3');
+
+
+Pluggable database created.
+
+
+spool pdbQACNTR11.log
+set echo on;
+show parameter db_name;
+create pluggable database QACNTR11  using '/var/oracle/export/QACNTR11/migrate/QACNTR11.xml' move file_name_convert=('+DATAC3','+DATAC3');
+echo off;
+spool off;
+exit
+
+
+QACNTR11
+
+
+
+SQL> SQL>
+
+========================================================================
+
+SQL> SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 QACNTR11                       MOUNTED
+
+SQL>
+
+=================================================
+
+13)this is new PDB created and this PDB should be mount state...>>>>show pdbs 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[oracle@usdfw23db02vcn1 migrate]$ cat QACNTR11_noncdb_pdb.sh
+export ORACLE_SID=COLNP0261
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1
+export PATH=$ORACLE_HOME/bin:$PATH
+sqlplus / as sysdba << EOF > /var/oracle/export/QACNTR11/migrate/QACNTR11_noncdb_to_pdb.out
+spool /var/oracle/export/QACNTR11/migrate/QACNTR11_noncdb_to_pdb.log
+select name, open_mode from v\$database;
+set time on timing on feedback on verify on head on echo on
+SELECT name, open_mode FROM v\$pdbs WHERE name = 'QACNTR11';
+ALTER SESSION SET CONTAINER=QACNTR11;
+show con_name
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/noncdb_to_pdb.sql
+alter pluggable database QACNTR11 open instances=all;
+alter pluggable database QACNTR11 save state instances=all;
+select time,name,cause,status,message,type from PDB_PLUG_IN_VIOLATIONS where status= 'PENDING' order by name;
+spool off
+EOF
+[oracle@usdfw23db02vcn1 migrate]$ echo $ORACLE_SID
+COLNP0261
+
+./QACNTR11_noncdb_pdb.sh |tee -a /tmp/QACNTR11.log
+
+[oracle@usdfw23db02vcn1 migrate]$ echo $?
+0
+[oracle
+=======================================================
+
+set pages 999 lines 200
+col cause for a10
+col name for a10
+col message for a35 word_wrapped
+select name,cause,type,message,status from PDB_PLUG_IN_VIOLATIONS where name='QACNTR11' and type='ERROR';
+
+select name,cause,type,message,status from PDB_PLUG_IN_VIOLATIONS where name='QACNTR11' and type='ERROR';
+
+
+SQL>
+
+ alter session set container=QACNTR11;
+SQL>
+
+===================================================================
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+QACNTR11.MRSHMC.COM
+
+ alter session set container=QACNTR11;
+
+SQL> update global_name set global_name='QACNTR11';
+
+1 row updated.
+
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+QACNTR11
+
+SQL> commit;
+
+Commit complete.
+
+
+PDB save sate once alter session to PDB and execute alter pluggable database <name> save state instances=all;
+========================================================================
+
+QACNTR11=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=usdfw23db42v-sca)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME=QACNTR11.mrshmc.com)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))
+		  
+datapatch -prereq -verbose
+
+
+
+make sure tnsping and sqlplus abc/abc@tnsentry are working (sqlplus should give invalid username/password)
+================================================
+
+SQL> alter session set container=QACNTR11;
+
+Session altered.
+
+SQL> ADMINISTER KEY  MANAGEMENT SET KEY FORCE KEYSTORE IDENTIFIED BY "MMC_Prod_Mar312022"  WITH BACKUP ;
+
+keystore altered.
+
+SQL>
+
+=============================================
+SQL>  select * from gv$encryption_wallet;
+
+   INST_ID WRL_TYPE
+---------- --------------------
+WRL_PARAMETER
+--------------------------------------------------------------------------------
+STATUS                         WALLET_TYPE          WALLET_OR KEYSTORE FULLY_BAC
+------------------------------ -------------------- --------- -------- ---------
+    CON_ID
+----------
+         1 FILE
+
+OPEN                           AUTOLOGIN            SINGLE    UNITED   NO
+         4
+
+
+   INST_ID WRL_TYPE
+---------- --------------------
+WRL_PARAMETER
+--------------------------------------------------------------------------------
+STATUS                         WALLET_TYPE          WALLET_OR KEYSTORE FULLY_BAC
+------------------------------ -------------------- --------- -------- ---------
+    CON_ID
+----------
+         2 FILE
+
+OPEN                           AUTOLOGIN            SINGLE    UNITED   NO
+         4
+
+
+SQL>
+
+===============================================================
+
+
+
+===============================================================
+19)db timezone change is not required for IPAS DBs. It is only required for WebCas application databases.
+
+SQL> alter session set container=QACNTR11;
+
+Session altered.
+
+SQL>
+SQL>
+SQL> select dbtimezone from dual;
+
+DBTIME
+------
++00:00
+
+select dbtimezone,sessiontimezone,systimestamp from dual;
+
+
+SQL>
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-MON-YYHH24:MI:SS')
+--------------------------------------------------------------------------------
+30-MAY-22 09:59:05
+
+
+TZ=EST5EDT
+
+
+env|grep TZ - at source
+Change through "srvctl setenv" command
+
+srvctl getenv database -d COLNP026 
+srvctl setenv database -d COLNP026 -t 'TZ=EST5EDT'
+Add export TZ=EST5EDT in environment file.
+
+===============================================================================================   
+
+SQL> alter session set container=QACNTR11;
+
+Session altered.
+
+SQL> select to_char(sysdate,'DD-MON-YY HH24:MI:SS') from dual;
+
+TO_CHAR(SYSDATE,'DD-MON-YYHH24:MI:SS')
+---------------------------------------------------------------------------
+19-MAY-22 11:14:38
+
+SQL>
+SQL> select dbtimezone from dual;
+
+DBTIME
+------
++00:00
+
+20)
+
+SELECT name, encryptionalg 
+              FROM v$tablespace t, v$encrypted_tablespaces v 
+              WHERE t.ts#=v.ts# and v.con_id=3;
+
+SQL> !cat gen_encrypt_ts.sql
+set echo off termout off feedback off pagesize 0 head off
+spool  /var/oracle/export/QACNTR11/migrate/encrypt_ts.sql
+select 'set  echo on feedback on timing on' from dual;
+select 'spool /var/oracle/export/QACNTR11/migrate/encrypt_ts_out.log' from dual;
+select 'alter tablespace ' || tablespace_name || ' encryption online encrypt ;'
+from dba_tablespaces where tablespace_name not like '%UNDO%' and tablespace_name not like '%TEMP%';
+select 'spool off' from dual;
+spool off
+
+after encryption all tablespaces eccept undo and temp should be in encrypted mode, can be verified using below
+
+SQL> select tablespace_name from dba_tablespaces where encrypted='NO';
+UNDOTBS1
+TEMP
+PSTEMP
+PSGTT01
+UNDO_2
+
+5 rows selected.
+
+
+vi QACNTR11_encrypt_ts.sh
+export ORACLE_SID=COLNP0261
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1
+export PATH=$ORACLE_HOME/bin:$PATH
+sqlplus / as sysdba << EOF > /var/oracle/export/QACNTR11/migrate/QACNTR11_encrypt_ts.out
+spool /var/oracle/export/QACNTR11/migrate/QACNTR11_encrypt_ts.log
+select name, open_mode from v\$database;
+set time on timing on feedback on verify on head on
+SELECT name, open_mode FROM v\$pdbs WHERE name = 'QACNTR11';
+show con_name
+ALTER SESSION SET CONTAINER=QACNTR11;
+@/var/oracle/export/QACNTR11/migrate/encrypt_ts.sql
+select tablespace_name from dba_tablespaces where encrypted='NO';
+spool off
+EOF
+

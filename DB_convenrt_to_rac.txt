@@ -1,0 +1,274 @@
+
+
+Addidtion of Redo thread 2 for node 2
+=========================================
+
+
+    GROUP#    THREAD# MEMBER                                                   ARC STATUS            Size (MB)
+---------- ---------- -------------------------------------------------------- --- ---------------- ----------
+         1          1 +GEN_VTE_DATA01/CEMWWC1P/ONLINELOG/group_1.693.107780494 YES INACTIVE                512
+                      3
+
+         1          1 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_1.20241.10778049 YES INACTIVE                512
+                      45
+
+         2          1 +GEN_VTE_DATA01/CEMWWC1P/ONLINELOG/group_2.694.107780494 YES INACTIVE                512
+                      5
+
+         2          1 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_2.22232.10778049 YES INACTIVE                512
+                      47
+
+         3          1 +GEN_VTE_DATA01/CEMWWC1P/ONLINELOG/group_3.695.107780494 NO  CURRENT                 512
+                      7
+
+         3          1 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_3.22120.10778049 NO  CURRENT                 512
+                      49
+
+
+6 rows s
+
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP 4 '+GEN_VTE_FRA02' SIZE 512m;
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP 5 '+GEN_VTE_FRA02' SIZE 512m;
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP 6 '+GEN_VTE_FRA02' SIZE 512m;
+
+After added redo thread 2
+
+========================
+
+    GROUP#    THREAD# MEMBER                                                   ARC STATUS            Size (MB)
+---------- ---------- -------------------------------------------------------- --- ---------------- ----------
+         1          1 +GEN_VTE_DATA01/CEMWWC1P/ONLINELOG/group_1.693.107780494 YES INACTIVE                512
+                      3
+
+         1          1 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_1.20241.10778049 YES INACTIVE                512
+                      45
+
+         2          1 +GEN_VTE_DATA01/CEMWWC1P/ONLINELOG/group_2.694.107780494 YES INACTIVE                512
+                      5
+
+         2          1 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_2.22232.10778049 YES INACTIVE                512
+                      47
+
+         3          1 +GEN_VTE_DATA01/CEMWWC1P/ONLINELOG/group_3.695.107780494 NO  CURRENT                 512
+                      7
+
+         3          1 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_3.22120.10778049 NO  CURRENT                 512
+                      49
+
+         4          2 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_4.42683.10778085 YES UNUSED                  512
+                      41
+
+         5          2 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_5.42366.10778085 YES UNUSED                  512
+                      49
+
+         6          2 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_6.42484.10778085 YES UNUSED                  512
+                      63
+
+         7          2 +GEN_VTE_FRA02/CEMWWC1P/ONLINELOG/group_7.42308.10778085 YES UNUSED                  512
+                      79
+
+
+
+
+SQL> Alter Database Enable Public Thread 2;
+
+
+Create undo for thread 2
+=============================
+
+create undo tablespace UNDOTBS2 datafile '+GEN_VTE_DATA01' size 200M autoextend on next 200M maxsize 2000m;  
+
+
+SQL> show parameter undo
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+temp_undo_enabled                    boolean     FALSE
+undo_management                      string      AUTO
+undo_retention                       integer     900
+undo_tablespace                      string      UNDOTBS1
+
+SQL> create undo tablespace UNDOTBS2 datafile '+GEN_VTE_DATA01' size 200M autoextend on next 200M maxsize 2000m;
+
+Tablespace created.
+
+SQL>
+
+
+
+shu down
+
+
+add below parameter in pfile
+
+CTMWWC1P1.instance_name='CTMWWC1P1'
+CTMWWC1P2.instance_name='CTMWWC1P2'
+CTMWWC1P1.instance_number=1
+CTMWWC1P2.instance_number=2
+*.undo_tablespace=''
+CTMWWC1P1.undo_tablespace='UNDOTBS1'
+CTMWWC1P2.undo_tablespace='UNDOTBS2'
+
+
+save it
+
+Remove spfile 
+
+===========================
+
+
+Type           Redund  Striped  Time             Sys  Name
+PARAMETERFILE  UNPROT  COARSE   JUL 13 15:00:00  Y    spfile.701.1077806871
+ASMCMD> cp spfile.701.1077806871 /home/oracle
+copying +GEN_VTE_DATA01/CEMWWC1P/PARAMETERFILE/spfile.701.1077806871 -> /home/oracle/spfile.701.1077806871
+ASMCMD>
+ASMCMD>
+ASMCMD>
+ASMCMD> rm spfile.701.1077806871
+ASMCMD>
+ASMCMD>
+ASMCMD> pwd
++GEN_VTE_DATA01/CEMWWC1P/PARAMETERFILE
+ASMCMD>
+
+=========================================
+
+OPen instance with pfile and make spfile from it
+
+'/opt/oracle/product/19.3.0/dbhome_1/dbs/test8.ora'
+
+
+SQL> create spfile='+GEN_VTE_DATA01' from pfile ='/home/oracle/test8.ora';
+
+File created.
+
+
+
+
+
+ORACLE_SID = [+ASM1] ? CEMWWC1P1
+The Oracle base remains unchanged with value /opt/oracle
+usdfw21db67vcn1.Linux:/home/oracle>
+usdfw21db67vcn1.Linux:/home/oracle>
+usdfw21db67vcn1.Linux:/home/oracle>sqlplus "/as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Jul 13 15:36:09 2021
+Version 19.11.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 5368708168 bytes
+Fixed Size                  8907848 bytes
+Variable Size            1040187392 bytes
+Database Buffers         4311744512 bytes
+Redo Buffers                7868416 bytes
+Database mounted.
+Database opened.
+SQL>
+SQL>
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+CEMWWC1P  READ WRITE           ARCHIVELOG
+
+
+
+==============================================
+
+node 2
+
+make oratab file entry
+CEMWWC1P1:/opt/oracle/product/19.3.0/dbhome_1:N--node1
+CEMWWC1P2:/opt/oracle/product/19.3.0/dbhome_1:N--node2
+
+
+
+Startup instance on node 2
+
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ vi /opt/oracle/product/19.3.0/dbhome_1/dbs/initCEMWWC1P2.ora
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ sqlplus "/as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Jul 13 15:40:40 2021
+Version 19.11.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL>
+SQL> startup
+ORA-39511: Start of CRS resource for instance '223' failed with error:[CRS-2552: There are no available instances of resource 'ora.cemwwc1p.db' to start.
+CRS-0223: Resource 'ora.cemwwc1p.db' has placement error.
+clsr_start_resource:260 status:223
+clsrapi_start_db:start_asmdbs status:223
+]
+SQL> exit
+Disconnected
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ . oraenv
+ORACLE_SID = [CEMWWC1P2] ?
+The Oracle base remains unchanged with value /opt/oracle
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ srvctl add database -d CEMWWC1P -o /opt/oracle/product/19.3.0/dbhome_1 -spfile '+GEN_VTE_DATA01/CEMWWC1P/PARAMETERFILE/spfile.701.1077809545'
+PRCS-1007 : Server pool CEMWWC1P already exists
+PRCR-1086 : server pool ora.CEMWWC1P is already registered
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ srvctl modify database -d CEMWWC1P -o /opt/oracle/product/19.3.0/dbhome_1 -spfile '+GEN_VTE_DATA01/CEMWWC1P/PARAMETERFILE/spfile.701.1077809545'
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ srvctl add instance -d CEMWWC1P -i CEMWWC1P1 -n usdfw21db67vcn1
+PRCD-1051 : Failed to add instance to database CEMWWC1P
+PRCD-1212 : An instance with name "CEMWWC1P1" already exists on node usdfw21db67vcn1
+[oracle@usdfw21db67vcn2 ~]$ srvctl add instance -d CEMWWC1P -i CEMWWC1P2 -n usdfw21db67vcn2
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ srvctl status database -d CEMWWC1P
+Instance CEMWWC1P1 is running on node usdfw21db67vcn1
+Instance CEMWWC1P2 is not running on node usdfw21db67vcn2
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ srvctl start instance -db CEMWWC1P -instance CEMWWC1P2
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 ~]$ srvctl status database -d CEMWWC1P
+Instance CEMWWC1P1 is running on node usdfw21db67vcn1
+Instance CEMWWC1P2 is running on node usdfw21db67vcn2
+
+
+
+
+-----------------------------The End------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

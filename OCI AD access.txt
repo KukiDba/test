@@ -1,0 +1,17 @@
+
+DBA team members need to request access to the below AD group using the self service portal.
+
+https://accessmanagement.selfservice.mmc.com/
+
+OKTA-ExaCC-OCI-ORCLDBA-S-G
+
+Steps to request access
+
+login to https://accessmanagement.selfservice.mmc.com/
+Click on Request access
+Search "exacc-oci-orcldba" in the search tab
+Select the relavent Exacc group for yourself, it will be the group that starts with your network domain
+      Example: sanjeeb parida's laptop login and okta login is in the ad domain, so he requested access to :
+
+         Mercer\AD-OKTA-ExaCC-OCI-ORCLDBA-S-G ..You need to do for Mercer /Marsh/ or anything else
+

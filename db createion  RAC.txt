@@ -1,0 +1,274 @@
+
+
+https://dbaclass.com/article/create-rac-database-manually/#:~:text=Create%20RAC%20database%20manually.%201%201.%20Prepare%20a,node%3A%205%205.%20Create%20USERS%20tablespace%3A%20More%20items
+
+https://oracledbwr.com/manually-creating-an-oracle-19c-database/
+
+CREATE DATABASE test
+USER SYS IDENTIFIED BY manager
+USER SYSTEM IDENTIFIED BY manager
+LOGFILE GROUP 1 (‘/u01/test/redo01.log’) SIZE 50M,
+GROUP 2 (‘/u01/test/redo02.log’) SIZE 50M,
+GROUP 3 (‘/u01/test/redo03.log’) SIZE 50M
+MAXLOGFILES 5
+MAXLOGMEMBERS 5
+MAXLOGHISTORY 50
+MAXDATAFILES 100
+MAXINSTANCES 1
+DATAFILE ‘/u01/test/system01.dbf’ SIZE 100M autoextend on
+SYSAUX DATAFILE ‘/u01/test/sysaux01.dbf’ SIZE 100M autoextend on
+DEFAULT TABLESPACE users datafile ‘/u01/test/users01.dbf’ size 100m autoextend on
+DEFAULT TEMPORARY TABLESPACE temp
+TEMPFILE ‘/u01/test/temp01.dbf’ SIZE 50m
+UNDO TABLESPACE undotbs1
+DATAFILE ‘/u01/test/undotbs01.dbf’
+SIZE 200M;
+
+SQL> @$ORACLE_HOME/rdbms/admin/catalog.sql;
+SQL> @$ORACLE_HOME/rdbms/admin/catproc.sql;
+SQL> @$ORACLE_HOME/sqlplus/admin/pupbld.sql
+
+
+
+catalog.sql
+catproc.sql
+pupbld.sql
+
+SYSTEM
+SYSAUX
+UNDOTBS1
+TEST
+UNDOTBS2
+USERS
+APPL_USERS_DATA1
+APPL_USERS_INDEX1
+
+
+CREATE CONTROLFILE REUSE DATABASE "COPHXC1P" NORESETLOGS FORCE LOGGING ARCHIVELOG
+    MAXLOGFILES 192
+    MAXLOGMEMBERS 3
+    MAXDATAFILES 1024
+    MAXINSTANCES 32
+    MAXLOGHISTORY 2866
+LOGFILE
+  GROUP 1 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_1.301.1047725605'  SIZE 200M BLOCKSIZE 512,
+  GROUP 2 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_2.302.1047725607'  SIZE 200M BLOCKSIZE 512,
+  GROUP 3 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_3.303.1047725607'  SIZE 200M BLOCKSIZE 512,
+  GROUP 4 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_4.304.1047725607'  SIZE 200M BLOCKSIZE 512,
+  GROUP 5 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_5.305.1047725607'  SIZE 200M BLOCKSIZE 512,
+  GROUP 6 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_6.306.1047725607'  SIZE 200M BLOCKSIZE 512,
+  GROUP 7 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_7.307.1047725607'  SIZE 200M BLOCKSIZE 512,
+  GROUP 8 '+GEN_VTE_DATA01/COPHXC1P/ONLINELOG/group_8.308.1047725607'  SIZE 200M BLOCKSIZE 512
+-- STANDBY LOGFILE
+DATAFILE
+  '	/COPHXC1P/DATAFILE/system.273.1047724755',
+  '+GEN_VTE_DATA01/COPHXC1P/DATAFILE/sysaux.271.1047724713',
+  '+GEN_VTE_DATA01/COPHXC1P/DATAFILE/undotbs1.274.1047724759',
+  '+GEN_VTE_DATA01/COPHXC1P/DATAFILE/undotbs2.272.1047724747',
+  '+GEN_VTE_DATA01/COPHXC1P/DATAFILE/users.300.1047724785',
+
+CTMWWC1P1:/opt/oracle/product/19.3.0/dbhome_1:N
+
+create spfile='+GEN_VTE_DATA01' from pfile='/home/oracle/test5.ora';
+spfile.678.1077785121
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      +GEN_VTE_DATA01/CTMWWC1P/PARAMETERFILE/spfile.678.1077785121
+SQL>
+
+srvctl add database -d CTMWWC3P -o /opt/oracle/product/19.3.0/dbhome_1 -spfile '+GEN_VTE_DATA01/CTMWWC3P/PARAMETERFILE/spfile.717.1077886247'
+
+srvctl modify database -d CTMWWC3P -o /opt/oracle/product/19.3.0/dbhome_1 -spfile '+GEN_VTE_DATA01/CTMWWC3P/PARAMETERFILE/spfile.717.1077886247'
+
+srvctl add instance -d CTMWWC3P -i CTMWWC3P1 -n usdfw21db67vcn1
+
+srvctl add instance -d CTMWWC3P2 -i CTMWWC3P2 -n usdfw21db67vcn2
+
+srvctl status database -d CTMWWC3P
+
+srvctl start instance -db CTMWWC3P -instance CTMWWC3P2 
+
+
+
+spfile='+GEN_VTE_DATA01/CEMWWC1P/PARAMETERFILE/spfile.701.1077809545'
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      +GEN_VTE_DATA01/CEMWWC1P/PARAMETERFILE/spfile.701.1077806871
+SQL>
+SQ
+SQL>
+alter tablespace USERS add datafile '+GEN_VTE_DATA01' size 30G;
+
+SQL>
+SQL> alter tablespace USERS add datafile '+GEN_VTE_DATA01' size 30G;
+
+Tablespace altered.
+
+SQL> ALTER PROFILE MARSH_APP_PROFILE LIMIT IDLE_TIME UNLIMITED;
+
+Profile altered.
+
+SQL>
+
+
+
+
+
+
+
+CTMWWC1P
+
+CEMWWC1P -- db user CTMEM---------completed
+CTMWWC1P -- db user CTMS1/controlem_123S13 ---------bharat--done
+CTMWWC2P -- db user CTMS2/controlem_123S14---------ria
+
+CTMWWC3P -- db user CTMS3----------pending
+
+CTMWWC1P
+CTMWWC2P
+
+
+Password like this in all four user’s
+controlem_123S12--->CTMEM
+
+controlem_123S13--- >>CTMS1
+controlem_123S14--->CTMS2
+
+controlem_123S15--- ->>CTMS3
+
+CTMWWC2P
+
+usdfw21db67vcn1.Linux:/home/oracle>
+usdfw21db67vcn1.Linux:/home/oracle>srvctl status database -d CTMWWC1P
+Instance CTMWWC1P1 is running on node usdfw21db67vcn1
+Instance CTMWWC1P2 is running on node usdfw21db67vcn2
+usdfw21db67vcn1.Linux:/home/oracle>srvctl status database -d CTMWWC2P
+Instance CTMWWC2P1 is running on node usdfw21db67vcn1
+Instance CTMWWC2P2 is running on node usdfw21db67vcn2
+usdfw21db67vcn1.Linux:/home/oracle>
+usdfw21db67vcn1.Linux:/home/oracle>
+[oracle@usdfw21db67vcn2 ~]$ srvctl status database -d CEMWWC1P
+Instance CEMWWC1P1 is running on node usdfw21db67vcn1
+Instance CEMWWC1P2 is running on node usdfw21db67vcn2
+[oracle@usdfw21db67vcn2 ~]$
+[oracle@usdfw21db67vcn2 audit]$
+[oracle@usdfw21db67vcn2 audit]$ srvctl status database -d CTMWWC3P
+Instance CTMWWC3P1 is running on node usdfw21db67vcn1
+Instance CTMWWC3P2 is running on node usdfw21db67vcn2
+
+[oracl
+
+CTMWWC3P1:/opt/oracle/product/19.3.0/dbhome_1:N
+
+SQL> show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      +GEN_VTE_DATA01/CTMWWC3P/PARAMETERFILE/spfile.717.1077886247
+
+SQL>  select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+CTMWWC3P  READ WRITE           ARCHIVELOG
+
+
+
+
+
+
+CREATE USER "CTMS3" IDENTIFIED BY controlem_123S15 DEFAULT TABLESPACE "USERS" TEMPORARY TABLESPACE "DEF_TEMP" PROFILE "MARSH_APP_PROFILE";
+
+grant alter session to CTMS3;
+grant DBA to CTMS3;
+grant create procedure to CTMS3;
+grant create sequence to CTMS3;
+grant create session to CTMS3;
+grant select any dictionary to CTMS3;
+grant create synonym to CTMS3;
+grant create table to CTMS3;
+grant create trigger to CTMS3;
+grant create view to CTMS3;
+grant unlimited tablespace to CTMS3;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTMWWC1P2:/opt/oracle/product/19.3.0/dbhome_1:N
+
+------------------------------------ ----------- ------------------------------
+spfile                               string      +GEN_VTE_DATA01/CTMWWC2P/PARAMETERFILE/spfile.659.1077736837
+SQL>
+
+------------------------------------ ----------- ------------------------------
+spfile                               string      +GEN_VTE_DATA01/CTMWWC2P/PARAM
+                                                 ETERFILE/spfile.659.1077736837
+SQ
+
+
+
+ ps -ef|grep pmon
+  960  export ORACLE_SID=CTMWWC2P1
+  961  sqlplus / as sysdba
+  962  srvctl add database -d CTMWWC2P -o /opt/oracle/product/19.3.0/dbhome_1 -spfile '+GEN_VTE_DATA01/CTMWWC2P/PARAMETERFILE/spfile.659.1077736837'
+  963  srvctl modify database -d CTMWWC2P -o /opt/oracle/product/19.3.0/dbhome_1 -spfile '+GEN_VTE_DATA01/CTMWWC2P/PARAMETERFILE/spfile.659.1077736837'
+  964  srvctl add instance -d CTMWWC2P -i CTMWWC2P1 -n usdfw21db67vcn1
+  965  srvctl add instance -d CTMWWC2P -i CTMWWC2P2 -n usdfw21db67vcn2
+  966  srvctl status database -d CTMWWC2P
+  967  srvctl start database -d CTMWWC2P
+  968  sqlplus / as sysdba
+  969  srvctl status database -d CTMWWC2P
+  970  srvctl stop database -d CTMWWC2P
+  971  srvctl start database -d CTMWWC2P
+  972  srvctl status database -d CTMWWC2P
+  973  sqlplus / as sysdba
+  974  srvctl stop database -d CTMWWC2P
+  975  srvctl start database -d CTMWWC2P
+  976  srvctl status database -d CTMWWC2P
+
+
+CREATE DATABASE "CEMWWC1P"
+    MAXLOGFILES 192
+    MAXLOGMEMBERS 3
+    MAXDATAFILES 1024
+    MAXINSTANCES 32
+    MAXLOGHISTORY 2866
+DATAFILE '+GEN_VTE_DATA01/CEMWWC1P/DATAFILE/system01.dbf' SIZE 700M REUSE AUTOEXTEND ON NEXT 10240K MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL
+SYSAUX DATAFILE +GEN_VTE_DATA01/CEMWWC1P/DATAFILE/sysaux01.dbf' SIZE 550M REUSE AUTOEXTEND ON NEXT 10240K MAXSIZE UNLIMITED
+USERS DATAFILE +GEN_VTE_DATA01/CEMWWC1P/DATAFILE/users01.dbf' SIZE 550M REUSE AUTOEXTEND ON NEXT 10240K MAXSIZE UNLIMITED
+SMALLFILE DEFAULT TEMPORARY TABLESPACE TEMP TEMPFILE '+GEN_VTE_DATA01/CEMWWC1P/DATAFILE/temp01.dbf' SIZE 20M REUSE AUTOEXTEND ON NEXT 640K MAXSIZE UNLIMITED
+SMALLFILE UNDO TABLESPACE "UNDOTBS1" DATAFILE '+GEN_VTE_DATA01/CEMWWC1P/DATAFILE/undotbs101.dbf' SIZE 200M REUSE AUTOEXTEND ON NEXT 5120K MAXSIZE UNLIMITED
+SMALLFILE UNDO TABLESPACE "UNDOTBS2" DATAFILE '+GEN_VTE_DATA01/CEMWWC1P/DATAFILE/undotbs102.dbf' SIZE 200M REUSE AUTOEXTEND ON NEXT 5120K MAXSIZE UNLIMITED
+CHARACTER SET WE8ISO8859P1
+LOGFILE
+GROUP 1 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo01.log') SIZE 200M,
+GROUP 2 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo02.log') SIZE 200M,
+GROUP 3 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo03.log') SIZE 200M,
+GROUP 4 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo04.log') SIZE 200M,
+GROUP 5 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo05.log') SIZE 200M,
+GROUP 6 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo06.log') SIZE 200M,
+GROUP 7 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo06.log') SIZE 200M,
+GROUP 8 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo08.log') SIZE 200M,
+GROUP 9 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo09.log') SIZE 200M,
+GROUP 10 ('+GEN_VTE_DATA01/CEMWWC1P/ONLINLOG/redo10.log') SIZE 200M
+;
+
+
+
+CEMWWC1P:/opt/oracle/product/19.3.0/dbhome_1:N
+
+
+

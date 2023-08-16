@@ -1,0 +1,193 @@
+
+Aws solutions artitect exam
+
+https://share-linkedin-materials.s3.amazonaws.com/AWS+SAP.pdf
+
+
+Delta check
+Cheery Picking
+
+=====================
+
+Service account
+
+Build Agent
+Accounts - MGD\svc-WIN-AES-APAC
+Accounts - Mercer\svc-aredbun
+===================================
+
+Linux Fundamentals Certification Training 
+Python Scripting Certification 
+Training DevOps Certification 
+Training Docker Certification Training
+AWS Certified DevOps Certification Training 
+Splunk Developer & Admin Certification Training
+
+
+==========================================================
+configuration varibales
+============================
+https://docs.liquibase.com/concepts/basic/liquibase-configuration-reference.html
+==============================
+
+
+TFVC--ADO
+==================
+changelog.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd" changeLogId="9a72cfde-3e4d-4e5e-a0e8-a5f14b28c1b6">
+
+    <!-- <includeAll path="main/" /> -->
+
+    <includeAll path="main/100_ddl/" />
+
+if [ $? -ne 0 ]; then
+        exit 1
+      fi
+
+
+
+=============================================
+
+Build (Comiling+Executing Unit Test cases+Packaging your application)+Tested>
+
+Developers>Git>Jenkins(Build(Compile+Unit+Program)+Testing+Deployment
+HashiCorp-->Ansible
+
+
+Plan --Jira/Treo/Kanban Board
+Code --Development of code -> Git Repo
+Build--Compiling+unit Testing+Packaging(jar,war,ear)-->Docker image
+Test--Testing the application (Executing automated test cases --selenium)
+Release --Gonna release --Creates final artifact to be deployed to production + versioning
+Deploy - Create Infra(Terraform)+Configure Infra(Ansible)+Deploy(Docker)
+Operate --Manage(Kubernates)
+Monitor---Prometheus(collection of logs) and Grafana(Visualization of Reports)
+
+===================================================================
+
+DCRK DB details:
+
+===============================
+user:WB_LIQUIBASE_CD
+Liquibase_cdi_2022 
+QA:
+INCPC1Q =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw23db35v-sca.mrshmc.com)(PORT = 1530))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = INCPC1Q.mercer.com)
+    )
+  )           
+
+=============================
+
+UAT:
+INCPC1X =
+(DESCRIPTION = 
+ (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw23db35v-sca.mrshmc.com)(PORT = 1530)) 
+ (CONNECT_DATA = 
+ (SERVER = DEDICATED) 
+ (SERVICE_NAME = INCPC1X.mercer.com)
+)
+)
+
+
+=====================
+
+PRD 
+User:WB_LIQUIBASE_CD
+Passwd:Liquibase_cdi_2022
+
+
+INCPC1P =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw21db67vcn1-vip.mrshmc.com)(PORT = 1530))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = INCPC1P.mercer.com)
+    )
+
+
+================================
+
+TYP          GRANTEE                        PRIV                           AD  TABNM       COLNM      OWNER
+------------ ------------------------------ ------------------------------ --- ----------- ---------- ---------------
+ROLE         WB_LIQUIBASE_CD                CONNECT                        NO  --          --         --
+ROLE         WB_LIQUIBASE_CD                RESOURCE                       NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE ANY SEQUENCE            NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE ANY TABLE               NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE ANY VIEW                NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE PROCEDURE               NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE SESSION                 NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE TABLE                   NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                CREATE VIEW                    NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                DROP ANY VIEW                  NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                INSERT ANY TABLE               NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                UNLIMITED TABLESPACE           NO  --          --         --
+SYSTEM       WB_LIQUIBASE_CD                UPDATE ANY TABLE               NO  --          --         --
+
+13 rows selected.
+
+SQL> SQL> SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         3 INCPC1Q                        READ WRITE NO
+
+==========================================================
+
+TYP          GRANTEE                        PRIV                           AD  TABNM       COLNM      OWNER
+------------ ------------------------------ ------------------------------ --- ----------- ---------- ---------------
+ROLE         DCRK                           RESOURCE                       NO  --          --         --
+SYSTEM       DCRK                           CREATE ANY TABLE               NO  --          --         --
+SYSTEM       DCRK                           CREATE SESSION                 NO  --          --         --
+SYSTEM       DCRK                           CREATE VIEW                    NO  --          --         --
+SYSTEM       DCRK                           UNLIMITED TABLESPACE           NO  --          --         --
+TABLE        DCRK                           EXECUTE                        NO  SEND_EMAIL  --         APP
+
+6 rows selected.
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         3 INCPC1Q                        READ WRITE NO
+SQL>
+
+
+
+TYP          GRANTEE                        PRIV                           AD  TABNM       COLNM      OWNER
+------------ ------------------------------ ------------------------------ --- ----------- ---------- ---------------
+ROLE         DCRK                           RESOURCE                       NO  --          --         --
+SYSTEM       DCRK                           CREATE SEQUENCE                NO  --          --         --
+SYSTEM       DCRK                           CREATE SESSION                 NO  --          --         --
+SYSTEM       DCRK                           CREATE VIEW                    NO  --          --         --
+SYSTEM       DCRK                           EXECUTE ANY TYPE               NO  --          --         --
+SYSTEM       DCRK                           UNLIMITED TABLESPACE           NO  --          --         --
+TABLE        DCRK                           EXECUTE                        NO  SEND_EMAIL  --         APP
+
+7 rows selected.
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         3 INCPC1X                        READ WRITE NO
+SQL> exit
+
+
+
+
+
+
+

@@ -1,0 +1,48 @@
+Procedure to update OID entries  after db migration
+----------------------------------------------------
+
+1. Login to  usfkl23db39vcn1 as oracle
+
+2. cd /home/oracle/oid_scripts
+
+3. upd_tns_all_nodes.sh <ldif_file>
+
+
+    where  ldif_file =  upd_tns_<db>.ldif  ---  file containing ldif entries for the db being migrated
+
+
+  ex: upd_tns_all_nodes.sh upd_tns_bwqa24s.ldif
+
+
+NOTE :    <ldif_file>   can be created in advance with appropriate entries for the db being migrated.
+
+4.   Check if  tnsping returns correct  string 
+
+      setenv ORACLE_HOME /opt/oracle/product/19.3.0/dbhome_1
+      setenv TNS_ADMIN /opt/oracle/product/12.1.0/dbhome_1/network/admin
+      tnsping bwqa24s
+
+
+
+5. Login to  usfkl21db137vcn1 as oracle
+
+6. cd /home/oracle/oid_scripts
+
+7. upd_tns_all_nodes.sh <ldif_file>
+
+    
+    where  ldif_file =  upd_tns_<db>.ldif  ---  file containing ldif entries for the db being migrated
+
+
+  ex: upd_tns_all_nodes.sh upd_tns_bwqa24s.ldif
+
+8. Check if  tnsping returns correct  string 
+
+      setenv ORACLE_HOME /opt/oracle/product/19.3.0/dbhome_1
+      setenv TNS_ADMIN /opt/oracle/product/12.1.0/dbhome_1/network/admin
+      tnsping bwqa24s
+
+      NOTE :  tnsping  may not be able to reach new non-prod Exacc  server  from this  OVM prod server. 
+
+              Ignore as long as  LDAP returns correct  'HOST'  info
+

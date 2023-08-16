@@ -1,0 +1,281 @@
+Take a full rman backup  (Hot/Cold) as per RUNBOOK
+
+RUN
+{
+ALLOCATE CHANNEL ch1 TYPE DISK;
+BACKUP DATABASE   FORMAT '/var/oracle/export/fullbkp_oltt236/%d_D_%T_%u_s%s_p%p';
+sql 'alter system switch logfile';
+sql 'alter system switch logfile';
+Backup archivelog all format '/var/oracle/export/fullbkp_oltt236/%d_A_%T_%u_s%s_p%p';
+Backup current controlfile format '/var/oracle/export/fullbkp_oltt236/%d_C_%T_%u';
+RELEASE CHANNEL ch1;
+}
+
+----------------------------------------------------------------------------------------------
+save the location of SPFILE
+create pfile='/tmp/pfile_oltt236.ora' from spfile;
+
+select count(*) from dba_objects where status='INVALID';
+
+@?/rdbms/admin/utlrp.sql
+
+PURGE DBA_RECYCLEBIN;
+
+lsnrctl stop LISTENER
+
+EXECUTE DBMS_STATS.GATHER_DICTIONARY_STATS;
+
+To enable restore point  , set db_recovery_file_dest location.
+
+show parameter db_recovery_file_dest
+
+SQL>alter system set db_recovery_file_dest_size=20G scope=both;
+
+SQL>alter system set db_recovery_file_dest='/u01/archive_log' scope=both;
+
+crontab -e ------------ comment respective backups
+
+check tablespcae size sys/system should be 50% free
+
+-------------------------Running the Pre-Upgrade Information Tool -----------
+
+ORACLE_HOME=/opt/oracle/product/1210/db
+
+/opt/oracle/product/1210/db/jdk/bin/java -jar /opt/oracle/product/19/db/rdbms/admin/preupgrade.jar FILE DIR /var/oracle/export/upgrade_oltt236/
+
+
+cat preupgrade.log
+
+SQL>@/var/oracle/export/upgrade/preupgrade_fixups.sql
+
+---------------------Should not invalid objects for sys and system
+SET SERVEROUTPUT ON;
+        EXECUTE DBMS_PREUP.INVALID_OBJECTS;
+
+SQL> select flashback_on from v$database;  ------------- flashback_on can be NO
+
+create restore point pre_upgrade guarantee flashback database;
+
+col name for a20
+col GUARANTEE_FLASHBACK_DATABASE for a10
+col TIME for a60
+set lines 190
+select NAME,GUARANTEE_FLASHBACK_DATABASE,TIME from V$restore_point;
+
+SHUT IMMEDIATE;
+
+export ORACLE_HOME=/opt/oracle/product/19/db
+export ORACLE_SID=oltt236
+export PATH=$ORACLE_HOME/bin:$PATH
+
+Move pfile to oracle 19c Home
+cp /tmp/pfile_oltt236.ora $ORACLE_HOME/dbs/initoltt236.ora
+
+Move password file to 12c to 19c Home ---------- if present
+
+SQL> startup nomount pfile='/opt/oracle/product/19/db/dbs/initoltt236.ora'
+
+alter database mount;
+alter database open upgrade;
+select status from v$instance;
+
+ mkdir -p /var/oracle/export/oltt236_upgrade
+cd $ORACLE_HOME/rdbms/admin
+
+----------------------Start Upgrade --------------------
+
+/opt/oracle/product/19/db/perl/bin/perl catctl.pl -l /var/oracle/export/oltt236_upgrade -n 4 catupgrd.sql
+
+------------------- If failed, resolve issue and restart upgrade to below command-----------------
+cd $ORACLE_HOME/bin
+dbupgrade -p 98   ---------98 phase
+--------------------------------------------------------------------------------------------------
+
+
+SQL> Startup upgrade;
+
+SET SERVEROUTPUT ON
+DECLARE
+l_tz_version PLS_INTEGER;
+BEGIN
+l_tz_version := DBMS_DST.get_latest_timezone_version;
+DBMS_OUTPUT.put_line('l_tz_version=' || l_tz_version);
+DBMS_DST.begin_upgrade(l_tz_version);
+END;
+/
+
+shu immediate;
+startup
+
+
+=============
+AFTER UPGRADE
+=============
+
+
+7.  Upgrade the database time zone file using the DBMS_DST package.
+
+SET SERVEROUTPUT ON
+DECLARE
+l_failures   PLS_INTEGER;
+BEGIN
+DBMS_DST.upgrade_database(l_failures);
+DBMS_OUTPUT.put_line('DBMS_DST.upgrade_database : l_failures=' || l_failures);
+DBMS_DST.end_upgrade(l_failures);
+DBMS_OUTPUT.put_line('DBMS_DST.end_upgrade : l_failures=' || l_failures);
+END;
+/
+
+
+SQL> SELECT * FROM v$timezone_file;
+
+FILENAME                VERSION     CON_ID
+-------------------- ---------- ----------
+timezlrg_32.dat              32          0
+
+SQL>  select TZ_VERSION from registry$database;
+
+TZ_VERSION
+----------
+        18
+
+SQL>  update registry$database set TZ_VERSION = (select version FROM v$timezone_file);
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL>  select TZ_VERSION from registry$database;
+
+TZ_VERSION
+----------
+        32
+
+
+
+set pagesize500
+set linesize 100
+select substr(comp_name,1,40) comp_name, status, substr(version,1,10) version from dba_registry order by comp_name;
+
+
+
+
+EXECUTE DBMS_STATS.GATHER_DICTIONARY_STATS;
+
+EXECUTE DBMS_STATS.GATHER_FIXED_OBJECTS_STATS;
+
+SQL>@/var/oracle/export/upgrade_oltt236/postupgrade_fixups.sql
+
+@?/rdbms/admin/utlrp.sql
+select count(*) from dba_objects where status='INVALID';
+
+Drop restore point if any
+
+col name for a20
+col GUARANTEE_FLASHBACK_DATABASE for a10
+col TIME for a60
+set lines 190
+select NAME,GUARANTEE_FLASHBACK_DATABASE,TIME from V$restore_point;
+
+DROP RESTORE POINT PRE_UPGRADE;
+
+shutdown immediate;
+
+export ORACLE_HOME=/opt/oracle/product/1210/db
+export PATH=$ORACLE_HOME/bin:$PATH
+
+srvctl remove database -d oltt236
+
+export ORACLE_HOME=/opt/oracle/product/19/db
+export PATH=$ORACLE_HOME/bin:$PATH
+
+srvctl add database -d oltt236 -oraclehome /opt/oracle/product/19/db
+
+srvctl start database -d oltt236
+
+srvctl modify database -d oltt236 -p +VTET234_QA_DATA/oltt236/PARAMETERFILE/spfileoltt236.ora
+
+
+SQL> create spfile='+VTET234_QA_DATA/oltt236/PARAMETERFILE/spfileoltt236.ora' from pfile='/opt/oracle/product/19/db/dbs/initoltt236.ora';
+srvctl stop database -d oltt236
+
+mv /opt/oracle/product/19/db/dbs/initoltt236.ora /opt/oracle/product/19/db/dbs/initoltt236.ora_org
+vi /opt/oracle/product/19/db/dbs/initoltt236.ora
+spfile='+VTET234_QA_DATA/oltt236/PARAMETERFILE/spfileoltt236.ora'
+
+srvctl start database -d oltt236
+
+show parameter pfile
+
+cat /etc/oratab
+
+cat .oraenv
+
+srvctl stop database -d oltt236
+srvctl start database -d oltt236
+
+
+lsnrctl start listener
+
+tnsping oltt236
+
+sqlplus u1219940_dkumar_dba@oltt236 ------ Check remote connection
+select name, open_mode, database_role from v$database;
+
+crontab -e ------------ uncomment respective backups
+
+
+
+
+
+
+=========================================================================================
+
+SQL> SET SERVEROUTPUT ON
+DECLARE
+l_tz_version PLS_INTEGER;
+BEGIN
+l_tz_version := DBMS_DST.get_latest_timezone_version;
+DBMS_OUTPUT.put_line('l_tz_version=' || l_tz_version);
+DBMS_DST.begin_upgrade(l_tz_version);
+END;
+/SQL>   2    3    4    5    6    7    8
+l_tz_version=32
+DECLARE
+*
+ERROR at line 1:
+ORA-56920: a prepare or upgrade window or an on-demand or datapump-job loading
+of a secondary time zone data file is in an active state
+ORA-06512: at "SYS.DBMS_SYS_ERROR", line 79
+ORA-06512: at "SYS.DBMS_DST", line 1208
+ORA-06512: at line 6
+
+
+
+Solution:
+
+SQL> ALTER SESSION SET EVENTS '30090 TRACE NAME CONTEXT FOREVER, LEVEL 32';
+
+SQL> exec dbms_dst.unload_secondary;
+
+ALTER SESSION SET EVENTS '30090 TRACE NAME CONTEXT FOREVER, OFF';
+
+
+
+
+SQL> SELECT PROPERTY_NAME, SUBSTR(property_value, 1, 30) value
+FROM DATABASE_PROPERTIES
+WHERE PROPERTY_NAME LIKE 'DST_%'
+ORDER BY PROPERTY_NAME;
+
+PROPERTY_NAME VALUE
+-------------------------------------------------------------------------------------------------------------------------------- ---------
+DST_PRIMARY_TT_VERSION 18
+DST_SECONDARY_TT_VERSION 14
+DST_UPGRADE_STATE NONE
+
+
+
++OLTT226_UAT_512_DATA

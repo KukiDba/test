@@ -1,0 +1,43 @@
+set lines 444 pages 999
+col NAME for a30
+col STATE for a20
+select name,state,TOTAL_MB,FREE_MB, TYPE from v$asm_diskgroup;
+
+set lines 444 pages 100
+col MOUNT_STATUS for a15
+col HEADER_STATUS for a15
+col MODE_STATUS for a15
+col STATE for a15
+col PATH for a50
+col LABEL for a20
+col name for a20
+col FAILGROUP for a20
+select name,PATH,LABEL,FAILGROUP,STATE,MODE_STATUS,HEADER_STATUS,MOUNT_STATUS from v$asm_disk order by 7;
+
+select name,PATH,FAILGROUP,HEADER_STATUS,MOUNT_STATUS,OS_MB from v$asm_disk order by 2;
+
+select name,PATH,HEADER_STATUS,MOUNT_STATUS,OS_MB from v$asm_disk where path like '%GEN_VTE_1024_DATADWBIG_3%';
+
+select PATH,HEADER_STATUS,MOUNT_STATUS,OS_MB from v$asm_disk where HEADER_STATUS like '%CANDIDATE%';
+
+
+select name,PATH,STATE,OS_MB,TOTAL_MB,FREE_MB,HOT_USED_MB,COLD_USED_MB from v$asm_disk where path like '%ACFS%';
+
+
+select    mount_status,    header_status,    mode_status,    state,    total_mb,    free_mb,    name,    path,    label from    v$asm_disk;    
+
+Now, we can add the disk to the ASM diskgroup:
+
+alter diskgroup    my_diskgroup add disk    '/devices/rhdisk1';       
+
+ALTER DISKGROUP    dgroup1 ADD DISK    '/devices/diska5' NAME diska5,    '/devices/diska6' NAME diska6;
+
+ 
+ALTER DISKGROUP dgroup1 ADD DISK '/devices/diska*'; 
+ 
+ALTER aa DISKGROUP DG_RMS_VTE_DATA01     ADD  DISK '/dev/oracleasm/disks/RMS_VTE_2048_DATA1_05' ;
+
+
+
+alter diskgroup DG_DATAOLTP add disk '/dev/oracleasm/disks/GEN_VTE_1024_DATAOLTP_10' name DG_DATAOLTP_0010 rebalance power 11;
+

@@ -1,0 +1,17 @@
+select object_name, object_type, status from dba_objects Where object_type = 'MATERIALIZED VIEW';
+
+SQL> select mview_name, compile_state from dba_mviews where MVIEW_NAME ='WF_AT_FACT_CLASS_MV';
+
+select OWNER,OBJECT_NAME,STATUS from dba_objects where OBJECT_NAME like '%WF_AT_FACT_CLASS_MV%';
+
+
+select object_name, object_type, status from dba_objects Where object_type = 'MATERIALIZED VIEW' and object_name ='WF_AT_FACT_CLASS_MV';
+
+After DML on the Master Table(s) of Local Materialized View, USER_MVIEWS.COMPILE_STATE becomes 
+'NEEDS_COMPILE' and USER_OBJECTS.STATUS becomes 'INVALID' (Doc ID 264036.1)	
+
+
+
+
+
+

@@ -1,0 +1,815 @@
+
+----------------------------------------------------------------
+
+oracle@iedub26db03vcn2:NOSID>vi /opt/oracle/product/10.2.0/root.sh
+
+#mkdir -p  /opt/oracle/oraInventory
+
+#chmod -R 777 /opt/oracle/oraInventory
+
+#chown -R oragrid:dba /opt/oracle/oraInventory
+
+#chmod  -R 777  /opt/oracle/product
+#chmod -R 777 /tmp
+
+#chmod +t /tmp
+
+#chmod 1777 /tmp
+
+#mkdir -p /opt/oragrid/oraInventory
+
+#ls -ltd /opt/oragrid/oraInventory
+
+#chown oragrid:dba /opt/oragrid/oraInventory
+
+#chmod -R 777 /opt/oragrid/oraInventoryi
+
+ln -s /usr/bin/ssh /usr/local/bin/ssh
+"/opt/oracle/product/10.2.0/root.sh" 24L, 416C written
+oracle@iedub26db03vcn2:NOSID>
+oracle@iedub26db03vcn2:NOSID>
+oracle@iedub26db03vcn2:NOSID>sudo "/opt/oracle/product/10.2.0/root.sh"
+oracle@iedub26db03vcn2:NOSID>
+oracle@iedub26db03vcn2:NOSID>
+oracle@iedub26db03vcn2:NOSID>exit
+Connection to iedub26db03vcn2 closed.
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>vi /opt/oracle/product/10.2.0/root.sh
+ssh iedub26db03vcn2
+
+mkdir -p  /opt/oracle/oraInventory
+
+chmod -R 777 /opt/oracle/oraInventory
+
+chown -R oragrid:dba /opt/oracle/oraInventory
+
+chmod  -R 777  /opt/oracle/product
+
+chmod -R 777 /tmp
+
+chmod +t /tmp
+
+
+ln -s /usr/bin/ssh /usr/local/bin/ssh
+~
+~
+
+
+mkdir -p /opt/oragrid/oraInventory
+
+ls -ltd /opt/oragrid/oraInventory
+
+chown oragrid:dba /opt/oragrid/oraInventory
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+
+
+
+----------------------------------------------------
+
+$cluvfy [-help]
+$cluvfy stage {-list|-help}
+$cluvfy stage {-pre|-post} <stage-name> <stage-specific options>  [-verbose]
+$cluvfy comp  {-list|-help}
+$cluvfy comp  <component-name> <component-specific options>  [-verbose]
+
+
+cluvfy comp  <component-name> <component-specific options>  [-verbose]
+
+
+SYNTAX (for Components):
+cluvfy comp nodereach -n <node_list> [-srcnode <srcnode>]  [-verbose]
+cluvfy comp nodecon -n <node_list> [-i <interface_list>]  [-verbose]
+cluvfy comp cfs  [-n <node_list>] -f <file_system>  [-verbose]
+cluvfy comp ssa  [-n <node_list>]  [-s <storageID_list>] 
+                 [-t {software|data|ocr_vdisk}]  [-verbose]
+cluvfy comp space  [-n <node_list>] -l <storage_location> 
+                   -z <disk_space>{B|K|M|G}  [-verbose]
+cluvfy comp sys  [-n <node_list>] -p {crs|ha|database}
+                 [-r {10gR1|10gR2|11gR1|11gR2}] 
+                 [-osdba <osdba_group>]  [-orainv <orainventory_group>] 
+                 [-fixup [-fixupdir <fixup_dir>]] [-verbose]
+cluvfy comp clu  [-n <node_list>]  [-verbose]
+cluvfy comp clumgr  [-n <node_list>]  [-verbose]
+cluvfy comp ocr  [-n <node_list>]  [-verbose]
+cluvfy comp olr  [-verbose]
+cluvfy comp ha   [-verbose]
+cluvfy comp crs  [-n <node_list>]  [-verbose]
+cluvfy comp nodeapp  [-n <node_list>]  [-verbose]
+cluvfy comp admprv  [-n <node_list>]  [-verbose]
+        -o user_equiv  [-sshonly]
+        -o crs_inst [-orainv <orainventory_group>]
+                    [-fixup [-fixupdir <fixup_dir>]]
+        -o db_inst  [-osdba <osdba_group>] 
+                    [-fixup [-fixupdir <fixup_dir>]]
+        -o db_config  -d <oracle_home>
+                    [-fixup [-fixupdir <fixup_dir>]]
+cluvfy comp peer [-refnode <refnode>] -n <node_list>
+                 [-r {10gR1|10gR2|11gR1|11gR2}] 
+                 [-orainv <orainventory_group>] [-osdba <osdba_group>]
+                 [-verbose]
+cluvfy comp software   [-n <node_list>]  [ -d <oracle_home> [ -r {10gR1|10gR2|11gR1|11gR2}] ]  [-verbose]
+cluvfy comp acfs  [-n <node_list>]  [-f <file_system>]  [-verbose]
+cluvfy comp asm  [-n <node_list>]  [-verbose]
+cluvfy comp gpnp [-n <node_list>]  [-verbose]
+cluvfy comp gns [-n <node_list>]  [-verbose]
+cluvfy comp scan  [-verbose]
+cluvfy comp ohasd [-n <node_list>]  [-verbose]
+cluvfy comp clocksync  [-noctss]  [ -n <node_list>]  [-verbose]
+cluvfy comp vdisk [ -n <node_list>]  [-verbose]
+
+---------------------------------------------------
+
+$ cluvfy comp scan -verbose
+
+
+-- To find configuration of gns
+
+$srvctl config gns -a
+
+
+*********************************************************
+
+s
+
+
+[In node1 and node2 …]
+
+cd . ./.profile
+
+oragrid@usdfw23db18vcn1:NOSID>ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+Generating public/private rsa key pair.
+Your identification has been saved in /home/oragrid/.ssh/id_rsa.
+Your public key has been saved in /home/oragrid/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:7DeKagV4HmRa0tR2j76uL0t+3S4e6tpkl7RbeGMn7g0 oragrid@usdfw23db18vcn1
+The key's randomart image is:
++---[RSA 2048]----+
+|   o..           |
+|  . = o .        |
+|   B . . o       |
+|  o +  .. .      |
+|   o o .S .      |
+|    . .... +     |
+|     .. +oO.E .  |
+|    .o.=o=oO.*   |
+|   ...*XB.o++ .  |
++----[SHA256]-----+
+oragrid@usdfw23db18vcn1:NOSID>
+
+chmod 755 /home/oragrid
+chmod 755 /home/oragrid/.ssh
+mkdir /tmp/temp_oragrid_rsa
+chmod 777 /tmp/temp_oragrid_rsa
+
+cp /home/oragrid/.ssh/id_rsa.pub /tmp/temp_oragrid_rsa
+
+[In node1]
+scp /home/oragrid/.ssh/id_rsa.pub  u1236852@iedub26db03vcn2:/tmp/temp_oragrid_rsa/iedub26db03vcn1.id_rsa.pub
+
+cat /tmp/temp_oragrid_rsa/id_rsa.pub > /home/oragrid/.ssh/authorized_keys
+cat /tmp/temp_oragrid_rsa/iedub26db03vcn2.id_rsa.pub >> /home/oragrid/.ssh/authorized_keys
+
+
+
+[in node2]
+scp /home/oragrid/.ssh/id_rsa.pub  u1236852@iedub26db03vcn1:/tmp/temp_oragrid_rsa/u1236852.id_rsa.pub
+
+cat /tmp/temp_oragrid_rsa/id_rsa.pub > /home/oragrid/.ssh/authorized_keys
+cat /tmp/temp_oragrid_rsa/iedub26db03vcn1.id_rsa.pub >> /home/oragrid/.ssh/authorized_keys
+
+
+chmod -R 777 /tmp
+
+chmod +t /tmp
+
+
+ln -s /usr/bin/ssh /usr/local/bin/ssh
+
+
+# Rename the original scp
+mv /usr/bin/scp /usr/bin/scp.bak
+
+# Create a new file scp
+echo "/usr/bin/scp.orig -T $*" > /usr/bin/scp
+
+# Make the file executable
+chmod a+rx /usr/bin/scp
+
+After successfully installing GI 19.3, remember restore original scp
+# Delete interim scp
+rm /usr/bin/scp
+
+# Restore the original scp.
+mv /usr/bin/scp.bak /usr/bin/scp
+~
+
+
+~
+
+https://www.dbaplus.ca/2021/02/19c-gridsetupsh-failed-with-ins-06006.html
+
+
+
+CVU home:                     /opt/oragrid/product/19/grid/
+User:                         oragrid
+oragrid@iedub26db03vcn1:NOSID>./runcluvfy.sh stage -pre crsinst -n iedub26db03vcn1,iedub26db03vcn2 -verbose
+oragrid@iedub26db03vcn1:NOSID>
+ora
+
+
+
+GridSetupActions2021-07-04_04-55-29PM/
+
+PRVF-7546 : The work directory "/tmp/oracle/GridSetupActions2021-07-04_04-55-29PM/CVU_19.0.0.0.0_oragrid/" cannot be used on node "iedub26db03vcn2"
+
+
+
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp 	
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp /usr/bin/scp.orig
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+mv /usr/bin/scp.bkp /usr/bin/scp
+rm /usr/share/centrifydc/libexec/scp.orig
+rm /usr/bin/scp.orig
+
+
+
+https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=179270661131107&parent=EXTERNAL_SEARCH&sourceId=PROBLEM&id=2555697.1&_afrWindowMode=0&_adf.ctrl-state=ikw5hbt2n_66
+
+
+
+node 2
+
+=====================
+
+current
+
+
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp /usr/bin/scp.orig
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+
+
+
+
+===========================
+
+#cp /usr/bin/scp /usr/bin/scp.bkp
+#mv /usr/bin/scp /usr/bin/scp.orig
+#echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+#chmod 555 /usr/bin/scp
+
+Rollback 
+===================
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+mv /usr/bin/scp.bkp /usr/bin/scp
+rm /usr/share/centrifydc/libexec/scp.orig
+rm /usr/bin/scp.orig
+
+=============================
+
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp /usr/bin/scp.orig
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+mv /usr/bin/scp.bkp /usr/bin/scp
+rm /usr/share/centrifydc/libexec/scp.orig
+rm /usr/bin/scp.orig
+
+
+
+node 1
+=======================
+
+oragrid@iedub26db03vcn1:NOSID>
+oragrid@iedub26db03vcn1:NOSID>
+oragrid@iedub26db03vcn1:NOSID>cat "/opt/oracle/product/10.2.0/root.sh"
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp /usr/bin/scp.orig
+#echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+#chmod 555 /usr/bin/scp
+#cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+#mv /usr/bin/scp.bkp /usr/bin/scp
+#rm /usr/share/centrifydc/libexec/scp.origpm
+#rm /usr/bin/scp.orig
+
+==================================
+
+
+
+
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp /usr/bin/scp.orig
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+
+
+
+=============================================================
+
+
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp /usr/bin/scp.orig
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+mv /usr/bin/scp.bkp /usr/bin/scp
+rm /usr/share/centrifydc/libexec/scp.orig
+rm /usr/bin/scp.orig
+
+============================
+To check subnet range
+
+
+oragrid@usdfw25db11vcn1:NOSID>/bin/netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         192.168.41.254  0.0.0.0         UG        0 0          0 eth0
+172.31.8.0      0.0.0.0         255.255.254.0   U         0 0          0 eth1
+172.31.10.0     172.31.9.251    255.255.255.0   UG        0 0          0 eth1
+172.31.188.0    172.31.9.251    255.255.252.0   UG        0 0          0 eth1
+172.31.214.0    0.0.0.0         255.255.254.0   U         0 0          0 eth2
+192.168.41.0    0.0.0.0         255.255.255.0   U         0 0          0 eth0
+oragrid@usdfw
+
+============================
+
+Scp configugration Steps of cluster
+===================================
+
+oragrid@iedub26db03vcn1:NOSID>cat "/opt/oracle/product/10.2.0/root.sh"
+
+cp /usr/bin/scp /usr/bin/scp.bkp
+mv /usr/bin/scp  /usr/bin/scp.orig
+echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+
+
+#cp /usr/bin/scp /usr/bin/scp.bkp
+#mv /usr/bin/scp /usr/bin/scp.orig
+#echo "/usr/bin/scp.orig -T \$*" > /usr/bin/scp
+#chmod 555 /usr/bin/scp
+#cp /usr/share/centrifydc/libexec/scp /usr/share/centrifydc/libexec/scp.orig
+#mv /usr/bin/scp.bkp /usr/bin/scp
+#rm /usr/share/centrifydc/libexec/scp.orig
+#rm /usr/bin/scp.orig
+
+oragrid@iedub26db03vcn1:NOSID
+
+cd /tmp/oracle/GridSetupActions2021-07-08_07-29-05AM/CVU_19.0.0.0.0_oragrid
+
+rpm -Uvh cvuqdisk-1.0.10-1.rpm
+
+
+========================================================
+oracle home installation on RAC server
+
+check oracInventory location should be clean
+
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>ls -lrth
+total 0
+drwxrwxr-x 23 oracle dba 280 Jan  6  2020 diag/
+drwxr-x---  4 oracle dba  34 Jan 21  2020 cfgtoollogs/
+drwxr-xr-x  2 oracle dba   6 Feb 10  2020 checkpoints/
+drwxr-x---  2 oracle dba   6 Feb 24  2020 audit/
+drwxr-x---  3 oracle dba  20 Feb 24  2020 admin/
+oracle@iedub26db03vcn1:NOSID>rm -rf *
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>pwd
+/opt/oracle/base
+
+
+oracle@iedub26db03vcn1:NOSID>cd oraInventory/
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>pwd
+/opt/oracle/oraInventory
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>ls -lrth
+total 4.0K
+drwxrwx---  3 oragrid dba   35 Jul  8 12:20 backup/
+drwxrwx--- 24 oragrid dba 4.0K Jul  8 12:20 logs/
+drwxrwx---  2 oragrid dba   81 Jul  9 09:43 ContentsXML/
+
+
+
+
+
+
+oracle@iedub26db03vcn1:NOSID>pwd
+/var/oracle/export/19c_db_media
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>
+oracle@iedub26db03vcn1:NOSID>unzip LINUX.X64_193000_db_home.zip -d /opt/oracle/product/19/db
+
+
+
+
+oragrid@iedub26db04vcn1:NOSID>cat /etc/hosts
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1               localhost.localdomain localhost
+10.182.188.23           iedub26db04vcn1.mrshmc.com   iedub26db04vcn1
+
+ 
+
+10.181.218.19           iedub26db04vcn1-pri.mrshmc.com  iedub26db04vcn1-pri
+10.181.218.20           iedub26db04vcn2-pri.mrshmc.com  iedub26db04vcn2-pr
+
+
+
+
+
+oracle@iedub26db02vcn1:NOSID>cat /etc/hosts
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1               localhost.localdomain localhost
+10.181.188.11   iedub26db02vcn1.mrshmc.com      iedub26db02vcn1
+10.181.218.3    iedub26db02vcn1-pri.mrshmc.com  iedub26db02vcn1-pri
+10.181.218.4    iedub26db02vcn2-pri.mrshmc.com  iedub26db02vcn2-pri
+
+
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>cat /etc/hosts
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1               localhost.localdomain localhost
+192.168.41.78           usdfw25db11vcn1.mrshmc.com   usdfw25db11vcn1
+172.31.214.80           usdfw25db11vcn1-pri.mrshmc.com  usdfw25db11vcn1-pri
+172.31.214.81           usdfw25db11vcn2-pri.mrshmc.com  usdfw25db11vcn2-pri
+oragrid@usdfw25db11vcn1:NOSID>
+
+Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1               localhost.localdomain localhost
+192.168.41.118          usdfw25db11vcn2.mrshmc.com   usdfw25db11vcn2
+172.31.214.81           usdfw25db11vcn2-pri.mrshmc.com  usdfw25db11vcn2-pri
+172.31.214.80           usdfw25db11vcn1-pri.mrshmc.com  usdfw25db11vcn1-pri
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSI
+
+
+
+
+SSH connectivity
+===========================
+
+
+cd 
+. ./.profile
+
+oragrid@usdfw23db18vcn1:NOSID>ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+Generating public/private rsa key pair.
+Your identification has been saved in /home/oragrid/.ssh/id_rsa.
+Your public key has been saved in /home/oragrid/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:7DeKagV4HmRa0tR2j76uL0t+3S4e6tpkl7RbeGMn7g0 oragrid@usdfw23db18vcn1
+The key's randomart image is:
++---[RSA 2048]----+
+|   o..           |
+|  . = o .        |
+|   B . . o       |
+|  o +  .. .      |
+|   o o .S .      |
+|    . .... +     |
+|     .. +oO.E .  |
+|    .o.=o=oO.*   |
+|   ...*XB.o++ .  |
++----[SHA256]-----+
+oragrid@usdfw23db18vcn1:NOSID>
+
+chmod 755 /home/oragrid
+chmod 755 /home/oragrid/.ssh
+mkdir /tmp/temp_oragrid_rsa
+chmod 777 /tmp/temp_oragrid_rsa
+
+oragrid@usdfw25db11vcn1:NOSID>cp /home/oragrid/.ssh/id_rsa.pub  /tmp/temp_oragrid_rsa/usdfw25db11vcn1.id_rsa.pub
+
+
+[In node1]
+scp /home/oragrid/.ssh/id_rsa.pub  u1236852@usdfw25db11vcn2:/tmp/temp_oragrid_rsa/usdfw25db11vcn1.id_rsa.pub
+
+cat /tmp/temp_oragrid_rsa/id_rsa.pub > /home/oragrid/.ssh/authorized_keys
+cat /tmp/temp_oragrid_rsa/usdfw25db11vcn2.id_rsa.pub >> /home/oragrid/.ssh/authorized_keys
+
+
+[in node2]
+scp /home/oragrid/.ssh/id_rsa.pub  u1236852@usdfw23db18vcn1:/tmp/temp_oragrid_rsa/usdfw25db11vcn2.id_rsa.pub
+
+cat /tmp/temp_oragrid_rsa/id_rsa.pub > /home/oragrid/.ssh/authorized_keys
+cat /tmp/temp_oragrid_rsa/usdfw25db11vcn1.id_rsa.pub >> /home/oragrid/.ssh/authorized_keys
+
+
+
+
+3.	Setup ssh for oracle among nodes
+cd 
+. ./.profile
+
+ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+
+The key fingerprint is:
+SHA256:epmej+4/Srq974h7JqiQGIT62KI/uCginVorTJ3wFco oracle@usdfw23db18vcn1
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|.    .           |
+|... . .          |
+|o. E .           |
+|o + o   S        |
+|.B +   . o       |
+|Oo+. .. =        |
+|O=+.. .Bo+.      |
+|O=+o  =O@B=.     |
++----[SHA256]-----+
+oracle@usdfw23db18vcn1:NOSID>pwd
+
+
+
+chmod 755 /home/oracle
+chmod 755 /home/oracle/.ssh
+cd /home/oracle
+mkdir /tmp/temp_oracle_rsa
+chmod 777 /tmp/temp_oracle_rsa
+
+cp /home/oracle/.ssh/id_rsa.pub /tmp/temp_oracle_rsa
+cp /home/oracle/.ssh/id_rsa.pub /tmp/temp_oracle_rsa/usdfw25db12vcn1.id_rsa.pub
+
+
+
+[In node1]
+scp /home/oracle/.ssh/id_rsa.pub  pwang@usdfw23db18vcn2:/tmp/temp_oracle_rsa/usdfw23db18vcn1.id_rsa.pub
+
+1:NOSID>
+oracle@iedub26db03vcn1:NOSID>scp /home/oracle/.ssh/id_rsa.pub u1236852@iedub26db03vcn2:/tmp/usdfw23db18vcn1.id_ora.pub
+
+[in node2]
+scp /home/oracle/.ssh/id_rsa.pub  pwang@usdfw23db18vcn1:/tmp/temp_oracle_rsa/usdfw23db18vcn2.id_rsa.pub
+
+[In node1]
+cat /tmp/temp_oracle_rsa/id_rsa.pub > /home/oracle/.ssh/authorized_keys
+cat /tmp/temp_oracle_rsa/usdfw23db18vcn2.id_rsa.pub >> /home/oracle/.ssh/authorized_keys
+
+
+[in node2]
+cat /tmp/temp_oracle_rsa/id_rsa.pub > /home/oracle/.ssh/authorized_keys
+cat /tmp/temp_oracle_rsa/usdfw25db12vcn1.id_rsa.pub >> /home/oracle/.ssh/authorized_keys
+
+
+==================================================================================================================
+
+Configuration
+=========================
+
+
+
+USDFW25DB12VCN1/2
+
+u1236852
+Welcome@888
+
+sudo "/opt/oracle/product/10.2.0/root.sh"
+
+ansd -iu oragrid
+
+[egst128@bdl1 ~]$ cp .Xauthority /tmp
+[egst128@bdl1 ~]$ chmod 777 /tmp/.Xauthority
+[egst128@bdl1 ~]$ sudo su - grid
+grid-bd1:/home/grid =>mv .Xauthority .Xauthority_bak
+grid-bd1:/home/grid =>cp /tmp/.Xauthority .
+
+iedub26db03v-cl
+iedub26db03v-sca
+
+iedub26db03vcn2-vip.mrshmc.com
+iedub26db03vcn2.mrshmc.com
+
+192.168.41.70           usdfw23db16vcn1.mrshmc.com   usdfw23db16vcn1
+10.181.28.4             iedub26db03vcn1.mrshmc.com      iedub26db03vcn1
+10.181.217.25           iedub26db03vcn1-pri.mrshmc.com  iedub26db03vcn1-pri
+10.181.217.26           iedub26db03vcn2-pri.mrshmc.com  iedub26db03vcn2-pri
+oragrid@iedub26db03vcn1:NOSID>
+
+PRVF-7546 : The work directory "/tmp/oracle/GridSetupActions2021-07-04_04-55-29PM/CVU_19.0.0.0.0_oragrid/" cannot be used on node "iedub26db03vcn2"
+
+oragrid@iedub26db03vcn1:NOSID>cat /etc/hosts
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1               localhost.localdomain localhost
+192.168.41.70           usdfw23db16vcn1.mrshmc.com   usdfw23db16vcn1
+10.181.28.4             iedub26db03vcn1.mrshmc.com      iedub26db03vcn1
+10.181.217.25           iedub26db03vcn1-pri.mrshmc.com  iedub26db03vcn1-pri
+10.181.217.26           iedub26db03vcn2-pri.mrshmc.com  iedub26db03vcn2-pri
+oragrid@iedub26db03vcn1:NOSID>
+
+11 minor version to check against 2
+[AWT-EventQueue-0] [ 2021-07-04 16:33:12.829 UTC ] [Version.isPre:798]  isPre: Returning FALSE for major version check
+[AWT-EventQueue-0] [ 2021-07-04 16:33:12.829 UTC ] [UnixSystem.isHAConfigured:3609]  olrFileName = /etc/oracle/olr.loc
+[ACFSSupportedThread_iedub26db03vcn1] [ 2021-07-04 16:33:26.894 UTC ] [RuntimeExec.runCommand:296]  runCommand: process returns 0
+[ACFSSupportedThread_iedub26db03vcn1] [ 2021-07-04 16:33:26.894 UTC ] [RuntimeExec.runCommand:323]  RunTimeExec: error>
+[ACFSSupportedThread_iedub26db03vcn1] [ 2021-07-04 16:33:26.894 UTC ] [RuntimeExec.runCommand:326]  modinfo: ERROR: could not get modinfo from 'oracleoks': Invalid argument
+[ACFSSupportedThread_iedub26db03vcn1] [ 2021-07-04 16:33:26.894 UTC ] [RuntimeExec.runCommand:349]  Returning from RunTimeExec.runCommand
+
+
+sksiekekfhietek
+# Rename the original scp
+mv /usr/bin/scp /usr/bin/scp.bak
+
+# Create a new file scp
+echo "/usr/bin/scp.orig -T $*" > /usr/bin/scp
+
+# Make the file executable
+chmod a+rx /usr/bin/scp
+
+After successfully installing GI 19.3, remember restore original scp
+# Delete interim scp
+rm /usr/bin/scp
+
+# Restore the original scp.
+mv /usr/bin/scp.bak /usr/bin/scp
+
+
+
+
+
+
+
+
+oragrid@iedub26db03vcn1:NOSID>cd /opt/oracle/
+oragrid@iedub26db03vcn1:NOSID>
+oragrid@iedub26db03vcn1:NOSID>ls -lrth
+total 860K
+drwxr-xr-x 16 oracle  dba   328 Jun  9  2017 scripts/
+-rwxr-xr-x  1 oracle  dba  860K Nov 14  2017 scripts_12cR2.tar*
+drwxr-xr-x  3 root    root   16 Jan 19  2020 extapi/
+drwxr-xr-x  7 oracle  dba    82 Feb 11  2020 base/
+drwxr-xr-x  4 oracle  dba    30 Jun 30 11:20 product/
+drwxrwxrwx  3 oragrid dba    18 Jul  4 11:17 oraInventory/
+oragrid@iedu
+
+
+drwxr-xr-x 3 oragrid dba 4.0K Jul  2 18:29 CVU_19.0.0.0.0_oragrid
+[u1236852@iedub22db01v oracle]$ ls -ld /tmp
+drwxrwxrwt. 19 root root 4096 Jul  4 12:34 /tmp
+[u
+
+
+u1236852@iedub22db01v oracle]$ cd /opt/oracle/
+[u1236852@iedub22db01v oracle]$
+[u1236852@iedub22db01v oracle]$ ls -lrtha
+total 860K
+drwxrwxr-x  16 oracle  dba   328 Jun  9  2017 scripts
+-rwxrwxr-x   1 oracle  dba  860K Nov 14  2017 scripts_12cR2.tar
+drwxr-xr-x   3 root    root   16 Jan 19  2020 extapi
+drwxr-xr-x. 16 root    root  261 Jun 21 08:26 ..
+drwxrwxr-x   3 oracle  dba    20 Jul  2 15:07 product
+drwxrwxr-x   6 oracle  dba    95 Jul  2 15:28 .
+drwxr-xr-x   5 oragrid dba    51 Jul  2 18:29 oraInventory
+[u1236852@iedub22db01v oracle]$
+[u1236852@iedub22db01v oracle
+
+
+
+
+
+============================================
+
+
+
+racle@usdfw25db11vcn1:NOSID>
+oracle@usdfw25db11vcn1:NOSID>nslookup usdfw25db11v-sca
+Server:         10.6.1.134
+Address:        10.6.1.134#53
+
+Name:   usdfw25db11v-sca.mrshmc.com
+Address: 192.168.41.189
+Name:   usdfw25db11v-sca.mrshmc.com
+Address: 192.168.41.188
+Name:   usdfw25db11v-sca.mrshmc.com
+Address: 192.168.41.187
+
+oracle@usdfw25db11vcn1:NOSID>
+oracle@usdfw25db11vcn1:NOSID>
+oracle@usdfw25db11vcn1:NOSID>nslookup usdfw25db11v-sca
+Server:         10.6.1.134
+Address:        10.6.1.134#53
+
+Name:   usdfw25db11v-sca.mrshmc.com
+Address: 192.168.41.188
+Name:   usdfw25db11v-sca.mrshmc.com
+Address: 192.168.41.187
+Name:   usdfw25db11v-sca.mrshmc.com
+Address: 192.168.41.189
+
+oracle@usdfw25db11vcn1:NOSID>nslookup usdfw25db11vcn1-vip
+Server:         10.6.1.134
+Address:        10.6.1.134#53
+
+Name:   usdfw25db11vcn1-vip.mrshmc.com
+Address: 192.168.41.123
+
+oracle@usdfw25db11vcn1:NOSID>nslookup usdfw25db11vcn2-vip
+Server:         10.6.1.134
+Address:        10.6.1.134#53
+
+Name:   usdfw25db11vcn2-vip.mrshmc.com
+Address: 192.168.41.166
+
+
+=======================================================
+
+Voting Disk inaccessible
+==========================
+
+=== Zoom Conference Summary ===
+
++ 2 Node Grid Infrastructure setup.
+
++ After OS patching, CRS startup was failing on both nodes.
+
++ CSSD was terminating on voting file discovery with the error shown below -
+
+--------------
+2022-03-05 09:50:03.212 : CSSD:2760152832: [ INFO] clssnmFindVF: Duplicate voting file found in the queue of previously discovered disks queued(/dev/xvde1|[c4a6ccf2-9f734f0f-bf023174-4616cffd]), found(/dev/oracleasm/disks/LUN01_CRS|[c4a6ccf2-9f734f0f-bf023174-4616cffd]), is not corrupted
+2022-03-05 09:50:03.212 : CLSF:2760152832: Resolved (/dev/xvde1,/dev/oracleasm/disks/LUN01_CRS) to NONE
+2022-03-05 09:50:03.212 : CSSD:2760152832: [ INFO] clssnmvDiskCreate: Found a duplicate voting file /dev/xvde1 in the discovery queue which appears to be the same physical device as the newly discovered disk /dev/oracleasm/disks/LUN01_CRS. Rejecting both these files
+--------------
+
++ "gpnptool get" showed that two diskstrings were set which was causing duplicate disk discovery - "/dev/xv*" & "/dev/oracleasm/disks/*" ( "/dev/oracleasm/disks" was configured using udev rules and, is a softlink to "/dev/xvd*" )
+
++ Executed the following steps to resolve the issue -
+
+1) Stopped CRS on all nodes
+
+2) On Node 1, disabled udev rules temporarily to remove disk duplicacy.
+
+3) Started CRS successfully on Node 1 with "/dev/xv*" devices. Logged in to ASM and set discovery string to "/dev/oracleasm/disks/*" with scope=spfile
+
+4) Stopped CRS and re-activated udev rules
+
+5) The following CRS startup on both nodes worked as expected and, successfully started all services.
+
+
+
+
+node eviction
+=================
+execute below only on problem node
+
+1.crsctl stop crs -f
+2.remove socket files
+# rm -rf /usr/tmp/.oracle/* /var/tmp/.oracle/* /tmp/.oracle/* ( do not remove .oracle directory )
+3. reboot the node
+wait for 5-10 min
+and verify whether crs has been started , if not started then start using crsctl start crs
+====================================
+
+Cluster health checks command
+===================================
+
+[grid@usdfw21db86vcn2 ~]$ cluvfy comp healthcheck
+
+=========================================
+
+
+
+
+
+
+
+
+
+

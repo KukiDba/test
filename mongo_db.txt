@@ -1,0 +1,180 @@
+/opt/mongo/software/mongodb-linux-x86_64-4.2.19-ent/bin/mongo -u u1222605_app -p $DBPASS --port 27013 --authenticationDatabase '$external' --authticationMechanism 'PLAIN'
+
+/opt/mongo/software/mongodb-linux-x86_64-4.2.19-ent/bin/mongo --port 27013 --authenticationDatabase '$external' --authenticationMechanism 'PLAIN'u ezhang_app
+
+
+docker exec -ti PROD-MMP078PROD-mongo-rs  mongo --port 27078 --authenticationDatabase '$external' --authenticationMechanism PLAIN -u u1236852_app
+
+
+  989  pwd
+  990  history |grep 27051
+  991   sudo docker exec -ti PROD-MOE051PROD-mongo-rs  mongodump --port 27051 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external' -d mobility-entitlement -c currencies --gzip -o /audit/backup
+  992   sudo docker exec -ti PROD-MOE051PROD-mongo-rs  mongodump --port 27051 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external' -d mobility-entitlement -c preferences  --gzip -o /audit/backup
+  993  sudo docker exec -ti PROD-MOE051PROD-mongo-rs  mongo --port 27051 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external'
+  994   sudo docker exec -ti PROD-MOE051PROD-mongo-rs  mongodump --port 27051 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external' -d mobility-entitlement -c locations --gzip -o /audit/backup
+  995   sudo docker exec -ti PROD-MOE051PROD-mongo-rs  mongodump --port 27051 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external' -d mobility-entitlement -c mappings --gzip -o /audit/backup
+  996  sudo docker exec -ti PROD-MOE051PROD-mongo-rs  mongo --port 27051 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external'
+  997  uname
+  998  whoami
+  999  docker ps | grep 27096
+ 1000  sudo docker exec -ti PROD-OVIE194PROD-mongo-rs  mongo --port 27194 -u u1236852_app --authenticationMechanism PLAIN --authenticationDatabase '$external'
+
+
+[root@gbbed21db05v ~]# docker container ls | port 27194
+-bash: port: command not found
+[root@gbbed21db05v ~]# docker container ls | grep -i 27194
+030b1ca0246d        europe-app-nexus.mercer.com:5000/mongo-enterprise-4.0.12:4.0.12   "mongod -f /mongod..."   22 months ago       Up 9 days           192.168.84.95:27132->27132/tcp       PROD-JAT132PROD-mongo-rs
+
+sudo docker exec -ti STG-GBMA062STG-mongo-rs mongo --port 27062 -u u1215535_app --authenticationMechanism PLAIN --authenticationDatabase '$external' --host ip-10-236-75-137.ec2.internal
+===============================================
+BI Connector MongoDb
+=====================
+add below script in startup scripts on crontab
+================================================
+nohup /opt/mongo/mongo-bi/bin/mongosqld --config /opt/mongo/mongo-bi/bi-connector3039.conf &
+
+
+mongo@ip-10-237-74-76.ec2.internal:/opt/mongo/mongo-bi> $ adquery user -a svc-CTM-STG-USER|grep -i mongo
+dmzprod01.mrshmc.com/Enterprise Systems/MongoDB/Marsh/MAR-Mongo-stg-mmi-ReadWrite-S-G
+dmzprod01.mrshmc.com/Enterprise Systems/MongoDB/Marsh/MAR-MongoDB-stg-uat-dgtlbrkr-ReadWrite-S-G
+mongo@ip-10-237-74-76.ec2.internal:/opt/mongo/mongo-bi> $ adquery group -A MAR-Mongo-stg-mmi-ReadWrite-S-G|grep 'dn:'
+dn:CN=MAR-Mongo-stg-mmi-ReadWrite-S-G,OU=Marsh,OU=MongoDB,OU=Enterprise Systems,DC=dmzprod01,DC=mrshmc,DC=com
+mongo@ip-10-237-74-76.ec2.internal:/opt/mongo/mongo-bi> $
+
+"svc-CTM-STG-USER"
+
+
+
+Mongo teminology
+==================
+collection=table
+row=documents
+column=field
+===================
+
+
+
+rep_stg021
+ip-10-237-105-75.ec2.internal 270132 -----DONE
+ip-10-237-74-76.ec2.internal 270133  ----[ DONE ]
+ip-10-237-90-22.ec2.internal 27013
+
+========================
+
+2135795 ----mongo referesh
+
+[root@ip-10-236-11-136 ~]#
+[root@ip-10-236-11-136 ~]#
+[root@ip-10-236-11-136 ~]#  sudo docker exec -ti  PROD-MMP079PROD-mongo-rs mongodump --port 27079 -u u1215535_app -d Mobility_MMP_Calculators -c lookupdata --authenticationMechanism PLAIN --authenticationDatabase '$external' --host ip-10-236-27-50.ec2.internal --gzip -o /audit/goss
+
+Step 1 - PROD Target DB :-
+
+MONGODB_URI=mongodb://svc-prd-mobcalc-app:******************@mongo-gen-1.merceros.us-east-1.prod.db.mercer.com:27078,mongo-gen-2.merceros.us-east-1.prod.db.mercer.com:27078,mongo-gen-3.merceros.us-east-1.prod.db.mercer.com:27078/Mobility_MMP_Metadata?authSource=\\\$external&authMechanism=PLAIN&replicaSet=REPMMP078&socketTimeoutMS=300000&connectTimeoutMS=300000&w=majority&wtimeoutMS=300000&readConcernLevel=majority&poolSize=200
+
+
+Step 2 - Drop collection 'hostbased_costprojection' if any.
+
+Step 3 - Create collection 'hostbased_costprojection'
+
+Step 4 - Copy data.json to ur local file systemm and execute below command:
+
+	mongoimport --jsonArray --db Mobility_MMP_Metadata --collection hostbased_costprojection --file="<local file path>\data.json" --maintainInsertionOrder
+
+Planview code: Mobility Tools_ETB â€¢ 1001261
+
+
+=========================
+
+Mongo Restore
+
+[root@ip-10-236-27-50 ~]# sudo docker exec -ti PROD-MDC2AUTHORIZATIONPROD-mongo-rs mongorestore -u u1269477_app --port 27178 --authenticationDatabase '$external' --authenticationMechanism 'PLAIN' -d authorization --gzip /audit/authorization --host mongo-gen-3.merceros.us-east-1.prod.db.mercer.com
+
+==================================
+
+
+0 0 1 * * /var/mongo/logs/Audit_purging.sh
+mongo@ip-10-237-105-75.ec2.internal:/home/mongo> $ cat /opt/mongo/scripts/startup.sh
+##/opt/mongo/mongo/bin/mongod -f /opt/mongo/scripts/rep_stg01.conf >/opt/mongo/scripts/startup.log
+sh /opt/mongo/mongo-agents/mongodb-mms-automation-agent-5.4.11.5498-1.rhel7_x86_64/startup.sh
+sh /opt/mongo/mongo-bi/startup-biconnect.sh
+cat /opt/mongo/scripts/startup.log|mailx -s "MongoD startup on '$HOSTNAME' completed at `date +%m/%d/%y\ %H:%M`" '#MMCGLMarshAMSIDBAMongodb@mercer.com'
+
+mongo@ip-10-237-105-75.ec2.internal:/home/mongo> $ exit
+[root@ip-10-237-105-75 ~]#
+
+./mongo --port 27012   --authenticationDatabase '$external' --authenticationMechanism PLAIN -u u1236852_app
+
+
+
+
+nohup /opt/mongo/mongo-bi/bin/mongosqld --config /opt/mongo/mongo-bi/bi-connector3038.conf &
+
+nohup /opt/mongo/mongo-bi/bin/mongosqld --config /opt/mongo/mongo-bi/bi-connector3039.conf &
+
+
+nohup /opt/mongo/mongo-bi/bin/mongosqld --config /opt/mongo/mongo-bi/bi-connector3039.conf &
+
+
+docker exec -ti  PROD-MCEDPRO96PROD-mongo-rs  mongo -u u1242776_app --port 27096 --authenticationDatabase '$external' --authenticationMechanism 'PLAIN'
+
+sudo docker exec -it PROD-MCEDPRO96PROD-mongo-rs  mongodump -u u1242776_app --port 27096 --authenticationDatabase '$external' --authenticationMechanism 'PLAIN' -d MCEDPro -c evalrole  --gzip -o /audit/CO2121044_evalrole_backup
+
+
+
+ mongo -u rpandey_app -p  --port 27012  --authenticationDatabase '$external' --authenticationMechanism PLAIN --ssl --sslCAFile /opt/mongo/certificates/master_encryp_keyfile_opsmgr-admdb
+
+
+
+  307  mkdir /home/u1228185/CO1860130
+  308  cp -p /etc/sysctl.conf /home/u1228185/CO1860130/
+  309  cp -p /etc/security/limits.conf /home/u1228185/CO1860130/
+  310  vim /etc/security/limits.conf
+  311  su mongo
+  312  sysctl -a | egrep 'kernel.pid_max|kernel.threads-max|vm.max_map_count'
+  313  sysctl -w kernel.pid_max=64000 >> /etc/sysctl.conf
+  314  sysctl -w kernel.threads-max=64000 >> /etc/sysctl.conf
+  315  sysctl -w vm.max_map_count=128000 >> /etc/sysctl.conf
+  316  sysctl -a | egrep 'kernel.pid_max|kernel.threads-max|vm.max_map_count'
+  317  cat /etc/sysctl.conf
+
+
+
+collection count
+==========================
+
+MongoDB Enterprise rs_nam_aws_ppm_uat01:PRIMARY> db.getCollectionNames().forEach(function(collection) { resultCount = db[collection].count(); print("Results count for " + collection + ": "+ resultCount); });
+Results count for CoverageDetail_bkp_20220717: 1210638
+Results count for DatabaseMetadata_SchemaMap: 1
+Results count for billingRequest: 0
+Results count for billingRequestExecution: 0
+Results count for billingRequestFiduciaryMessage: 0
+
+
+
+================================================
+
+Stop and start docker
+========================
+
+sudo docker stop $(sudo docker ps -q); echo ;sudo docker ps -a
+
+================================================================
+
+
+[root@ip-10-236-11-136 ~]# docker ps | grep -i 27069
+dbe97c788eb1        ip-10-236-6-6.ec2.internal:5000/mongo-enterprise-4.0.12:4.0.12   "mongod -f /mongod..."   2 months ago        Up 2 we             eks          
+10.236.11.136:27069->27069/tcp   PROD-MBM069PROD-mongo-rs
+[root@ip-10-236-11-136 ~]#
+[root@ip-
+
+
+
+
+sudo docker exec -ti  PROD-MBM069PROD-mongo-rs  mongo -u u1236852_app --port 27069 --authenticationDatabase '$external' --authenticationMechanism 'PLAIN'
+
+sudo docker exec -ti PROD-MDCAUTHOR117PROD-mongo-rs mongo -u u1269477_app -p  --port 27117 --authenticationMechanism PLAIN --authenticationDatabase $external
+
+
+docker container list -q | awk '{print "docker container stop " $1}' | sh -x
+
+

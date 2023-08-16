@@ -1,0 +1,54 @@
+STANDBY SETUP
+=====================
+Refresh CSONAUQ Standby database on aumel21db17vcn1/ vcn2 as per below details.
+(At present CSONAUQ is being synced from UNTRAUQ but as a result of this CO it needs to sync from UNTRAUR
+Primary Host: ausyd26db02vcn1/ vcn2
+Primary DB Name: CUNTRAUR
+Primary db_unique_name: CUNTRAUR
+Primary Instances: CUNTRAUR1, CUNTRAUR2
+Primary O_H: /opt/oracle/product/19/UNT_uat
+Listeners: Use existing scan listeners (ausyd26db02v-sca.mrshmc.com and AUMEL21DB17V-SCA.mrshmc.com)
+
+Standby Host: aumel21db17vcn1/ vcn2
+Standby DB Name: CSONAUQ
+Standby db_unique_name: CSONAUQ_DR
+Standby Instances: CSONAUQ1, CSONAUQ2
+Standby O_H: /opt/oracle/product/19/Son_dgd
+Listeners: Use existing scan listeners (ausyd26db02v-sca.mrshmc.com and AUMEL21DB17V-SCA.mrshmc.com)
+
+Notes:
+0. On aumel21db17vcn1 comment out four cron entries realted to "manage_stby_db.sh"
+
+1. At present CSONAUQ is being synced from UNTRAUQ but as a result of this CO it needs to sync from CUNTRAUR. Revert any relevant database parameters in UNTRAUQ so that UNTRAUQ is not primary any more.
+
+2. ******* Make sure to put standby datafiles on DG_DATAOLTP_DR disk group ********
+
+3. On Standby db_unique_name should be CSONAUQ_DR
+
+4. On Standby database:
+log_archive_dest_1='LOCATION=+DG_FRAOLTP_DR'
+db_recovery_file_dest='+DG_FRAOLTP_DR'
+db_recovery_file_dest_size=1000G
+memory_target=20G
+memory_max_target=20G
+
+5. Setup service as below to allow read access to the database (*** Ajay G/ Upul to take care of it ***)
+(a) On Sydney
+. /opt/oracle/bin/CUNTRAUR1
+srvctl add service -db CUNTRAUR -pdb UNTRAUR -service SONAUQ_DR_SRVC -role PHYSICAL_STANDBY -preferred "CUNTRAUR1,CUNTRAUR2"
+srvctl start service -db CUNTRAUR -service SONAUQ_DR_SRVC
+srvctl stop service -db CUNTRAUR -service SONAUQ_DR_SRVC
+Do few log switches and ensure no gaps on standby side
+
+(b) On Melbourne
+. /opt/oracle/bin/CSONAUQ1
+----> Put database in readonly mode.
+
+----> Re-create service
+srvctl stop service -db CSONAUQ -service SONAUQ_DR_SRVC
+srvctl remove service -db CSONAUQ -service SONAUQ_DR_SRVC
+
+srvctl add service -db CSONAUQ -pdb UNTRAUR -service SONAUQ_DR_SRVC -role PHYSICAL_STANDBY -preferred "CSONAUQ1,CSONAUQ2" -notification TRUE -policy AUTOMATIC
+srvctl start service -db CSONAUQ -service SONAUQ_DR_SRVC
+
+6. On aumel21db17vcn1 uncomment four cron entries realted to "manage_stby_db.sh" (*** Ajay G/ Upul to take care of it ***)

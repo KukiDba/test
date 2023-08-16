@@ -1,0 +1,2369 @@
+
+~~~~~~~~~~~~~~~~~~
+Enter value for sqlid: 39jr3081wht8u
+
+Sql Id specified: 39jr3081wht8u
+
+Tune the sql
+~~~~~~~~~~~~
+
+GENERAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+Tuning Task Name   : TASK_551678
+Tuning Task Owner  : SYS
+Workload Type      : Single SQL Statement
+Scope              : COMPREHENSIVE
+Time Limit(seconds): 1800
+Completion Status  : COMPLETED
+Started at         : 09/07/2021 08:50:35
+Completed at       : 09/07/2021 08:50:41
+
+-------------------------------------------------------------------------------
+Schema Name: CRMLOAD
+
+SQL ID     : 39jr3081wht8u
+SQL Text   : UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_ACCOUNT_ID = :1
+             WHERE CLIENT_ONE_CODE = :2
+Bind Variables :
+ 2 -  (NVARCHAR2(128)):BPCO03
+
+-------------------------------------------------------------------------------
+FINDINGS SECTION (1 finding)
+-------------------------------------------------------------------------------
+
+1- Index Finding (see explain plans section below)
+--------------------------------------------------
+  The execution plan of this statement can be improved by creating one or more
+
+  indices.
+
+  Recommendation (estimated benefit: 86.04%)
+  ------------------------------------------
+  - Consider running the Access Advisor to improve the physical schema design
+    or creating the recommended index.
+    create index CRMLOAD.IDX$$_86AFE0001 on
+    CRMLOAD.MID_ACCOUNT_SUBBUS_REVENUE_TEST(SYS_OP_C2C("CLIENT_ONE_CODE"));
+
+  Rationale
+  ---------
+    Creating the recommended indices significantly improves the execution plan
+    of this statement. However, it might be preferable to run "Access Advisor"
+
+    using a representative SQL workload as opposed to a single statement. This
+    will allow to get comprehensive index recommendations which takes into
+    account index maintenance overhead and additional space consumption.
+
+select count(1) from CRMLOAD. MID_ACCOUNT_SUBBUS_REVENUE_TEST
+where SFDC_ACCOUNT_ID is null and TIME_PERIOD_YYYYMM = '202108';
+
+-------------------------------------------------------------------------------
+EXPLAIN PLANS SECTION
+-------------------------------------------------------------------------------
+
+1- Original
+-----------
+Plan hash value: 2115775528
+
+------------------------------------------------------------------------------------------------------
+
+| Id  | Operation          | Name                            | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------------
+|   0 | UPDATE STATEMENT   |                                 | 34812 |   407K|  4769   (3)| 00:00:01 |
+|   1 |  UPDATE            | MID_ACCOUNT_SUBBUS_REVENUE_TEST |       |       |            |          |
+|*  2 |   TABLE ACCESS FULL| MID_ACCOUNT_SUBBUS_REVENUE_TEST | 34812 |   407K|  4769   (3)| 00:00:01 |
+------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter(SYS_OP_C2C("CLIENT_ONE_CODE")=:2)
+
+2- Using New Indices
+
+--------------------
+Plan hash value: 1086779228
+
+------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                            | Name                            | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------------------------------
+|   0 | UPDATE STATEMENT                     |                                 | 34812 |  4147K|   665   (0)| 00:00:01 |
+|   1 |  UPDATE                              | MID_ACCOUNT_SUBBUS_REVENUE_TEST |       |       |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MID_ACCOUNT_SUBBUS_REVENUE_TEST | 34812 |  4147K|   665   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                  | IDX$$_86AFE0001                 |  1552 |       |     8   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+
+
+ create index CRMLOAD.IDX$$_86B030001 on CRMLOAD.MID_ACCOUNT_SUBBUS_REVENUE(SYS_OP_C2C("CLIENT_ONE_CODE"));
+
+
+---------------------------------------------------
+
+   3 - access("MID_ACCOUNT_SUBBUS_REVENUE_TEST"."SYS_QSMMIX_VCOL_5001"=:2)
+
+-------------------------------------------------------------------------------
+
+09:16:08 SQL> 09:16:08 SQL> select count(1) from CRMLOAD. MID_ACCOUNT_SUBBUS_REVENUE_TEST
+where SFDC_ACCOUNT_ID is null and TIME_PERIOD_YYYYMM = '202108';09:16:13   2
+
+
+
+
+  COUNT(1)
+----------
+         0
+
+1 row selected.
+
+09:16:18 SQL> 09:16:18 SQL> 09:16:18 SQL> 09:16:18 SQL>
+
+
+BEGIN
+DBMS_STATS.GATHER_TABLE_STATS (
+ownname => 'CRMLOAD',
+tabname => 'MID_ACCOUNT_SUBBUS_REVENUE',
+cascade => true,
+method_opt=>'for all indexed columns size 1',
+estimate_percent =>dbms_stats.auto_sample_size,
+degree => 4);
+END;
+/
+
+
+select count(1) from CRMLOAD.MID_ACCOUNT_SUBBUS_REVENUE
+where SFDC_ACCOUNT_ID is null and TIME_PERIOD_YYYYMM = '202108';
+
+
+SQL>   2    3    4    5    6    7    8    9   10
+
+PL/SQL procedure successfully completed.
+
+
+
+
+
+
+
+
+
+
+CRMLOAD
+
+
+spool off
+
+spool mrp3.sql
+
+select 'exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'''||owner||''',tabname=>'''||table_name||''',granularity => ''ALL'', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);'
+from dba_tables where owner='CRMLOAD';
+
+login as: u1236852
+Pre-authentication banner message from server:
+|
+| This system is for the use by authorized users only. All data contained
+| on all systems is owned by the company and may be monitored, intercepted,
+| recorded, read, copied, or captured in any manner and disclosed in any
+| manner, by authorized company personnel. Users (authorized or unauthorized)
+| have no explicit or implicit expectation of privacy. Unauthorized or improper
+| use of this system may result in administrative, disciplinary action, civil
+| and criminal penalties. Use of this system by any user, authorized or
+| unauthorized, constitutes express consent to this monitoring, interception,
+| recording, reading, copying, or capturing and disclosure.
+|
+| IF YOU DO NOT CONSENT, LOG OFF NOW.
+|
+| ##################################################################
+| # *** This Server is using Centrify                          *** #
+| # *** Remember to use your Active Directory account          *** #
+| # ***    password when logging in                            *** #
+| ##################################################################
+|
+End of banner message from server
+Keyboard-interactive authentication prompts from server:
+| (AD: corp.mmco.int) Password:
+| Sent Mobile Authenticator request to your device. Please follow the instructi
+> ons to proceed with authentication or enter verification code here. After tha
+> t, please press <enter> to finish authentication:
+End of keyboard-interactive prompts from server
+Last login: Sat Jul 24 06:00:08 2021 from 10.3.35.52
+$
+$
+$
+$
+$
+$
+$
+$ bash
+
+
+[u1236852@usdfw24db22vcn2 ~]$
+[u1236852@usdfw24db22vcn2 ~]$
+[u1236852@usdfw24db22vcn2 ~]$ sudo -u oracle -i
+
+
+(AD: corp.mmco.int) Password:
+Sorry, try again.
+(AD: corp.mmco.int) Password:
+$
+$
+$ bash
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$ uptime
+ 08:44:16 up 44 days, 21:22,  6 users,  load average: 7.64, 7.42, 7.19
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$ top
+top - 08:44:55 up 44 days, 21:23,  6 users,  load average: 10.28, 8.14, 7.45
+Tasks: 1538 total,   5 running, 1533 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 28.4 us,  6.4 sy,  0.0 ni, 60.1 id,  2.2 wa,  0.0 hi,  0.2 si,  2.7 st
+KiB Mem : 13186323+total, 24525324 free, 20969556 used, 86368352 buff/cache
+KiB Swap: 16777212 total,    11864 free, 16765348 used. 72002264 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 9829 oracle    20   0 4927692 821616 816348 R  92.5  0.6  93:25.34 oracle_9829_mid
+ 6535 oracle    20   0   25.2g  12.0g  12.0g R  16.0  9.6  81:30.13 oracle_6535_rpt
+17379 oracle    rt   0 2870460 448084 114304 S  10.1  0.3   2997:05 ocssd.bin
+26718 oracle    20   0 5172576 226996 125112 R   5.5  0.2   1858:53 asm_dia0_+asm2
+26654 oracle    -2   0 5057012  17112  16904 S   4.6  0.0   1235:01 asm_vktm_+asm2
+28155 root      20   0 8680328   3.6g  37992 S   4.2  2.9   2149:35 crsd.bin
+15393 oracle    20   0   25.2g  14.1g  14.1g S   3.6 11.2   1109:21 ora_scmn_rptwwc
+15403 oracle    20   0   24.9g  14.1g  14.1g S   3.6 11.2   1113:54 ora_scmn_rptwwc
+ 4947 root      20   0 4687212 193104  36268 S   2.6  0.1   3667:05 ohasd.bin
+ 7803 root      20   0  961384 277156   9452 S   2.3  0.2   1900:21 BESClient
+28950 oracle    20   0 4605532 110000  35828 S   2.3  0.1   1416:26 oraagent.bin
+ 7889 oracle    -2   0 4923196  18228  17972 S   2.0  0.0   1249:13 ora_vktm_dbawwc
+ 8955 oracle    -2   0 4923196  18228  17972 S   2.0  0.0   1231:04 ora_vktm_msjwwc
+ 9318 oracle    -2   0 4923452  18440  18184 S   2.0  0.0   1249:31 ora_vktm_midwwc
+ 9485 oracle    -2   0 4923192  18200  17944 S   2.0  0.0   1241:49 ora_vktm_pdmwwc
+ 9502 oracle    -2   0 4923444  18452  18200 R   2.0  0.0   1230:10 ora_vktm_midwwc
+ 9596 oracle    -2   0 4923192  18236  17980 S   2.0  0.0   1238:52 ora_vktm_infwwc
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$ free -gt
+              total        used        free      shared  buff/cache   available
+Mem:            125          20          23          34          82          68
+Swap:            15          15           0
+Total:          141          36          23
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$ vmsstat 2 6
+bash: vmsstat: command not found
+[oracle@usdfw24db22vcn2 ~]$ vmstat 2 6
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 2  1 16765348 24497964   5508 86364480    0    1  4968   821    1    1 28  8 59  2  2
+ 4  0 16765348 24512572   5508 86364576    0    0 28205   236 25667 38215 22  5 68  4  2
+ 2  1 16765348 24506992   5508 86364696    0    0 37657   362 27089 39250 24  3 65  6  2
+ 5  0 16765348 24490468   5508 86364824    0    0 45001   775 27651 38998 24  4 64  5  3
+ 5  0 16765348 24493628   5508 86364904    0    0 41533  1495 27630 39169 27 12 53  5  3
+ 9  0 16765348 24504804   5508 86365008    0    0 42061  1243 25354 37864 21  3 67  6  3
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$
+[oracle@usdfw24db22vcn2 ~]$ ps -ef|grep pmon
+oracle    7718     1  0 Jul24 ?        00:09:07 ora_pmon_DBAWWC1U2
+oracle    8603     1  0 Jul24 ?        00:09:46 ora_pmon_MSJWWC1U2
+oracle    9042     1  0 Jul24 ?        00:09:19 ora_pmon_PDMWWC2U2
+oracle    9074     1  0 Jul24 ?        00:10:01 ora_pmon_MIDWWC2U2
+oracle    9187     1  0 Jul24 ?        00:09:47 ora_pmon_MIDWWC2Q2
+oracle    9219     1  0 Jul24 ?        00:10:01 ora_pmon_INFWWC2U2
+oracle    9737     1  0 Jul24 ?        00:09:30 ora_pmon_MIDWWC1U2
+oracle   14675     1  0 Jul24 ?        00:09:45 ora_pmon_RPTWWC1U2
+oracle   15375  9296  0 08:45 pts/6    00:00:00 grep --color=auto pmon
+oracle   26501     1  0 Jul24 ?        00:16:27 asm_pmon_+ASM2
+oracle   30198     1  0 Jul24 ?        00:07:07 apx_pmon_+APX2
+oracle   31001     1  0 Jul24 ?        00:07:50 mdb_pmon_-MGMTDB
+[oracle@usdfw24db22vcn2 ~]$ history
+    1  ps -ef | grep apex
+    2  ps -ef | grep smon
+    3  ps -ef | grep smon | wc -l
+    4  ps -ef | grep pmon
+    5  ps -ef | grep d.bin
+    6  ps -ef | grep mrp
+    7  ps -ef | grep lsnr
+    8  ps -ef | grep tns
+    9  ps -ef | grep agent
+   10  secfsd -status guard
+   11  df -h
+   12  ps -ef | grep 'vor'
+   13  cat /etc/oratab
+   14  ps -ef | grep oid
+   15  sudo -l
+   16  cat /opt/oracle/bin/crs_stop.sh
+   17  sudo /opt/oracle/bin/crs_stop.sh
+   18  ps -ef | grep smon
+   19  sudo -l
+   20  cat /opt/oracle/bin/crs_start.sh
+   21  cat /opt/oracle/bin/crs_stop.sh
+   22  ps -ef | grep 'vor'
+   23  cat /opt/oracle/bin/crs_start.sh
+   24  sudo /opt/oracle/bin/crs_start.sh
+   25  ps -ef | grep d.bin
+   26  ps -ef | grep smon
+   27  ps -ef | grep smon | wc -l
+   28   ps -ef | grep smon | wc -l
+   29  ps -ef | grep smon | wc -l
+   30   ps -ef | grep smon
+   31   df -h
+   32  ps -ef | grep agent
+   33  cd /opt/oracle/bin
+   34  . ./OEM_AGENT_13c
+   35  emctl start agent
+   36  df -h
+   37  cd /opt/oracle
+   38  cd orastage/
+   39  ls -lrt
+   40  cd 19c
+   41  ls -lrt
+   42  cd patches
+   43  ls -lrt
+   44  rm -rf OCT2020_RU JUL2020_RU
+   45  cd ..
+   46  ls -lrt
+   47  cd ..
+   48  ls -lrt
+   49  cd 12c
+   50  ls -lrt
+   51  cd 12102
+   52  ls -lrt
+   53  cd patches/
+   54  ls- lrt
+   55  ls -lrt
+   56  rm -rf OCT2018_PSU
+   57  cd ..
+   58  cd ..
+   59  ls -lrt
+   60  cd 12201
+   61  ls -lrt
+   62  cd patches/
+   63  ls -lrt
+   64  rm -rf p6880880_122010_Linux-x86-64.zip OCT2019_RU JAN2020_RU APR2020_RU
+   65  cd ..
+   66  cd ..
+   67  ls -lrt
+   68  cd ..
+   69  ls -lrt
+   70  cd ASM/
+   71  ls -lrt
+   72  cd 28553832/
+   73  ls -lrt
+   74  cd ..
+   75  ls -lrt
+   76  rm -rf 28553832 p28553832_12201190115OCWJAN2019RU_Linux-x86-64.zip
+   77  cd /opt/oracle/product/12.1.0.2/dbhome_1/deinstall/
+   78  cat /etc/oratab
+   79  ./deinstall
+   80  ps -ef|grep pmon
+   81  cd /opt/oracle/orastage/19c/patches/
+   82  ls -ltr
+   83  cd ../.
+   84  cd ..
+   85  ls -ltr
+   86  cat /etc/oratab
+   87  cd ASM
+   88  ls -ltr
+   89  cd ..
+   90  pwd
+   91  rm -rf *
+   92  ls -ltr /opt/oracle/orastage/19c/patches/JAN2021_RU
+   93  ls -ltr /opt/oracle/orastage/19c/patches/JAN2021_RU
+   94  srvctl status home -oraclehome /opt/oracle/product/12.2.0.1/dbhome_1 -s /tmp/usdfw21db59v -n usdfw24db22vcn2
+   95  cd /opt/oracle/product/12.2.0.1/dbhome_1/bin/
+   96  ./srvctl status home -oraclehome /opt/oracle/product/12.2.0.1/dbhome_1 -s /tmp/usdfw21db59v -n usdfw24db22vcn2
+   97  . /opt/oracle/bin/ASM1
+   98  . /opt/oracle/bin/MIDWWC1U2
+   99  ./srvctl status home -oraclehome /opt/oracle/product/12.2.0.1/dbhome_1 -s /tmp/usdfw21db59v -n usdfw24db22vcn2
+  100  more /tmp/usdfw21db59v
+  101  ./srvctl status home -oraclehome /opt/oracle/product/12.2.0.1/dbhome_1 -s /tmp/usdfw21db59v -n usdfw24db22vcn2
+  102  cd ..
+  103  cd deinstall/
+  104  ls -ltr
+  105  ./deinstall
+  106  ls -ltr
+  107  cd ..
+  108  cd ..
+  109  ls -ltr
+  110  cd ..
+  111  ls -ltr
+  112  cd 12.2.0.1/
+  113  ls -ltr
+  114  cd /opt/oragrid/oraInventory
+  115  ls -ltr
+  116  cd ContentsXML/
+  117  ls -ltr
+  118  vi inventory.xml
+  119  cd /opt/oragrid/product/19.3.0/deinstall/
+  120  ls -ltr
+  121  ./deinstall
+  122  ps -ef|grep pmon
+  123  cd ../..
+  124  cd 12.2.0.1/
+  125  cd bin/
+  126  cd ..
+  127  cd deinstall/
+  128  ./deinstall
+  129  cd ../..
+  130  du -sh *
+  131  cd 12.2.0.1
+  132  ls -ltr
+  133  pwd
+  134  cd /opt/oracle/bin/
+  135  vi opatch.sh
+  136  sudo ./opatch.sh
+  137  cd /opt/oragrid/
+  138  ps -ef|grep pmon
+  139  cd oraInventory/
+  140  ls -ltr
+  141  cd ContentsXML
+  142  ls -ltr
+  143  more inventory.xml
+  144  cd /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/sysman/install
+  145  cd /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0
+  146   ./emcli login -username=sysman
+  147  pwd
+  148  cd /tmp/
+  149  sftp oracle@usdfw21db42v
+  150  unzip 13.4.0.0.0_AgentCore_226.zip
+  151  ls -ltr
+  152  cd t/mp
+  153  mkdir agent
+  154  cp 13.4.0.0.0_AgentCore_226.zip agent/13.4.0.0.0_AgentCore_226.zip
+  155  cd agent/
+  156  ls -ltr
+  157  unzip 13.4.0.0.0_AgentCore_226.zip
+  158  ls -ltr
+  159  ./agentDeploy.sh AGENT_BASE_DIR=/opt/oracle/product/middleware/agent13c   -force   -ignorePrereqs   -invPtrLoc /etc/oraInst.loc   AGENT_PORT=3872      EM_UPLOAD_PORT=4903   OMS_HOST=usdfw21db42v.mrshmc.com   ORACLE_HOSTNAME=usdfw24db22vcn2.mrshmc.com   AGENT_INSTANCE_HOME=/opt/oracle/product/middleware/   agent13c/agent_inst   AGENT_REGISTRATION_PASSWORD=hotday2017
+  160  . /opt/oracle/bin/OEM_AGENT_13c
+  161  emctl status agent
+  162  cd /opt/oracle/product/middleware/agent13c/
+  163  ls -ltr
+  164  rm -rf agent_13.2.0.0.0
+  165  emctl status agent
+  166  emctl status agent
+  167  emctl upload agent
+  168  emctl status agent
+  169  ls -ltr /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0
+  170  emctl status agent
+  171  emctl status agent
+  172  cd /opt/oracle/bin/
+  173  vi opatch.sh
+  174  sudo ./opatch.sh
+  175  ps -ef|grep pmon
+  176  ssh oracle@usdfw24db22vcn1
+  177  ssh u1081283@usdfw24db22vcn1
+  178  pwd
+  179  su oracle
+  180  sudo -u oraCLE -I
+  181  sudo -u oracle -i
+  182  more "/tmp/deinstall2021-04-01_03-55-16AM/response/deinstall_OraGI12Home1.rsp"
+  183  ls -ltr /opt/oracle/product/12.2.0.1/dbhome_1/
+  184  cd  /opt/oracle/product/
+  185  su -sh *|grep G
+  186  du -sh
+  187  ls -ltr
+  188  du -sh *
+  189  rm -rf 12.2.0.1
+  190  cd 12.2.0.1/dbhome_1/log/usdfw24db22vcn2/client
+  191  ls -ltr
+  192  cd ..
+  193  ls -ltr
+  194  cd /opt/oracle/bin/
+  195  vi opatch.sh
+  196  sudo ./opatch.sh
+  197  cd /opt/oracle/product/
+  198  ls -ltr
+  199  ls -ltr /opt/oracle/product/12.2.0.1/dbhome_1
+  200  cd /orabackup01/orastage/
+  201  ls -ltr
+  202  rm -rf 19c
+  203  cd /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0/sysman/install/
+  204  ./AgentDeinstall.pl -agentHome 13.2.0.0.0
+  205  cd /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0/perl/bin/perl
+  206  /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0/perl/bin/perl /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0/sysman/install/Agen   tDeinstall.pl -agentHome 13.2.0.0.0
+  207  /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0/perl/bin/perl /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0/sysman/install/Agen   tDeinstall.pl -agentHome /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0
+  208  cd /opt/oracle/product/middleware/agent13c/agent_13.2.0.0.0
+  209  ls -ltr
+  210  ps -ef|grep agent
+  211  . /opt/oracle/bin/OEM_AGENT_13c
+  212  emctl status agent
+  213  cat /etc/hosts
+  214  emctl status agent
+  215  emctl start agent
+  216  ls -ltr /opt/oracle/product/middleware/agent13c/agent_inst
+  217  ps -ef|grep pmon
+  218  export TMOUT=0
+  219  pwd
+  220  ls -ltr
+  221  cd bin/
+  222  ls -ltr
+  223  pwd
+  224  ls -ltr agentDeploy.sh
+  225  cd
+  226  cd /opt/oracle/product/middleware/agent13c/
+  227  ls -ltr
+  228  cd agent_13.4.0.0.0/
+  229  ls -ltr
+  230  cd install
+  231  ls -ltr
+  232  cd ..
+  233  cd sysman/
+  234  ls -ltr
+  235  cd install/
+  236  ls -ltr
+  237  ./agentDeploy.sh AGENT_BASE_DIR=/opt/oracle/product/middleware/agent13c -force -ignorePrereqs -invPtrLoc /etc/oraInst.loc AGENT_PORT=3872 EM_UPLOAD   _PORT=4903 OMS_HOST=https://usdfw21db42v.mrshmc.com ORACLE_HOSTNAME=usdfw24db22vcn2.mercer.com AGENT_INSTANCE_HOME=/opt/oracle/product/middleware/agent13c   /agent_inst AGENT_REGISTRATION_PASSWORD=hotday2017 SCRATCHPATH=/tmp
+  238  more agentimage.properties
+  239  ls -ltr
+  240  pwd
+  241  ls -ltr
+  242  basjjj
+  243  bash
+  244  export TMOUT=0
+  245  export TMOUT=0
+  246  ps -ef|grep pmon
+  247  cd /opt/oracle/orastage/
+  248  ls -ltr
+  249  sftp oracle@usdfw21db42v
+  250  ls -ltr
+  251  unzip p32162391_190000_Linux-x86-64.zip
+  252  . /opt/oracle/bin/ora1930.env
+  253  pwd
+  254  ls -ltr
+  255  cd $ORACLE_HOME/OPatcj
+  256  cd $ORACLE_HOME
+  257  cd OPatch
+  258  pwd
+  259  ./opatch apply -oh /opt/oracle/product/19.3.0/dbhome_1 -local /opt/oracle/orastage/32162391
+  260  export TMOUT=0
+  261  ./opatch version
+  262  java -version
+  263  java -version
+  264  which java
+  265  /opt/oracle/product/19.3.0/dbhome_1/bin/java -version
+  266  ls -ltr
+  267  cd jre/bin/
+  268  ./java -version
+  269  cd /opt/oracle/product/19.3.0/dbhome_1/jdk/bin/
+  270  ./java -version
+  271  cd /opt/oracle/orastage/
+  272  sftp oracle@usdfw21db42v
+  273  pwd
+  274  cd /opt/oracle/product/19.3.0/dbhome_1
+  275  ls -ltr |grep OPatch
+  276  mv OPatch OPatch_BKP
+  277  cd /opt/oracle/orastage/
+  278  ls -ltr
+  279  unzip -od /opt/oracle/product/19.3.0/dbhome_1  /opt/oracle/orastage/p6880880_121010_LINUX.zip
+  280  cd /opt/oracle/product/19.3.0/dbhome_1/OPatch/
+  281  ./opatch version
+  282  cd jre/bin/
+  283  ./java -version
+  284  cd /opt/oragrid/product/19.3.0
+  285  cd OPatch/
+  286  ./opatch version
+  287  pwd
+  288  ./opatch apply -oh /opt/oragrid/product/19.3.0 -local /opt/oracle/orastage/32162391
+  289  df -h
+  290  set OPATCH_JRE_MEMORY_OPTIONS= " -d64 -mx1024m "
+  291  ./opatch apply -oh /opt/oragrid/product/19.3.0 -local /opt/oracle/orastage/32162391
+  292  export  OPATCH_JRE_MEMORY_OPTIONS= " -d64 -mx1024m "
+  293  export OPATCH_JRE_MEMORY_OPTIONS= " -d64 -mx1024m "
+  294  export OPATCH_JRE_MEMORY_OPTIONS= -d64 -mx1024m
+  295  more /opt/oragrid/product/19.3.0/cfgtoollogs/opatch/opatch2021-04-05_01-25-17AM_1.log
+  296  df -h
+  297  pwd
+  298  cd ..
+  299  mv OPatch OPatch_BKP
+  300  pwd
+  301  cd /opt/oracle/bin/
+  302  vi opatch.sh
+  303  sudo ./opatch.sh
+  304  cd /opt/oragrid/product/19.3.0
+  305  ls -ltr |grep OPatch/
+  306  ls -ltr |grep OPatch
+  307  mv OPatch OPatch_BKP
+  308  cd -
+  309  vi opatch.sh
+  310  sudo ./opatch.sh
+  311  vi opatch.sh
+  312  sudo ./opatch.sh
+  313  cd /opt/oragrid/product/19.3.0/OPatch
+  314  id
+  315  cd /opt/oragrid/product/19.3.0/
+  316  ls -ltr |grep OPatch
+  317  cd OPatch_BKP
+  318  ls -ltr
+  319  cd ..
+  320  chown -oracle:oinstall
+  321  chown -R oracle:oinstall OPatch
+  322  pwd
+  323  cd /opt/oracle/bin/
+  324  vi opatch.sh
+  325  sudo ./opatch.sh
+  326  cd /opt/oragrid/product/19.3.0/OPatch
+  327  ./opatch apply -oh /opt/oragrid/product/19.3.0 -local /opt/oracle/orastage/32162391
+  328  cd ..
+  329  ls -ltr |grep OPatch
+  330  pwd
+  331  cd /opt/oracle/bin/
+  332  vi opatch.sh
+  333  vi opatch.sh
+  334  sudo ./opatch.sh
+  335  cd /opt/oragrid/product/19.3.0
+  336  ls -ltr |grep OPatch
+  337  cd OPatch/
+  338  ./opatch version
+  339  export TMOUT=0
+  340  cd /opt/oracle/product/19.3.0/dbhome_1/
+  341  ls -ltr |grep OPatch
+  342  rm -rf OPatch_BKP
+  343  cd /opt/oracle/orastage/
+  344  ls -ltr
+  345  rm -rf 32162391
+  346  ls -ltr
+  347  unzip p32162391_190000_Linux-x86-64.zip
+  348  cd /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/
+  349  cd OPatch
+  350  ./opatch apply -oh /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0 -local /opt/oracle/orastage/32162391
+  351  ./opatch lsinventory |grep applied
+  352  ./opatch lsinventory
+  353  ./opatch lspatches
+  354  . /opt/oracle/bin/OEM_AGENT_13c
+  355  ./opatch lspatches
+  356  ./opatch apply -oh /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0 -local /opt/oracle/orastage/32162391
+  357  ls -ltr /opt/oracle/product/12.2.0.1/dbhome_1
+  358  ps -ef|grep pmon
+  359  cd /opt/oracle/bin/RPTWWC3D
+  360  cd /opt/oracle/bin
+  361  . ./RPTWWC1U2
+  362  sqlplus / as sysdba
+  363  ps -ef|grep agent
+  364  ps -ef|grep pmon
+  365  cd /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/bin
+  366  ./emctl status blackout
+  367  ./emctl status agent
+  368  /emctl stop blackout OS_DB_Maint
+  369  ./emctl stop blackout OS_DB_Maint
+  370  ./emctl status blackout
+  371  echo $ORACLE_SID
+  372  cd /opt/oracle/orastage/19c/patches/APR2021_RU/RDBMS/32578972
+  373  ls -lrt|grep 32545013
+  374  rm -rf 32545013
+  375  cd /opt/oracle/orastage/
+  376  ls -lrt|grep 32162391
+  377  rm -rf 32162391 p32162391_190000_Linux-x86-64.zip
+  378  cd /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/oracle_common/
+  379  ls -lrt|grep old_jay_dee_kay_jdk_25may21_bkp
+  380  rm -rf old_jay_dee_kay_jdk_25may21_bkp
+  381  rm -rf old_jay_dee_kay_jdk_25may21_bkp.tar.gz
+  382  ps -ef|grep pmon
+  383  ps -ef|grep pmon
+  384  . /opt/oracle/bin/ASM2
+  385  echo $ORACLE_HOME
+  386  /opt/oragrid/product/19.3.0/jdk/bin/java -version
+  387  sudo -l
+  388  cd /tmp
+  389  vi /opt/oracle/bin/crs_stop.sh
+  390  sudo /opt/oracle/bin/crs_stop.sh
+  391  cd /opt/oragrid/product/19.3.0//opt/oragrid/product/19.3.0/
+  392  cd /opt/oragrid/product/19.3.0/
+  393  ls -lrt|grep jdk-8u291-linux-x64.tar.gzjdk-8u291-linux-x64.tar.gz
+  394  ls -lrt|grep jdk-8u291-linux-x64.tar.gz
+  395  vi /opt/oracle/bin/crs_stop.sh
+  396  sudo /opt/oracle/bin/crs_stop.sh
+  397  ls -lrt|grep jdk
+  398  vi /opt/oracle/bin/crs_stop.sh
+  399  sudo /opt/oracle/bin/crs_stop.sh
+  400  ls -lrt|grep jdk1.8.0_291jdk1.8.0_291
+  401  ls -lrt|grep jdk1.8.0_291
+  402  vi /opt/oracle/bin/crs_stop.sh
+  403  sudo /opt/oracle/bin/crs_stop.sh
+  404  /opt/oragrid/product/19.3.0/jdk/bin/java -version
+  405  vi /opt/oracle/bin/crs_stop.sh
+  406  pwd
+  407  cd .tmp
+  408  ls -lrt|grep jdk-8u291-linux-x64.tar.gz
+  409  cd /tmp
+  410  ls -lrt|grep jdk-8u291-linux-x64.tar.gz
+  411  scp  jdk-8u291-linux-x64.tar.gz usdfw24db22vcn1:/tmp
+  412  ps -ef |grep pmon
+  413  ps -ef |grep mrp
+  414  ps -ef |grep lsn
+  415  ps -ef |grep d.bin
+  416  cat /etc/oratab
+  417  df -h
+  418  ps -ef |grep vor
+  419  cd /opt/oracle/admin/db_mgnt/scripts/tool/bin/DB_STOP_START
+  420  bash Stop_Start_DB_N_SERVICES.sh STOP
+  421  ps -ef|grep pmon
+  422  ps e-f|grep tns
+  423  ps -ef|grep tns
+  424  ps -ef|grep pmon
+  425  cd /opt/oracle/bin
+  426  . ./RPTWWC1U2
+  427  sqlplus / as ssydba
+  428  sqlplus / as sysdba
+  429  ps -ef|grep pmon
+  430  ps -ef|grep emage|grep pl
+  431  locate emctl
+  432  /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/bin/emctl start agent
+  433  /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/bin/emctl status agent
+  434  /opt/oracle/product/middleware/agent13c/agent_13.4.0.0.0/bin/emctl upload agent
+  435  history
+  436  . oraenv
+  437  . /opt/oracle/bin/ASM2
+  438  . oraenv
+  439   cat /etc/oratab
+  440  uname
+  441  uptime
+  442  ps -eF|grep pmon
+  443   . oraenv
+  444   . oraenv
+  445  sqlplys
+  446  sqlplus
+  447  ./emctl reload agent
+  448  ./emctl upload agent
+  449  ps -ef|grep emage
+  450  uptime
+  451  top
+  452  free -gt
+  453  vmsstat 2 6
+  454  vmstat 2 6
+  455  ps -ef|grep pmon
+  456  history
+[oracle@usdfw24db22vcn2 ~]$ . /opt/oracle/bin/MIDWWC2U2
+[usdfw24db22vcn2@oracle:/home/oracle]>
+[usdfw24db22vcn2@oracle:/home/oracle]>
+[usdfw24db22vcn2@oracle:/home/oracle]>sqlplus "/as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Sep 7 08:46:44 2021
+Version 19.11.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.11.0.0.0
+
+SQL> select event,
+sum(wait_time +time_waited) ttl_wait_time
+from v$active_session_history
+where sample_time between sysdate - 60/2880 and sysdate
+group by event
+order by 2  2    3    4    5    6
+  7  /
+
+EVENT                                                            TTL_WAIT_TIME
+---------------------------------------------------------------- -------------
+enq: PS - contention                                                         0
+enq: JS - job run lock - synchronize                                         0
+JS kgl get object wait                                                       0
+IPC send completion sync                                                     0
+db file sequential read                                                      0
+CGS wait for IPC msg                                                        62
+library cache pin                                                          630
+gc cr multi block request                                                  631
+enq: CF - contention                                                       781
+latch free                                                                1084
+gc cr block 2-way                                                         1931
+
+EVENT                                                            TTL_WAIT_TIME
+---------------------------------------------------------------- -------------
+os thread creation                                                        6924
+control file sequential read                                              7241
+IMR slave acknowledgement msg                                            12718
+direct path read                                                         34190
+enq: PR - contention                                                     44056
+CSS initialization                                                       74208
+CSS group registration                                                   75251
+ASM file metadata operation                                             118027
+KSV master wait                                                         397949
+oracle thread bootstrap                                                 602877
+                                                                      64723434
+
+EVENT                                                            TTL_WAIT_TIME
+---------------------------------------------------------------- -------------
+GCR CSS group join                                                  1532107616
+
+23 rows selected.
+
+SQL> /
+
+EVENT                                                            TTL_WAIT_TIME
+---------------------------------------------------------------- -------------
+enq: PS - contention                                                         0
+enq: JS - job run lock - synchronize                                         0
+JS kgl get object wait                                                       0
+IPC send completion sync                                                     0
+db file sequential read                                                      0
+CGS wait for IPC msg                                                        62
+library cache pin                                                          630
+gc cr multi block request                                                  631
+enq: CF - contention                                                       781
+latch free                                                                1084
+gc cr block 2-way                                                         1931
+
+EVENT                                                            TTL_WAIT_TIME
+---------------------------------------------------------------- -------------
+os thread creation                                                        6924
+control file sequential read                                              7241
+IMR slave acknowledgement msg                                            12718
+direct path read                                                         34190
+enq: PR - contention                                                     44056
+CSS initialization                                                       74208
+CSS group registration                                                   75251
+ASM file metadata operation                                             118027
+KSV master wait                                                         397949
+oracle thread bootstrap                                                 602877
+                                                                      64512244
+
+EVENT                                                            TTL_WAIT_TIME
+---------------------------------------------------------------- -------------
+GCR CSS group join                                                  1532110909
+
+23 rows selected.
+
+SQL> show parameter parallel_force_local
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+parallel_force_local                 boolean     FALSE
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+
+SQL> SQL> col program format a20
+set lines 180
+col sql_text format a50
+select b.sid,b.status,b.last_call_et,b.program,c.sql_id,c.sql_text from v$session b,v$sqlarea c where b.sql_id=c.sql_id;SQL> SQL> SQL>
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              1 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+       696 ACTIVE              4 oracle@usdfw24db22vc f705bwx3q0ydq select count(*) from dba_autotask_window_clients c
+                                 n2 (MZ01)                          , (select window_name, max(log_date) max_log_date
+                                                                    from dba_scheduler_window_log where operation = 'O
+                                                                    PEN' group by window_name) wo, (select window_name
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+                                                                    , max(log_date) max_log_date from dba_scheduler_wi
+                                                                    ndow_log where operation = 'CLOSE' group by window
+                                                                    _name) wc where c.window_name = wo.window_name and
+                                                                     c.optimizer_stats = 'ENABLED' and wo.window_name
+                                                                    = wc.window_name and wo.max_log_date < wc.max_log_
+                                                                    date and wc.window_name not in (select h.window_na
+                                                                    me from dba_autotask_job_history h where h.client_
+                                                                    name = 'auto optimizer stats collection' and h.job
+                                                                    _start_time between wo.max_log_date and wc.max_log
+                                                                    _date)
+
+
+SQL>  @?/rdbms/admin/sqltrpt
+
+15 Most expensive SQL in the cursor cache
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SQL_ID           ELAPSED SQL_TEXT_FRAGMENT
+------------- ---------- -------------------------------------------------------
+39jr3081wht8u  16,128.52 UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_ACCOUNT
+0sbbcuruzd66f     191.89 select /*+ rule */ bucket_cnt, row_cnt, cache_cnt, null
+2sxqgx5hx76qr     178.84 select /*+ rule */ bucket, endpoint, col#, epvalue, epv
+c9umxngkc3byq     115.21 select sql_id, sql_exec_id, dbop_name, dbop_exec_id, to
+0vzcv5vdajxkf      87.52 SELECT    obj_type, plan_id,
+121ffmrc95v7g      82.63 select i.obj#,i.ts#,i.file#,i.block#,i.intcols,i.type#,
+drktaf71uygnb      61.30 BEGIN           sys.prvt_hdm.auto_execute(
+3un99a0zwp4vd      56.95 select owner#,name,namespace,remoteowner,linkname,p_tim
+4tqd4vgqrh76h      53.99 SELECT * FROM (SELECT NULL CAT, OWNER SCH, TABLE_NAME N
+87gaftwrm2h68      48.05 select o.owner#,o.name,o.namespace,o.remoteowner,o.link
+fbjs6vqydm3xa      47.85 select s.ts#, s.file#, s.block#, so.object_id, s.spare1
+
+SQL_ID           ELAPSED SQL_TEXT_FRAGMENT
+------------- ---------- -------------------------------------------------------
+0w26sk6t6gq98      45.50 SELECT XMLTYPE(DBMS_REPORT.GET_REPORT_WITH_SUMMARY(:B1
+fhf8upax5cxsz      44.18 BEGIN sys.dbms_auto_report_internal.i_save_report (:rep
+03guhbfpak0w7      42.52 select /*+ index(idl_ub1$ i_idl_ub11) */ piece#,length,
+9tgj4g8y4rwy8      40.33 select type#,blocks,extents,minexts,maxexts,extsize,ext
+
+15 Most expensive SQL in the workload repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SQL_ID           ELAPSED
+------------- ----------
+SQL_TEXT_FRAGMENT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+bwj8w97cgupy6 ##########
+UPDATE MID_ACCOUNT_SUBBUS_REVENUE SET SFDC_ACCOUNT_ID =
+
+b6usrg82hwsa3  20,450.15
+call dbms_stats.gather_database_stats_job_proc (  )
+
+39jr3081wht8u  17,006.86
+UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_ACCOUNT
+
+
+SQL_ID           ELAPSED
+------------- ----------
+SQL_TEXT_FRAGMENT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1rpg0nkcww5sh  16,223.63
+UPDATE MID_ACCOUNT_REVENUE SET SFDC_ACCOUNT_ID = :1, TI
+
+3121rzd8bp5pt  15,407.85
+UPDATE MID_ACCOUNT_REVENUE SET CY_YTD_REVN_AMT_USD = :1
+
+6mcpb06rctk0x  14,561.14
+call dbms_space.auto_space_advisor_job_proc (  )
+
+
+SQL_ID           ELAPSED
+------------- ----------
+SQL_TEXT_FRAGMENT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+as2dr3ag24gay  14,221.31
+select not_stale.obj# from (select s.obj# obj#, count(*
+
+anahr29kd569z  13,558.52
+UPDATE MID_OPP_PROJECT_REVENUE_SOURCE SET TIME_PERIOD_Y
+
+8szmwam7fysa3   9,873.38
+insert into wri$_adv_objspace_trend_data select timepoi
+
+
+SQL_ID           ELAPSED
+------------- ----------
+SQL_TEXT_FRAGMENT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+grg1kfkg7ngsz   9,224.37
+UPDATE MID_OPP_PROJECT_REVENUE SET TIME_PERIOD_YYYYMM =
+
+6hnhqahphpk8n   8,418.09
+select free_mb from v$asm_diskgroup_stat where name=:1
+
+5qdptu5gnkayq   8,230.57
+ SELECT m.tablespace_name, ROUND(m.used_percent, 2), RO
+
+
+SQL_ID           ELAPSED
+------------- ----------
+SQL_TEXT_FRAGMENT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4xm1ruvkx3awx   7,928.64
+DECLARE job BINARY_INTEGER := :job;  next_date TIMESTAM
+
+afxtmpgx5b5hu   7,257.23
+SELECT "V_SSBI_SNAPSHOT"."Annualized Revenue Product (U
+
+1wtd1zpsds7xj   6,871.81
+/* SQL Analyze(1) */ select /*+  full(t)    parallel(t,
+
+
+Specify the Sql id
+~~~~~~~~~~~~~~~~~~
+Enter value for sqlid: 39jr3081wht8u
+
+Sql Id specified: 39jr3081wht8u
+
+Tune the sql
+~~~~~~~~~~~~
+
+GENERAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+Tuning Task Name   : TASK_551678
+Tuning Task Owner  : SYS
+Workload Type      : Single SQL Statement
+Scope              : COMPREHENSIVE
+Time Limit(seconds): 1800
+Completion Status  : COMPLETED
+Started at         : 09/07/2021 08:50:35
+Completed at       : 09/07/2021 08:50:41
+
+-------------------------------------------------------------------------------
+Schema Name: CRMLOAD
+
+SQL ID     : 39jr3081wht8u
+SQL Text   : UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_ACCOUNT_ID = :1
+             WHERE CLIENT_ONE_CODE = :2
+Bind Variables :
+ 2 -  (NVARCHAR2(128)):BPCO03
+
+-------------------------------------------------------------------------------
+FINDINGS SECTION (1 finding)
+-------------------------------------------------------------------------------
+
+1- Index Finding (see explain plans section below)
+--------------------------------------------------
+  The execution plan of this statement can be improved by creating one or more
+
+  indices.
+
+  Recommendation (estimated benefit: 86.04%)
+  ------------------------------------------
+  - Consider running the Access Advisor to improve the physical schema design
+    or creating the recommended index.
+    create index CRMLOAD.IDX$$_86AFE0001 on
+    CRMLOAD.MID_ACCOUNT_SUBBUS_REVENUE_TEST(SYS_OP_C2C("CLIENT_ONE_CODE"));
+
+  Rationale
+  ---------
+    Creating the recommended indices significantly improves the execution plan
+    of this statement. However, it might be preferable to run "Access Advisor"
+
+    using a representative SQL workload as opposed to a single statement. This
+    will allow to get comprehensive index recommendations which takes into
+    account index maintenance overhead and additional space consumption.
+
+-------------------------------------------------------------------------------
+EXPLAIN PLANS SECTION
+-------------------------------------------------------------------------------
+
+1- Original
+-----------
+Plan hash value: 2115775528
+
+------------------------------------------------------------------------------------------------------
+
+| Id  | Operation          | Name                            | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------------
+|   0 | UPDATE STATEMENT   |                                 | 34812 |   407K|  4769   (3)| 00:00:01 |
+|   1 |  UPDATE            | MID_ACCOUNT_SUBBUS_REVENUE_TEST |       |       |            |          |
+|*  2 |   TABLE ACCESS FULL| MID_ACCOUNT_SUBBUS_REVENUE_TEST | 34812 |   407K|  4769   (3)| 00:00:01 |
+------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_SUBBUS_REVENUE_TEST ',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+
+BEGIN
+DBMS_STATS.GATHER_TABLE_STATS (
+ownname => 'CRMLOAD',
+tabname => 'MID_ACCOUNT_SUBBUS_REVENUE_TEST',
+cascade => true,
+method_opt=>'for all indexed columns size 1',
+estimate_percent =>dbms_stats.auto_sample_size,
+degree => 4);
+END;
+/
+
+create index CRMLOAD.IDX$$_86AFE0001 on CRMLOAD.MID_ACCOUNT_SUBBUS_REVENUE_TEST(SYS_OP_C2C("CLIENT_ONE_CODE"));
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter(SYS_OP_C2C("CLIENT_ONE_CODE")=:2)
+
+2- Using New Indices
+
+--------------------
+Plan hash value: 1086779228
+
+------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                            | Name                            | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------------------------------
+|   0 | UPDATE STATEMENT                     |                                 | 34812 |  4147K|   665   (0)| 00:00:01 |
+|   1 |  UPDATE                              | MID_ACCOUNT_SUBBUS_REVENUE_TEST |       |       |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MID_ACCOUNT_SUBBUS_REVENUE_TEST | 34812 |  4147K|   665   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                  | IDX$$_86AFE0001                 |  1552 |       |     8   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+
+---------------------------------------------------
+
+   3 - access("MID_ACCOUNT_SUBBUS_REVENUE_TEST"."SYS_QSMMIX_VCOL_5001"=:2)
+
+-------------------------------------------------------------------------------
+
+
+SQL>
+SQL>
+SQL>
+SQL>
+
+col program format a20
+set lines 180
+col sql_text format a50
+select b.sid,b.status,b.last_call_et,b.program,c.sql_id,c.sql_text from v$session b,v$sqlarea c where b.sql_id=c.sql_id;
+SQL> SQL> SQL> SQL> SQL>
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL>
+SQL>
+SQL>
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       500 ACTIVE              2 sqlplus@usdfw24db22v 6ay5y2tbbv9vp /* SQL Analyze(500,0) */ UPDATE MID_ACCOUNT_SUBBUS
+                                 cn2 (TNS V1-V3)                    _REVENUE_TEST SET SFDC_ACCOUNT_ID = :1 WHERE CLIEN
+                                                                    T_ONE_CODE = :2
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+3 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL>
+SQL>
+
+SQL> SQL>
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL>
+SQL>
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              1 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              1 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL>
+SQL>
+
+SQL> SQL>
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              0 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+       601 ACTIVE              1 pmdtm.exe            39jr3081wht8u UPDATE MID_ACCOUNT_SUBBUS_REVENUE_TEST SET SFDC_AC
+                                                                    COUNT_ID = :1 WHERE CLIENT_ONE_CODE = :2
+
+
+2 rows selected.
+
+SQL>
+SQL>
+
+SQL> SQL>
+SQL> /
+
+       SID STATUS   LAST_CALL_ET PROGRAM              SQL_ID        SQL_TEXT
+---------- -------- ------------ -------------------- ------------- --------------------------------------------------
+        18 ACTIVE              0 sqlplus@usdfw24db22v 96jm1hxy3gu8j select b.sid,b.status,b.last_call_et,b.program,c.s
+                                 cn2 (TNS V1-V3)                    ql_id,c.sql_text from v$session b,v$sqlarea c wher
+                                                                    e b.sql_id=c.sql_id
+
+
+1 row selected.
+
+SQL> select 'exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'''||owner||''',tabname=>'''||table_name||''',granularity => ''ALL'', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);'
+from dba_tables where owner='CRMLOAD';
+  2
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'VW_EMP_BUS_HIER_TEST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY_LINE_ITEM_REPORTING__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sa
+mple_size, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_GPOS_SALES_LOAD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'OPPTY_TYPE_VAL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_SUBBUS_REVENUE_TEST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_siz
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+e, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_SUBBUS_REVENUE_TEST1',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_si
+ze, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNT_REVENUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_EXCHANGE_RT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_CCS_ACCOUNTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDRIVE_OPTY_SOURCE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_CCS_PROD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_CCS_OPTY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_USER_08092020',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SSFDC_COLLEAGUE__C_08092020',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TASK_08092020',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_ACCOUNTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_MERCER_OFFICE_GEO_D_BKP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'BUYER_OPPTY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CURR_EXCHG_RATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MASTER_CURR_RATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPTY_EXPANSION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LOAD_ACTV_PROJ_CD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ACTIVE_PROJ_CODE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'INACTIVE_CAREER_PROJ_CD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CAREER_INACTIVE_PROJ_CD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DUP_CHECK_PROJ_CD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DUP_5400_PROJ_CD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ONCECODE_TEMP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_PRD_USER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'EMP_GOAL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_PRODUCT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ERROR_PMERR_SESS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ERROR_PMERR_TRANS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ERROR_PMERR_MSG',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ERROR_PMERR_DATA',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ACCOUNT_ANALYSIS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'OPPTY_ANALYSIS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'EXPANDED_TOR',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STAGE_SFDC_COLLEAGUE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STAGE_SFDC_OPPTY_LINE_ITEM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STAGE_SFDC_INDIVIDUAL_SALES_GOAL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_si
+ze, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TARGET',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CLIENT_CONNECT_REJECTION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OBJECT_NAME_MATCH',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ER_MF_SUBBUS_REF',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNTS_BKP_93',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_CLIENT_BUSINESS_TARGET',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_REBID_OPPORTUNITY_TYPE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY_BKP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PRODUCT_BKP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPTY_LINE_ITEM_BKP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_PRODUCT_REVENUE_OLD_010221',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sam
+ple_size, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_SUBBUS_REVENUE_1',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNTS_CRMSTAGING_BCKUP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size
+, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_BRIDGER_ACCOUNTS_ORIG_BKP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+ degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPTY_21735',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ACCOUNT_20592_UPDATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNT_SUB_BUS_REVENUE_BKP_01122020',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_
+sample_size, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_GROWTH_PLAN_BKP21232',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNTSBKP21232',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNTSBKP21',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_DRM_SNAPGOC_ACCTS_BKP_JAN21',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_siz
+e, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY_LINE_ITEM_REPORTING_TGT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_s
+ample_size, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CLIENT_OPPORTUNITY_STAGE_AMAN_TEST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_
+size, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_GROWTH_PLAN_BKP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY_TARGET',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_RESOURCE_T',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CL_AOR_TEST_COMMA',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_RESOURCE_C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPTY_LINE_ITM_BKP237',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY_BKP237',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'PSFT_SYRC_EMPL_TST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'VW_CRM_STG_PSFT_MMC_LOAD_TST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_CAMPAIGN',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_INCUMBENT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PRICEBOOKENTRY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PRICEBOOK2',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_GOC_STATUS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TARGET__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_RENEWAL__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_MERCER_PROJECT_TEAM__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TASK_TEMP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_FORECASTERA_GROWTH_PLAN',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_PROJ_UPDATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_SYRC_CLIE_REF',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_REF_DNB_COUNTRY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_PRODUCT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CLIENT_CONTRACT_REQUEST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CLIENT_PRODUCT_CONTACT__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size
+, degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_MERCER_OFFICE_GEO_D',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_GLB_MEMBERSHIP_DETAIL__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+ degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CHATTERFEEDREPORTING__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_SYSRC_CLIENT_LOCATION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_SUBBUS_REVENUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TALENT_TS_MODULES__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_DRM_SNAPGBL_ACCTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_PSC_BUS_MODEL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PARTNERS_INTERMEDIARIES',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY_TEST_ID',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_MER_360_EMP_OPI_TA_SM__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+ degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_EVENTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPTY_LINE_ITEM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_COMPTIVE_ASSMNT_C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_PSC_GEO_SCOPE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'USEFUL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_GROWTH_PLAN__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CURRENT_EXCHANGE_RATE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+ degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_PSC_SOL_AREA',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_ACCOUNTS_SEGMENTATION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_SFDC_OPPORTUNITYLINEITEM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_OFFICE_GEO',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_REVENUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_OPPORTUNITYTEAMMEMBER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_DRM_SNAPINT_ACCTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SALES_CREDIT_LINE_ITEM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_SFDC_ACCOUNT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_GOAL_RELATIONSHIP__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'IN_LKP_SFDC_USER_REGION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CONTACT_AFFILIATIONS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ACCOUNTS_NO_GRWTH_PLAN',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_REVENUE_CONNECTIVITY__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SENSITIVE_AT_RISK',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SLA__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_ACTIVATED_ACCOUNTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_BRIDGER_ACCOUNTS_TEST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_GOAL_ACTION__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_USER_ROLE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_PRODUCT_REVENUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CLIENT_RELATIONSHIP__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_COMPETITOR__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_PROFILE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNT_SUB_BUS_REVENUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_ACCOUNT_AR',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PROD_INFO_MONITORING__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'PS_WD_CODE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'PSFT_SYRC_EMPL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNTS_ONETIME_FLG_UPD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+ degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_OPP_PROJECT_REVENUE_SOURCE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size
+, degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_IDEAL_CUSTOMER_CRITERIA',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_DRM_SNAPGOC_ACCTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'INC_JOB_CONTROL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_PRICEBOOKENTRY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_LEAD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_GROWTH_PLAN',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPTY_REFERRALS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_COLLEAGUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_ACCOUNT_CHECK',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_KYC_BRIDGER_ALM_ACCTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TALENT_IS_OPPTY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'WC_OFFICE_GEO_D',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TASK',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_USERROLE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CLIENT_ENG_M_INTERVIEW__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size
+, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_CONTACT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_FCST_FISCAL_YEAR_LIST__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+ degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_DISTRIBUTION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STAGE_SFDC_ACCOUNTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDRIVE_OPTY_PARTNER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_FIELD_OF_PLAY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_SFDC_COLLEAGUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SURVEY_RESPONSE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_MANAGEMENT_REPORTING__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCT_ALIGNMENT_CLIENT_C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OLIR_MATCH_TARGET',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_FORECAST_MODEL__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'PROJECT_CODE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CLIENT_OPPORTUNITY_STAGE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CL_AOR_TEMP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_COLLEAGUE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'PHYSICAL_LOCATION_PS_WD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_RANKING',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_BRIDGER_ACCOUNTS_EU_NA_ASIA',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_siz
+e, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CL_AOR__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TEMP_SFDC_PROJECT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CONTACT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDRIVE_OPTY_LOB_PRODUCT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_CRM_INTERFACE_STATUS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ER_FORECASTERA_SUBBUS_REF',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_INDIVIDUAL_SALES_GOAL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SWOT_STRENGTH__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=
+> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_INDIVIDUAL_SALES_GOAL',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, deg
+ree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CLIENT_REF_INFORMATION__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size
+, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNT_MIDEAS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_USER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CONTACT_DISTRIBUTIONS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'VW_CRM_STG_PSFT_MMC_LOAD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDRIVE_OPTY_TEAM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'ALL_OPPTY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_EXTENDED_ACCOUNT_TEAM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_SFDC_PRODUCT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STG_BRIDGER_ACCOUNTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TALENT_CONTRACT__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CROSSOPCO_REFERRALS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_TALENTTSPRODUCTMAPPING__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size
+, degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_REVENUE_TARGET',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'OPPTY_PROD_DUP',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_REF_GOC_STATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_DUNS_UPDATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_REPLICATION_COUNT_RECON',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size,
+degree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_PSC_CLIENT_TYPE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'STAGE_SFDC_OPPORTUNITY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'LKP_USER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_ACCOUNT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_USER_REGION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_DISTRIBUTION',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SWOT_WEAK__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_EMPLOYEE_ROLE_FLAGS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CA_MF_OPP_LINK_LOG',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNTS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDRIVE_OPTY_DATA',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'G1C_REF_GOC_COUNTRY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_USER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PROFILE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_US_OFFICE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CLIENT_BUS_IMPRATVES_C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SWOT_OPPORTUNITY__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SALES_CREDIT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CONTRACTS_RENEWALS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_INDUSTRY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_PRODUCT',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPORTUNITYTEAMMEMBER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, de
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+gree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_BUYING_INFLUENCE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_ACCOUNT_CLASS',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_REFERRED_OPTY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CONTACT_TEAM_MEMBER__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SCOPEIT_PROJECT__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SCOPEIT_EMPLOYEE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degr
+ee=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDN_SYSREC_UPDATE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+;
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'TALENT_IS_OPPTY_PROD',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'PROJECT_OPP_DUMP_C1X',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'CCMP_TEST',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SCOPEIT_TASK__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_OPPTY_HISTORY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8
+);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CEM__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MID_OPP_PROJECT_REVENUE',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_SWOT_THREAT__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNT_TEAM',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8)
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_ACCOUNT_HISTORY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=>
+ 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_CAMPAIGN_MEMBER',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, d
+egree=> 8);
+
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'MDRIVE_OPTY_COMPETITOR',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree
+=> 8);
+
+
+'EXECDBMS_STATS.GATHER_TABLE_STATS(OWNNAME=>'''||OWNER||''',TABNAME=>'''||TABLE_NAME||''',GRANULARITY=>''ALL'',CASCADE=>TRUE,ESTIMATE_PERCENT=>DBMS_STATS.AUTO_SAMPLE_SIZE,DEGREE=>8
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_MODULE__C',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'SFDC_CAMPAIGN',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degree=> 8);
+exec DBMS_STATS.GATHER_TABLE_STATS(ownname=>'CRMLOAD',tabname=>'DM_LKP_SFDC_OPPORTUNITY',granularity => 'ALL', cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, degre
+e=> 8);
+
+
+244 rows selected.
+
+SQL>
+SQL>
+SQL>
+
+thread_1_seq_18771.1298.1082400999
+ASMCMD> ls -lrth
+WARNING: option 'r' is deprecated for 'ls'
+please use 'reverse'
+
+Type        Redund  Striped  Time             Sys  Name
+ARCHIVELOG  UNPROT  COARSE   SEP 04 18:00:00  Y    thread_1_seq_18768.802.1082400565
+ARCHIVELOG  UNPROT  COARSE   SEP 04 18:00:00  Y    thread_1_seq_18769.800.1082400951
+ARCHIVELOG  UNPROT  COARSE   SEP 04 18:00:00  Y    thread_1_seq_18770.799.1082400997
+ARCHIVELOG  UNPROT  COARSE   SEP 04 18:00:00  Y    thread_1_seq_18771.1298.1082400999
+ARCHIVELOG  UNPROT  COARSE   SEP 04 19:00:00  Y    thread_1_seq_18767.801.1082392515
+ASMCMD> exit
+oracle@iedub26d
+
+SQL> select process,status,sequence# from v$managed_standby;
+
+PROCESS   STATUS        SEQUENCE#
+--------- ------------ ----------
+ARCH      CONNECTED             0
+ARCH      CONNECTED             0
+ARCH      CONNECTED             0
+ARCH      CONNECTED             0
+MRP0      WAIT_FOR_LOG      18624
+RFS       IDLE                  0
+RFS       IDLE              18788
+
+7 rows select
+
+
+oltt267n1
+
+
+*.audit_file_dest='/var/oracle/admin/oltt200n1/audit'
+*.audit_trail='DB'
+*.cluster_database=false
+*.compatible='12.1.0.2.0'
+*.control_files='+VTEGEN_UAT_DATA/OLTT200N1/CONTROLFILE/current01.ctl','+VTEGEN_UAT_FRA/OLTT200N1/CONTROLFILE/current02.ctl'
+*.db_block_size=8192
+*.db_create_file_dest='+VTEGEN_UAT_DATA'
+*.db_domain=''
+*.db_name='oltt200'
+*.db_recovery_file_dest='+VTEGEN_UAT_FRA'
+*.db_recovery_file_dest_size=32212254720
+*.db_unique_name='oltt200s'
+*.diagnostic_dest='/opt/oracle/base'
+*.event=''
+*.log_archive_config='dg_config=(oltt200n1,oltt200)'
+*.log_archive_dest_1='LOCATION=USE_DB_RECOVERY_FILE_DEST VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=oltt200s'
+*.log_archive_dest_2='SERVICE=oltt200 VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=oltt200'
+oltt2002.thread=2
+oltt2001.thread=1
+*.open_cursors=300
+*.pga_aggregate_limit=2147483648
+*.pga_aggregate_target=6727663616
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sga_target=20199768064
+
+
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='SERVICE=oltt200s LGWR ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=oltt200' scope=both sid='*';
+
+
+
+1785
+
+alter syste set audit_file_dest='/var/oracle/admin/oltp22/audit' scope=spfile;
+
+ALTER SYSTEM SET LOCAL_LISTENER='(ADDRESS=(PROTOCOl=TCP)(HOST=192.168.66.117)(PORT=1521))' SCOPE=BOTH sid='*';
+
+ID
+Password
+
+MDOCS_DBLINK_USER
+Marsh_xWHfLN!_JAn2
+
+
+DSSP10 =
+  (DESCRIPTION =
+    (FAILOVER = ON)
+    (LOAD_BALANCE = OFF)
+    (ADDRESS = (PROTOCOL = TCP)(HOST = USDFW21DB78V-SCA.mrshmc.com)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVICE_NAME = dssp10)
+      (failover_mode =
+        (type = select)
+        (method = basic)
+      )
+    )
+  )
+
+
+## CREATE PUBLIC DATABASE LINK GIDS_DB CONNECT TO LPM_DBLINK_USER IDENTIFIED BY Marsh_klirdht21_Sept USING 'dssp10
+
+
+
+
+
+
+
+
+
+
+
+ALTER PUBLIC DATABASE LINK  GIDS_DB
+HOST usdfw21db78v-sca.mrshmc.com;
+
+CREATE PROCEDURE scott.drop_db_link AS
+BEGIN
+EXECUTE IMMEDIATE 'drop database link LINK1';
+END drop_db_link; 
+ /
+
+Procedure created
+SQL> exec scott.drop_db_link
+PL/SQL procedure successfully completed.
+SQL> select * from dba_db_links where OWNER='SCOTT';
+no rows selected
+
+
+(DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP) (HOST = usdfw21db78v-sca.mrshmc.com) (PORT = 1521)
+
+
+CREATE PUBLIC DATABASE LINK GIDS_DB CONNECT TO IDENTIFIED BY Marsh_klirdht_Sept USING '(DESCRIPTION= (ADDRESS=(PROTOCOL=TCP)(HOST=usdfw21db78v-sca.mrshmc.com)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME = dssp10)))';
+
+
+CREATE PUBLIC DATABASE LINK GIDS_DB CONNECT TO PUBLIC IDENTIFIED BY Marsh_klirdht_Sept USING '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP) (HOST = usdfw21db78v-sca.mrshmc.com) (PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = dssp10)))';
+
+CREATE PUBLIC DATABASE LINK GIDS_DB CONNECT TO IDENTIFIED BY Marsh_klirdht_Sept USING '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP) (HOST = usdfw21db78v-sca.mrshmc.com) (PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = dssp10)))';
+
+create public database link
+  mylink
+connect to
+  remote_username
+identified by
+  mypassword
+using 'tns_service_name';
+
+
+DSSP05 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP) (HOST = usdfw21db78v-sca.mrshmc.com) (PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = dssp05)
+    )
+  )
+
+DSSP10 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP) (HOST = usdfw21db78v-sca.mrshmc.com) (PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = dssp10)
+    )
+  )
+
+#DSSP17 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP) (HOST = usdfw21db78v-sca.mrshmc.com) (PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = dssp17)
+    )
+  )
+
+
+## DB Link 2:
+OWNER_DB: DSSP10 on USDFW21DB78vcn1/vcn2
+DB_LINK: GIDS_DB
+USERNAME: LPM_DBLINK_USER
+HOST: DSSP10 on USDFW21DB78vcn1/vcn2
+
+ 
+
+## CREATE PUBLIC DATABASE LINK RACP4 CONNECT TO ODB_LINK_USER IDENTIFIED BY Q2_K33pDistan56_2021 USING 'oltp22';
+
+cREATE PUBLIC DATABASE LINK GIDS_DB CONNECT TO LPM_DBLINK_USER IDENTIFIED BY Marsh_klirdht21_Sept USING 'dssp10';
+
+ 
+
+## DB Link 3:
+OWNER_DB: OLTP63 on usdfw21db72v
+DB_LINK: GIDS_DB
+USERNAME: LPM_DBLINK_USER
+HOST: dssp10 on on USDFW21DB78vcn1/vcn2
+
+ 
+
+## CREATE DATABASE LINK GIDS_DB CONNECT TO LPM_DBLINK_USER IDENTIFIED BY Q2_K33pDistan56_2021 USING 'oltp22';
+
+
+SQL> drop  database link GIDS_DB;
+
+
+
+RACP4 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw21db79v-sca.mrshmc.com)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SID = oltp22)
+      (SERVER = DEDICATED)
+    )
+  )
+
+OLTP22 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw21db79v-sca.mrshmc.com)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = oltp22)
+      (SERVER = DEDICATED)
+    )
+  )
+
+
+primar -defer
+db-recviver-dest-stand
+mrp
+grp 
+chk
+snapshot
+alter ddb activeatew stanbr;
+primaru aletre database ioer
+
+shu immedy
+
+mount
+
+flasback to restore mount
+aleter db to physical stanbt:
+
+mrp
+
+
+
+
+
+
+Database link dropped.
+
+SQL>
+SQL>
+SQL> select * from dba_db_links where OWNER='PUBLIC';
+
+no rows selected
+
+
+
+SQL> drop public database link GIDS_DB;
+
+Database link dropped.
+
+SQL>
+SQL>
+SQL> select * from dba_db_links where OWNER='PUBLIC';
+
+no rows selected
+
+SQL>
+
+
+CREATE or replace PROCEDURE GIDS_LOCAL_OWNER.drop_db_link AS
+BEGIN
+EXECUTE IMMEDIATE 'drop database link GIDS_DB';
+END drop_db_link; 
+ /
+
+
+
+	
+
+
+
+

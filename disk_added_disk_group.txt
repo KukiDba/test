@@ -1,0 +1,225 @@
+set lines 444 pages 999
+col NAME for a30
+col STATE for a20
+select name,state,TOTAL_MB,FREE_MB, TYPE from v$asm_diskgroup;
+
+set lines 444 pages 100
+col MOUNT_STATUS for a15
+col HEADER_STATUS for a15
+col MODE_STATUS for a15
+col STATE for a15
+col PATH for a50
+col LABEL for a20
+col name for a20
+col FAILGROUP for a20
+select name,PATH,LABEL,FAILGROUP,STATE,MODE_STATUS,HEADER_STATUS,MOUNT_STATUS from v$asm_disk order by 7;
+
+select name,PATH,FAILGROUP,HEADER_STATUS,MOUNT_STATUS,OS_MB from v$asm_disk order by 2;
+
+select name,PATH,HEADER_STATUS,MOUNT_STATUS,OS_MB from v$asm_disk where path like '%GEN_VTE_1024_DATADWBIG_3%';
+
+select PATH,HEADER_STATUS,MOUNT_STATUS,OS_MB from v$asm_disk where HEADER_STATUS like '%CANDIDATE%';
+
+
+select name,PATH,STATE,OS_MB,TOTAL_MB,FREE_MB,HOT_USED_MB,COLD_USED_MB from v$asm_disk where path like '%ACFS%';
+
+Disk detail under diskgroup
+===============================
+ set pages 200
+set lines 200
+col NAME for a20
+col FAILGROUP for a20
+col HEADER_STATUS for a10
+col MODE_STATUS for a10
+col PATH for a50
+select name,STATE,MODE_STATUS,HEADER_STATUS,FAILGROUP,path from v$asm_disk;
+
+=================================================
+
+DG size
+=========================
+SET LINESIZE 145
+SET PAGESIZE 9999
+SET VERIFY off
+
+COLUMN group_name FORMAT a20 HEAD 'Disk Group|Name'
+COLUMN sector_size FORMAT 99,999 HEAD 'Sector|Size'
+COLUMN block_size FORMAT 99,999 HEAD 'Block|Size'
+COLUMN allocation_unit_size FORMAT 999,999,999 HEAD 'Allocation|Unit Size'
+COLUMN state FORMAT a11 HEAD 'State'
+COLUMN type FORMAT a6 HEAD 'Type'
+COLUMN total_mb FORMAT 999,999,999 HEAD 'Total Size (MB)'
+COLUMN used_mb FORMAT 999,999,999 HEAD 'Used Size (MB)'
+COLUMN pct_used FORMAT 999.99 HEAD 'Pct. Used'
+
+break on report on disk_group_name skip 1
+
+compute sum label "Grand Total: " of total_mb used_mb on report
+
+SELECT
+ name group_name
+ , sector_size sector_size
+ , block_size block_size
+ , allocation_unit_size allocation_unit_size
+ , state state
+ , type type
+ , total_mb total_mb
+ , (total_mb - free_mb) used_mb
+ , ROUND((1- (free_mb / total_mb))*100, 2) pct_used
+FROM
+ v$asm_diskgroup
+ORDER BY
+ name
+/
+
+
+Disk Group            Sector   Block   Allocation
+Name                    Size    Size    Unit Size State       Type   Total Size (MB) Used Size (MB) Pct. Used
+-------------------- ------- ------- ------------ ----------- ------ --------------- -------------- ---------
+DG_CRS                   512   4,096    4,194,304 MOUNTED     NORMAL         196,608            916       .47
+DG_DATADW                512   4,096    4,194,304 MOUNTED     EXTERN       5,242,880      3,506,768     66.89
+DG_DATAOLTP              512   4,096    4,194,304 MOUNTED     EXTERN      49,283,072     46,245,856     93.84
+DG_FRADW                 512   4,096    4,194,304 MOUNTED     EXTERN       1,048,576        188,836     18.01
+DG_FRAOLTP               512   4,096    4,194,304 MOUNTED     EXTERN       6,291,456      1,884,252     29.95
+DG_ORABKP                512   4,096    4,194,304 MOUNTED     EXTERN       9,437,184      9,335,036     98.92
+DG_REDODW                512   4,096    4,194,304 MOUNTED     EXTERN         262,144            148       .06
+DG_REDOOLTP              512   4,096    4,194,304 MOUNTED     EXTERN         786,432         53,264      6.77
+                                                                     --------------- --------------
+Grand Total:                                                              72,548,352     61,215,076
+
+
+================================================
+
+
+select    mount_status,    header_status,    mode_status,    state,    total_mb,    free_mb,    name,    path,    label from    v$asm_disk;    
+
+Now, we can add the disk to the ASM diskgroup:
+
+alter diskgroup    my_diskgroup add disk    '/devices/rhdisk1';       
+
+ALTER DISKGROUP    dgroup1 ADD DISK    '/devices/diska5' NAME diska5,    '/devices/diska6' NAME diska6;
+
+~]# cat /etc/udev/rules.d/99-oracle-asmdevices.rules
+
+secfsd -status devmap
+
+
+ 
+ALTER DISKGROUP dgroup1 ADD DISK '/devices/diska*'; 
+ 
+ALTER DISKGROUP DG_RMS_VTE_DATA01 ADD DISK '/dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_45' ;
+
+
+NAME                 State       MODE_STATU HEADER_STA FAILGROUP            PATH
+-------------------- ----------- ---------- ---------- -------------------- --------------------------------------------------
+                     NORMAL      ONLINE     CANDIDATE                       /dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_49
+                     NORMAL      ONLINE     CANDIDATE                       /dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_44
+                     NORMAL      ONLINE     CANDIDATE                       /dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_46
+                     NORMAL      ONLINE     CANDIDATE                       /dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_47    
+                     NORMAL      ONLINE     CANDIDATE                       /dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_48
+                     NORMAL      ONLINE     CANDIDATE                       /dev/oracleasm/disks/NEW_VTE_1024_DATAOLTP_45
+
+
+
+
+alter diskgroup DG_DATAOLTP add disk '/dev/oracleasm/disks/GEN_VTE_1024_DATAOLTP_10' name DG_DATAOLTP_0010 rebalance power 11;
+
+cat /etc/udev/rules.d/99-oracle-asmdevices.rules
+
+col PATH for a45
+col NAME for a25
+select name, header_status, PATH, os_mb from v$asm_disk;
+
+./runcluvfy.sh stage -pre crsinst -n usdfw25db11vcn1,usdfw25db11vcn1 -fixup -verbose
+
+gurarding
+===================
+oracle@gbexe22db61vcn1:+ASM1>secfsd -status guard
+GuardPoint   Policy                      Type       ConfigState  Status   Reason
+----------   ------                      ----       -----------  ------   ------
+/dev/xvddc1  GBEXE22DB61VCN1_CN2_Policy  rawdevice  guarded      guarded  N/A
+oracle@gbexe22db61vcn1:+ASM1>
+
+
+Stop vormetric
+=======================
+
+/etc/vormetric/secfs stop
+
+
+oragrid@usdfw24db28v:+ASM>
+oragrid@usdfw24db28v:+ASM>sudo "/opt/oracle/product/10.2.0/root.sh"
+Stopping the CipherTrust Transparent Encryption Agent.
+Stopping Live Data Transform processes (if any).
+
+
+Successfully stopped the Encryption Expert File System Agent.
+oragrid@usdfw24db28v:+ASM>
+oragrid@usdfw24db28v:+ASM>
+oragrid@usdfw24db28v:+ASM>vi /opt/oracle/product/10.2.0/root.sh
+
+
+/etc/vormetric/secfs start
+
+"/opt/oracle/product/10.2.0/root.sh" 3L, 29C written
+oragrid@usdfw24db28v:+ASM>
+oragrid@usdfw24db28v:+ASM>
+oragrid@usdfw24db28v:+ASM>sudo "/opt/oracle/product/10.2.0/root.sh"
+Starting the CipherTrust Transparent Encryption Agent.
+Successfully started Encryption Expert File System Agent.
+oragrid@usdfw24db28v:+ASM>
+
+
+====================
+
+DG 
+
+create diskgroup GEN_UAT_FRA external redundancy disk '/dev/oracleasm/disks/GEN_UAT_FRA_32_01','/dev/oracleasm/disks/GEN_UAT_FRA_32_02','/dev/oracleasm/disks/GEN_UAT_FRA_32_03';
+
+============================================
+
+https://huzefapatel.com/blogs/20-asmcmd-useful-commands/
+
+Disk id media detail
+=====================
+
+cat 99-oracle-asmdevices.rules.DR | grep secvm_dev_xvd | awk '{print $1}' | awk -F"_" '{print $NF}' | tr -d "\"" | tr -d "," | awk '{print "/dev/"$1}'
+
+======================================
+
+
+MTU query
+
+===================
+SELECT MU.*, MUA.ACCESS_LEVEL, MUA.USER_ATTEMPT, MUA.USER_LAST_LOGIN,
+SECURITY_QUESTION_ID, MUA.USER_PREVIOUS_LOGIN,
+W.WORKGROUPDESCRIPTION FROM MERCER_USERS MU, MERCER_USERS_APP_ACCESS
+MUA, USER_SEC_QUE Q, WORKGROUPS W WHERE UPPER(MU.USER_USERNAME) =
+UPPER(:B2 ) AND MU.USER_ID = MUA.USER_ID AND MUA.APP_ID = :B1 AND
+UPPER(MUA.ENABLED) = 'Y' AND MU.USER_ID = Q.USER_ID(+) AND
+MU.WORKGROUP_ID = W.WORKGROUPID;
+
+====================================
+
+[oracle@usfkl22db19v ~]$ cat /etc/oratab | grep oracle| grep -v ^'#' | grep -v ^$ | awk -F ":" ' { print $2 }' | grep -v ASM | uniq
+/opt/oracle/product/19.3.0/dbhome_1
+/opt/oracle/product/12.2.0.1/dbhome_1
+/opt/oracle/product/19.3.0/dbhome_1
+
+
+==========================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

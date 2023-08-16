@@ -1,0 +1,184 @@
+Fix write in gcs resources
+Thu Aug 26 17:47:20 2021
+Reconfiguration complete (total time 0.1 secs)
+Sat Aug 28 11:41:58 2021
+alter database mount
+Sat Aug 28 11:41:58 2021
+This instance was first to mount
+Sat Aug 28 11:41:58 2021
+NOTE: ASMB mounting group 5 (VTEGEN_UAT_DATA)
+NOTE: ASM background process initiating disk discovery for grp 5 (reqid:0)
+WARNING: group 5 (VTEGEN_UAT_DATA) has missing disks
+ORA-15040: diskgroup is incomplete
+WARNING: group 5 is being dismounted.
+WARNING: ASMB force dismounting group 5 (VTEGEN_UAT_DATA) due to missing disks
+SUCCESS: diskgroup VTEGEN_UAT_DATA was dismounted
+Sat Aug 28 11:41:58 2021
+ORA-00210: cannot open the specified control file
+ORA-00202: control file: '+VTEGEN_UAT_DATA/OLTT245STD/CONTROLFILE/current.257.1078651413'
+ORA-17503: ksfdopn:2 Failed to open file +VTEGEN_UAT_DATA/OLTT245STD/CONTROLFILE/current.257.1078651413
+ORA-15001: diskgroup "VTEGEN_UAT_DATA" does not exist or is not mounted
+ORA-15040: diskgroup is incomplete
+ORA-205 signalled during: alter database mount...
+
+
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>cd /opt/oracle/product/1210/db/bin/
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>ls -ltr oracle*
+-rwsr-s--x 1 oracle dba 323613256 Jul 12 09:06 oracleO*
+-rwsr-s--x 1 oracle dba 323613256 Aug 16 21:57 oracle*
+oracle@iedub26db02vcn1:oltt245stdn1>
+
+
+
+oracle@iedub26db02vcn1:oltt245stdn1>cd /opt/oragrid/product/19/grid
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>cd bin/
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>ls -ltr oracle*
+-rwsr-s--x 1 oragrid dba 425031728 Aug 16 10:39 oracle*
+oracle@iedub26db02vcn1:oltt245stdn1>
+
+
+oracle@iedub26db02vcn1:oltt245stdn1>ls -lrta /opt/oragrid/product/19/grid/bin/oracle*
+-rwsr-s--x 1 oragrid dba 425031728 Aug 28 12:11 /opt/oragrid/product/19/grid/bin/oracle*
+or
+
+racle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub26db02vcn1:oltt245stdn1>ls -lrth
+total 0
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTET231_UAT_FRA_32_01 -> ../../dm-38
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_TEMP_16_01 -> ../../dm-37
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_TEMP_64_01 -> ../../dm-23
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_TEMP_16_02 -> ../../dm-31
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_TEMP_64_04 -> ../../dm-34
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_TEMP_16_04 -> ../../dm-29
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_FRA_32_01 -> ../../dm-35
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTET231_UAT_DATA_1024_03 -> ../../dm-33
+lrwxrwxrwx 1 root root 10 Aug 28 11:41 GEN_UAT_CLUSTER_16_01 -> ../../sdb1
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_TEMP_64_02 -> ../../dm-21
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_DATA_1024_04 -> ../../dm-16
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_DATA_1024_03 -> ../../dm-11
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_TEMP_16_03 -> ../../dm-28
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_FRA_32_03 -> ../../dm-10
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_FRA_32_02 -> ../../dm-17
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTET231_UAT_DATA_1024_01 -> ../../dm-32
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_DATA_32_02 -> ../../dm-19
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTET231_UAT_FRA_32_03 -> ../../dm-26
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTET231_UAT_DATA_1024_02 -> ../../dm-20
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_TEMP_64_03 -> ../../dm-14
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_DATA_32_01 -> ../../dm-15
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTET231_UAT_FRA_32_02 -> ../../dm-24
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_DATA_1024_02 -> ../../dm-18
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 VTEGEN_UAT_DATA_1024_01 -> ../../dm-13
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_DATA_32_04 -> ../../dm-25
+lrwxrwxrwx 1 root root 11 Aug 28 11:41 GEN_UAT_DATA_32_03 -> ../../dm-36
+lrwxrwxrwx 1 root root 11 Aug 28 11:46 VTEGEN_UAT_FRA_128_04 -> ../../dm-27
+lrwxrwxrwx 1 root root 11 Aug 28 11:46 VTEGEN_UAT_FRA_128_03 -> ../../dm-30
+lrwxrwxrwx 1 root root 11 Aug 28 11:46 VTEGEN_UAT_FRA_128_02 -> ../../dm-22
+lrwxrwxrwx 1 root root 11 Aug 28 11:46 VTEGEN_UAT_FRA_128_01 -> ../../dm-12
+oracle@iedub26db02vcn1:oltt245stdn1>
+
+
+oracle@iedub26db02vcn1:oltt231s1>
+oracle@iedub26db02vcn1:oltt231s1>cd /opt/oracle/product/1210/db/bin/
+oracle@iedub26db02vcn1:oltt231s1>
+oracle@iedub26db02vcn1:oltt231s1>ls -lrta oracle*
+-rwsr-s--x 1 oracle dba 323613256 Jul 12 09:06 oracleO*
+-rwsr-s--x 1 oracle dba 323613256 Aug 16 21:57 oracle*
+oracle@iedub26db02vcn1:oltt231s1>
+
+racle@iedub26db02vcn1:oltt245stdn1>ls -lrta /opt/oracle/product/1210/db/bin/oracle
+-rwsr-s--x 1 oracle dba 323613256 Aug 28 12:23 /opt/oracle/product/1210/db/bin/oracle*
+oracle@iedub26db02vcn1:oltt245stdn1>
+oracle@iedub
+
+
+
+
+Relinking Oracle Home FAQ ( Frequently Asked Questions) (Doc ID 1467060.1
+
+_fix_control
+string                                       17376322:OFF
+control_file_record_keep_time
+integer                                      7
+control_files
+string                                       +VTEGEN_UAT_FRA/OLTT268/CONTRO
+                                             LFILE/ctrl02.ctl
+control_management_pack_access
+string                                       DIAGNOSTIC+TUNING
+SQL> select name from v$database;
+
+NAME
+---------
+OLTT268
+
+
+
+
+
+OTE: released resources held for client id 0x1000f (reg:729591570)
+2021-08-28T12:49:52.255563+01:00
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl no longer has group 6 (VTEGEN_UAT_FRA) mounted
+2021-08-28T12:49:54.258500+01:00
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl deregistered
+2021-08-28T12:51:58.368948+01:00
+NOTE: Flex client id 0x0 [oltt268n1:oltt268:iedub26db02v-cl] attempting to connect
+NOTE: registered owner id 0x10010 for oltt268n1:oltt268:iedub26db02v-cl
+NOTE: Flex client oltt268n1:oltt268:iedub26db02v-cl registered, osid 38839, mbr 0x0, asmb 38808 (reg:974597133)
+2021-08-28T12:52:01.638604+01:00
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl mounted group 6 (VTEGEN_UAT_FRA)
+2021-08-28T12:52:06.881610+01:00
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl no longer has group 5 (VTEGEN_UAT_DATA) mounted
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl no longer has group 5 (VTEGEN_UAT_DATA) mounted
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl no longer has group 5 (VTEGEN_UAT_DATA) mounted
+NOTE: client oltt268n1:oltt268:iedub26db02v-cl no longer has group 5 (VTEGEN_UAT_DATA) mounted
+2021-08-28T12:55:44.491273+01:00
+NOTE: Flex client id 0x0 [oltt184s1:oltt184:iedub26db02v-cl] attempting to connect
+NOTE: registered owner id 0x10011 for oltt184s1:oltt184:iedub26db02v-cl
+NOTE: Flex client oltt184s1:oltt184:iedub26db02v-cl registered, osid 40981, mbr 0x0, asmb 40958 (reg:1317117652)
+2021-08-28T12:55:46.813407+01:00
+NOTE: client oltt184s1:oltt184:iedub26db02v-cl no longer has group 5 (VTEGEN_UAT_DATA) mounted
+NOTE: client oltt184s1:oltt184:iedub26db02v-cl mounted group 6 (VTEGEN_UAT_FRA)
+2021-08-28T12:55:50.430511+01:00
+NOTE: ASM client oltt184s1:oltt184:iedub26db02v-cl disconnected unexpectedly.
+NOTE: check client alert log.
+NOTE: cleaned up ASM client oltt184s1:oltt184:iedub26db02v-cl connection state (reg:1317117652)
+2021-08-28T12:55:50.682446+01:00
+Dumping diagnostic data in directory=[cdmp_20210828125550], requested by (instance=0, osid=40981), summary=[trace bucket dump request (kfnclDelete0)].
+2021-08-28T12:55:50.791609+01:00
+NOTE: detected orphaned ownerid 0x10011; rcl client id 0x10011.
+2021-08-28T12:55:53.792118+01:00
+NOTE: Proactively cleaning up dead client oltt184s1:oltt184:iedub26db02v-cl with orphan ownerid 0x10011; 2s elapsed
+WARNING: giving up on client id 0x10011 [oltt184s1:oltt184:iedub26db02v-cl] which has not reconnected for 2 seconds (originally from ASM inst +ASM1, reg:1317117652) [dead]
+NOTE: removing stale ownerid 0x10011 for client oltt184s1:oltt184:iedub26db02v-cl (reg:1317117652)
+NOTE: removing stale cgid 0x10011 for client oltt184s1:oltt184:iedub26db02v-cl (clientid:0x10011 gn:0 startid:0)
+NOTE: released resources held for CGID 0x10011 (gn: 0)
+NOTE: released resources held for client id 0x10011 (reg:1317117652)
+~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

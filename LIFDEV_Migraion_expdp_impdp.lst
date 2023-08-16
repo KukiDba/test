@@ -1,0 +1,387 @@
+#################source database character 
+col PROPERTY_NAME for a30
+col PROPERTY_VALUE for a30
+col DESCRIPTION for a50
+set lines 300
+select * from database_properties where PROPERTY_NAME like '%CHARACTER%';
+
+PROPERTY_NAME                  PROPERTY_VALUE                 DESCRIPTION
+------------------------------ ------------------------------ ----------------------------------------
+NLS_NUMERIC_CHARACTERS         .,                             Numeric characters
+NLS_NCHAR_CHARACTERSET         UTF8                           NCHAR Character set
+NLS_CHARACTERSET               UTF8                           Character set
+
+##########################Target databaes char : -
+
+SQL> col PROPERTY_NAME for a30
+col PROPERTY_VALUE for a30
+col DESCRIPTION for a50
+set lines 300
+select * from database_properties where PROPERTY_NAME like '%CHARACTER%';SQL> SQL> SQL> SQL>
+
+PROPERTY_NAME                  PROPERTY_VALUE                 DESCRIPTION
+------------------------------ ------------------------------ --------------------------------------------------
+NLS_NUMERIC_CHARACTERS         .,                             Numeric characters
+NLS_NCHAR_CHARACTERSET         AL16UTF16                      NCHAR Character set
+NLS_CHARACTERSET               AL32UTF8                       Character set
+
+
+#### Before proceesing with migrataion ==
+select mkloc from x$kcbdbk;
+-17 -- proceeding with export /import 
+
+/orabackup01/backup/ExaMigCC_7Jun2022
+###############2)	Verify if there are any users assigned with the incorrect temporary tablespace.
+
+alter user DBA_ADMIN local temporary tablespace TEMP ;
+alter user APEX_030200 local temporary tablespace TEMP ;
+alter user PS local temporary tablespace TEMP ;
+alter user SYSADM local temporary tablespace TEMP ;
+alter user AUDITOR local temporary tablespace TEMP ;
+alter user CYBERARK_ADMIN local temporary tablespace TEMP ;
+alter user PS8USER local temporary tablespace TEMP ;
+alter user QA_ADMIN local temporary tablespace TEMP ;
+alter user U1262133_AVERMA_DBA local temporary tablespace TEMP ;
+alter user U1243703_ACHAUDHARY_DBA local temporary tablespace TEMP ;
+alter user U1250347_SVARSHNEY_DBA local temporary tablespace TEMP ;
+alter user U1248539_RGHOSH_DBA local temporary tablespace TEMP ;
+alter user VERMAP881873 local temporary tablespace TEMP ;
+alter user KALLAMP1212408 local temporary tablespace TEMP ;
+alter user SEEK622100 local temporary tablespace TEMP ;
+alter user GANJOA1219658 local temporary tablespace TEMP ;
+alter user GUPTAD1207882 local temporary tablespace TEMP ;
+alter user HUANGH587165 local temporary tablespace TEMP ;
+alter user GARICHT616591 local temporary tablespace TEMP ;
+alter user ADVANIB1219659 local temporary tablespace TEMP ;
+alter user BHATIT1245162 local temporary tablespace TEMP ;
+alter user JAHANN1237029 local temporary tablespace TEMP ;
+alter user SHUKLAS1248777 local temporary tablespace TEMP ;
+alter user PARKERS1093369 local temporary tablespace TEMP ;
+
+
+select username ,LOCAL_TEMP_TABLESPACE from dba_users
+where local_temp_tablespace <> 'TEMP'
+and  oracle_maintained = 'N';
+
+USERNAME                                                                                                                         LOCAL_TEMP_TABLESPACE
+-------------------------------------------------------------------------------------------------------------------------------- ------------------------------
+SYSADM                                                                                                                           SYSTEM
+PS8USER                                                                                                                          SYSTEM
+QA_ADMIN                                                                                                                         SYSTEM
+SEEK622100                                                                                                                       SYSTEM
+
+select USERNAME,TEMPORARY_TABLESPACE ,LOCAL_TEMP_TABLESPACE from dba_users where username in ('SYSADM','PS8USER','QA_ADMIN','SEEK622100');
+
+
+alter user PS8USER local temporary tablespace PSTEMP ;
+alter user QA_ADMIN local temporary tablespace PSTEMP ;
+alter user SEEK622100 local temporary tablespace PSTEMP ;
+
+################3)	Verify if there are any users exists with password version 10 and user status in ROLLOVER.
+
+
+select username, account_status,password_versions from dba_users where trim(password_versions)='10G';
+
+USERNAME                       ACCOUNT_STATUS                   PASSWORD_VERSIONS
+------------------------------ -------------------------------- ---------------------------------------------------
+DBSNMP                         OPEN                             10G
+APPQOSSYS                      LOCKED                           10G
+GSMCATUSER                     LOCKED                           10G
+SYSBACKUP                      LOCKED                           10G
+REMOTE_SCHEDULER_AGENT         LOCKED                           10G
+DBSFWUSER                      LOCKED                           10G
+ANONYMOUS                      LOCKED                           10G
+APEX_PUBLIC_USER               LOCKED                           10G
+FLOWS_FILES                    LOCKED                           10G
+GSMUSER                        LOCKED                           10G
+GGSYS                          LOCKED                           10G
+SYSRAC                         LOCKED                           10G
+APEX_030200                    LOCKED                           10G
+OJVMSYS                        LOCKED                           10G
+AUDSYS                         LOCKED                           10G
+DIP                            LOCKED                           10G
+GSMADMIN_INTERNAL              LOCKED                           10G
+APEX_050000                    LOCKED                           10G
+SYSKM                          LOCKED                           10G
+APEX_040200                    LOCKED                           10G
+AUDITOR                        LOCKED                           10G
+CYBERARK_ADMIN                 OPEN                             10G
+OUTLN                          LOCKED                           10G
+ORACLE_OCM                     LOCKED                           10G
+SYS$UMF                        LOCKED                           10G
+XDB                            LOCKED                           10G
+QA_ADMIN                       OPEN                             10G
+SYSDG                          LOCKED                           10G
+
+Select username, account_status,password_versions from dba_users where account_status like '%ROLLOVER%';
+USERNAME                       ACCOUNT_STATUS                   PASSWORD_VERSIONS
+------------------------------ -------------------------------- ---------------------------------------------------
+SYSTEM                         LOCKED & IN ROLLOVER             10G 11G 12C
+
+
+SQL> select USERNAME,TEMPORARY_TABLESPACE ,LOCAL_TEMP_TABLESPACE from dba_users where username='SYSADM';
+
+USERNAME
+--------------------------------------------------------------------------------
+TEMPORARY_TABLESPACE           LOCAL_TEMP_TABLESPACE
+------------------------------ ------------------------------
+SYSADM
+PSTEMP                         SYSTEM
+
+
+SQL> alter user SYSADM local temporary tablespace PSTEMP ;
+
+User altered.
+
+SQL> select USERNAME,TEMPORARY_TABLESPACE ,LOCAL_TEMP_TABLESPACE from dba_users where username='SYSADM';
+
+USERNAME
+--------------------------------------------------------------------------------
+TEMPORARY_TABLESPACE           LOCAL_TEMP_TABLESPACE
+------------------------------ ------------------------------
+SYSADM
+PSTEMP                         PSTEMP
+
+
+SQL>
+
+
+
+SQL> select USERNAME,TEMPORARY_TABLESPACE ,LOCAL_TEMP_TABLESPACE from dba_users where username in ('SYSADM','PS8USER','QA_ADMIN','SEEK622100');
+
+USERNAME                       TEMPORARY_TABLESPACE           LOCAL_TEMP_TABLESPACE
+------------------------------ ------------------------------ ------------------------------
+SYSADM                         PSTEMP                         PSTEMP
+PS8USER                        PSTEMP                         PSTEMP
+QA_ADMIN                       PSTEMP                         PSTEMP
+SEEK622100                     PSTEMP                         PSTEMP
+
+SQL>
+
+select username,temporary_tablespace from dba_users where temporary_tablespace  not in (select tablespace_name from dba_tablespaces where contents='TEMPORARY');
+
+select username,default_tablespace from dba_users where default_tablespace not in (select tablespace_name from dba_tablespaces) order by 1;
+
+select owner,table_name,DEF_TABLESPACE_NAME from dba_part_tables where DEF_TABLESPACE_NAME not in (select tablespace_name from dba_tablespaces);
+
+no row selected 
+
+##################5)	The following parameter should be set at the source side prior to the migration if not set to the appropriate value.
+
+1)            as sysdba PURGE DBA_RECYCLEBIN
+SQL> select count(1) from DBA_RECYCLEBIN ;
+
+  COUNT(1)
+----------
+         0
+
+
+ 2)            CHECK STREAMS_POOL_SIZE=150M minimum 
+ 3)            CHECK undo_retention = 18000 
+ 4)            CHECK pga_aggregate_limit=5g
+ 5)            CHECK aq_tm_processes=1
+ 
+ ##############6)	Check and drop APEX schemas in source database (If APEX is not being used).
+ 
+ 
+ SQL> select username from dba_users where username like 'APEX%';
+
+USERNAME
+------------------------------
+APEX_PUBLIC_USER
+APEX_030200
+APEX_050000
+APEX_040200
+
+####Verify and drop above apex users using below command.
+select ' DROP USER '||username || ' CASCADE ;' from dba_users where username like 'APEX%';
+
+
+
+drop package sys.wwv_dbms_sql;
+@/u02/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin/utlrp.sql
+	
+####Verify if there are any INVALID objects for SYSADM user.
+
+SQL> select owner,object_name from dba_objects  where status <> 'VALID'  ;
+
+OWNER                OBJECT_NAME
+-------------------- --------------------
+SEEK622100           MHR_QUERY_AUDIT_TBL
+SYSADM               MHRCREATEOPRID
+SYSADM               PS_MHR_SCRTY_RPT
+
+###################3.2	Source Server Migration Execution 
+#######################1)	Create Migration user and assign required grants on source database.
+
+
+create user MIGRATION identified by MMC_Prod_Mar312022 default tablespace SYSAUX;
+alter user MIGRATION account unlock;
+alter user MIGRATION quota 200m ON SYSAUX;
+ 
+grant unlimited tablespace to MIGRATION;
+grant create session,create table TO MIGRATION;
+grant select any dictionary TO MIGRATION;
+grant exp_full_database TO MIGRATION;
+grant select any table TO MIGRATION;
+grant select_catalog_role to MIGRATION;
+grant execute on dbms_system to MIGRATION;
+grant restricted session to MIGRATION;
+grant create any directory to MIGRATION;
+grant drop any directory to MIGRATION;
+grant become user to MIGRATION;
+grant alter system to MIGRATION;
+grant administer sql tuning set to MIGRATION;
+grant execute on utl_file to MIGRATION;
+grant manage tablespace to MIGRATION;
+grant execute on dbms_workload_capture to MIGRATION;
+grant execute on DBMS_WORKLOAD_REPOSITORY to MIGRATION;
+grant flashback any table to MIGRATION;
+grant advisor to MIGRATION;
+grant execute on DBMS_LOB TO MIGRATION;
+grant EXEMPT ACCESS POLICY to MIGRATION;
+grant select on sys.user_history$ to MIGRATION;
+
+
+
+create or replace directory EXP_IMP as '/var/oracle/export/LIFDEV/exacc_mig';
+grant read,write on DIRECTORY EXP_IMP TO MIGRATION;
+
+
+Query to get the SCN:
+select to_char(current_scn) from v$database;
+#######################2)	Take Export backup on Source database.
+
+expdp \"MIGRATION/MMC_Prod_Mar312022\"   full=y   content=METADATA_ONLY   include=role   directory= EXP_IMP   dumpfile=LIFDEV_role.dmp   logfile=LIFDEV_role.log   version=19
+
+=== profiles backup:
+
+expdp \"MIGRATION/MMC_Prod_Mar312022\"   full=y   content=METADATA_ONLY   include=profile   directory= EXP_IMP   dumpfile=LIFDEV_profile.dmp   logfile=LIFDEV_profile.log   version=19
+
+=== users backup:
+
+expdp \"MIGRATION/MMC_Prod_Mar312022\"    full=y   content=METADATA_ONLY   include=user   directory= EXP_IMP   dumpfile=LIFDEV_user.dmp   logfile=LIFDEV_user.log   version=19
+
+-- /var/oracle/export/LIFDEV/exacc_mig/export.sh
+
+expdp \"MIGRATION/MMC_Prod_Mar312022\"   full=Y   EXCLUDE=STATISTICS   directory=EXP_IMP   dumpfile=LIFDEV_full_exp.dmp   logfile=LIFDEV_full_exp.log   METRICS=Y   flashback_scn=6548777544986
+
+#################3)	Execute the below code on source database and generate the tablespace creation script .
+
+set feedback on 
+set echo on 
+spool create_tbs_LIFDEV.sql
+SET LONG 20000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+SELECT DBMS_METADATA.get_ddl ('TABLESPACE', tablespace_name)
+FROM   dba_tablespaces ;
+--WHERE  tablespace_name = DECODE(UPPER('&1'), 'ALL', tablespace_name, UPPER('&1'));
+
+SET PAGESIZE 14 LINESIZE 100 FEEDBACK ON VERIFY ON
+
+spool off ;
+
+#############################################################################
+CREATE PDB at container with LIFDEV name
+
+
+select sqlstmt from PDB_SYNC$ where sqlstmt like ('%alter user C##DBA_ADMIN%');
+create table BKPPDB_SYNC$ as select * from PDB_SYNC$;
+delete from PDB_SYNC$ where sqlstmt like ('%alter user C##DBA_ADMIN quota unlimited on USERS%');
+commit ;
+
+
+
+
+select property_value
+from database_properties
+where property_name = 'DEFAULT_TBS_TYPE';
+
+alter database set default smallfile tablespace;
+
+#############3.3	Target Server Migration Execution
+
+###############1)	Create  Migration user and assign required grants.
+
+
+create tablespace MIG_TBS;
+
+create user MIGRATION identified by MMC_Prod_Mar312022 default tablespace MIG_TBS profile default;
+alter user MIGRATION account unlock;
+alter user MIGRATION default tablespace MIG_TBS;
+alter user MIGRATION profile default;
+alter user MIGRATION quota unlimited ON MIG_TBS;
+ 
+grant BECOME USER to MIGRATION ;
+grant IMP_FULL_DATABASE to MIGRATION;
+grant unlimited tablespace to MIGRATION;
+grant oem_advisor to MIGRATION;
+grant create session,create table TO MIGRATION;
+grant SELECT ANY DICTIONARY to MIGRATION;
+grant EXP_FULL_DATABASE TO MIGRATION;
+grant SELECT ANY TABLE TO MIGRATION;
+grant CREATE ANY DIRECTORY TO MIGRATION;
+grant alter system to MIGRATION;
+grant administer sql tuning set to MIGRATION;
+grant execute on utl_file to MIGRATION;
+grant IMP_FULL_DATABASE TO MIGRATION;
+alter user MIGRATION quota unlimited on SYSAUX;
+grant create any materialized view to MIGRATION;
+grant execute on dbms_workload_replay to MIGRATION;
+grant advisor to MIGRATION;
+grant execute on SYS.DBMS_SYS_SQL to MIGRATION;
+grant select on SYS.user$ to MIGRATION;
+ 
+create or replace directory EXP_IMP as '/var/oracle/export/LIFDEV/exacc_mig';
+grant read,write on DIRECTORY EXP_IMP TO MIGRATION;
+
+
+#######################2)	Pre-Create the tablespaces on the target PDB.
+create tablespace using scirpt (create_tbs_LIFDEV.sql)
+
+impdp MIGRATION/MMC_Prod_Mar312022@LIFDEV   DIRECTORY=EXP_IMP    DUMPFILE=LIFDEV_role.dmp    FULL=Y   INCLUDE=ROLE   LOGFILE=LIFDEV_role_imp.log
+
+impdp MIGRATION/MMC_Prod_Mar312022@LIFDEV  DIRECTORY=EXP_IMP    DUMPFILE= LIFDEV_profile.dmp    FULL=Y   INCLUDE=PROFILE   LOGFILE= LIFDEV_profile_imp.log
+
+impdp MIGRATION/MMC_Prod_Mar312022@LIFDEV    DIRECTORY=EXP_IMP    DUMPFILE=LIFDEV_user.dmp    FULL=Y    LOGFILE=user_imp.log   ACCESS_METHOD=DIRECT_PATH
+
+impdp MIGRATION/MMC_Prod_Mar312022@LIFDEV   full=y   DIRECTORY=EXP_IMP   dumpfile= LIFDEV_full_exp.dmp   LOGFILE=LIFDEV_imp.log   METRICS=Y   cluster=n   EXCLUDE=tablespace,user,PASSWORD_HISTORY
+
+
+select * from gv$encryption_wallet;
+select TS#, ENCRYPTIONALG,ENCRYPTEDTS,KEY_VERSION,STATUS,CON_ID from  v$encrypted_tablespaces;
+***********  For  IPAS   databases,  set the following params  at  PDB level and bounce PDB
+
+Alter session set container= LIFDEV;
+
+alter system set "_fix_control" ='12433153:off' scope=both sid='*';
+
+
+alter system set "_unnest_subquery"=FALSE  scope=both sid='*';
+
+
+       connect / as sysdba    (  connect to CDB )
+ 
+       show pdbs;
+
+           alter pluggable database LIFDEV   close immediate instances=all;
+           alter pluggable database LIFDEV   open  instances=all;
+
+           show pdbs;
+
+LIFDEV=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=usdfw23db02v-sca)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME=LIFDEV.mrshmc.com)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))

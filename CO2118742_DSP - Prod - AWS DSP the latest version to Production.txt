@@ -1,0 +1,133 @@
+CO2118742_DSP - Prod - AWS DSP the latest version to Production
+Order Description   
+DBA Team - Someone from DBA Team to take backup and on stand by for any unexpected thing in case server/database restart required.
+
+Note: No PI Information is stored in database.
+
+Need ISMS (ATO CSM) & ISMS RM team to deploy DSP the latest to production.
+ISMS to deploy latest Jenkins build version.
+Please check attached document for detailed instructions.
+
+Time code for this job:
+Please use "PAC - DS Investor Portal • 1001308" and Post-Implementation activities
+Justification   	CAB Approval   
+This is part of DSP ongoing continuous integration/continuous deployment process.
+---------
+
+New Connection String (ASG MongoDB Server) - To Be Verified
+
+MONGODB_URI=mongodb://svc-prd-DSP-app:password@
+ip-10-236-42-128.ec2.internal:27072,
+ip-10-236-11-136.ec2.internal:27072,
+ip-10-236-27-50.ec2.internal:27072/
+
+DSP?replicaSet=REPDSP072&authSource=$external&authMechanism=PLAIN
+
+
+
+
+4	Post Deployment
+	#1. Please take a PROD database backup and share it at –
+\\Inggn61ns1avf2\groups\Shared\Temp\DewashishDSPortal\
+
+#2. Run the provided script – “DSP_M50_ScriptsToBeExceuted.txt”.
+
+Note:  No PI information is stored in database.
+
+Also availability in case, database restart is required due any connection issues.	DBA Team
+
+-
+
+[root@ip-10-236-11-136 u1222605]# docker ps |grep 27072
+e6f8174a63e0        ip-10-236-6-6.ec2.internal:5000/mongo-enterprise-4.2.6:4.2.6     "mongod -f /mongod..."   2 months ago        Up 13 days          
+10.236.11.136:27072->27072/tcp   PROD-DSP072PROD-mongo-rs
+[root@ip-10-236-11-136 u1222605]#
+
+
+sudo docker exec -ti PROD-DSP072PROD-mongo-rs mongo -u u1222605_app -p `cat /home/u1222605/pa` --port 27072 --authenticationDatabase '$external' --authenticationMechanism PLAIN
+
+
+sudo docker exec -ti PROD-DSP072PROD-mongo-rs mongodump -u u1222605_app -p `cat /home/u1222605/pa` --port 27072 --authenticationDatabase '$external' --authenticationMechanism PLAIN -d DSP --gzip -o /audit/CO2118742_DSP_PROD_DB_BKP
+
+
+db.getCollection('Client').findOne({ country: 'au' })
+
+db.getCollection('placement').findOne({programClientContactEmail ()})
+
+db.student.find({name:{$exists:true}})
+
+db.placement.find({programClientContactEmail:{$exists:true}})
+
+db.programClientContactEmail.find({ field1: 'content' }).count()
+
+https://www.zuar.com/blog/mongodb-cheat-sheet/
+
+
+Counting the Records in a Collection:
+========================================
+
+db.collectionname.find().count()
+
+MongoDB Enterprise rs_nam_aws_ppm_uat01:PRIMARY> db.program.find().count()
+272093
+MongoDB 
+
+Listing Records with Matching Values of Specific Fields:
+=======================================================
+db. collectionname.find({"field1": "matchers"})
+
+MongoDB Enterprise rs_nam_aws_ppm_uat01:PRIMARY> db.placement_model.find({"programVsnExpiryDt": "matchers"})
+MongoDB Enterprise rs_nam_aws_ppm_uat01:PRIMARY>
+MongoDB Enterprise rs_nam_aws_ppm_uat01:PRIMARY>
+
+
+========================================
+
+Finding a Single Record:
+db. collectionname.findOne({"field1": "content"})
+
+
+=======================================
+
+Listing a Collection’s Records:
+=====================================
+db.programClientContactEmail.find()
+
+db.collectionname.find().pretty()
+
+=====================================
+
+
+count++;
+
+
+db.getCollection('Client').update({ country: 'au' },[{ $set: { productDocument: true } }],{ multi: true });
+db.getCollection('Client').update({ country: 'nz' },[{ $set: { productDocument: false } }],{ multi: true });
+
+
+MongoDB Enterprise REPDSP072:PRIMARY> rs.isMaster().hosts
+[
+        "ip-10-236-11-136.ec2.internal:27072",
+        "ip-10-236-27-50.ec2.internal:27072",
+        "ip-10-236-42-128.ec2.internal:27072"
+]
+MongoDB Enterprise REPDSP072:PRIMARY> db
+DSP
+MongoDB Enterprise REPDSP072:PRIMARY> db.getCollection('Client').update({ country: 'au' },[{ $set: { productDocument: true } }],{ multi: true });
+WriteResult({ "nMatched" : 46, "nUpserted" : 0, "nModified" : 46 })
+MongoDB Enterprise REPDSP072:PRIMARY> db.getCollection('Client').update({ country: 'nz' },[{ $set: { productDocument: false } }],{ multi: true });
+WriteResult({ "nMatched" : 0, "nUpserted" : 0, "nModified" : 0 })
+MongoDB Enterprise REPDSP072:PRIMARY>
+
+
+
+==============================================
+
+import in mongoDb
+
+docker exec -ti PROD-MOE052PROD-mongo-rs  mongoimport --port 27052 --authenticationMechanism PLAIN -u u1073575_app /audit/CO1985763/subscription_prod.json -d entitlement -c subscriptions
+
+==================================================
+
+
+

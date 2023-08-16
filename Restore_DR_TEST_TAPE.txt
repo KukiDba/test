@@ -1,0 +1,118 @@
+1. Capture all datafile location,redo log location, pfile,control file,trace of controlfile  from source .
+
+show parameter pfile;
+select name from v$Datafile;
+show parameter control;
+select  GROUP#,STATUS,MEMBER from v$logfile;
+ALTER DATABASE BACKUP CONTROLFILE TO TRACE as '/home/oracle/OLTP192.sql';
+
+
+2. create pfile from spfile;
+
+create pfile='/tmp/pfile.ora' from spfile;
+
+
+3. Edit pfile according to the dr server , audit path,diskgroup naming convention shoud be matching, make directories at DR accordingly .
+
+
+4. Make DB in nomount with transferred pfile on DR server .
+
+5. Restore control file from tape and restore,recover database
+
+
+Restore controlfile from backup 
+=================================
+
+run {
+allocate channel c1 type 'sbt_tape'
+PARMS= 'ENV=(NB_ORA_CLASS=AEDBI_INT_MAR_RMAN_Weekly_5W,
+NB_ORA_SERV=gbexe21bs100v550,
+NB_ORA_CLIENT=aedbi21db02.mrshmc.com,
+NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+format 'hot_%d_%U_%t';
+set until time "to_date('09-JUN-2022 20:21:46','DD-MON-YYYY HH24:MI:SS')";
+restore controlfile ;
+}
+
+
+Restore,Recover Database
+===================
+
+connect target;
+connect catalog rman_user/Mar_Rman_Cat2021@RMANB1P;
+run {
+allocate channel c1 type 'sbt_tape'
+PARMS= 'ENV=(NB_ORA_CLASS=AEDBI_INT_MAR_RMAN_Weekly_5W,
+NB_ORA_SERV=gbexe21bs100v550,
+NB_ORA_CLIENT=aedbi21db02.mrshmc.com,
+NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+format 'hot_%d_%U_%t';
+restore database;
+switch datafile all;
+recover database;
+switch tempfile all;
+}
+
+
+=============================================================
+
+
+recover database using backup controlfile until cancel;
+
+
+
+To fetch archivelogs details from tape
+===========================================
+
+list backup of archivelog time between "to_date('09-JUN-2022 19:27:12','DD-MON-YYYY HH24:MI:SS')" and "to_date('10-JUN-2022 05:27:12','DD-MON-YYYY HH24:MI:SS')";
+
+
+
+Restore archivelog in case archivelog needed
+============================================
+connect target;
+connect catalog rman_user/Mar_Rman_Cat2021@RMANB1P;
+run {
+allocate channel c1 type 'sbt_tape'
+PARMS= 'ENV=(NB_ORA_CLASS=AEDBI_INT_MAR_RMAN_Weekly_5W,
+NB_ORA_SERV=gbexe21bs100v550,
+NB_ORA_CLIENT=aedbi21db02.mrshmc.com,
+NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+format 'hot_%d_%U_%t';
+restore archivelog from logseq 10905 until logseq 10930;
+release channel C1;
+}
+
+
+
+
+
+
+In case need to rename files
+======================================
+
+connect target;
+connect catalog rman_user/Mar_Rman_Cat2021@RMANB1P;
+run {
+allocate channel c1 type 'sbt_tape'
+PARMS= 'ENV=(NB_ORA_CLASS=AEDBI_INT_MAR_RMAN_Weekly_5W,
+NB_ORA_SERV=gbexe21bs100v550,
+NB_ORA_CLIENT=aedbi21db02.mrshmc.com,
+NLS_LANG=AMERICAN_AMERICA.AL32UTF8)'
+format 'hot_%d_%U_%t';
+set newname for datafile 1 to '/var/oradata/OLTP192/datafiles/OLTP192/system01.dbf';
+set newname for datafile 3 to '/var/oradata/OLTP192/datafiles/OLTP192/sysaux01.dbf';
+set newname for datafile 4 to '/var/oradata/OLTP192/datafiles/OLTP192/undotbs01.dbf';
+set newname for datafile 7 to '/var/oradata/OLTP192/datafiles/OLTP192/users01.dbf';
+set newname for datafile 5 to '/var/oradata/OLTP192/datafiles/OLTP192/ezynsure_EGY_data01.dbf';
+set newname for datafile 2 to '/var/oradata/OLTP192/datafiles/OLTP192/ezynsure_EGY_idx01.dbf';
+set newname for datafile 8 to '/var/oradata/OLTP192/datafiles/OLTP192/ezynsuresys_EGY_data01.dbf';
+set newname for datafile 9 to '/var/oradata/OLTP192/datafiles/OLTP192/ezynsuresys_EGY_idx01.dbf';
+set newname for datafile 10 to '/var/oradata/OLTP192/datafiles/OLTP192/audit_data01.dbf';
+}
+
+
+Running job in background after preparing cmdfile
+=================================================
+
+nohup rman cmdfile=arc.cmd log=arc_16jun_192.log &

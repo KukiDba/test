@@ -1,0 +1,242 @@
+ORACLE_SID = [NOSID] ? oltt200n1
+The Oracle base remains unchanged with value /opt/oracle/base
+oracle@iedub26db02vcn1:oltt200n1>
+oracle@iedub26db02vcn1:oltt200n1>
+oracle@iedub26db02vcn1:oltt200n1>rman target sys/Q2_K33pDistanc3_2021@oltt200p auxiliary sys/Q2_K33pDistanc3_2021@oltt200s
+
+Recovery Manager: Release 12.1.0.2.0 - Production on Wed Sep 15 17:26:36 2021
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: OLTT200 (DBID=3547206367)
+connected to auxiliary database: OLTT200 (not mounted)
+
+RMAN> run {
+allocate channel prmy1 type disk;
+allocate channel prmy2 type disk;
+2> allocate channel prmy3 type disk;
+allocate channel prmy4 type disk;
+allocate auxiliary channel stby3 type disk;
+allocate auxiliary channel stby4 type disk;
+duplicate target database for standby from active database;
+} 3> 4> 5> 6> 7> 8> 9>
+
+using target database control file instead of recovery catalog
+allocated channel: prmy1
+channel prmy1: SID=304 instance=oltt200n1 device type=DISK
+
+allocated channel: prmy2
+channel prmy2: SID=117 instance=oltt200n1 device type=DISK
+
+allocated channel: prmy3
+channel prmy3: SID=210 instance=oltt200n1 device type=DISK
+
+allocated channel: prmy4
+channel prmy4: SID=301 instance=oltt200n1 device type=DISK
+
+allocated channel: stby3
+channel stby3: SID=63 device type=DISK
+
+allocated channel: stby4
+channel stby4: SID=178 device type=DISK
+
+Starting Duplicate Db at Sep 15 2021 17:27:04
+
+contents of Memory Script:
+{
+   backup as copy reuse
+   targetfile  '+GEN_UAT_DATA/OLTT200/PASSWORD/pwdoltt200.299.1082736789' auxiliary format
+ '/opt/oracle/product/1210/db/dbs/orapwoltt200n1'   ;
+}
+executing Memory Script
+
+Starting backup at Sep 15 2021 17:27:04
+Finished backup at Sep 15 2021 17:27:06
+
+contents of Memory Script:
+{
+   backup as copy current controlfile for standby auxiliary format  '+VTEGEN_UAT_DATA/OLTT200N1/CONTROLFILE/current01.ctl';
+   restore clone primary controlfile to  '+VTEGEN_UAT_FRA/OLTT200N1/CONTROLFILE/current02.ctl' from
+ '+VTEGEN_UAT_DATA/OLTT200N1/CONTROLFILE/current01.ctl';
+}
+executing Memory Script
+
+Starting backup at Sep 15 2021 17:27:07
+channel prmy1: starting datafile copy
+copying standby control file
+output file name=+VTEGEN_UAT_DATA/OLTT200N1/CONTROLFILE/current01.ctl tag=TAG20210915T172707
+channel prmy1: datafile copy complete, elapsed time: 00:00:07
+Finished backup at Sep 15 2021 17:27:17
+
+Starting restore at Sep 15 2021 17:27:17
+
+channel stby4: skipped, AUTOBACKUP already found
+channel stby3: copied control file copy
+Finished restore at Sep 15 2021 17:27:26
+
+contents of Memory Script:
+{
+   sql clone 'alter database mount standby database';
+}
+executing Memory Script
+
+sql statement: alter database mount standby database
+
+contents of Memory Script:
+{
+   set newname for clone tempfile  2 to new;
+   switch clone tempfile all;
+   set newname for clone datafile  1 to new;
+   set newname for clone datafile  2 to new;
+   set newname for clone datafile  3 to new;
+   set newname for clone datafile  4 to new;
+   set newname for clone datafile  5 to new;
+   set newname for clone datafile  6 to new;
+   set newname for clone datafile  7 to new;
+   set newname for clone datafile  8 to new;
+   set newname for clone datafile  9 to new;
+   set newname for clone datafile  10 to new;
+   set newname for clone datafile  11 to new;
+   backup as copy reuse
+   datafile  1 auxiliary format new
+   datafile  2 auxiliary format new
+   datafile  3 auxiliary format new
+   datafile  4 auxiliary format new
+   datafile  5 auxiliary format new
+   datafile  6 auxiliary format new
+   datafile  7 auxiliary format new
+   datafile  8 auxiliary format new
+   datafile  9 auxiliary format new
+   datafile  10 auxiliary format new
+   datafile  11 auxiliary format new
+   ;
+   sql 'alter system archive log current';
+}
+executing Memory Script
+
+executing command: SET NEWNAME
+
+renamed tempfile 2 to +VTEGEN_UAT_DATA in control file
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+Starting backup at Sep 15 2021 17:27:34
+channel prmy1: starting datafile copy
+input datafile file number=00002 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/sysaux.548.990975341
+channel prmy2: starting datafile copy
+input datafile file number=00006 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.547.990975341
+channel prmy3: starting datafile copy
+input datafile file number=00008 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1001.1018760415
+channel prmy4: starting datafile copy
+input datafile file number=00001 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/system.549.990975341
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/system.504.1083346059 tag=TAG20210915T172735
+channel prmy4: datafile copy complete, elapsed time: 00:03:28
+channel prmy4: starting datafile copy
+input datafile file number=00003 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/undotbs1.550.990975341
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/undotbs1.505.1083346269 tag=TAG20210915T172735
+channel prmy4: datafile copy complete, elapsed time: 00:03:27
+channel prmy4: starting datafile copy
+input datafile file number=00004 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/undotbs2.551.990975367
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.502.1083346059 tag=TAG20210915T172735
+channel prmy2: datafile copy complete, elapsed time: 00:10:24
+channel prmy2: starting datafile copy
+input datafile file number=00005 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/users.552.990975367
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.503.1083346059 tag=TAG20210915T172735
+channel prmy3: datafile copy complete, elapsed time: 00:10:25
+channel prmy3: starting datafile copy
+input datafile file number=00007 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/audit_data.555.990975393
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/undotbs2.506.1083346477 tag=TAG20210915T172735
+channel prmy4: datafile copy complete, elapsed time: 00:03:29
+channel prmy4: starting datafile copy
+input datafile file number=00009 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1002.1018760417
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.509.1083346685 tag=TAG20210915T172735
+channel prmy4: datafile copy complete, elapsed time: 00:00:26
+channel prmy4: starting datafile copy
+input datafile file number=00010 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1003.1018760417
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/audit_data.508.1083346685 tag=TAG20210915T172735
+channel prmy3: datafile copy complete, elapsed time: 00:00:53
+channel prmy3: starting datafile copy
+input datafile file number=00011 name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1004.1018760417
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.510.1083346713 tag=TAG20210915T172735
+channel prmy4: datafile copy complete, elapsed time: 00:00:26
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.511.1083346739 tag=TAG20210915T172735
+channel prmy3: datafile copy complete, elapsed time: 00:00:26
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/users.507.1083346685 tag=TAG20210915T172735
+channel prmy2: datafile copy complete, elapsed time: 00:03:31
+output file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/sysaux.501.1083346059 tag=TAG20210915T172735
+channel prmy1: datafile copy complete, elapsed time: 00:25:40
+Finished backup at Sep 15 2021 17:53:17
+
+sql statement: alter system archive log current
+
+contents of Memory Script:
+{
+   switch clone datafile all;
+}
+executing Memory Script
+
+datafile 1 switched to datafile copy
+input datafile copy RECID=1514 STAMP=1083347602 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/system.504.1083346059
+datafile 2 switched to datafile copy
+input datafile copy RECID=1515 STAMP=1083347602 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/sysaux.501.1083346059
+datafile 3 switched to datafile copy
+input datafile copy RECID=1516 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/undotbs1.505.1083346269
+datafile 4 switched to datafile copy
+input datafile copy RECID=1517 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/undotbs2.506.1083346477
+datafile 5 switched to datafile copy
+input datafile copy RECID=1518 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/users.507.1083346685
+datafile 6 switched to datafile copy
+input datafile copy RECID=1519 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.502.1083346059
+datafile 7 switched to datafile copy
+input datafile copy RECID=1520 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/audit_data.508.1083346685
+datafile 8 switched to datafile copy
+input datafile copy RECID=1521 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.503.1083346059
+datafile 9 switched to datafile copy
+input datafile copy RECID=1522 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.509.1083346685
+datafile 10 switched to datafile copy
+input datafile copy RECID=1523 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.510.1083346713
+datafile 11 switched to datafile copy
+input datafile copy RECID=1524 STAMP=1083347603 file name=+VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.511.1083346739
+Finished Duplicate Db at Sep 15 2021 17:53:26
+released channel: prmy1
+released channel: prmy2
+released channel: prmy3
+released channel: prmy4
+released channel: stby3
+released channel: stby4
+
+RMAN>
+
+RMAN>
+
+RMAN> exit
+
+
+Recovery Manager complete.
+
+
+oracle@iedub26db02vcn1:oltt200n1>
+oracle@iedub26db02vcn1:oltt200n1>
+oracle@iedub26db02vcn1:oltt200n1>
+oracle@iedub26db02vcn1:oltt200n1>
+oracle@iedub26db02vcn1:oltt200n1>ps -ef|grep mrp

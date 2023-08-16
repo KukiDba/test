@@ -1,0 +1,175 @@
+https://www.chronicler.tech/installing-oem/#:~:text=Download%20Agent%20from%20OMS%20using%20emcli%20On%20the,platforms%20are%20included%20in%20your%20OMS%20to%20download%3A
+
+
+
+ /tmp/AgentPull.sh LOGIN_USER=SYSMAN LOGIN_PASSWORD=YourDBAatCanada22 PLATFORM="Oracle Solaris on SPARC (64-bit)" VERSION=13.5.0.0.0 AGENT_BASE_DIR=/tmp/oem_agent/ -download_only
+ 
+ 
+ 
+ emcli get_agentimage -destination=/var/oracle/export/Sol_sw -platform="Oracle Solaris on SPARC (64-bit)" -version="13.5.0.0.0"
+ 
+ 
+  /var/oracle/export/
+ curl -sk https://192.168.0.171:7803/em/i
+ 
+ 
+ [9/28 1:24 PM] Bisht, Bharat
+curl -v ato_oem_01.mrshmc.com:4903
+
+
+ 
+ curl -sk https://ato_oem_01.mrshmc.com:4903/em/install/getAgentImage > /tmp/AgentPull.sh
+ 
+ 
+
+
+
+
+emctl status oms -details
+
+
+
+oracle@usdfw21db83vcn1:NOSID>cd /opt/oracle/product/OMS/13.5/bin/
+
+oracle@usdfw21db83vcn1:NOSID>emcli login -username=sysman
+Enter password :
+
+Login successful
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>emcli get_supported_platforms
+-----------------------------------------------
+Version = 13.5.0.0.0
+ Platform = Linux x86-64
+-----------------------------------------------
+Version = 13.5.0.0.0
+ Platform = Oracle Solaris on SPARC (64-bit)
+-----------------------------------------------
+Platforms list displayed successfully.
+oracle@usdfw21db83vcn1:NOSID>cd /opt/oracle/product/OMS/13.5/bin/
+
+command: emcli get_agentimage -destination=/var/oracle/export/Sol_sw -platform="Oracle Solaris on SPARC (64-bit)" -version="13.5.0.0.0"
+ 
+
+oracle@usdfw21db83vcn1:NOSID>emcli get_agentimage -destination=/var/oracle/export/Sol_sw -platform="Oracle So
+ === Partition Detail ===
+Space free : 38 GB
+Space required : 1 GB
+Check the logs at /opt/oracle/product/OMS/gc_inst/em/EMGC_OMS1/sysman/emcli/setup/.emcli/get_agentimage_2022-10-12_05-03-09-AM.log
+Downloading /var/oracle/export/Sol_sw/13.5.0.0.0_AgentCore_23.zip
+File saved as /var/oracle/export/Sol_sw/13.5.0.0.0_AgentCore_23.zip
+Downloading /var/oracle/export/Sol_sw/13.5.0.0.0_Plugins_23.zip
+File saved as /var/oracle/export/Sol_sw/13.5.0.0.0_Plugins_23.zip
+Downloading /var/oracle/export/Sol_sw/unzip
+File saved as /var/oracle/export/Sol_sw/unzip
+Executing command: /var/oracle/export/Sol_sw/unzip /var/oracle/export/Sol_sw/13.5.0.0.0_Plugins_23.zip -d /var/oracle/export/Sol_sw
+ERROR: Command /var/oracle/export/Sol_sw/unzip /var/oracle/export/Sol_sw/13.5.0.0.0_Plugins_23.zip -d /var/oracle/export/Sol_sw execution failed.
+Extracting plugins failed.
+If your agent image platform and the emcli client setup is on a different platform then you need to set the environment variable UNZIP_LOC to the absolute path of unzip utility location  which is greater than or equal to version 6.0.
+Example: setenv UNZIP_LOC /usr/local/bin/unzip,for windows set UNZIP_LOC=C:/unzip.exe
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>cd /var/oracle/export/Sol_sw
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>ls -rlth
+total 548M
+-rw-r--r-- 1 oracle dba 526M Oct 12 05:03 13.5.0.0.0_AgentCore_23.zip
+-rw-r--r-- 1 oracle dba  23M Oct 12 05:03 13.5.0.0.0_Plugins_23.zip
+-rwxr--r-- 1 oracle dba 147K Oct 12 05:03 unzip*
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>sftp u1236852@usash31db03v
+
+This system is for the use by authorized users only. All data contained
+on all systems is owned by the company and may be monitored, intercepted,
+recorded, read, copied, or captured in any manner and disclosed in any
+manner, by authorized company personnel. Users (authorized or unauthorized)
+have no explicit or implicit expectation of privacy. Unauthorized or improper
+use of this system may result in administrative, disciplinary action, civil
+and criminal penalties. Use of this system by any user, authorized or
+unauthorized, constitutes express consent to this monitoring, interception,
+recording, reading, copying, or capturing and disclosure.
+
+IF YOU DO NOT CONSENT, LOG OFF NOW.
+
+##################################################################
+# *** This Server is using Centrify                          *** #
+# *** Remember to use your Active Directory account          *** #
+# ***    password when logging in                            *** #
+##################################################################
+
+(u1236852@usash31db03v) (AD: dmzprod01.mrshmc.com) Password:
+(u1236852@usash31db03v) [Available mechanisms]
+ 1 - Mobile Authenticator
+ 2 - SMS... XXX-2615
+Please select a mechanism [1]: 1
+(u1236852@usash31db03v) Sent Mobile Authenticator request to your device. Please follow the instructions to proceed with authentication or enter verification code here. After that, please press <enter> to finish authentication:
+Connected to usash31db03v.
+sftp>
+sftp>
+sftp>
+sftp> cd /tmp/oem_agent
+sftp>
+sftp>
+sftp> put 13.5.0.0.0_AgentCore_23.zip
+Uploading 13.5.0.0.0_AgentCore_23.zip to /tmp/oem_agent/13.5.0.0.0_AgentCore_23.zip
+13.5.0.0.0_AgentCore_23.zip                                                                                                100%  525MB  60.6MB/s   00:08
+sftp>
+sftp>
+sftp>
+sftp>
+sftp> exit
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>sftp u1236852@usash31db03v
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>
+oracle@usdfw21db83vcn1:NOSID>sftp u1236852@usash31db09v
+The authenticity of host 'usash31db09v (10.14.156.111)' can't be established.
+ED25519 key fingerprint is SHA256:d3Kx+5emtxbllMGK+z+4qiwqzgWSU0z7tGwEmvbDDCo.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'usash31db09v' (ED25519) to the list of known hosts.
+
+This system is for the use by authorized users only. All data contained
+on all systems is owned by the company and may be monitored, intercepted,
+recorded, read, copied, or captured in any manner and disclosed in any
+manner, by authorized company personnel. Users (authorized or unauthorized)
+have no explicit or implicit expectation of privacy. Unauthorized or improper
+use of this system may result in administrative, disciplinary action, civil
+and criminal penalties. Use of this system by any user, authorized or
+unauthorized, constitutes express consent to this monitoring, interception,
+recording, reading, copying, or capturing and disclosure.
+
+IF YOU DO NOT CONSENT, LOG OFF NOW.
+
+##################################################################
+# *** This Server is using Centrify                          *** #
+# *** Remember to use your Active Directory account          *** #
+# ***    password when logging in                            *** #
+##################################################################
+
+(u1236852@usash31db09v) (AD: dmzprod01.mrshmc.com) Password:
+(u1236852@usash31db09v) [Available mechanisms]
+ 1 - Mobile Authenticator
+ 2 - SMS... XXX-2615
+Please select a mechanism [1]: 1
+(u1236852@usash31db09v) Sent Mobile Authenticator request to your device. Please follow the instructions to proceed with authentication or enter verification code here. After that, please press <enter> to finish authentication:
+Connected to usash31db09v.
+sftp>
+sftp>
+sftp> cd /tmp/oem_agent
+sftp> put 13.5.0.0.0_AgentCore_23.zip
+Uploading 13.5.0.0.0_AgentCore_23.zip to /tmp/oem_agent/13.5.0.0.0_AgentCore_23.zip
+13.5.0.0.0_AgentCore_23.zip                                                                                                100%  525MB   6.9MB/s   01:16
+sftp>
+sftp>
+sftp>
+sftp>
+

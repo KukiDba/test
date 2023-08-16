@@ -1,0 +1,265 @@
+Step1:
+
+orapwd file=orapwdsst34 password=Q2_ExHilarAting_2022 force=y entries=10 -->>crrate password file and transfer to standby
+
+
+
+ -->>step on prd side
+
+Step2:
+
+ sqlplus sys/Q2_ExHilarAting_2022@MHSUS1P_P as sysdba-->>make remote connection andboth prod and stndby side
+
+copy password file on oth node of prod and DR side
+
+SQL> create pfile='/tmp/initdsst34.ora' from spfile;-->>primay side
+
+File created
+
+
+Step:3
+login to oragrid in tnsnames.ora and append below-->>its deped upon wheter tns owned by grid or oracle
+
+
+
+
+dsst34_P=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw24db28v.mrshmc.com)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = dsst34) (UR = A) (HS = OK)))
+
+
+
+dsst34_S=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=usdfw23db01vcn1-vip)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME= dsst34)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))
+
+Step4:
+#####ON STndbside####
+
+make env file (BWTEST12.env) on standby side in home/oracle and make a directory in below location as mentioned in env file like below
+mkdir -p /u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/oltp78
+
+
+
+PATH=/u02/app/oracle/product/19.0.0.0/dbhome_1/bin:/u02/app/oracle/product/19.0.0.0/dbhome_1/OPatch:$PATH; export PATH
+ORACLE_SID=oltp78; export ORACLE_SID
+ORACLE_HOSTNAME=usdfw23db02vcn1.mrshmc.com; export ORACLE_HOSTNAME
+LD_LIBRARY_PATH=/u02/app/oracle/product/19.0.0.0/dbhome_1/lib; export LD_LIBRARY_PATH
+ORACLE_BASE=/u02/app/oracle; export ORACLE_BASE
+OH=/u02/app/oracle/product/19.0.0.0/dbhome_1; export OH
+ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1; export ORACLE_HOME
+TNS_ADMIN=/u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/oltp78; export TNS_ADMIN
+
+
+
+	Copy sqlnet.ora and tnsnames.ora from other available loc on created loaction
+
+oracle@usash23db01vcn1:BWTEST12>cp tnsnames.ora /u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/BWTEST12
+oracle@usash23db01vcn1:BWTEST12>pwd
+/u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/BWTEST10
+
+example: 
+cp /u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/ALTTST/tnsnames.ora /u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/LIFTST/
+cp /u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/ALTTST/sqlnet.ora /u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/LIFTST/
+
+
+now chnage tns entry on  u02/app/oracle/product/19.0.0.0/dbhome_1/network/admin/oltp78-->>Same lke prod on DR side
+
+
+oltp78_P=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw23db31v)(PORT = 1530)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = oltp78)))
+
+oltp78_S=
+    (DESCRIPTION=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=Usdfw23db02vcn1-vip)
+        (PORT=1521))
+      (CONNECT_DATA=
+        (SERVER=DEDICATED)
+        (SERVICE_NAME= oltp78)
+        (FAILOVER_MODE=
+          (TYPE=select)
+          (METHOD=basic))))
+
+
+STEP:5
+login into DR side with grid user network/admin/
+backup of listener. orafile like ([grid@usdfw23db02vcn1 admin]$ cp listener.ora listener.ora_bkp) 
+and append like blow entry 
+
+
+
+   (SID_DESC=
+      (GLOBAL_DBNAME = oltp78)
+      (ORACLE_HOME=/u02/app/oracle/product/19.0.0.0/dbhome_1)
+      (SID_NAME=oltp78)
+    )
+ 
+Step :6
+
+then on DR side
+lsnrctl status|grep -i oltp78
+lsnrctl reload----------------------->>reload it
+lsnrctl status|grep -i oltp78-->>check agin and status like below
+[grid@usdfw23db02vcn1 admin]$ lsnrctl status|grep -i oltp78
+[grid@usdfw23db02vcn1 admin]$ lsnrctl reload
+
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 20-JUN-2022 23:30:21
+
+Copyright (c) 1991, 2021, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=LISTENER)))
+The command completed successfully
+[grid@usdfw23db02vcn1 admin]$ lsnrctl status|grep -i oltp78
+Service "oltp78" has 1 instance(s).
+  Instance "oltp78", status UNKNOWN, has 1 handler(s) for this service...
+[grid@usdfw23db02vcn1 admin]$
+  
+  
+  
+ ############### check cksum value on both sorce and target side like below:##################
+  
+###Primay side:
+$ cd $ORACLE_HOME/dbs
+$ cksum orapwoltp78
+2080282869 6144 orapwoltp78
+$ pwd
+/opt/oracle/product/19.3.0/dbhome_1/dbs
+
+  
+
+###stndby side:  
+oracle@usdfw23db02vcn1:oltp78>cd $ORACLE_HOME/dbs
+oracle@usdfw23db02vcn1:oltp78>cksum orapwoltp78
+2080282869 6144 orapwoltp78
+oracle@usdfw23db02vcn1:oltp78>pwd
+/u02/app/oracle/product/19.0.0.0/dbhome_1/dbs
+oracle@usdfw23db02vcn1:oltp78>
+
+
+
+##Create pfile on standby side from prod side pfile which we have created earlier 
+
+
+Now start instance in No mount
+SQL> startup nomount;
+ORACLE instance started.
+
+
+create spfile from pfile='initoltp78.ora';-->>and bounce the DB to make effect of spile
+
+
+rman target sys/Q2_ExHilarAting_2022@dsst34_P auxiliary sys/Q2_ExHilarAting_2022@dsst34_S--->>check connection
+
+oracle@usdfw23db01vcn1:dsst34>
+oracle@usdfw23db01vcn1:dsst34>rman target sys/Q2_ExHilarAting_2022@dsst34_P auxiliary sys/Q2_ExHilarAting_2022@dsst34_S
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Thu Oct 27 05:21:49 2022
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: DSST34 (DBID=1683804039)
+connected to auxiliary database (not started)
+
+
+
+run 
+{
+allocate channel prmy1 type disk;
+allocate channel prmy2 type disk;
+allocate channel prmy3 type disk;
+allocate channel prmy4 type disk;
+allocate auxiliary channel stby1 type disk;
+allocate auxiliary channel stby2 type disk;
+allocate auxiliary channel stby3 type disk;
+duplicate target database for standby from active database;
+}
+
+
+################After completion of duplicate command set below parameter as mentioned.
+
+Prod:-
+SQL> alter system set fal_server=dsst34_S sid='*';
+
+System altered.
+
+SQL> alter system set fal_client=dsst34_P sid='*';
+
+System altered.
+
+Standby:-
+SQL> alter system set fal_server=dsst34_P sid='*';
+
+System altered.
+
+SQL> alter system set fal_client=dsst34_S sid='*';
+
+
+Prod:-
+SQL> alter system set log_archive_dest_2='SERVICE=dsst34_S ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=dsst34' sid='*';
+
+set lines 200 pages 300
+show parameter redo;
+
+alter system set redo_transport_user='';-->>redo_transport should be null
+
+
+ALTER SYSTEM SET log_archive_dest_state_2='DEFER' SCOPE=BOTH sid='*';
+ALTER SYSTEM SET log_archive_dest_state_2='ENABLE' SCOPE=BOTH sid='*';
+
+----------------------->on prod side check error 
+
+set pages 1000
+set lines 120
+column DEST_NAME format a20
+column DESTINATION format a35
+column ARCHIVER format a10
+column TARGET format a15
+column status format a10
+column error format a15
+select DEST_ID,DEST_NAME,DESTINATION,TARGET,STATUS,ERROR from v$archive_dest
+where DESTINATION is NOT NULL
+/	
+
+
+##################ON standbyside start mrp
+
+ALTER DATABASE RECOVER managed standby database disconnect from session noparallel;
+#########################################################################################################
+Stndby side chceck sync status
+
+set lines 250 pages 250 
+col HOST_NAME for a15 
+col DB_StarDB_START_TIME for a30
+col DB_UNIQUE_NAME for a30
+SELECT NAME as DB_NAME,db_unique_name,instance_name,INSTANCE_NUMBER,OPEN_MODE,LOG_MODE,HOST_NAME,database_role,to_char(startup_time,'DD-MON-YYYY HH24:MI') DB_Start_Time FROM gV$INSTANCE,gv$database; 
+ 
+
+col process for a30
+col thread# for 9999999999
+col sequence# for 9999999999
+set lines 333
+set pages 200
+select process, thread#, sequence#, status, client_process, client_pid
+from v$managed_standby order by 1, 3;
+
+	select al.thrd "Thread", almax "Last Seq Received", lhmax "Last Seq Applied" , almax-lhmax "Sequence Difference"
+	from (select thread# thrd, max(sequence#) almax
+	from v$archived_log
+	where resetlogs_change#=(select resetlogs_change# from v$database)
+	group by thread#) al,
+	(select thread# thrd, max(sequence#) lhmax
+	from v$log_history
+	where resetlogs_change#=(select resetlogs_change# from v$database)
+	group by thread#) lh
+	where al.thrd = lh.thrd;
+
+

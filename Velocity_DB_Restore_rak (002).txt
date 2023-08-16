@@ -1,0 +1,84 @@
+
+source db: usurb31db03v (Velocity CCC prod DB) 
+Db_name:db01
+
+Target server : Usurb31db06v
+user: oracle 
+passwd:7TLDrUgas?eXl8a
+
+enviroment variable
+========================
+
+export ORACLE_HOME=/opt/oracle/product/19/db
+export ORACLE_BASE=/opt/oracle
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$ORACLE_HOME/lib32
+export LIBPATH=$ORACLE_HOME/lib:$ORACLE_HOME/lib32
+export ORACLE_SID=db01
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+
+NPRD:oracle@usurb31db06v:db01>rman target sys/Geeklab#25777266222
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Tue Apr 19 07:13:39 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: DB01 (not mounted)
+
+
+RMAN> connect catalog rman_user/WellRman2020_Pwd@RMANDC1P;
+
+connected to recovery catalog database
+
+RMAN> set DBID=1604649859
+
+executing command: SET DBID
+database name is "DB01" and DBID is 1604649859
+
+
+RMAN> run {
+allocate channel c1 type 'sbt_tape'
+2> 3>       PARMS= 'ENV=(NB_ORA_CLASS=USURB_RMAN_MONTHLY_PROD_LINUX_EXTERNAL,
+               NB_ORA_SERV=usurb21bs100v550,
+               NB_ORA_CLIENT=usurb31db03vbu,
+               NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+               format 'hot_%d_%U_%t';
+restore controlfile from 'arch_DB01_pr0r63o6_96059_1_1_1102253830';
+}
+
+
+==================================================
+run {
+allocate channel c1 type 'sbt_tape'
+PARMS= 'ENV=(NB_ORA_CLASS=USURB_RMAN_WEEKLY_PROD_LINUX_EXTERNAL,
+NB_ORA_SERV=usurb21bs100v550,
+NB_ORA_CLIENT=usurb31db03vbu,
+NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252)'
+format 'hot_%d_%U_%t';
+set until time "to_date('12-APR-2022 13:47:07','DD-MON-YYYY HH24:MI:SS')";
+restore controlfile ;
+}
+
+
+
+usdfw22bs100v558
+
+
+
+current NB_ORA_SERV=usurb21bs100v550
+
+To be used: NB_ORA_SERV=usdfw22bs100v558
+
+
+Q2_ExHilarAting_2022
+
+Kapt__yrSRrFS7xt6kS7
+
+
+
+
+
+
+
+

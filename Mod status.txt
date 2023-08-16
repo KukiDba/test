@@ -1,0 +1,115 @@
+
+oracle@gbbed23db06v:NOSID>
+oracle@gbbed23db06v:NOSID>crontab -l| grep oltd162
+0 * * * * /opt/oracle/scripts/wrappers/fra_checking_oltd162.sh 1>/dev/null 2>&1
+30 00 * * 1 /opt/oracle/scripts/wrappers/backup_oltd162_full.sh > /dev/null 2>&1
+01 00 * * 0,2,3,4,5,6 /opt/oracle/scripts/wrappers/backup_oltd162_inc.sh > /dev/null 2>&1
+0 4,9,11,13,23 * * * /opt/oracle/scripts/wrappers/backup_oltd162_arch.sh > /dev/null 2>&1
+0 3 * * 0  /opt/oracle/scripts/wrappers/gather_stats_oltd162.sh > /dev/null 2>&1
+0 7 * * 0  /opt/oracle/scripts/wrappers/purge_objects_oltd162.sh >/dev/null 2>&1
+0 3 * * 0  /opt/oracle/scripts/wrappers/rebuild_index_oltd162.sh > /dev/null 2>&1
+oracle@gbbed23d
+
+
+alias asm='. /opt/oragrid/base/asm/.+ASM_env'
+alias oltd159='. $ADMIN/oltd159/.oltd159_env'
+#alias oltd155='. $ADMIN/oltd155/.oltd155_env'
+alias OLTD156='. $ADMIN/OLTD156/.OLTD156_env'
+alias oltd154='. $ADMIN/oltd154/.oltd154_env'
+alias ASM='. /opt/oragrid/base/asm/.+ASM_env'
+
+alias oltd130='. /var/oracle/admin/oltd130/.oltd130_env'
+alias oltd133='. /var/oracle/admin/oltd133/.oltd133_env'
+alias oltd180='. /var/oracle/admin/oltd180/.oltd180_env'
+alias oltd152='. /var/oracle/admin/oltd152/.oltd152_env'
+alias oltd153='. /var/oracle/admin/oltd153/.oltd153_env'
+alias oltd155='. /var/oracle/admin/oltd155/.oltd155_env'
+alias oltd162='. /var/oracle/admin/oltd162/.oltd162_env'
+alias oltd164='. /var/oracle/admin/oltd164/.oltd164_env'
+alias oltd165='. /var/oracle/admin/oltd165/.oltd165_env'
+alias oltd170='. /var/oracle/admin/oltd170/.oltd170_env'
+
+# ========================
+#
+export ORACLE_BASE=/opt/oracle/base
+export ORACLE_HOME=/opt/oracle/product/1900/db
+export ORAGRID_HOME=/opt/oragrid/product/1900/grid
+export TMPDIR=/tmp/oracle
+export EDITOR=/bin/vi
+export JAVA_HOME=/var/oracle/export/jre1.8.0_25
+export PATH=$JAVA_HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/usr/openv/netbackup/bin:/sbin:/usr/ccs/bin:/opt/openmail/bin:$ORACLE_HOME/bin:$ORACLE_HOME/ctx/bin:$ORACLE_HOME/lib:$ORACLE_HOME/ctx/lib:$PATH:$ORACLE_HOME/patch/OPatch:/usr/lib:/lib:$ORACLE_HOME/OPatch:.
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+export ORA_NLS33=${ORACLE_HOME}/ocommon/nls/admin/data
+export NLS_DATE_FORMAT='Mon DD YYYY HH24:MI:SS'
+export TNS_ADMIN=${ORAGRID_HOME}/network/admin
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$ORACLE_HOME/ctx/lib:/usr/lib64:/usr/lib:/usr/dt/lib:/usr/ucblib:/lib
+
+
+
+oracle     7311      1  0 12:31 ?        00:00:00 ora_pmon_oltp161n2---done
+oracle     7468      1  0 Sep07 ?        00:01:25 ora_pmon_oltt237n2----done
+oracle    12040      1  0 Sep06 ?        00:01:35 ora_pmon_oltt248n2----done
+
+oracle    25258      1  0 Sep08 ?        00:01:20 ora_pmon_oltt268n2----done
+oracle    54498      1  0 08:53 ?        00:00:01 ora_pmon_oltt267n2----done
+
+oracle    58100      1  0 Aug28 ?        00:02:43 ora_pmon_oltt231s2--done
+oracle    89948      1  0 Sep07 ?        00:01:26 ora_pmon_oltt245stdn2-done
+oracle    97369      1  0 Sep07 ?        00:01:27 ora_pmon_oltt240n2---done
+oracle   112091      1  0 Sep06 ?        00:01:31 ora_pmon_oltt251n2---done
+oracle   128050      1  0 12:01 ?        00:00:00 ora_pmon_oltt196n2--done
+
+MOD
+
+CO# 1905170  -- FCR for MOD  dev app servers  -- target 09/28 
+
+M3rc3r_05052020_2468
+
+pt/oracle/admin/db_mgnt/scripts/tool/bin/check_dataguard.log >/dev/null 2>&1
+20 20 * * * /opt/oracle/admin/db_mgnt/scripts/BKUP/RMAN/delete_RMAN_ARCHIVE_STANDBY.sh laS  2>&1 >/dev/null
+00 08,12,17,22 * * * /opt/oracle/admin/db_mgnt/scripts/tool/bin/check_dataguard.sh -i australia -s australiaS -n 1 -b /opt/oracle -u dbsnmp -p M3rc3r_05052020_2468 > /opt/oracle/admin/db_mgnt/scripts/tool/bin/check_dataguard.log >/dev/null 2>&1
+
+
+oracle@iedub26db02vcn1:oltt251n1>ps -ef|grep pmon
+oracle    55845      1  0 18:09 ?        00:00:00 ora_pmon_oltt245stdn1-d
+
+oracle    57473      1  0 18:10 ?        00:00:00 ora_pmon_oltp161n1--d
+oracle    57566      1  0 18:10 ?        00:00:00 ora_pmon_oltt237n1--d
+oracle    57626      1  0 18:10 ?        00:00:00 ora_pmon_oltt200n1--d
+oracle    57628      1  0 18:10 ?        00:00:00 ora_pmon_oltt196n1--d
+oracle    57652      1  0 18:10 ?        00:00:00 ora_pmon_oltt251n1--d
+oracle    57692      1  0 18:10 ?        00:00:00 ora_pmon_oltt252n1--d
+oracle    57707      1  0 18:10 ?        00:00:00 ora_pmon_oltt267n1--d
+oracle    57732      1  0 18:10 ?        00:00:00 ora_pmon_oltt240n1--d
+oracle    57864      1  0 18:10 ?        00:00:00 ora_pmon_oltt268n1--d
+oracle    57995      1  0 18:10 ?        00:00:00 ora_pmon_oltt248n1
+oracle    58432      1  0 18:10 ?        00:00:00 ora_pmon_oltt231s1--d
+oracle    91018      1  0 18:35 ?        00:00:00 ora_pmon_oltt246n1
+oracle   106311  49285  0 19:05 pts/6    00:00:00 grep pmon
+oracle@iedub26db02vcn1:oltt251n1>
+oracle@iedub26db02vcn1:oltt251n1>
+oracle@iedub26db02vcn1:oltt251n1>ps -ef|grep mrp
+oracle    63124      1  0 18:13 ?        00:00:00 ora_mrp0_oltt252n1--d
+oracle    95133      1  0 18:45 ?        00:00:00 ora_mrp0_oltt231s1--d
+oracle    99627      1  0 18:50 ?        00:00:00 ora_mrp0_oltt245stdn1-d
+oracle   100409      1  0 18:52 ?        00:00:00 ora_mrp0_oltp161n1--d
+oracle   100951      1  0 18:53 ?        00:00:00 ora_mrp0_oltt237n1--d
+oracle   102107      1  0 18:55 ?        00:00:00 ora_mrp0_oltt200n1--dd
+oracle   104750      1  0 19:02 ?        00:00:00 ora_mrp0_oltt268n1--d
+oracle   105660      1  0 19:03 ?        00:00:00 ora_mrp0_oltt251n1--d
+oracle   106410  49285  0 19:05 pts/6    00:00:00 grep mrp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,129 @@
+
+u1236852
+
+
+Please create a role CTMEM_READ_ONLY_ROLE with select privilege on all tables and views that belong to CTMEM be granted to CTMEM_READ_ONLY_ROLE and then the CTMEM_READ_ONLY_ROLE be granted to CTMEM_REPORT user.
+
+Database: CEMWWC1P
+Oracle RAC USDFW21DB67VCN1/CN2
+New db logon name: ctmem_report
+
+
+  CREATE USER "CTMEM_REPORT" IDENTIFIED BY controlem_123S123
+      DEFAULT TABLESPACE "USERS"
+      TEMPORARY TABLESPACE "DEF_TEMP"
+      PROFILE "MERCER_APP_PROFILE";
+	  
+ ALTER USER "CTMEM_REPORT" LOCAL TEMPORARY TABLESPACE "DEF_TEMP"/
+
+
+controlem_123S123
+
+GRANT CREATE SESSION to CTMEM_REPORT;
+
+CREATE ROLE CTMEM_READ_ONLY_ROLE;
+
+
+select grantee, table_name, column_name, privilege
+From sys.dba_col_privs where grantee='CTMEM_READ_ONLY_ROLE';
+
+SELECT count(*) FROM dba_role_privs WHERE grantee = 'CTMEM_READ_ONLY_ROLE';
+
+set long 20000 longchunksize 20000 pagesize 0 linesize 1000 feedback off verify off trimspool on
+column ddl format a1000
+begin
+dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'SQLTERMINATOR', true);
+dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'PRETTY', true);
+end;
+/
+variable v_role VARCHAR2(30);
+exec :v_role := upper('&1');
+select dbms_metadata.get_ddl('ROLE', r.role) AS ddl
+from dba_roles r
+where r.role = :v_role
+union all
+select dbms_metadata.get_granted_ddl('ROLE_GRANT', rp.grantee) AS ddl
+from dba_role_privs rp
+where rp.grantee = :v_role
+and rownum = 1
+union all
+select dbms_metadata.get_granted_ddl('SYSTEM_GRANT', sp.grantee) AS ddl
+from dba_sys_privs sp
+where sp.grantee = :v_role
+and rownum = 1
+union all
+select dbms_metadata.get_granted_ddl('OBJECT_GRANT', tp.grantee) AS ddl
+from dba_tab_privs tp
+where tp.grantee = :v_role
+and rownum = 1
+/
+
+set linesize 80 pagesize 14 feedback on verify on
+
+
+
+
+set long 100000
+spool createUser.sql;
+SELECT DBMS_METADATA.GET_DDL('USER','MAPJLRT') FROM dual;
+SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT', 'CTMEM_READ_ONLY_ROLE') FROM dual;
+SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT', 'MAPJLRT') FROM dual;
+SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT', 'MAPJLRT') FROM dual;
+spool off;
+
+
+rem cr_grantall.sql
+rem script to build grant select stmts for specified owners objectsset echo off verify off heading off feedback offaccept towner prompt 'Enter value for object owner : '
+accept tgrantee prompt 'Enter value for grantee : '
+accept grtype prompt 'Selects only [Y]/N : 'spool cr_grantall.out
+set lines 888
+select 'grant '||decode(nvl(upper('&grtype'),'Y'),'Y','select','select'||','||'insert'||','||'update'||','||'delete')||' on '||owner ||'.'||object_name||' to &tgrantee;'
+from dba_objects where owner = upper('&towner') and object_type in ('TABLE','VIEW')
+-- ignore underlying replication objects
+and object_name not like 'MVIEW$_%'
+and object_name not like 'SNAP$_%'
+and object_name not like 'MLOG$_%'
+and object_name not like 'RUPD$_%'
+union all
+select 'grant select' ||' on '||sequence_owner||'.'||sequence_name||' to &tgrantee;'
+from dba_sequences where sequence_owner = upper('&towner') and decode(nvl(upper('&grtype'),'Y'),'Y','Y','N') = 'Y'
+union all
+select 'grant execute on '||owner ||'.'||object_name||' to &tgrantee;'
+from dba_objects where owner = upper('&towner') and object_type in ('PROCEDURE','FUNCTION','PACKAGE') and decode(nvl(upper('&grtype'),'Y'),'Y','Y','N') = 'N'
+order by 1
+/--spool offset heading on echo on feedback on echo off
+
+
+
+rem cr_grantall.sql
+rem script to build grant select stmts for specified owners objectsset echo off verify off heading off feedback offaccept towner prompt 'Enter value for object owner : '
+accept tgrantee prompt 'Enter value for grantee : '
+accept grtype prompt 'Selects only [Y]/N : 'spool cr_grantall.out
+set lines 888
+select 'grant '||decode(nvl(upper('&grtype'),'Y'),'Y','select','select'||','||'insert'||','||'update'||','||'delete')||' on '||owner ||'.'||object_name||' to &tgrantee;'
+from dba_objects where owner = upper('&towner') and object_type in ('TABLE','VIEW')
+-- ignore underlying replication objects
+and object_name not like 'MVIEW$_%'
+and object_name not like 'SNAP$_%'
+and object_name not like 'MLOG$_%'
+and object_name not like 'RUPD$_%'
+union all
+select 'grant select' ||' on '||sequence_owner||'.'||sequence_name||' to &tgrantee;'
+from dba_sequences where sequence_owner = upper('&towner') and decode(nvl(upper('&grtype'),'Y'),'Y','Y','N') = 'Y'
+union all
+select 'grant execute on '||owner ||'.'||object_name||' to &tgrantee;'
+from dba_objects where owner = upper('&towner') and object_type in ('PROCEDURE','FUNCTION','PACKAGE') and decode(nvl(upper('&grtype'),'Y'),'Y','Y','N') = 'N'
+order by 1
+/--spool offset heading on echo on feedback on echo off
+
+
+SELECT 'GRANT select ON ' || OWNER || '.' || OBJECT_NAME ||' TO CTMEM_REPORT ;'
+FROM DBA_TABLES
+WHERE OWNER IN ('CTMEM')
+ORDER BY 1;
+
+
+SELECT 'GRANT select ON ' || OWNER || '.' || TABLE_NAME || ' TO CTMEM_REPORT;'
+FROM DBA_TABLES
+WHERE OWNER IN ('CTMEM')
+ORDER BY 1;

@@ -31,6 +31,19 @@ NAME                                               SPACE_LIMIT_IN_GB SPACE_USED_
 /dbfra78/oracle/fra                                              600       514.257651       85.7423487          0            1395
 
 
+delete noprompt archivelog until time 'sysdate - 3' backed up 1 times to device type sbt;
+
+
+archive log size
+=====================
+
+column name format a85;
+column "Size (MB)" format 9999.999;
+select sequence#, name, blocks*block_size/1024/1024/1024 "Size (GB)" from v$archived_log where completion_time > sysdate-1;
+
+==========================
+
+
 alter system set db_recovery_file_dest_size=<size> scope=both;
 
 connect to rman target /
@@ -52,6 +65,7 @@ RMAN> crosscheck archivelog all;
 
 RMAN > DELETE EXPIRED ARCHIVELOG ALL;
 
+delete noprompt archivelog all backed up 2 times to DEVICE TYPE disk completed before 'sysdate-2';
 
 
 

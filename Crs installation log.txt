@@ -1,0 +1,561 @@
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>sudo "/opt/oracle/product/10.2.0/root.sh"
+Performing root user operation.
+
+The following environment variables are set as:
+    ORACLE_OWNER= oragrid
+    ORACLE_HOME=  /opt/oragrid/product/19/grid
+
+Enter the full pathname of the local bin directory: [/usr/local/bin]:
+The contents of "dbhome" have not changed. No need to overwrite.
+The contents of "oraenv" have not changed. No need to overwrite.
+The contents of "coraenv" have not changed. No need to overwrite.
+
+
+Creating /etc/oratab file...
+Entries will be added to the /etc/oratab file as needed by
+Database Configuration Assistant when a database is created
+Finished running generic part of root script.
+Now product-specific root actions will be performed.
+Relinking oracle with rac_on option
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/usdfw25db11vcn1/crsconfig/rootcrs_usdfw25db11vcn1_2021-07-10_11-29-18AM.log
+2021/07/10 11:29:28 CLSRSC-594: Executing installation step 1 of 19: 'SetupTFA'.
+2021/07/10 11:29:28 CLSRSC-594: Executing installation step 2 of 19: 'ValidateEnv'.
+2021/07/10 11:29:28 CLSRSC-363: User ignored prerequisites during installation
+2021/07/10 11:29:28 CLSRSC-594: Executing installation step 3 of 19: 'CheckFirstNode'.
+2021/07/10 11:29:31 CLSRSC-594: Executing installation step 4 of 19: 'GenSiteGUIDs'.
+2021/07/10 11:29:32 CLSRSC-594: Executing installation step 5 of 19: 'SetupOSD'.
+2021/07/10 11:29:32 CLSRSC-594: Executing installation step 6 of 19: 'CheckCRSConfig'.
+2021/07/10 11:29:32 CLSRSC-594: Executing installation step 7 of 19: 'SetupLocalGPNP'.
+2021/07/10 11:29:47 CLSRSC-594: Executing installation step 8 of 19: 'CreateRootCert'.
+2021/07/10 11:29:52 CLSRSC-594: Executing installation step 9 of 19: 'ConfigOLR'.
+2021/07/10 11:29:53 CLSRSC-4002: Successfully installed Oracle Trace File Analyzer (TFA) Collector.
+2021/07/10 11:30:07 CLSRSC-594: Executing installation step 10 of 19: 'ConfigCHMOS'.
+2021/07/10 11:30:07 CLSRSC-594: Executing installation step 11 of 19: 'CreateOHASD'.
+2021/07/10 11:30:13 CLSRSC-594: Executing installation step 12 of 19: 'ConfigOHASD'.
+2021/07/10 11:30:13 CLSRSC-330: Adding Clusterware entries to file 'oracle-ohasd.service'
+2021/07/10 11:30:54 CLSRSC-594: Executing installation step 13 of 19: 'InstallAFD'.
+2021/07/10 11:31:00 CLSRSC-594: Executing installation step 14 of 19: 'InstallACFS'.
+2021/07/10 11:31:50 CLSRSC-594: Executing installation step 15 of 19: 'InstallKA'.
+2021/07/10 11:31:56 CLSRSC-594: Executing installation step 16 of 19: 'InitConfig'.
+
+
+ASM has been created and started successfully.
+
+[DBT-30001] Disk groups created successfully. Check /opt/oragrid/base/cfgtoollogs/asmca/asmca-210710AM113229.log for details.
+
+2021/07/10 11:33:34 CLSRSC-482: Running command: '/opt/oragrid/product/19/grid/bin/ocrconfig -upgrade oragrid dba'
+CRS-4256: Updating the profile
+Successful addition of voting disk 26b159a4987a4f6ebfa28b3ab4830e3a.
+Successfully replaced voting disk group with +CLUSTER_DATA01.
+CRS-4256: Updating the profile
+CRS-4266: Voting file(s) successfully replaced
+##  STATE    File Universal Id                File Name Disk group
+--  -----    -----------------                --------- ---------
+ 1. ONLINE   26b159a4987a4f6ebfa28b3ab4830e3a (/dev/oracleasm/disks/GEN_PERF_64_CLUSTER01) [CLUSTER_DATA01]
+Located 1 voting disk(s).
+2021/07/10 11:34:56 CLSRSC-594: Executing installation step 17 of 19: 'StartCluster'.
+2021/07/10 11:36:00 CLSRSC-343: Successfully started Oracle Clusterware stack
+2021/07/10 11:36:00 CLSRSC-594: Executing installation step 18 of 19: 'ConfigNode'.
+2021/07/10 11:37:27 CLSRSC-594: Executing installation step 19 of 19: 'PostConfig'.
+2021/07/10 11:37:54 CLSRSC-325: Configure Oracle Grid Infrastructure for a Cluster ... succeeded
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>sudo "/opt/oracle/product/10.2.0/root.sh"
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>cat "/opt/oracle/product/10.2.0/root.sh"
+
+/opt/oragrid/product/19/grid/root.sh
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>ssh usdfw25db11vcn2
+
+This system is for the use by authorized users only. All data contained
+on all systems is owned by the company and may be monitored, intercepted,
+recorded, read, copied, or captured in any manner and disclosed in any
+manner, by authorized company personnel. Users (authorized or unauthorized)
+have no explicit or implicit expectation of privacy. Unauthorized or improper
+use of this system may result in administrative, disciplinary action, civil
+and criminal penalties. Use of this system by any user, authorized or
+unauthorized, constitutes express consent to this monitoring, interception,
+recording, reading, copying, or capturing and disclosure.
+
+IF YOU DO NOT CONSENT, LOG OFF NOW.
+
+##################################################################
+# *** This Server is using Centrify                          *** #
+# *** Remember to use your Active Directory account          *** #
+# ***    password when logging in                            *** #
+##################################################################
+
+Last login: Sat Jul 10 11:27:42 2021 from 192.168.41.78
+
+Value of TERM has been set to "vt100".
+
+oragrid  20199 20193  0 11:38 pts/3    00:00:00 grep lsnr
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>vi "/opt/oracle/product/10.2.0/root.sh"
+
+/opt/oragrid/product/19/grid/root.sh
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/10.2.0/root.sh" 2L, 38C written
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>sudo "/opt/oracle/product/10.2.0/root.sh"
+Performing root user operation.
+
+The following environment variables are set as:
+    ORACLE_OWNER= oragrid
+    ORACLE_HOME=  /opt/oragrid/product/19/grid
+
+Enter the full pathname of the local bin directory: [/usr/local/bin]:
+The contents of "dbhome" have not changed. No need to overwrite.
+The contents of "oraenv" have not changed. No need to overwrite.
+The contents of "coraenv" have not changed. No need to overwrite.
+
+
+Creating /etc/oratab file...
+Entries will be added to the /etc/oratab file as needed by
+Database Configuration Assistant when a database is created
+Finished running generic part of root script.
+Now product-specific root actions will be performed.
+Relinking oracle with rac_on option
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/usdfw25db11vcn2/crsconfig/rootcrs_usdfw25db11vcn2_2021-07-10_11-39-43AM.log
+2021/07/10 11:39:49 CLSRSC-594: Executing installation step 1 of 19: 'SetupTFA'.
+2021/07/10 11:39:49 CLSRSC-594: Executing installation step 2 of 19: 'ValidateEnv'.
+2021/07/10 11:39:49 CLSRSC-363: User ignored prerequisites during installation
+2021/07/10 11:39:49 CLSRSC-594: Executing installation step 3 of 19: 'CheckFirstNode'.
+2021/07/10 11:39:51 CLSRSC-594: Executing installation step 4 of 19: 'GenSiteGUIDs'.
+2021/07/10 11:39:51 CLSRSC-594: Executing installation step 5 of 19: 'SetupOSD'.
+2021/07/10 11:39:51 CLSRSC-594: Executing installation step 6 of 19: 'CheckCRSConfig'.
+2021/07/10 11:39:51 CLSRSC-594: Executing installation step 7 of 19: 'SetupLocalGPNP'.
+2021/07/10 11:39:53 CLSRSC-594: Executing installation step 8 of 19: 'CreateRootCert'.
+2021/07/10 11:39:53 CLSRSC-594: Executing installation step 9 of 19: 'ConfigOLR'.
+2021/07/10 11:40:01 CLSRSC-594: Executing installation step 10 of 19: 'ConfigCHMOS'.
+2021/07/10 11:40:01 CLSRSC-594: Executing installation step 11 of 19: 'CreateOHASD'.
+2021/07/10 11:40:03 CLSRSC-594: Executing installation step 12 of 19: 'ConfigOHASD'.
+2021/07/10 11:40:03 CLSRSC-330: Adding Clusterware entries to file 'oracle-ohasd.service'
+2021/07/10 11:40:13 CLSRSC-4002: Successfully installed Oracle Trace File Analyzer (TFA) Collector.
+2021/07/10 11:40:40 CLSRSC-594: Executing installation step 13 of 19: 'InstallAFD'.
+2021/07/10 11:40:41 CLSRSC-594: Executing installation step 14 of 19: 'InstallACFS'.
+2021/07/10 11:41:25 CLSRSC-594: Executing installation step 15 of 19: 'InstallKA'.
+2021/07/10 11:41:27 CLSRSC-594: Executing installation step 16 of 19: 'InitConfig'.
+2021/07/10 11:41:36 CLSRSC-594: Executing installation step 17 of 19: 'StartCluster'.
+2021/07/10 11:42:23 CLSRSC-343: Successfully started Oracle Clusterware stack
+2021/07/10 11:42:23 CLSRSC-594: Executing installation step 18 of 19: 'ConfigNode'.
+2021/07/10 11:42:34 CLSRSC-594: Executing installation step 19 of 19: 'PostConfig'.
+2021/07/10 11:42:40 CLSRSC-325: Configure Oracle Grid Infrastructure for a Cluster ... succeeded
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>ps -ef|grep pmon
+oragrid   7051 20193  0 11:45 pts/3    00:00:00 grep pmon
+oragrid  32039     1  0 11:42 ?        00:00:00 asm_pmon_+ASM2
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>. oraenv
+ORACLE_SID = [NOSID] ? +ASM2
+ORACLE_HOME = [/home/oracle] ? /opt/oragrid/product/19/grid
+The Oracle base remains unchanged with value /opt/oragrid/base
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>asmcmd
+ASMCMD>
+ASMCMD>
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Logical_Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512             512   4096  4194304     65536    65200                0           65200              0             Y  CLUSTER_DATA01/
+ASMCMD>
+ASMCMD> eit
+ASMCMD-8022: unknown command 'eit' specified
+ASMCMD>
+ASMCMD> exit
+
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>sqlplus "/as sysasm"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Jul 10 11:46:23 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> show paraemter disk
+SP2-0158: unknown SHOW option "paraemter"
+SP2-0158: unknown SHOW option "disk"
+SQL> show parameter disk
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+asm_diskgroups                       string
+
+asm_diskstring                       string
+/dev/oracleasm/disks/*
+SQL>
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>eit
+-ksh: eit: not found [No such file or directory]
+oragrid@usdfw25db11vcn2:+ASM2>exit
+Connection to usdfw25db11vcn2 closed.
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>cat /etc/oratab
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+#
+oragrid@usdfw25db11vcn1:NOSID>ps -ef|grep pmon
+oragrid   3200     1  0 11:35 ?        00:00:00 asm_pmon_+ASM1
+oragrid   7518 16163  0 11:47 pts/3    00:00:00 grep pmon
+oragrid@usdfw25db11vcn1:NOSID>ps -ef|grep tns
+root        49     2  0 Jul05 ?        00:00:00 [netns]
+oragrid   4763     1  0 11:36 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr ASMNET1LSNR_ASM -no_crs_notify -inherit
+oragrid   6096     1  0 11:37 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER_SCAN2 -no_crs_notify -inherit
+oragrid   6231     1  0 11:37 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+oragrid   7531 16163  0 11:47 pts/3    00:00:00 grep tns
+oragrid   8393     1  0 11:37 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>vi /etc/oratab
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+
+
++ASM1:/opt/oragrid/product/19/grid:N
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/etc/oratab" 24L, 778C written
+oragrid@usdfw25db11vcn1:NOSID>
+oragrid@usdfw25db11vcn1:NOSID>. oraenv
+ORACLE_SID = [NOSID] ? +ASM1
+The Oracle base remains unchanged with value /opt/oragrid/base
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>ssh usdfw25db11vcn2
+
+This system is for the use by authorized users only. All data contained
+on all systems is owned by the company and may be monitored, intercepted,
+recorded, read, copied, or captured in any manner and disclosed in any
+manner, by authorized company personnel. Users (authorized or unauthorized)
+have no explicit or implicit expectation of privacy. Unauthorized or improper
+use of this system may result in administrative, disciplinary action, civil
+and criminal penalties. Use of this system by any user, authorized or
+unauthorized, constitutes express consent to this monitoring, interception,
+recording, reading, copying, or capturing and disclosure.
+
+IF YOU DO NOT CONSENT, LOG OFF NOW.
+
+##################################################################
+# *** This Server is using Centrify                          *** #
+# *** Remember to use your Active Directory account          *** #
+# ***    password when logging in                            *** #
+##################################################################
+
+Last login: Sat Jul 10 11:47:15 2021
+
+Value of TERM has been set to "vt100".
+oragrid  32039     1  0 11:42 ?        00:00:00 asm_pmon_+ASM2
+
+oragrid  11067 11056  0 11:49 pts/3    00:00:00 grep lsnr
+oragrid  31289     1  0 11:42 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr ASMNET1LSNR_ASM -no_crs_notify -inherit
+oragrid  31565     1  0 11:42 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER_SCAN1 -no_crs_notify -inherit
+oragrid  32043     1  0 11:42 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>vi /etc/oratab
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+
++ASM2:/opt/oragrid/product/19/grid:N
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/etc/oratab" 23L, 777C written
+oragrid@usdfw25db11vcn2:NOSID>
+oragrid@usdfw25db11vcn2:NOSID>. oraenv
+ORACLE_SID = [NOSID] ? +ASM2
+The Oracle base remains unchanged with value /opt/oragrid/base
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>
+oragrid@usdfw25db11vcn2:+ASM2>exit
+Connection to usdfw25db11vcn2 closed.
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>. oraenv
+ORACLE_SID = [+ASM1] ?
+The Oracle base remains unchanged with value /opt/oragrid/base
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+               ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+ora.chad
+               ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+               ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+ora.net1.network
+               ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+               ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+ora.ons
+               ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+               ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+ora.proxy_advm
+               OFFLINE OFFLINE      usdfw25db11vcn1          STABLE
+               OFFLINE OFFLINE      usdfw25db11vcn2          STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.ASMNET1LSNR_ASM.lsnr(ora.asmgroup)
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+      2        ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+      3        OFFLINE OFFLINE                               STABLE
+ora.CLUSTER_DATA01.dg(ora.asmgroup)
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+      2        ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+      3        OFFLINE OFFLINE                               STABLE
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+ora.LISTENER_SCAN2.lsnr
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.LISTENER_SCAN3.lsnr
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.asm(ora.asmgroup)
+      1        ONLINE  ONLINE       usdfw25db11vcn1          Started,STABLE
+      2        ONLINE  ONLINE       usdfw25db11vcn2          Started,STABLE
+      3        OFFLINE OFFLINE                               STABLE
+ora.asmnet1.asmnetwork(ora.asmgroup)
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+      2        ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+      3        OFFLINE OFFLINE                               STABLE
+ora.cvu
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.qosmserver
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.scan1.vip
+      1        ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+ora.scan2.vip
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.scan3.vip
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.usdfw25db11vcn1.vip
+      1        ONLINE  ONLINE       usdfw25db11vcn1          STABLE
+ora.usdfw25db11vcn2.vip
+      1        ONLINE  ONLINE       usdfw25db11vcn2          STABLE
+--------------------------------------------------------------------------------
+oragrid@usdfw25db11vcn1:+ASM1>srvctl status listener
+Listener LISTENER is enabled
+Listener LISTENER is running on node(s): usdfw25db11vcn2,usdfw25db11vcn1
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>ps e-f|grep tns
+error: embedded '-' among BSD options makes no sense
+
+Usage:
+ ps [options]
+
+ Try 'ps --help <simple|list|output|threads|misc|all>'
+  or 'ps --help <s|l|o|t|m|a>'
+ for additional help text.
+
+For more details see ps(1).
+oragrid@usdfw25db11vcn1:+ASM1>ps -ef|grep tns
+root        49     2  0 Jul05 ?        00:00:00 [netns]
+oragrid   4763     1  0 11:36 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr ASMNET1LSNR_ASM -no_crs_notify -inherit
+oragrid   6096     1  0 11:37 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER_SCAN2 -no_crs_notify -inherit
+oragrid   6231     1  0 11:37 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+oragrid   8393     1  0 11:37 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+oragrid  11400 16163  0 11:50 pts/3    00:00:00 grep tns
+oragrid@usdfw25db11vcn1:+ASM1>srvctl status listener
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is running on node usdfw25db11vcn2
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is running on node usdfw25db11vcn1
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is running on node usdfw25db11vcn1
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>
+oragrid@usdfw25db11vcn1:+ASM1>srvctl config scan
+SCAN name: usdfw25db11v-sca, Network: 1
+Subnet IPv4: 192.168.41.0/255.255.255.0/eth0, static
+Subnet IPv6:
+SCAN 1 IPv4 VIP: 192.168.41.189
+SCAN VIP is enabled.
+SCAN 2 IPv4 VIP: 192.168.41.188
+SCAN VIP is enabled.
+SCAN 3 IPv4 VIP: 192.168.41.187
+SCAN VIP is enabled.
+oragrid@usdfw25db11vcn1:+ASM1>

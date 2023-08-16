@@ -1,0 +1,432 @@
+
+*** Before you start activity check if standby is in sync with production
+
+###################################################################################
+Source	   : DATABASE COLPR040|UNTRAUP ausyd22db01vcn1/2/3/4    [Standby database]
+Destination: DATABASE COLNP091|UNTRAUQ ausyd25db03vcn1/2/3/4 
+###################################################################################
+
+
+-- In source and destination -> check the compatible parameter , they should be same.
+
+Source:DATABASE ausyd22db01vcn1/2/3/4    [Standby database]
+. ~/COLPR040.env
+sqlplus "/as sysdba"
+show parameter compatible
+
+Destination:DATABASE ausyd25db03vcn1/2/3/4 
+. ~/COLNP091.env 
+sqlplus "/as sysdba"
+show parameter compatible
+
+
+-- Put the standby in snapshot standby mode :- 
+
+Source:
+. ~/COLPR040.env
+sqlplus "/as sysdba"
+
+show parameter DB_RECOVERY_FILE;
+ALTER SYSTEM SET DB_RECOVERY_FILE_DEST_SIZE=7420G; 
+ALTER SYSTEM SET DB_RECOVERY_FILE_DEST='+RECOC3';
+
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL; 
+
+CREATE RESTORE POINT Standby_flashback_dr_<date> GUARANTEE FLASHBACK DATABASE; 
+select NAME,SCN,TIME from v$restore_point; 
+
+ALTER DATABASE ACTIVATE STANDBY DATABASE;
+select CONTROLFILE_TYPE from v$database;   // it should be 'current'
+
+-- Now shutdown database and start only one instance. 
+
+srvctl status database -d COLDR040
+srvctl config database -d COLDR040
+srvctl stop database -d COLDR040
+
+startup mount
+
+-- in CDB
+SQL> sho pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         4 UNTRAUP                        MOUNTED
+         5 BABELP                         MOUNTED
+
+SQL> sho con_name
+
+CON_NAME
+------------------------------
+CDB$ROOT
+
+-- Then
+alter database open;
+
+SQL> sho pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         4 UNTRAUP                        READ WRITE NO
+         5 BABELP                         READ WRITE NO
+
+
+. ~/COLPR040.env
+srvctl add service -database COLDR040 -service UNTRAUPDR_SRVC -preferred COLPR0401 -pdb UNTRAUP
+Enable the service
+srvctl enable service -d COLDR040 -s UNTRAUPDR_SRVC
+
+-- Check service is running
+srvctl status service -d COLDR040 -s UNTRAUPDR_SRVC
+
+-- Start the service if not started already 
+--srvctl start service -d COLDR040 -s UNTRAUPDR_SRVC
+
+In Stage (UNTRAUQ) - Destination
+===================================
+Drop all objects in Uregistry in UNTRAUQ 
+-- Drop objects takes approx 1 hour to complete
+-- There is a 'delete_schema.sql' on the server ausyd25db03vcn1 : /var/oracle/external_files/orastage/TTS_REFRESH/delete_schema.sql
+-- Run as 'uregistry' user, password can be obtailed from the IDO team. 
+
+. ~/COLNP091.env
+
+sqlplus uregistry@UNTRAUQ
+
+/*  like so ...
+SQL> @delete_schema.sql
+Object count (before drop): 18725
+
+PL/SQL procedure successfully completed.
+*/
+
+-- Drop restorepoint if you find any in UNTRAUQ
+
+-- Drop tablespace UNIT_REGISTRY_DATA_INDEX including datafiles files in UNTRAUQ
+
+alter session set container=UNTRAUQ
+
+ drop tablespace UNIT_REGISTRY_DATA_INDEX including contents and datafiles
+
+
+In P -- Source [standby]
+=========================
+-- Put TS in read only mode /// DATABASE ausyd22db01vcn1/2/3/4
+
+. ~/COLPR040.env
+
+ sqlplus "/as sysdba"
+ alter user system account unlock
+ alter session set container=UNTRAUP
+ alter user system account unlock
+
+
+-- Check inter-dependency violations
+
+EXECUTE dbms_tts.transport_set_check('UNIT_REGISTRY_DATA_INDEX' , TRUE)
+SELECT * FROM transport_set_violations                 -- should not return any rows.
+
+
+-- Put tablespace in read-only mode 
+ alter tablespace UNIT_REGISTRY_DATA_INDEX read only
+ select status from dba_tablespaces  where TABLESPACE_NAME='UNIT_REGISTRY_DATA_INDEX';
+
+-- expdp with transport_tablespace=y
+
+/*
+/var/oracle/external_files/orastage/TTS_REFRESH
+
+alter session set container=UNTRAUP;
+
+create user tts_refresh identified by This_Year_2023 ;
+
+grant CREATE SESSION to tts_refresh ;
+GRANT CREATE ANY TABLE TO tts_refresh ;
+GRANT UNLIMITED TABLESPACE TO tts_refresh ;
+grant EXP_FULL_DATABASE to tts_refresh ;
+
+create directory TTS_REFRESH as '/var/oracle/external_files/orastage/TTS_REFRESH';
+grant read, write on directory TTS_REFRESH to tts_refresh;
+
+*/
+
+
+expdp userid=tts_refresh@UNTRAUPDR_SRVC transport_tablespace=y DIRECTORY=TTS_REFRESH tablespaces=UNIT_REGISTRY_DATA_INDEX dumpfile=UREGISTRY_TTS_EXPORT.dmp logfile=UREGISTRY_TTS_EXPORT.log statistics=none ENCRYPTION_PASSWORD=MMC_Prod_Mar312022
+
+-- Export with EXCLUDE=TABLE, index for the schema
+
+expdp tts_refresh@UNTRAUPDR_SRVC DIRECTORY=TTS_REFRESH exclude=table,index schemas=UREGISTRY DUMPFILE=UREGISTRY_EXPORT_metadata.dmp LOGFILE=UREGISTRY_EXPORT_metadata.log ENCRYPTION_PASSWORD=MMC_Prod_Mar312022	
+
+
+###############################################################################
+--Copy datafiles files and .dmp files to destination 
+--Ensure /var/oracle/external_files/orastage/TTS_REFRESH @ ausyd25db03vcn1 
+  has enough space to accomodate datafiles and .dmp files from source 
+###############################################################################
+
+
+@Source: It takes around 3 hours
+-- Copy datafiles from ASM to NFS using the following scripts
+
+-- run the SQL TO generate the rman copy command 
+
+alter session set container = UNTRAUP;
+select TS#,NAME from  v$tablespace where NAME = 'UNIT_REGISTRY_DATA_INDEX';
+
+-- Put the TS# in next SQL this case was 5
+set pages 50000;
+set head off;
+set feed off;
+spool rmanCP.txt;
+select 'copy datafile '||FILE#||' to '||'''/var/oracle/external_files/orastage/TTS_REFRESH'||substr(name,59,29)||'.dbf;''' 
+from v$datafile where TS# = 5;
+spool off;
+exit
+
+vi rmanCP.txt and remove any empty lines
+
+create 4 files rmanCP1.sh, rmanCP2.sh, rmanCP3.sh, rmanCP4.sh
+
+sed -n "1,45p" rmanCP.txt > rmanCP1.sh
+sed -n "46,90p" rmanCP.txt > rmanCP2.sh
+sed -n "91,135p" rmanCP.txt > rmanCP3.sh
+sed -n "136,195p" rmanCP.txt > rmanCP4.sh  
+
+If rmanCP.txt have more than 195 lines then need to change for rmanCP4.sh
+
+Then edit each rmanCP* file add at begining:
+#!/bin/ksh
+rman target / << EOF
+run
+{
+-- add 'copy' commands 
+}
+EOF
+
+-------------------------------------------------------------------
+Files rmanCP*.sh should look like this :
+
+#!/bin/ksh
+rman target / << EOF
+run
+{
+copy datafile 166 to '/var/oracle/external_files/orastage/TTS_REFRESH/unit_registry_data_index.561.dbf';
+copy datafile 167 to '/var/oracle/external_files/orastage/TTS_REFRESH/unit_registry_data_index.560.dbf';
+
+}
+EOF
+------------------------------------------------------------------------
+
+Run them parallel and monitor till complete
+
+Location: /var/oracle/external_files/orastage/TTS_REFRESH/
+nohup ./rmanCP1.sh &
+nohup ./rmanCP2.sh &
+nohup ./rmanCP3.sh &
+nohup ./rmanCP4.sh &
+-------------------------------------------------------------------------
+       		
+
+@Destination: It takes around 4 hours 
+Copy datafiles from NFS [source] to NFS [destination] using the following script 
+
+1.	Login as oracle on ausyd25db03vcn1
+2.	Script name:             /var/oracle/scripts/wrappers/scp_file_from_remote_server.sh
+3.	Adjust *_LOCATION
+	#################### define variables #########
+	REMOTE_SERVER="ausyd22db01vcn1"
+	REMOTE_LOCATION="/var/oracle/external_files/orastage/TTS_REFRESH"
+	LOCAL_LOCATION="/var/oracle/external_files/orastage/TTS_REFRESH"
+	CURRENT_USER="oracle"
+	MULTITHREAD_COUNT=5
+	##############################################
+4.	Run script: /var/oracle/scripts/wrappers/scp_file_from_remote_server.sh
+
+
+@Destination: It takes around 3 hours 
+Copy datafiles from NFS to ASM using the following scripts
+
+As user grid
+
+Location: /var/oracle/external_files/orastage/TTS_REFRESH/
+       		
+ls *.dbf /var/oracle/external_files/orastage/TTS_REFRESH > 1.txt
+
+cat 1.txt |awk '{print "asmcmd cp "/var/oracle/external_files/orastage/TTS_REFRESH/"$1,"DATAC2/COLNP091/<get_actual_path>/DATAFILE/"$1}' > asmCP.txt
+
+create 4 files asmCP1.sh, asmCP2.sh, asmCP3.sh, asmCP4.sh
+
+sed -n "1,45p" asmCP.txt > asmCP1.sh
+sed -n "46,90p" asmCP.txt > asmCP2.sh
+sed -n "91,135p" asmCP.txt > asmCP3.sh
+sed -n "136,195p" asmCP.txt > asmCP4.sh
+
+Each asmCP*.sh should look like:
+asmcmd cp /var/oracle/external_files/orastage/TTS_REFRESH/unit_registry_data_index.385.dbf +DATAC2/COLNP091/<get_actual_path>/DATAFILE/unit_registry_data_index.385.dbf
+
+
+-------------------------------------------
+Run them parallel and monitor till complete
+
+Location: /var/oracle/external_files/orastage/TTS_REFRESH/
+nohup ./asmCP1.sh &
+nohup ./asmCP2.sh &
+nohup ./asmCP3.sh &
+nohup ./asmCP4.sh &
+---------------------------------------------
+
+
+-- Copy the .dmp files from UNTRAUP to  UNTRAUQ if they haven't already from running 'scp_file_from_remote_server.sh' 
+
+
+In UNTRAUQ
+===========
+
+Import using transport_tablespace=y 
+. ~/COLNP091.env
+cd /var/oracle/export/UNTRAUQ/TTS_REFRESH
+
+
+-- Check if the directory path points to the correct path on the server 
+
+select directory_name, directory_path from dba_directories where directory_name='TTS_REFRESH'
+
+
+-- If you see the following error 
+
+/*
+Processing object type TRANSPORTABLE_EXPORT/PLUGTS_BLK
+ORA-39123: Data Pump transportable tablespace job aborted
+ORA-00059: maximum number of DB_FILES exceeded
+
+Then...
+stop database 
+alter system set db_files=5000 scope=spfile sid='*';
+start database 	
+*/
+
+/*
+-- Create TTS_REFRESH user 
+alter session set container=UNTRAUQ;
+
+create user tts_refresh identified by This_Year_2023_123123 ;
+
+grant CREATE SESSION to tts_refresh ;
+GRANT CREATE ANY TABLE TO tts_refresh ;
+GRANT UNLIMITED TABLESPACE TO tts_refresh ;
+grant IMP_FULL_DATABASE to tts_refresh ;
+
+create directory TTS_REFRESH as '/var/oracle/external_files/orastage/TTS_REFRESH';
+grant read, write on directory TTS_REFRESH to tts_refresh;
+
+*/
+
+-- There is a sample *.par file at /var/oracle/external_files/orastage/TTS_REFRESH which you can use. Ensure you update the file before use. 
+impdp  userid=tts_refresh/This_Year_2023_123123@UNTRAUQ parfile=impdp_datafiles.par
+
+-- Import Uregistry objects (from the 2nd dump file)
+
+impdp  userid=tts_refresh/This_Year_2023_123123@UNTRAUQ DIRECTORY=TTS_REFRESH dumpfile=UREGISTRY_EXPORT_metadata.dmp logfile=impdp_UREGISTRY_EXPORT_metadata.log ENCRYPTION_PASSWORD=MMC_Prod_Mar312022
+
+
+-- Once import is successful, check obejct count and compare with source
+-- There are usually 6-7 tables that are missing which can be ignored
+
+select object_type,count(*) from dba_objects where owner='UREGISTRY' group by object_type  
+
+-- Put the Tablespace in read write mode at destination
+
+alter tablespace UNIT_REGISTRY_DATA_INDEX read write
+
+-- Gather stats:
+
+. ~/COLNP091.env
+sqlplus "/ as sysdba"
+
+alter session set container=UNTRAUQ
+
+BEGIN
+   DBMS_STATS.GATHER_DICTIONARY_STATS(no_invalidate=> FALSE);
+END;
+/
+
+-- then 
+
+BEGIN
+DBMS_STATS.GATHER_SCHEMA_STATS
+   (
+   ownname           => 'UREGISTRY',
+   estimate_percent  => DBMS_STATS.AUTO_SAMPLE_SIZE,
+   block_sample      => FALSE,
+   method_opt        => 'FOR ALL COLUMNS SIZE AUTO',
+   degree            => DBMS_STATS.AUTO_DEGREE,
+   granularity       => 'AUTO',
+   cascade           => TRUE,
+   options           => 'GATHER',
+   no_invalidate     => FALSE
+  );
+END;
+/
+
+
+-- Fix standby | ausyd22db01vcn1
+
+. ~/COLPR040.env 
+
+-- stop and start database in mount 
+-- only one instance should be up
+
+srvctl status database -d COLDR040
+srvctl stop database -d COLDR040
+
+startup mount 
+
+/*
+[oracle@ausyd22db01vcn1 /home/oracle>] srvctl status database -d COLDR040
+Instance COLPR0401 is running on node ausyd22db01vcn1
+Instance COLPR0402 is not running on node ausyd22db01vcn2
+Instance COLPR0403 is not running on node ausyd22db01vcn3
+Instance COLPR0404 is not running on node ausyd22db01vcn4
+
+SQL> sho pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         4 UNTRAUP                        MOUNTED
+         5 BABELP                         MOUNTED
+SQL>
+
+*/
+
+
+FLASHBACK DATABASE TO RESTORE POINT STANDBY_FLASHBACK_DR_<date>;
+ALTER DATABASE CONVERT TO PHYSICAL STANDBY;
+
+select database_role, open_mode from v$database
+
+-- Now shutdown and startup-mount standby on all 4 nodes 
+
+srvctl status database -d COLDR040
+
+srvctl stop database -d COLDR040
+
+srvctl start database -d COLDR040 -o mount 
+
+-- Start apply 
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT;
+
+-- Post migration steps -- 
+1. Lock the sys/system [if it was unlocked] - at source 
+2. Drop user tts_refresh at destination 
+3. Disable the service at destination 
+   srvctl status service -d COLDR040 -s UNTRAUPDR_SRVC
+4. Clean up /var/oracle/external_files/orastage/TTS_REFRESH/ at source and destination 
+
+
+------------------------------  END ----------------------------
+
+
+

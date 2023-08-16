@@ -1,0 +1,107 @@
+
+1>> deconfigure:-
+cd /opt/oragrid/product/19/grid/crs/install
+roothas.sh -deconfig -force
+
+bash-4.2$ sudo "/opt/oracle/product/10.2.0/root.sh"
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/iedub26db01v/crsconfig/hadeconfig.log
+PRCR-1070 : Failed to check if resource ora.asm is registered
+CRS-5168 : unable to communicate with ohasd
+2021/06/22 08:43:49 CLSRSC-180: An error occurred while executing the command '/opt/oragrid/product/19/grid/bin/srvctl remove asm -force'
+PRCR-1070 : Failed to check if resource ora.ons is registered
+CRS-5168 : unable to communicate with ohasd
+2021/06/22 08:43:49 CLSRSC-180: An error occurred while executing the command '/opt/oragrid/product/19/grid/bin/srvctl config ons'
+CLSU-00107: operating system function: opendir; failed with error data: 2; at location: scrsearch1
+CLSU-00101: operating system error message: No such file or directory
+CLSU-00104: additional error information: cant open scr home dir scls_scr_getval
+CRS-4639: Could not contact Oracle High Availability Services
+CRS-4000: Command Stop failed, or completed with errors.
+2021/06/22 08:44:52 CLSRSC-337: Successfully deconfigured Oracle Restart stack
+
+2>>oragrid@iedub26db01v:NOSID>cd /opt/oragrid/product/19/grid/deinstall/
+oragrid@iedub26db01v:NOSID>./deinstall
+Checking for required files and bootstrapping ...
+Please wait ...
+Location of logs /opt/oracle/oraInventory/logs/
+
+############ ORACLE DECONFIG TOOL START ############
+
+
+######################### DECONFIG CHECK OPERATION START #########################
+## [START] Install check configuration ##
+
+ Specify a comma-separated list of remote nodes to cleanup : iedub26db01v
+
+
+Checking for existence of the Oracle home location /opt/oragrid/product/19/grid
+Oracle Home type selected for deinstall is: Oracle Grid Infrastructure for a Standalone Server
+Oracle Base selected for deinstall is: /opt/oragrid/base
+Checking for existence of central inventory location /opt/oracle/oraInventory
+Checking for existence of the Oracle Grid Infrastructure home
+
+## [END] Install check configuration ##
+
+Traces log file: /opt/oracle/oraInventory/logs//crsdc_2021-06-23_02-20-37-PM.log
+
+Network Configuration check config START
+
+Network de-configuration trace file location: /opt/oracle/oraInventory/logs/netdc_check2021-06-23_02-20-37PM.log
+
+Network Configuration check config END
+
+Asm Check Configuration START
+
+ASM de-configuration trace file location: /opt/oracle/oraInventory/logs/asmcadc_check2021-06-23_02-20-37PM.log
+
+ASM configuration was not detected in this Oracle home. Was ASM configured in this Oracle home (y|n) [n]: n
+ASM was not detected in the Oracle Home
+Database Check Configuration START
+
+Database de-configuration trace file location: /opt/oracle/oraInventory/logs/databasedc_check2021-06-23_02-20-37PM.log
+
+Database Check Configuration END
+
+######################### DECONFIG CHECK OPERATION END #########################
+
+
+####################### DECONFIG CHECK OPERATION SUMMARY #######################
+Oracle Grid Infrastructure Home is:
+Oracle Home selected for deinstall is: /opt/oragrid/product/19/grid
+Inventory Location where the Oracle home registered is: /opt/oracle/oraInventory
+ASM was not detected in the Oracle Home
+Do you want to continue (y - yes, n - no)? [n]: y
+A log of this session will be written to: '/opt/oracle/oraInventory/logs/deinstall_deconfig2021-06-23_02-19-35-PM.out'
+Any error messages from this session will be written to: '/opt/oracle/oraInventory/logs/deinstall_deconfig2021-06-23_02-19-35-PM.err'
+
+######################## DECONFIG CLEAN OPERATION START ########################
+Database de-configuration trace file location: /opt/oracle/oraInventory/logs/databasedc_clean2021-06-23_02-20-37PM.log
+ASM de-configuration trace file location: /opt/oracle/oraInventory/logs/asmcadc_clean2021-06-23_02-20-37PM.log
+ASM Clean Configuration END
+
+Network Configuration clean config START
+
+Network de-configuration trace file location: /opt/oracle/oraInventory/logs/netdc_clean2021-06-23_02-20-37PM.log
+
+The network configuration has been cleaned up successfully.
+
+Network Configuration clean config END
+... follow other options/logs ...
+
+>> run as root
+
+/opt/oragrid/product/19/grid/crs/install/roothas.sh -force  -deconfig -paramfile "/tmp/deinstall2021-06-23_02-19-26PM/response/deinstall_OraGI19Home1.rsp"
+
+>> verify below folders & remove it exists
+cd /opt/oragrid/product/19/
+rm -rf grid
+cd /opt/oragrid/base
+rm -rf *
+rm -rf /etc/oratab
+rm -rf /etc/oraInst.loc
+rm -rf /opt/oracle/oraInventory
+cd /opt/oracle/product/19/db
+rm -rf *
+cd /opt/oragrid/product/1220/grid
+rm -rf *

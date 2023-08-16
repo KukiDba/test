@@ -1,0 +1,206 @@
+On Standby:-
+================
+
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = usdfw22db13v.mrshmc.com)(PORT = 1530))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
+SID_LIST_LISTENER =
+ (SID_LIST =
+  (SID_DESC =
+      (GLOBAL_DBNAME = LIFUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = LIFUSC1PS)
+   )
+  (SID_DESC =
+      (GLOBAL_DBNAME = WRIUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = WRIUSC1PS)
+   )
+  (SID_DESC =
+      (GLOBAL_DBNAME = AAAUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = AAAUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = CHBUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = CHBUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = DVNUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = DVNUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = HOCUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = HOCUSC1PS)
+   )
+    (SID_DESC =
+      (GLOBAL_DBNAME = TOSUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = TOSUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = CARUSC1PS)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = CARUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = LIFUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = LIFUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = WRIUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = WRIUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = CHBUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = CHBUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = DVNUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = DVNUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = HOCUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = HOCUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = AAAUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = AAAUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = TOSUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = TOSUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = CARUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = CARUSC1PS)
+   )
+   (SID_DESC =
+      (GLOBAL_DBNAME = AAAUSC1PS_DGMGRL)
+      (ORACLE_HOME = /opt/oracle/product/11.2.0.4/dbhome_1)
+      (SID_NAME = AAAUSC1PS)
+   )
+
+
+  )
+
+
+
+
+
+
+
+Primary:-
+=================
+
+ASMCMD> cd +DG_PSDATA/LIFUSC1P
+ASMCMD> ls
+CONTROLFILE/
+DATAFILE/
+ONLINELOG/
+PARAMETERFILE/
+TEMPFILE/
+control01.ctl
+control02.ctl
+spfileLIFUSC1P.ora
+ASMCMD> mkdir DATAGUARDCONFIG
+ASMCMD> cd DATAGUARDCONFIG
+ASMCMD> pwd
++DG_PSDATA/LIFUSC1P/DATAGUARDCONFIG
+ASMCMD>
+
+
+
+NAME                                 TYPE                              VALUE
+------------------------------------ --------------------------------- ------------------------------
+dg_broker_config_file1               string                            /opt/oracle/product/11.2.0.4/d
+                                                                       bhome_1/dbs/dr1LIFUSC1P.dat
+dg_broker_config_file2               string                            /opt/oracle/product/11.2.0.4/d
+                                                                       bhome_1/dbs/dr2LIFUSC1P.dat
+dg_broker_start                      boolean                           TRUE
+SQL> alter system set dg_broker_start=FALSE scope=both sid='*';
+
+System altered.
+
+SQL> alter system set dg_broker_config_file1='+DG_PSDATA/LIFUSC1P/DATAGUARDCONFIG/dr1LIFUSC1P.dat' scope=both sid='*';
+
+System altered.
+
+SQL> alter system set dg_broker_config_file2='+DG_PSDATA/LIFUSC1P/DATAGUARDCONFIG/dr2LIFUSC1P.dat' scope=both sid='*';
+
+System altered.
+
+SQL> alter system set dg_broker_start=TRUE scope=both sid='*';
+
+System altered.
+
+
+
+
+SQL> select count(*) from v$standby_log;
+
+  COUNT(*)
+----------
+         0
+
+
+Create standby logfiles on both sides(primary/standby)
+
+
+
+
+DGMGRL> create configuration DG_LIFUSC1P as primary database is 'LIFUSC1P' connect identifier is LIFUSC1P;
+Configuration "dg_lifusc1p" created with primary database "LIFUSC1P"
+DGMGRL> ADD DATABASE 'LIFUSC1PS' AS CONNECT IDENTIFIER IS LIFUSC1PS MAINTAINED AS PHYSICAL;
+Database "LIFUSC1PS" added
+		 
+
+DGMGRL> enable configuration;
+Enabled.
+DGMGRL> show configuration;
+
+Configuration - dg_lifusc1p
+
+  Protection Mode: MaxPerformance
+  Databases:
+    LIFUSC1P  - Primary database
+    LIFUSC1PS - Physical standby database
+
+Fast-Start Failover: DISABLED
+
+Configuration Status:
+SUCCESS
+
+
+
+======================================
+======================================
+Errors and solutions:-
+
+Errors and solutions:-
+============================================
+============================================
+
+  Warning: ORA-16792: configurable property value is inconsistent with database setting
+  
+  Sol:- disable and enable configuration.
+  
+  Error: ORA-16664: unable to receive the result from a database
+  solution:- Restart standby database.
+  

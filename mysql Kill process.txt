@@ -1,0 +1,201 @@
+
+mysql5     8315   7790  2 Mar08 ?        19:05:59 ./bin/mysqld --defaults-file=/inst05/inst05-data/etc/my.cnf --basedir=/tools/mysql55 --datadi   
+
+https://kb.veeble.org/recover-corrupted-table-mysql/
+                 
+/tools/mysql55/bin/mysql --socket=/inst05/inst05-data/etc/mysql.sock --port=3346 -u root -proot123
+
+ysql>
+mysql> show processlist;
++-------+--------+-------------------------------------------+-----------------+---------+-------+------------------------------+------------------------------------------------------------------------------------------------------+
+| Id    | User   | Host                                      | db              | Command | Time  | State                        | Info                                                                                                 |
++-------+--------+-------------------------------------------+-----------------+---------+-------+------------------------------+------------------------------------------------------------------------------------------------------+
+| 68441 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:48070 | NokiaEDU        | Query   | 24292 | Waiting for table level lock | SELECT eventresource5.`ID`,eventresource5.`UID`,eventresource5.`argb`,eventresource5.`pattern`,event |
+| 79893 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:54434 | NokiaEDU        | Query   | 24627 | preparing                    | SELECT eventresource29.`ID`,eventresource29.`UID`,eventresource29.`argb`,eventresource29.`pattern`,e |
+| 80022 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:55482 | NokiaEDU        | Query   | 24529 | Waiting for table level lock | UPDATE eventresource5 SET `rub437`=26.0 WHERE ID=30288                                               |
+| 80038 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:55640 | NokiaEDU        | Query   | 24441 | Waiting for table level lock | SELECT eventresource9.`ID`,eventresource9.`UID`,eventresource9.`argb`,eventresource9.`pattern`,event |
+| 80074 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:56080 | NokiaEDU        | Query   | 24422 | Waiting for table level lock | UPDATE eventresource4 SET `rub863`=89.0 WHERE ID=484                                                 |
+| 80075 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:56082 | NokiaEDU        | Query   | 24403 | Waiting for table level lock | SELECT `ID`,`UID`,`autoRealized`,`beginDate`,`comments`,`computedDailyWorkLoad`,`computedHourlyWorkL |
+| 80084 | vpuser | fr712uapp052.zeu.alcatel-lucent.com:56140 | NokiaEDU        | Query   | 24389 | Waiting for table level lock | SELECT eventresource5.`ID`,eventresource5.`UID`,eventresource5.`argb`,eventresource5.`pattern`,event |
+
+SELECT, OBJECT_SCHEMA, OBJECT_NAME, GROUP_CONCAT(DISTINCT EXTERNAL_LOCK) FROM performance_schema.table_handles 
+WHERE EXTERNAL_LOCK IS NOT NULL GROUP BY OBJECT_SCHEMA, OBJECT_NAME
+
+
+mysql -e "show full processlist;" -ss | awk '{print "KILL "$1";"}'| mysql
+
+SELECT CONCAT('KILL ',id,';') AS run_this FROM information_schema.processlist WHERE user='vpuser' AND info = 'SELECT * FROM processlist';
+
+SELECT CONCAT('KILL ',id,';') AS run_this FROM information_schema.processlist WHERE user='vpuser' AND info = 'SELECT * FROM processlist' INTO OUTFILE '/tmp/kill_process.txt';
+
+SELECT CONCAT('KILL ',id,';') AS kill_list FROM information_schema.processlist WHERE user='vpuser' AND info = 'SELECT * FROM processlist';
+
+mysql -e "show full processlist;" -ss | awk '{print "KILL "$1";"}'| mysql 
+
+
+
+SELECT GROUP_CONCAT(CONCAT('KILL ',id,';') SEPARATOR ' ') 
+FROM information_schema.processlist WHERE user <> 'vpuser'; 
+
+https://nestify.io/blog/how-to-kill-mysql-queries/
+
+
+=============================================================
+
+mysql> CREATE INDEX ind_PID ON DWProntoRCAEDA(PID);
+Query OK, 0 rows affected (1.54 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql> show indexes
+    -> Ctrl-C -- exit!
+Aborted
+[root@trpros50 (PRONTO QA DB) ~]#
+[root@trpros50 (PRONTO QA DB) ~]#  /mysql_master/mysql-5.6/bin/mysql -uroot -p --socket=/mysql_master/tmp/mysql_master.sock --port=3306
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 1490891
+Server version: 5.6.49-enterprise-commercial-advanced-log MySQL Enterprise Server - Advanced Edition (Commercial)
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+mysql> use pronto_qa2
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+
+
+Database changed
+mysql>
+mysql>
+mysql> SHOW INDEX FROM pronto_qa2. DWProntoRCAEDA;
++----------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table          | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++----------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| dwprontorcaeda |          1 | ind_PID  |            1 | PID         | A         |      268753 |     NULL | NULL   | YES  | BTREE      |         |               |
++----------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+
+mysql> SHOW INDEX FROM pronto_qa2. DWProntoActionProposal;
++------------------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table                  | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++------------------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| dwprontoactionproposal |          1 | ind_PID  |            1 | PID         | A         |      526579 |     NULL | NULL   | YES  | BTREE      |         |               |
++------------------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql> SHOW INDEX FROM pronto_qa2. DWProntoGFA;
++-------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table       | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| dwprontogfa |          1 | ind_PID  |            1 | PID         | A         |       25514 |     NULL | NULL   | YES  | BTREE      |         |               |
++-------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql>
+
+
+============================================================================================
+
+   /mysql_master/mysql-5.6/bin/mysqldump -uroot -p --socket=/mysql_master/tmp/mysql_master.sock --port=3306 --events pronto_qa1 >/pronto_attachments/pronto_qa1_events_27042021.sql
+  
+SELECT table_schema AS "Database", ROUND (SUM (data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" FROM information_schema.TABLES GROUP BY table_schema;
+
+
+nohup /mysql_master/mysql-5.6/bin/mysqldump -uroot -p --socket=/mysql_master/tmp/mysql_master.sock --port=3306  --max_allowed_packet=2G --no-create-db pronto_qa2 > /pronto_attachments/pronto_qa1_Backup_28042021.sql &
+
+
+SELECT 
+    table_schema 'Database Name',
+    SUM(data_length + index_length) 'Size in Bytes',
+    ROUND(SUM(data_length + index_length) /1024/1024/1024, 2) 'Size in MiB'
+FROM information_schema.tables 
+GROUP BY table_schema;
+
+SELECT 
+    table_schema 'Database Name',
+    SUM(data_length + index_length) 'Size in Bytes',
+    ROUND(SUM(data_length + index_length) / 1024 / 1024 /1024, 2) 'Size in GB'
+FROM information_schema.tables 
+WHERE table_schema = 'pronto_qa2';
+
+
+
+ /mysql_master/mysql-5.6/bin/mysqldump -uroot -p --socket=/mysql_master/tmp/mysql_master.sock --port=3306 --databases pronto_qa2 >/pronto_attachments/pronto_qa2_backup_28042021.sql &
+
+mysqldump -u root -p BBNB > /opt/eejira/database/BBNB/BKP_BBNB_2.sql
+
+/mysql_slave/mysql-8.0/bin/mysql -uroot -p'Nokia@2021' --max_allowed_packet=1G pronto_qa2 < rest_pronto_qa2_26April2021.sql &
+
+
+mysql>
+mysql> SELECT
+    ->     table_schema 'Database Name',
+    ->     SUM(data_length + index_length) 'Size in Bytes',
+    ->     ROUND(SUM(data_length + index_length) / 1024 / 1024 /1024, 2) 'Size in GB'
+    -> FROM information_schema.tables
+    -> WHERE table_schema = 'pronto_qa2';
+
+Prod
+------------------
++---------------+---------------+------------+
+| Database Name | Size in Bytes | Size in GB |
++---------------+---------------+------------+
+| pronto_qa2    |  117048416256 |     109.01 |
++---------------+---------------+------------+
+1 row in set (0.07 sec)
+
+mysql>
+
+
+Target
+------------------------
+
++---------------+---------------+------------+
+| Database Name | Size in Bytes | Size in GB |
++---------------+---------------+------------+
+| pronto_qa2    |  106364295168 |      99.06 |
++---------------+---------------+------------+
+1 row in set (0.94 sec)
+
+mysql>
+[root@trpros50 (PRONTO QA DB) pronto_attachments]# jobs -l
+[1]+ 11111 Running                 /mysql_master/mysql-5.6/bin/mysqldump -uroot -p@trpros50 --socket=/mysql_master/tmp/mysql_master.sock --port=3306 --databases pronto_qa2 > /pronto_attachments/pronto_qa2_bsckup_28042021.sql &
+
+
+restore status
+-----------------------
+
+
+/mysql_slave/mysql-8.0/bin/mysql -uroot -p'Nokia@2021' --max_allowed_packet=1G pronto_qa2 < rest_pronto_qa2_26April2021.sql &
+
+
+sELECT SUM(TABLE_ROWS) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'pronto_qa2'; 
+
+
+trpros50.emea.nsn-net.net,
+trpros51.emea.nsn-net.net,
+trpros52.emea.nsn-net.net
+SHOW INDEX FROM pronto.DWProntoRCAEDA(PID);
+
+CREATE INDEX ind_PID ON DWProntoActionProposal(PID);---created
+
+CREATE INDEX [ind_PID] ON DWProntoRCAEDA(PID);----created
+
+CREATE INDEX [ind_PID] ON DWProntoGFA(PID);
+
+CREATE INDEX [ind_FaultID] ON FaultAnalysis(FaultID);----alreadt created
+
+
+CREATE INDEX ind_PID ON DWProntoGFA(PID);

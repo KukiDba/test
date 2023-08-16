@@ -1,0 +1,138 @@
+***Application Stop**
+
+Status to be captured on Exeter database before shutdown:
+
+srvctl status database -d db_name -v
+srvctl config database -d db_name
+
+Check services in the database
+Check SGA/PGA
+Check TEMP tablespace Size
+
+
+-- check status of sync in standby
+
+    select a.thread#, applied, notappld, notappld-applied delta from
+    (select thread#, max(sequence#) applied  from gv$archived_log where applied='YES' group by thread#) A,
+    (select thread#, max(sequence#) notappld from gv$archived_log group by thread#) B
+    where a.thread# = b.thread# ;
+
+--Switch 3-4 archivelogs in primary: 
+
+alter system switch logfile;  --> primary
+
+
+-- check status of sync in standby if those archives are getting applied
+
+    select a.thread#, applied, notappld, notappld-applied delta from
+    (select thread#, max(sequence#) applied  from gv$archived_log where applied='YES' group by thread#) A,
+    (select thread#, max(sequence#) notappld from gv$archived_log group by thread#) B
+    where a.thread# = b.thread# ;
+
+--defer the log parameter at primary
+
+alter system set log_archive_dest_state_2=DEFER; --> primary
+
+--shutdown primary database once all archives have applied
+
+shut immediate;  --> primary
+
+** Activities to be done in standby**
+-------------------------------------
+
+-- check status of sync in standby
+
+    select a.thread#, applied, notappld, notappld-applied delta from
+    (select thread#, max(sequence#) applied  from gv$archived_log where applied='YES' group by thread#) A,
+    (select thread#, max(sequence#) notappld from gv$archived_log group by thread#) B
+    where a.thread# = b.thread# ;
+
+-- stop mrp on standby
+
+recover managed standby database cancel;
+
+-- create guranteed restore point in standby
+
+select name, flashback_on from gv$tablespace; 
+
+CREATE RESTORE POINT pre_migration guarantee  FLASHBACK DATABASE;
+
+-- check restore point
+
+select NAME,SCN,TIME,STORAGE_SIZE/1024/1024/1024 SizeinGB from v$restore_point;
+
+--set the cluster parameter false and start the standby database on one node.
+
+alter system set cluster_database=FALSE scope=spfile;
+
+srvctl stop database -d db_name
+
+-- start & activate standby
+
+startup mount;
+ALTER DATABASE ACTIVATE STANDBY DATABASE; 
+alter database open;
+
+-- set cluster database parameter true
+
+alter system set cluster_database=TRUE scope=spfile;
+
+-- stop the instance manually
+shut immediate
+
+
+-- start instances on both the nodes through srvctl
+
+srvctl start database -d db_name
+
+--Verify database status
+
+srvctl status database -d db_name -v
+
+-- verify SGA/PGA - keep similar to old database
+-- verify service_name & change if service_name is not added or different
+-- check local_listener parameter & set if it is not set
+-- verify TEMP tablespace and add tempfiles as captured in pre-checks
+-- test DB connection locally using DBA_ID
+-- add tnsentry in tnsnames.ora and share in the teams chat
+-- Verify alert logs & perform DB health check
+-- check archive destination & set log_archive_dest_size= diskgroup capacity
+
+
+*** Application confirmation & sanity completed ***
+
+Drop restore point post confirmation of sanity from application end.
+
+
+*** Post migration activities ***
+
+-- Register Dublin databases in  Global IT  OEM ( usdfw21db42v ) 
+-- Register in RMAN catalog
+
+steps
+======
+
+rman
+connect target;
+connect catalog rman_user/E1ephant#0nGround@RMANE1P;
+
+Register database;
+report schema:
+
+Disable Stanby configuration:
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='' SCOPE=BOTH sid='*';
+to avoid rman failure issue
+
+==========================================================
+
+-- RMAN archivelog backup of database  using existing  policy
+-- Verify Cron jobs for backup scripts and audit collection scripts
+
+
+All ok 
+
+
+
+
+======================================================xxxxxxxxx=======================================================
+

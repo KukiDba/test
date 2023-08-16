@@ -1,0 +1,3012 @@
+login as: u1249892
+Pre-authentication banner message from server:
+|
+| This system is for the use by authorized users only. All data contained
+| on all systems is owned by the company and may be monitored, intercepted,
+| recorded, read, copied, or captured in any manner and disclosed in any
+| manner, by authorized company personnel. Users (authorized or unauthorized)
+| have no explicit or implicit expectation of privacy. Unauthorized or improper
+| use of this system may result in administrative, disciplinary action, civil
+| and criminal penalties. Use of this system by any user, authorized or
+| unauthorized, constitutes express consent to this monitoring, interception,
+| recording, reading, copying, or capturing and disclosure.
+|
+| IF YOU DO NOT CONSENT, LOG OFF NOW.
+|
+| ##################################################################
+| # *** This Server is using Centrify                          *** #
+| # *** Remember to use your Active Directory account          *** #
+| # ***    password when logging in                            *** #
+| ##################################################################
+|
+End of banner message from server
+Keyboard-interactive authentication prompts from server:
+| (AD: corp.mmco.int) Password:
+| Sent Mobile Authenticator request to your device. Please follow the instructi
+> ons to proceed with authentication or enter verification code here. After tha
+> t, please press <enter> to finish authentication: 62446493
+End of keyboard-interactive prompts from server
+    +----------------------------------------------------------------------+
+    ¦                 • MobaXterm Personal Edition v21.4 •                 ¦
+    ¦               (SSH client, X server and network tools)               ¦
+    ¦                                                                      ¦
+    ¦ ? SSH session to u1249892@gbbed23db07v.MRSHMC.COM                    ¦
+    ¦   • Direct SSH      :  ?                                             ¦
+    ¦   • SSH compression :  ?                                             ¦
+    ¦   • SSH-browser     :  ?                                             ¦
+    ¦   • X11-forwarding  :  ?  (remote display is forwarded through SSH)  ¦
+    ¦                                                                      ¦
+    ¦ ? For more info, ctrl+click on help or visit our website.            ¦
+    +----------------------------------------------------------------------+
+
+Last login: Tue Nov  2 14:27:47 2021 from 10.228.85.63
+/usr/bin/xauth:  file /home/u1249892/.Xauthority does not exist
+$ sudo -iu oracle
+(AD: corp.mmco.int) Password:
+
+Value of TERM has been set to "xterm".
+The SID's on  are:
+The listeners on  are:
+oracle    58018  58012  0 14:28 pts/4    00:00:00 grep lsnr
+oracle@gbbed23db07v:NOSID>sudo -l
+Matching Defaults entries for oracle on gbbed23db07v:
+    !visiblepw, always_set_home, match_group_by_gid, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS",
+    env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT
+    LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE
+    LINGUAS _XKB_CHARSET XAUTHORITY", secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin, log_output
+
+Runas and Command-specific defaults for oracle:
+    Defaults!/usr/bin/sudoreplay !log_output
+    Defaults!/usr/local/bin/sudoreplay !log_output
+    Defaults!/sbin/reboot !log_output
+
+User oracle may run the following commands on gbbed23db07v:
+    (oracle, oragrid, foglight) ALL, !/bin/su
+    (root) NOPASSWD: /usr/bin/less /var/log/messages, /usr/bin/tail /var/log/messages, /bin/more /var/log/messages,
+        /usr/bin/less /var/log/boot.log, /usr/bin/tail /var/log/boot.log, /bin/more /var/log/boot.log, /bin/more
+        /var/log/demsg, /usr/bin/tail /var/log/dmesg, /usr/bin/less /var/log/dmesg,
+        /opt/oracle/product/920/oracm/bin/ocmstart.sh, /bin/mount, /bin/umount, /opt/oragrid/product/*/*/root.sh,
+        /opt/oracle/product/*/agentdeployroot.sh, /opt/oracle/product/*/*/root.sh, /opt/oracle/oraInventory/orainstRoot.sh,
+        /usr/bin/id
+    (root) NOPASSWD: /opt/oracle/product/*/grid/bin/crsctl, /opt/oracle/product/*/grid/crs/install/rootcrs.pl,
+        /opt/oracle/product/*/grid/crs/install/roothas.pl, /opt/oracle/product/*/grid/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/OPatch/opatch, /opt/oracle/product/*/grid/OPatch/opatchauto lsinventory,
+        /opt/oracle/product/*/grid/crs_asm/bin/crsctl, /opt/oracle/product/*/grid/crs_asm/crs/install/rootcrs.pl,
+        /opt/oracle/product/*/grid/crs_asm/crs/install/roothas.pl, /opt/oracle/product/*/grid/crs_asm/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/crs_asm/OPatch/opatch, /opt/oracle/product/*/grid/crs_asm/Patch/opatchauto lsinventory,
+        /opt/oragrid/product/*/grid/bin/crsctl, /opt/oragrid/product/*/grid/OPatch/opatchauto,
+        /opt/oragrid/product/*/grid/OPatch/opatch, /opt/oragrid/product/*/grid/OPatch/opatchauto lsinventory,
+        /opt/oragrid/product/*/grid/crs/install/rootcrs.pl, /opt/oragrid/product/*/grid/crs/install/roothas.pl,
+        /opt/oracle/product/*/db/OPatch/opatchauto, /opt/oracle/product/*/db/OPatch/opatch,
+        /opt/oracle/product/*/db/OPatch/opatchauto lsinventory, /opt/oracle/product/*/grid/DB/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/DB/OPatch/opatch, /opt/oracle/product/*/grid/DB/OPatch/opatchauto lsinventory,
+        /opt/oragrid/product/*/*/OPatch/opatch, /opt/oragrid/product/*/*/OPatch/opatchauto,
+        /opt/oragrid/product/*/grid/perl/bin/perl, /opt/oragrid/product/*/grid/bin/crsctl,
+        /opt/oracle/product/agent/*/*/root.sh, /opt/oracle/product/*/db/root.sh, /opt/oragrid/product/*/grid/root.sh,
+        /opt/oragrid/oraInventory/orainstRoot.sh, /bin/tar -cvpf * /opt/oracle/product/*, /bin/tar -cvpf *
+        /opt/oragrid/product/*, /bin/tar -cvpf * /var/oracle/export/*, /bin/tar -cvpf * /opt/oracle/base/*,
+        /opt/oragrid/product/*/grid/crs/install/roothas.sh, /opt/oragrid/product/*/grid/rdbms/install/rootadd_rdbms.sh
+    (root) NOPASSWD: /opt/vormetric/DataSecurityExpert/agent/vmd/bin/register_host
+oracle@gbbed23db07v:NOSID>ps -ef | grep smon
+oracle    58202  58012  0 14:28 pts/4    00:00:00 grep smon
+oracle@gbbed23db07v:NOSID>vi /opt/oracle/product/10.2.0/root.sh
+opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/10.2.0/root.sh" 2L, 120C written
+oracle@gbbed23db07v:NOSID>sudo /opt/oracle/product/10.2.0/root.sh
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for oracle:
+Sorry, try again.
+[sudo] password for oracle:
+
+
+
+^C
+
+sudo: 2 incorrect password attempts
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>sudo -l
+Matching Defaults entries for oracle on gbbed23db07v:
+    !visiblepw, always_set_home, match_group_by_gid, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS",
+    env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT
+    LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE
+    LINGUAS _XKB_CHARSET XAUTHORITY", secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin, log_output
+
+Runas and Command-specific defaults for oracle:
+    Defaults!/usr/bin/sudoreplay !log_output
+    Defaults!/usr/local/bin/sudoreplay !log_output
+    Defaults!/sbin/reboot !log_output
+
+User oracle may run the following commands on gbbed23db07v:
+    (oracle, oragrid, foglight) ALL, !/bin/su
+    (root) NOPASSWD: /usr/bin/less /var/log/messages, /usr/bin/tail /var/log/messages, /bin/more /var/log/messages,
+        /usr/bin/less /var/log/boot.log, /usr/bin/tail /var/log/boot.log, /bin/more /var/log/boot.log, /bin/more
+        /var/log/demsg, /usr/bin/tail /var/log/dmesg, /usr/bin/less /var/log/dmesg,
+        /opt/oracle/product/920/oracm/bin/ocmstart.sh, /bin/mount, /bin/umount, /opt/oragrid/product/*/*/root.sh,
+        /opt/oracle/product/*/agentdeployroot.sh, /opt/oracle/product/*/*/root.sh, /opt/oracle/oraInventory/orainstRoot.sh,
+        /usr/bin/id
+    (root) NOPASSWD: /opt/oracle/product/*/grid/bin/crsctl, /opt/oracle/product/*/grid/crs/install/rootcrs.pl,
+        /opt/oracle/product/*/grid/crs/install/roothas.pl, /opt/oracle/product/*/grid/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/OPatch/opatch, /opt/oracle/product/*/grid/OPatch/opatchauto lsinventory,
+        /opt/oracle/product/*/grid/crs_asm/bin/crsctl, /opt/oracle/product/*/grid/crs_asm/crs/install/rootcrs.pl,
+        /opt/oracle/product/*/grid/crs_asm/crs/install/roothas.pl, /opt/oracle/product/*/grid/crs_asm/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/crs_asm/OPatch/opatch, /opt/oracle/product/*/grid/crs_asm/Patch/opatchauto lsinventory,
+        /opt/oragrid/product/*/grid/bin/crsctl, /opt/oragrid/product/*/grid/OPatch/opatchauto,
+        /opt/oragrid/product/*/grid/OPatch/opatch, /opt/oragrid/product/*/grid/OPatch/opatchauto lsinventory,
+        /opt/oragrid/product/*/grid/crs/install/rootcrs.pl, /opt/oragrid/product/*/grid/crs/install/roothas.pl,
+        /opt/oracle/product/*/db/OPatch/opatchauto, /opt/oracle/product/*/db/OPatch/opatch,
+        /opt/oracle/product/*/db/OPatch/opatchauto lsinventory, /opt/oracle/product/*/grid/DB/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/DB/OPatch/opatch, /opt/oracle/product/*/grid/DB/OPatch/opatchauto lsinventory,
+        /opt/oragrid/product/*/*/OPatch/opatch, /opt/oragrid/product/*/*/OPatch/opatchauto,
+        /opt/oragrid/product/*/grid/perl/bin/perl, /opt/oragrid/product/*/grid/bin/crsctl,
+        /opt/oracle/product/agent/*/*/root.sh, /opt/oracle/product/*/db/root.sh, /opt/oragrid/product/*/grid/root.sh,
+        /opt/oragrid/oraInventory/orainstRoot.sh, /bin/tar -cvpf * /opt/oracle/product/*, /bin/tar -cvpf *
+        /opt/oragrid/product/*, /bin/tar -cvpf * /var/oracle/export/*, /bin/tar -cvpf * /opt/oracle/base/*,
+        /opt/oragrid/product/*/grid/crs/install/roothas.sh, /opt/oragrid/product/*/grid/rdbms/install/rootadd_rdbms.sh
+    (root) NOPASSWD: /opt/vormetric/DataSecurityExpert/agent/vmd/bin/register_host
+oracle@gbbed23db07v:NOSID>cd /opt/oracle/admin/db_mgnt
+-ksh: cd: /opt/oracle/admin/db_mgnt: [No such file or directory]
+oracle@gbbed23db07v:NOSID>cd /opt/oracle/admin/db
+-ksh: cd: /opt/oracle/admin/db: [No such file or directory]
+oracle@gbbed23db07v:NOSID>cd /opt/oracle/admin
+oracle@gbbed23db07v:NOSID>ls
+oltd157/  oltd160/  oltt227/  oltt234/  oltt292/
+oracle@gbbed23db07v:NOSID>cd oltt2
+1) oltt227/
+2) oltt234/
+3) oltt292/
+oracle@gbbed23db07v:NOSID>cd oltt2
+-ksh: cd: oltt2: [No such file or directory]
+oracle@gbbed23db07v:NOSID>ls
+oltd157/  oltd160/  oltt227/  oltt234/  oltt292/
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>cd oltt227
+oracle@gbbed23db07v:NOSID>LS
+-ksh: LS: not found [No such file or directory]
+oracle@gbbed23db07v:NOSID>ls
+xdb_wallet/
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>
+oracle@gbbed23db07v:NOSID>exit
+$ sudo /opt/oracle/product/10.2.0/root.sh
+(AD: corp.mmco.int) Password:
+Sorry, user u1249892 is not allowed to execute '/opt/oracle/product/10.2.0/root.sh' as root on gbbed23db07v.
+$ sudo -iu oracle
+(AD: corp.mmco.int) Password:
+
+Value of TERM has been set to "xterm".
+The SID's on  are:
+The listeners on  are:
+oracle    61778  61769  0 14:36 pts/4    00:00:00 grep lsnr
+oracle@gbbed23db07v:NOSID> sudo /opt/oracle/product/10.2.0/root.sh
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for oracle:
+Sorry, try again.
+[sudo] password for oracle:
+sudo: timed out reading password
+sudo: 1 incorrect password attempt
+oracle@gbbed23db07v:NOSID>sudo -l
+Matching Defaults entries for oracle on gbbed23db07v:
+    !visiblepw, always_set_home, match_group_by_gid, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS",
+    env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT
+    LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE
+    LINGUAS _XKB_CHARSET XAUTHORITY", secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin, log_output
+
+Runas and Command-specific defaults for oracle:
+    Defaults!/usr/bin/sudoreplay !log_output
+    Defaults!/usr/local/bin/sudoreplay !log_output
+    Defaults!/sbin/reboot !log_output
+
+User oracle may run the following commands on gbbed23db07v:
+    (oracle, oragrid, foglight) ALL, !/bin/su
+    (root) NOPASSWD: /usr/bin/less /var/log/messages, /usr/bin/tail /var/log/messages, /bin/more /var/log/messages,
+        /usr/bin/less /var/log/boot.log, /usr/bin/tail /var/log/boot.log, /bin/more /var/log/boot.log, /bin/more
+        /var/log/demsg, /usr/bin/tail /var/log/dmesg, /usr/bin/less /var/log/dmesg,
+        /opt/oracle/product/920/oracm/bin/ocmstart.sh, /bin/mount, /bin/umount, /opt/oragrid/product/*/*/root.sh,
+        /opt/oracle/product/*/agentdeployroot.sh, /opt/oracle/product/*/*/root.sh, /opt/oracle/oraInventory/orainstRoot.sh,
+        /usr/bin/id
+    (root) NOPASSWD: /opt/oracle/product/*/grid/bin/crsctl, /opt/oracle/product/*/grid/crs/install/rootcrs.pl,
+        /opt/oracle/product/*/grid/crs/install/roothas.pl, /opt/oracle/product/*/grid/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/OPatch/opatch, /opt/oracle/product/*/grid/OPatch/opatchauto lsinventory,
+        /opt/oracle/product/*/grid/crs_asm/bin/crsctl, /opt/oracle/product/*/grid/crs_asm/crs/install/rootcrs.pl,
+        /opt/oracle/product/*/grid/crs_asm/crs/install/roothas.pl, /opt/oracle/product/*/grid/crs_asm/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/crs_asm/OPatch/opatch, /opt/oracle/product/*/grid/crs_asm/Patch/opatchauto lsinventory,
+        /opt/oragrid/product/*/grid/bin/crsctl, /opt/oragrid/product/*/grid/OPatch/opatchauto,
+        /opt/oragrid/product/*/grid/OPatch/opatch, /opt/oragrid/product/*/grid/OPatch/opatchauto lsinventory,
+        /opt/oragrid/product/*/grid/crs/install/rootcrs.pl, /opt/oragrid/product/*/grid/crs/install/roothas.pl,
+        /opt/oracle/product/*/db/OPatch/opatchauto, /opt/oracle/product/*/db/OPatch/opatch,
+        /opt/oracle/product/*/db/OPatch/opatchauto lsinventory, /opt/oracle/product/*/grid/DB/OPatch/opatchauto,
+        /opt/oracle/product/*/grid/DB/OPatch/opatch, /opt/oracle/product/*/grid/DB/OPatch/opatchauto lsinventory,
+        /opt/oragrid/product/*/*/OPatch/opatch, /opt/oragrid/product/*/*/OPatch/opatchauto,
+        /opt/oragrid/product/*/grid/perl/bin/perl, /opt/oragrid/product/*/grid/bin/crsctl,
+        /opt/oracle/product/agent/*/*/root.sh, /opt/oracle/product/*/db/root.sh, /opt/oragrid/product/*/grid/root.sh,
+        /opt/oragrid/oraInventory/orainstRoot.sh, /bin/tar -cvpf * /opt/oracle/product/*, /bin/tar -cvpf *
+        /opt/oragrid/product/*, /bin/tar -cvpf * /var/oracle/export/*, /bin/tar -cvpf * /opt/oracle/base/*,
+        /opt/oragrid/product/*/grid/crs/install/roothas.sh, /opt/oragrid/product/*/grid/rdbms/install/rootadd_rdbms.sh
+    (root) NOPASSWD: /opt/vormetric/DataSecurityExpert/agent/vmd/bin/register_host
+oracle@gbbed23db07v:NOSID>cat /opt/oracle/product/10.2.0/root.sh
+opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+oracle@gbbed23db07v:NOSID>exit
+$ sudo -iu oragrid
+(AD: corp.mmco.int) Password:
+
+Value of TERM has been set to "xterm".
+The SID's on  are:
+The listeners on  are:
+oragrid   83481  83475  0 15:09 pts/4    00:00:00 grep lsnr
+oragrid@gbbed23db07v:NOSID>. oarenv
+-ksh: .: oarenv: cannot open [No such file or directory]
+oragrid@gbbed23db07v:NOSID>+ASM
+-ksh: +ASM: not found [No such file or directory]
+oragrid@gbbed23db07v:NOSID>. oraenv
+ORACLE_SID = [NOSID] ? +ASM
+The Oracle base remains unchanged with value /opt/oragrid/base
+oragrid@gbbed23db07v:+ASM>sudo /opt/oracle/product/10.2.0/root.sh
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for oragrid:
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/10.2.0/root.sh
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/10.2.0/root.sh" 2L, 121C written
+oragrid@gbbed23db07v:+ASM>ls -lrt /opt/oracle/product/10.2.0/root.sh
+-rwxrwxrwx 1 oracle dba 121 Nov  2 15:10 /opt/oracle/product/10.2.0/root.sh*
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/10.2.0/root.sh
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+
+chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/10.2.0/root.sh" 4L, 195C written
+oragrid@gbbed23db07v:+ASM>cat /opt/oracle/product/10.2.0/root.sh
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+
+chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+oragrid@gbbed23db07v:+ASM>sudo /opt/oracle/product/10.2.0/root.sh
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for oragrid:
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/10.2.0/root.sh"
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for oragrid:
+sudo: timed out reading password
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+oragrid@gbbed23db07v:+ASM>cat /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 5L, 369C written
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+/opt/oracle/product/920/oracm/bin/ocmstart.sh: line 5: opatchauto: command not found
+oragrid@gbbed23db07v:+ASM>cat "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>pwd
+/home/oragrid
+oragrid@gbbed23db07v:+ASM>cd /opt/oragrid/product/19/grid/OPatch/
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+/opt/oracle/product/920/oracm/bin/ocmstart.sh: line 5: opatchauto: command not found
+oragrid@gbbed23db07v:+ASM>pwd
+/opt/oragrid/product/19/grid/OPatch
+oragrid@gbbed23db07v:+ASM>ls -lrt
+total 156
+-rw-r----- 1 oragrid dba    26 Jul 30 15:31 version.txt
+-rw-r----- 1 oragrid dba  3177 Jul 30 15:31 operr_readme.txt
+-rwxr-x--- 1 oragrid dba  4218 Jul 30 15:31 operr.bat*
+-rwxr-x--- 1 oragrid dba  3159 Jul 30 15:31 operr*
+-rwxr-x--- 1 oragrid dba  4290 Jul 30 15:31 opatch_env.sh*
+-rw-r----- 1 oragrid dba  2551 Jul 30 15:31 opatch.pl
+-rwxr-x--- 1 oragrid dba 16554 Jul 30 15:31 opatch.bat*
+-rwxr-x--- 1 oragrid dba 50108 Jul 30 15:31 opatch*
+-rwxr-x--- 1 oragrid dba 23550 Jul 30 15:31 emdpatch.pl*
+-rwxr-x--- 1 oragrid dba   627 Jul 30 15:31 datapatch.bat*
+-rwxr-x--- 1 oragrid dba   589 Jul 30 15:31 datapatch*
+-rw-r----- 1 oragrid dba  2980 Jul 30 15:31 README.txt
+-rwxr-x--- 1 oragrid dba   393 Jul 30 15:36 opatchauto.cmd*
+-rwxr-x--- 1 oragrid dba  1763 Jul 30 15:36 opatchauto*
+drwxr-x--- 7 oragrid dba    83 Aug  5 15:23 auto/
+drwxr-x--- 3 oragrid dba    21 Aug  5 15:23 oracle_common/
+drwxr-x--- 3 oragrid dba    24 Aug  5 15:23 plugins/
+drwxr-x--- 2 oragrid dba   170 Oct 27 15:30 scripts/
+drwxr-xr-x 2 oragrid dba    72 Oct 27 15:30 private/
+drwxr-x--- 5 oragrid dba    58 Oct 27 15:30 ocm/
+drwxr-x--- 2 oragrid dba  4096 Oct 27 15:30 jlib/
+drwxr-x--- 4 oragrid dba    62 Oct 27 15:30 opatchprereqs/
+drwxr-x--- 2 oragrid dba    90 Oct 27 15:30 docs/
+drwxr-xr-x 6 oragrid dba   198 Oct 27 15:30 jre/
+drwxr-x--- 2 oragrid dba    19 Oct 27 15:30 oplan/
+drwxr-x--- 2 oragrid dba    31 Oct 27 15:30 config/
+drwxr-x--- 9 oragrid dba  4096 Oct 27 15:30 modules/
+oragrid@gbbed23db07v:+ASM>crsctl start has
+CRS-6706: Oracle Clusterware Release patch level ('997187226') does not match Software patch level ('2868669536'). Oracle Clus           terware cannot be started.
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:+ASM>cd /opt/oragrid/product/19/grid/OPatch/
+oragrid@gbbed23db07v:+ASM>vi "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+cd /opt/oragrid/product/19/grid/crs/install/
+perl rootcrs.pl -unlock
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 8L, 440C written
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+Using configuration parameter file: ./crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crsunlock_gbbed23db07v_2021-11-02_10-34-26AM.log
+2021/11/02 10:34:27 CLSRSC-357: Failed to stop current Oracle Clusterware stack during upgrade
+2021/11/02 10:34:27 CLSRSC-347: Successfully unlock /opt/oragrid/product/19/grid
+oragrid@gbbed23db07v:+ASM>vi "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+cd /opt/oragrid/product/19/grid/rdbms/install
+./rootadd_rdbms.sh
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 12L, 509C written
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+oragrid@gbbed23db07v:+ASM>vi "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 14L, 570C written
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crslock_gbbed23db07v_2021-11-02_10-36-41AM.log
+2021/11/02 10:36:44 CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+oragrid@gbbed23db07v:+ASM>crsctl start has
+PROCL-26: Error while accessing the physical storage Operating System error [Permission denied] [13]
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:+ASM>vi "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 15L, 679C written
+oragrid@gbbed23db07v:+ASM>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+Invalid option -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+rootcrs.sh  [-verbose] [-upgrade ] [-checkcrsentities <yes|no>]
+             [-paramfile <parameter_file>]
+             [-deconfig [-deinstall] [-keepdg] [-lastnode] | -downgrade [-ocrbackupfile <OCR_backup_file>] [-online]] [-force]
+ [-unlock | -lock [-crshome <path_to_CRS_home>]]
+             [[-prepatch [-cleanpids] | -postpatch] [-norestart] [-nonrolling] [-rollback]] [-dstcrshome <destination_patch_ho           me>]
+             [-join -existingnode <node_name>]
+             [-move -dstcrshome <path to CRS home>]
+             [-converttoextended [-first -sites <sites list>] -site <node site>]
+             [-convertcluster <conversion type> -manifestfile <manifest file> [-lastnode]]
+             [-init] [-first -force] [-cleansockets]
+  Options:
+   -verbose    Run this script in verbose mode.
+   -upgrade    Oracle HA is being upgraded from previous version.
+   -lock       Lock CRS home.
+   -paramfile  Complete path of file specifying HA parameter values
+   -lastnode   Force the node this is executing on to be considered the last node of the deconfiguration and perform actions a           ssociated with deconfiguring the last node.
+   -downgrade  Downgrade Oracle Clusterware.
+   -deconfig   Remove Oracle Clusterware to allow it to be uninstalled or reinstalled.
+   -deinstall  Reset the permissions on CRS home during deconfiguration.
+   -keepdg     Keep existing diskgroups during deconfiguration.
+   -force      Force the execution of steps in install or delete that cannot be verified to be safe.
+   -unlock     Unlock CRS home.
+   -crshome    Complete path of CRS home.
+   -prepatch   Perform required steps before the Oracle patching tool (Opatch) is invoked.
+   -cleanpids  Terminate Oracle Clusterware active processes. Must use with -prepatch option.
+   -postpatch  Perform required steps after the Oracle patching tool (Opatch) is invoked.
+   -nonrolling Perform steps for -prepatch and -postpatch in a non-rolling fashion.
+   -norestart  Leave Oracle Clusterware stack stack down after patching.
+   -rollback   Perform steps specific to rollback for -prepatch and -postpatch.
+   -dstcrshome Complete path of CRS home for out-of-place patching only
+   -join       Add the local node to an upgraded cluster.
+   -existingnode An already upgraded cluster node. Must use with join option.
+   -init       Reset the permissions of the files and directories in the GI home that are modified by root.sh.
+   -ocrbackupfile Restore OCR with the given OCR backup file.
+   -first      Force a node other than the installer node as the first node, during install or upgrade. Must use with -force o           ption.
+   -cleansockets Remove socket files created by the Grid Infrastructure processes. Stop the GI stack if not already stopped (O           ption specific to Unix platform only).
+   -online     Downgrade the cluster without bringing the stack down on all nodes. Must be used with -downgrade option.
+   -converttoextended Convert the cluster to an extended cluster.
+   -first -sites      List of sites to add to the cluster configuration on the first node.
+   -site       The site the local node is associated with.
+   -move       Change the Oracle Grid Infrastructure home path. The new home location is specified by the -dstcrshome option.
+   -checkcrsentities If yes, only verify CRS entities before upgrade, do not upgrade. If no, skip verification and proceed to            upgrade.
+  -updateosfiles Restore the GI configuration files stored in OS locations. Includes updating the drivers for ACFS and AFD.
+   -convertcluster  The type of cluster conversion.
+   -manifestfile  The manifest file to import ASM credential.
+   -extractclusterdata  Extract the standalone cluster information.
+   -clusterinfodir  The directory in which to store the cluster information files.
+   -createmc  Create the manifest file for the member cluster on the domain server.
+   -convert  Convert the Standalone Cluster to a Member Cluster.
+   -rollbacksc  Roll back the standalone cluster conversion changes.
+   -rollbackdsc  Roll back the domain services cluster conversion changes.
+   -member  Member cluster name.
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crslock_gbbed23db07v_2021-11-02_10-39-32AM.log
+2021/11/02 10:39:35 CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+oragrid@gbbed23db07v:+ASM>ig/crslock_gbbed23db07v_2021-11-02_10-39-32AM.log                                                <
+2021-11-02 10:39:32: Checking parameters from paramfile /opt/oragrid/product/19/grid/crs/install/crsconfig_params to validate            installer variables
+2021-11-02 10:39:32: Skipping validation for ODA_CONFIG
+2021-11-02 10:39:32: Skipping validation for OPC_CLUSTER_TYPE
+2021-11-02 10:39:32: Skipping validation for OPC_NAT_ADDRESS
+2021-11-02 10:39:32: Skipping validation for RHP_PROVISIONED
+2021-11-02 10:39:32: Skipping validation for SCAN_CREDENTIALS
+2021-11-02 10:39:32: Skipping validation for SCAN_IPS
+2021-11-02 10:39:32: Skipping validation for SCAN_TYPE
+2021-11-02 10:39:32: Install node: usdfw23db16vcn1
+2021-11-02 10:39:32: Current node is not the install node
+2021-11-02 10:39:32: The configuration parameter file /opt/oragrid/product/19/grid/crs/install/crsconfig_params  is valid
+2021-11-02 10:39:32: Run command --/opt/oragrid/product/19/grid/bin/oraversion -libVersion-- as oragrid
+2021-11-02 10:39:32: /opt/oragrid/product/19/grid/bin/oraversion -libVersion successfully executed
+2021-11-02 10:39:32: Command output:
+>  19
+>End Command output
+2021-11-02 10:39:32: "/opt/oragrid/product/19/grid/bin/oraversion -libVersion" output: 19
+
+2021-11-02 10:39:32: Run command --/opt/oragrid/product/19/grid/bin/oraversion -majorVersion-- as oragrid
+2021-11-02 10:39:32: /opt/oragrid/product/19/grid/bin/oraversion -majorVersion successfully executed
+2021-11-02 10:39:32: Command output:
+>  19
+>End Command output
+2021-11-02 10:39:32: "/opt/oragrid/product/19/grid/bin/oraversion -majorVersion" output: 19
+
+2021-11-02 10:39:32: ### Printing the configuration values from files:
+2021-11-02 10:39:32:    /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+2021-11-02 10:39:32:    /opt/oragrid/product/19/grid/crs/install/s_crsconfig_defs
+2021-11-02 10:39:32: AFD_CONF=true
+2021-11-02 10:39:32: APPLICATION_VIP=
+2021-11-02 10:39:32: ASMCA_ARGS=
+2021-11-02 10:39:32: ASM_CONFIG=
+2021-11-02 10:39:32: ASM_CREDENTIALS=
+2021-11-02 10:39:32: ASM_DISCOVERY_STRING=/dev/oracleasm/disks/*
+2021-11-02 10:39:32: ASM_SPFILE=
+2021-11-02 10:39:32: ASM_UPGRADE=false
+2021-11-02 10:39:32: BIG_CLUSTER=
+2021-11-02 10:39:32: CDATA_AUSIZE=1
+2021-11-02 10:39:32: CDATA_BACKUP_AUSIZE=
+2021-11-02 10:39:32: CDATA_BACKUP_DISKS=
+2021-11-02 10:39:32: CDATA_BACKUP_DISK_GROUP=
+2021-11-02 10:39:32: CDATA_BACKUP_FAILURE_GROUPS=
+2021-11-02 10:39:32: CDATA_BACKUP_QUORUM_GROUPS=
+2021-11-02 10:39:32: CDATA_BACKUP_REDUNDANCY=
+2021-11-02 10:39:32: CDATA_BACKUP_SITES=
+2021-11-02 10:39:32: CDATA_BACKUP_SIZE=
+2021-11-02 10:39:32: CDATA_DISKS=
+2021-11-02 10:39:32: CDATA_DISK_GROUP=GEN_DEV_DATA01
+2021-11-02 10:39:32: CDATA_FAILURE_GROUPS=
+2021-11-02 10:39:32: CDATA_QUORUM_GROUPS=
+2021-11-02 10:39:32: CDATA_REDUNDANCY=
+2021-11-02 10:39:32: CDATA_SITES=
+2021-11-02 10:39:32: CDATA_SIZE=
+2021-11-02 10:39:32: CLSCFG_MISSCOUNT=
+2021-11-02 10:39:32: CLUSTER_CLASS=
+2021-11-02 10:39:32: CLUSTER_GUID=
+2021-11-02 10:39:32: CLUSTER_NAME=
+2021-11-02 10:39:32: CLUSTER_TYPE=
+2021-11-02 10:39:32: CRS_LIMIT_CORE=unlimited
+2021-11-02 10:39:32: CRS_LIMIT_MEMLOCK=unlimited
+2021-11-02 10:39:32: CRS_LSNR_STACK=32768
+2021-11-02 10:39:32: CRS_NODEVIPS=
+2021-11-02 10:39:32: CRS_STORAGE_OPTION=0
+2021-11-02 10:39:32: CSS_LEASEDURATION=400
+2021-11-02 10:39:32: DC_HOME=
+2021-11-02 10:39:32: DIRPREFIX=
+2021-11-02 10:39:32: DISABLE_OPROCD=0
+2021-11-02 10:39:32: EXTENDED_CLUSTER=
+2021-11-02 10:39:32: EXTENDED_CLUSTER_SITES=usdfw23db16vcn1.mrshmc.com
+2021-11-02 10:39:32: EXTENDED_CLUSTER_SITE_GUIDS=
+2021-11-02 10:39:32: EXTERNAL_ORACLE=/opt/oracle
+2021-11-02 10:39:32: EXTERNAL_ORACLE_BIN=/opt/oracle/bin
+2021-11-02 10:39:32: GIMR_CONFIG=
+2021-11-02 10:39:32: GIMR_CREDENTIALS=
+2021-11-02 10:39:32: GNS_ADDR_LIST=
+2021-11-02 10:39:32: GNS_ALLOW_NET_LIST=
+2021-11-02 10:39:32: GNS_CONF=
+2021-11-02 10:39:32: GNS_CREDENTIALS=
+2021-11-02 10:39:32: GNS_DENY_ITF_LIST=
+2021-11-02 10:39:32: GNS_DENY_NET_LIST=
+2021-11-02 10:39:32: GNS_DOMAIN_LIST=
+2021-11-02 10:39:32: GNS_TYPE=
+2021-11-02 10:39:32: GPNPCONFIGDIR=/opt/oragrid/product/19/grid
+2021-11-02 10:39:32: GPNPGCONFIGDIR=/opt/oragrid/product/19/grid
+2021-11-02 10:39:32: GPNP_PA=
+2021-11-02 10:39:32: HUB_NODE_LIST=
+2021-11-02 10:39:32: HUB_NODE_VIPS=
+2021-11-02 10:39:32: HUB_SIZE=
+2021-11-02 10:39:32: ID=/etc/init.d
+2021-11-02 10:39:32: INIT=/sbin/init
+2021-11-02 10:39:32: INITCTL=/sbin/initctl
+2021-11-02 10:39:32: INSTALL_NODE=usdfw23db16vcn1.mrshmc.com
+2021-11-02 10:39:32: ISROLLING=false
+2021-11-02 10:39:32: IT=/etc/inittab
+2021-11-02 10:39:32: JLIBDIR=/opt/oragrid/product/19/grid/jlib
+2021-11-02 10:39:32: JREDIR=/opt/oragrid/product/19/grid/jdk/jre/
+2021-11-02 10:39:32: LANGUAGE_ID=AMERICAN_AMERICA.AL32UTF8
+2021-11-02 10:39:32: LISTENER_USERNAME=oragrid
+2021-11-02 10:39:32: MGMT_DB=
+2021-11-02 10:39:32: MSGFILE=/var/adm/messages
+2021-11-02 10:39:32: NETWORKS=
+2021-11-02 10:39:32: NEW_HOST_NAME_LIST=
+2021-11-02 10:39:32: NEW_NODEVIPS=
+2021-11-02 10:39:32: NEW_NODE_NAME_LIST=
+2021-11-02 10:39:32: NEW_PRIVATE_NAME_LIST=
+2021-11-02 10:39:32: NODE_NAME_LIST=
+2021-11-02 10:39:32: OCRCONFIG=/etc/oracle/ocr.loc
+2021-11-02 10:39:32: OCRCONFIGDIR=/etc/oracle
+2021-11-02 10:39:32: OCRID=
+2021-11-02 10:39:32: OCRLOC=ocr.loc
+2021-11-02 10:39:32: OCR_LOCATIONS=
+2021-11-02 10:39:32: ODA_CONFIG=
+2021-11-02 10:39:32: OLASTGASPDIR=/etc/oracle/lastgasp
+2021-11-02 10:39:32: OLD_CRS_HOME=
+2021-11-02 10:39:32: OLRCONFIG=/etc/oracle/olr.loc
+2021-11-02 10:39:32: OLRCONFIGDIR=/etc/oracle
+2021-11-02 10:39:32: OLRLOC=olr.loc
+2021-11-02 10:39:32: OPC_CLUSTER_TYPE=
+2021-11-02 10:39:32: OPC_NAT_ADDRESS=
+2021-11-02 10:39:32: OPROCDCHECKDIR=/etc/oracle/oprocd/check
+2021-11-02 10:39:32: OPROCDDIR=/etc/oracle/oprocd
+2021-11-02 10:39:32: OPROCDFATALDIR=/etc/oracle/oprocd/fatal
+2021-11-02 10:39:32: OPROCDSTOPDIR=/etc/oracle/oprocd/stop
+2021-11-02 10:39:32: ORACLE_BASE=/opt/oragrid/base
+2021-11-02 10:39:32: ORACLE_HOME=/opt/oragrid/product/19/grid
+2021-11-02 10:39:32: ORACLE_OWNER=oragrid
+2021-11-02 10:39:32: ORA_ASM_GROUP=dba
+2021-11-02 10:39:32: ORA_DBA_GROUP=dba
+2021-11-02 10:39:32: PING_TARGETS=
+2021-11-02 10:39:32: PRIVATE_NAME_LIST=
+2021-11-02 10:39:32: RCALLDIR=/etc/rc.d/rc0.d /etc/rc.d/rc1.d /etc/rc.d/rc2.d /etc/rc.d/rc3.d /etc/rc.d/rc4.d /etc/rc.d/rc5.d            /etc/rc.d/rc6.d
+2021-11-02 10:39:32: RCKDIR=/etc/rc.d/rc0.d /etc/rc.d/rc1.d /etc/rc.d/rc2.d /etc/rc.d/rc4.d /etc/rc.d/rc6.d
+2021-11-02 10:39:32: RCSDIR=/etc/rc.d/rc3.d /etc/rc.d/rc5.d
+2021-11-02 10:39:32: RC_KILL=K15
+2021-11-02 10:39:32: RC_KILL_OLD=K96
+2021-11-02 10:39:32: RC_KILL_OLD2=K19
+2021-11-02 10:39:32: RC_START=S96
+2021-11-02 10:39:32: REUSEDG=false
+2021-11-02 10:39:32: RHP_CONF=false
+2021-11-02 10:39:32: RHP_PROVISIONED=
+2021-11-02 10:39:32: RIM_NODE_LIST=
+2021-11-02 10:39:32: SCAN_CREDENTIALS=
+2021-11-02 10:39:32: SCAN_IPS=
+2021-11-02 10:39:32: SCAN_NAME=
+2021-11-02 10:39:32: SCAN_PORT=
+2021-11-02 10:39:32: SCAN_TYPE=
+2021-11-02 10:39:32: SCRBASE=/etc/oracle/scls_scr
+2021-11-02 10:39:32: SILENT=false
+2021-11-02 10:39:32: SO_EXT=so
+2021-11-02 10:39:32: SRVCFGLOC=srvConfig.loc
+2021-11-02 10:39:32: SRVCONFIG=/var/opt/oracle/srvConfig.loc
+2021-11-02 10:39:32: SRVCONFIGDIR=/var/opt/oracle
+2021-11-02 10:39:32: SYSTEMCTL=/usr/bin/systemctl
+2021-11-02 10:39:32: SYSTEMD_SYSTEM_DIR=/etc/systemd/system
+2021-11-02 10:39:32: TZ=America/Chicago
+2021-11-02 10:39:32: UPSTART_INIT_DIR=/etc/init
+2021-11-02 10:39:32: USER_IGNORED_PREREQ=false
+2021-11-02 10:39:32: VNDR_CLUSTER=false
+2021-11-02 10:39:32: VOTING_DISKS=
+2021-11-02 10:39:32: ### Printing other configuration values ###
+2021-11-02 10:39:32: CLSCFG_EXTRA_PARMS=
+2021-11-02 10:39:32: HAS_GROUP=dba
+2021-11-02 10:39:32: HAS_USER=root
+2021-11-02 10:39:32: HOST=gbbed23db07v
+2021-11-02 10:39:32: LOCK=1
+2021-11-02 10:39:32: OLR_DIRECTORY=/opt/oragrid/base/crsdata/gbbed23db07v/olr
+2021-11-02 10:39:32: OLR_LOCATION=/opt/oragrid/base/crsdata/gbbed23db07v/olr/gbbed23db07v_19.olr
+2021-11-02 10:39:32: ORA_CRS_HOME=/opt/oragrid/product/19/grid
+2021-11-02 10:39:32: ORA_VERSION=19
+2021-11-02 10:39:32: SIHA=0
+2021-11-02 10:39:32: SUCC_REBOOT=0
+2021-11-02 10:39:32: SUPERUSER=root
+2021-11-02 10:39:32: addfile=/opt/oragrid/product/19/grid/crs/install/crsconfig_addparams
+2021-11-02 10:39:32: cluutil_trc_suff_pp=0
+2021-11-02 10:39:32: crscfg_trace=1
+2021-11-02 10:39:32: crscfg_trace_file=/opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crslock_gbbed23db07v_2021-11-02_10-39-           32AM.log
+2021-11-02 10:39:32: old_nodevips=
+2021-11-02 10:39:32: osdfile=/opt/oragrid/product/19/grid/crs/install/s_crsconfig_defs
+2021-11-02 10:39:32: parameters_valid=1
+2021-11-02 10:39:32: paramfile=/opt/oragrid/product/19/grid/crs/install/crsconfig_params
+2021-11-02 10:39:32: platform_family=unix
+2021-11-02 10:39:32: pp_srvctl_trc_suff=0
+2021-11-02 10:39:32: srvctl_trc_suff=0
+2021-11-02 10:39:32: srvctl_trc_suff_pp=0
+2021-11-02 10:39:32: stackStartLevel=11
+2021-11-02 10:39:32: user_is_superuser=1
+2021-11-02 10:39:32: ### Printing of configuration values complete ###
+2021-11-02 10:39:32: Print system environment variables:
+2021-11-02 10:39:32: DISPLAY = localhost:10.0
+2021-11-02 10:39:32: HOME = /root
+2021-11-02 10:39:32: LD_LIBRARY_PATH = /opt/oragrid/product/19/grid/lib:
+2021-11-02 10:39:32: LOGNAME = oragrid
+2021-11-02 10:39:32: MAIL = /var/mail/oragrid
+2021-11-02 10:39:32: ORACLE_BASE = /opt/oragrid/base
+2021-11-02 10:39:32: ORACLE_HOME = /opt/oragrid/product/19/grid
+2021-11-02 10:39:32: PATH = /sbin:/bin:/usr/sbin:/usr/bin
+2021-11-02 10:39:32: PWD = /opt/oragrid/product/19/grid/OPatch
+2021-11-02 10:39:32: SHELL = /bin/bash
+2021-11-02 10:39:32: SHLVL = 2
+2021-11-02 10:39:32: SUDO_COMMAND = /opt/oracle/product/920/oracm/bin/ocmstart.sh
+2021-11-02 10:39:32: SUDO_GID = 63250
+2021-11-02 10:39:32: SUDO_UID = 600000043
+2021-11-02 10:39:32: SUDO_USER = oragrid
+2021-11-02 10:39:32: TERM = vt100
+2021-11-02 10:39:32: TZ = America/Chicago
+2021-11-02 10:39:32: USER = oragrid
+2021-11-02 10:39:32: USERNAME = oragrid
+2021-11-02 10:39:32: _ = /opt/oragrid/product/19/grid/perl/bin/perl
+2021-11-02 10:39:32: Performing few checks before running scripts
+2021-11-02 10:39:32: Attempt to get current working directory
+2021-11-02 10:39:32: Running as user oragrid: pwd
+2021-11-02 10:39:32: Removing file /tmp/SFv7_b5Enz
+2021-11-02 10:39:32: Successfully removed file: /tmp/SFv7_b5Enz
+2021-11-02 10:39:32: pipe exit code: 0
+2021-11-02 10:39:32: /bin/su successfully executed
+
+2021-11-02 10:39:32: The current working directory: /opt/oragrid/product/19/grid/OPatch
+2021-11-02 10:39:32: Change working directory to safe directory /opt/oragrid/product/19/grid
+2021-11-02 10:39:32: Pre-checks for running the rootcrs script passed.
+2021-11-02 10:39:32: Perform initialization tasks before configuring AFD
+2021-11-02 10:39:32: Perform initialization tasks before configuring ACFS
+2021-11-02 10:39:32: Perform initialization tasks before configuring SRVM
+2021-11-02 10:39:32: Perform initialization tasks before configuring OHASD
+2021-11-02 10:39:32: Running prereq checks related to component AFD for patching
+2021-11-02 10:39:32: Doing prerequisite checks related to component ACFS for patching
+2021-11-02 10:39:32: Executing pwdx 57412 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing cmd: pwdx 57412 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing pwdx 57963 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing cmd: pwdx 57963 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing pwdx 57980 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing cmd: pwdx 57980 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing pwdx 83461 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing cmd: pwdx 83461 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing pwdx 83474 >/dev/null 2>&1
+2021-11-02 10:39:32: Executing cmd: pwdx 83474 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing pwdx 83475 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing cmd: pwdx 83475 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing pwdx 97848 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing cmd: pwdx 97848 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing pwdx 97849 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing cmd: pwdx 97849 >/dev/null 2>&1
+2021-11-02 10:39:33: Executing pwdx  >/dev/null 2>&1
+2021-11-02 10:39:33: Executing cmd: pwdx  >/dev/null 2>&1
+2021-11-02 10:39:33: Running /opt/oragrid/product/19/grid/bin/acfsdriverstate installed -s
+2021-11-02 10:39:33: Executing cmd: /opt/oragrid/product/19/grid/bin/acfsdriverstate installed -s
+2021-11-02 10:39:33: acfs is installed
+2021-11-02 10:39:33: Running /opt/oragrid/product/19/grid/bin/acfsdriverstate loaded -s
+2021-11-02 10:39:33: Executing cmd: /opt/oragrid/product/19/grid/bin/acfsdriverstate loaded -s
+2021-11-02 10:39:33: acfs is loaded
+2021-11-02 10:39:33: Executing cmd: /sbin/acfsutil info fs "/" -o mountpoint
+2021-11-02 10:39:33: Command output:
+>  acfsutil info fs: ACFS-03037: not an ACFS file system
+>End Command output
+2021-11-02 10:39:33: isACFSInstalled: 1
+2021-11-02 10:39:33: isACFSLoaded: 1
+2021-11-02 10:39:33: Executing cmd: /sbin/acfsutil info fs "/home/u1249892" -o mountpoint
+2021-11-02 10:39:33: Command output:
+>  acfsutil info fs: ACFS-03037: not an ACFS file system
+>End Command output
+2021-11-02 10:39:33: isACFSInstalled: 1
+2021-11-02 10:39:33: isACFSLoaded: 1
+2021-11-02 10:39:33: Executing cmd: /sbin/acfsutil info fs "/opt/oragrid/product/19/grid/OPatch" -o mountpoint
+2021-11-02 10:39:33: Command output:
+>  acfsutil info fs: ACFS-03037: not an ACFS file system
+>End Command output
+2021-11-02 10:39:33: Locking Oracle home ...
+2021-11-02 10:39:33: Perform initialization tasks before configuring OLR
+2021-11-02 10:39:33: Perform initialization tasks before configuring OCR
+2021-11-02 10:39:33: Active Oracle home: /opt/oragrid/product/19/grid
+2021-11-02 10:39:33: The Oracle home to lock is: /opt/oragrid/product/19/grid
+2021-11-02 10:39:33: Instantiating scripts in GI home: /opt/oragrid/product/19/grid
+2021-11-02 10:39:33: original umask: 22
+2021-11-02 10:39:33: new umask after setting: 22
+2021-11-02 10:39:33: SRC FILE: /opt/oragrid/product/19/grid/crs/sbs/crsconfig_dirs.sbs; DST PATH: /opt/oragrid/product/19/grid           /crs/utl/gbbed23db07v/crsconfig_dirs
+2021-11-02 10:39:33: SRC FILE: /opt/oragrid/product/19/grid/crs/sbs/crsconfig_fileperms.sbs; DST PATH: /opt/oragrid/product/19           /grid/crs/utl/gbbed23db07v/crsconfig_fileperms
+2021-11-02 10:39:33: Resetting AFD wrapper scripts
+2021-11-02 10:39:33: Invoking "/opt/oragrid/product/19/grid/bin/cluutil -ckpt -oraclebase /opt/oragrid/base -chkckpt -name ROO           TCRS_AFDINST -status"
+2021-11-02 10:39:33: trace file=/opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/cluutil1.log
+2021-11-02 10:39:33: Running as user oragrid: /opt/oragrid/product/19/grid/bin/cluutil -ckpt -oraclebase /opt/oragrid/base -ch           kckpt -name ROOTCRS_AFDINST -status
+2021-11-02 10:39:34: Removing file /tmp/1v8MESyqK2
+2021-11-02 10:39:34: Successfully removed file: /tmp/1v8MESyqK2
+2021-11-02 10:39:34: pipe exit code: 0
+2021-11-02 10:39:34: /bin/su successfully executed
+
+2021-11-02 10:39:34: NOT_EXISTS
+
+2021-11-02 10:39:34: The 'ROOTCRS_AFDINST' does not exist
+2021-11-02 10:39:34: Running reset_AFD_wrapper_scripts function
+2021-11-02 10:39:34: Reset /opt/oragrid/product/19/grid/bin/afddriverstate
+2021-11-02 10:39:34: Reset /opt/oragrid/product/19/grid/bin/afdload
+2021-11-02 10:39:34: Reset /opt/oragrid/product/19/grid/bin/afdtool
+2021-11-02 10:39:34: Resetting ACFS wrapper scripts
+2021-11-02 10:39:34: Invoking "/opt/oragrid/product/19/grid/bin/cluutil -ckpt -oraclebase /opt/oragrid/base -chkckpt -name ROO           TCRS_ACFSINST -status"
+2021-11-02 10:39:34: trace file=/opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/cluutil2.log
+2021-11-02 10:39:34: Running as user oragrid: /opt/oragrid/product/19/grid/bin/cluutil -ckpt -oraclebase /opt/oragrid/base -ch           kckpt -name ROOTCRS_ACFSINST -status
+2021-11-02 10:39:34: Removing file /tmp/WZywulN9AQ
+2021-11-02 10:39:34: Successfully removed file: /tmp/WZywulN9AQ
+2021-11-02 10:39:34: pipe exit code: 0
+2021-11-02 10:39:34: /bin/su successfully executed
+
+2021-11-02 10:39:34: NOT_EXISTS
+
+2021-11-02 10:39:34: The 'ROOTCRS_ACFSINST' does not exist
+2021-11-02 10:39:34: Running reset_ACFS_wrapper_scripts function
+2021-11-02 10:39:34: Processing crsconfig_files.sbs and copying wrapper scripts
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/usrvip and /opt/oragrid/product/19/           grid/bin/usrvip
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/usrvip) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/appvipcfg and /opt/oragrid/product/           19/grid/bin/appvipcfg
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/appvipcfg) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/srdtool and /opt/oragrid/product/19           /grid/bin/rdtool
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/rdtool) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/evm.auth and /opt/oragrid/product/1           9/grid/evm/admin/conf/evm.auth
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/evm/admin/conf/evm.auth) already exists with proper contents, skipping the            copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/evmdaemon.conf and /opt/oragrid/pro           duct/19/grid/evm/admin/conf/evmdaemon.conf
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/evm/admin/conf/evmdaemon.conf) already exists with proper contents, skippin           g the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/evmlogger.conf and /opt/oragrid/pro           duct/19/grid/evm/admin/conf/evmlogger.conf
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/evm/admin/conf/evmlogger.conf) already exists with proper contents, skippin           g the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/logging.properties and /opt/oragrid           /product/19/grid/srvm/admin/logging.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/srvm/admin/logging.properties) already exists with proper contents, skippin           g the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/oclumon.pl and /opt/oragrid/product           /19/grid/bin/oclumon.pl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oclumon.pl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ologdbg.pl and /opt/oragrid/product           /19/grid/bin/ologdbg.pl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ologdbg.pl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/conf/clscalbuf.xml and /opt/oragrid/bas           e/crsdata/gbbed23db07v/calog/clscalbuf.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/calog/clscalbuf.xml) already exists with proper contents, skippin           g the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/mgmtca and /opt/oragrid/product/19/           grid/bin/mgmtca
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/mgmtca) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/mgmtua and /opt/oragrid/product/19/           grid/bin/mgmtua
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/mgmtua) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/srvmhelper and /opt/oragrid/product           /19/grid/srvm/admin/srvmhelper
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/srvm/admin/srvmhelper) already exists with proper contents, skipping the co           py
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrapexece.pl and /opt/oragrid/pr           oduct/19/grid/bin/crswrapexece.pl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crswrapexece.pl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/cluutil and /opt/oragrid/product/19           /grid/bin/cluutil
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cluutil) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ocrcheck
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ocrcheck) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ocrconfig
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ocrconfig) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ocrdump
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ocrdump) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ocrpatch
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ocrpatch) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/gipcd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/gipcd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/mdnsd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/mdnsd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oranetmonitor
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oranetmonitor) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oradnssd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oradnssd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/gpnpd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/gpnpd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/gpnptool
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/gpnptool) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/appagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/appagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/clssproxy
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/clssproxy) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/cssvfupgd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cssvfupgd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/cemutls
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cemutls) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/cemutlo
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cemutlo) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/octssd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/octssd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ohasd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ohasd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/crsd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crsd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evminfo
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evminfo) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmlogger
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmlogger) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmmkbin
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmmkbin) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmmklib
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmmklib) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmpost
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmpost) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmshow
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmshow) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmsort
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmsort) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/evmwatch
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/evmwatch) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/crscdpd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crscdpd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/cdpc
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cdpc) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/clsdiaglsnr
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/clsdiaglsnr) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/odig
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/odig) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oifcfg
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oifcfg) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/olsnodes
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/olsnodes) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oraagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oraagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/orarootagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/orarootagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oradaemonagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oradaemonagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oracsswd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oracsswd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/scriptagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/scriptagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/lsdb
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/lsdb) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/emcrsp
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/emcrsp) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/gnsd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/gnsd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/clsrwrap and /opt/oragrid/product/1           9/grid/bin/racgwrap
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/racgwrap) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/odnsd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/odnsd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/cv/admin/cvunetquery
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/cv/admin/cvunetquery) already exists with proper contents, skipping the cop           y
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/cv/admin/odnsdlite
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/cv/admin/odnsdlite) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/init.ohasd and /opt/oragrid/product           /19/grid/crs/init/init.ohasd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/init.ohasd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/init.ohasd.sles and /opt/oragrid/pr           oduct/19/grid/crs/init/init.ohasd.sles
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/init.ohasd.sles) already exists with proper contents, skipping the            copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/lsnodes and /opt/oragrid/product/19           /grid/bin/lsnodes
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/lsnodes) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ohasd and /opt/oragrid/product/19/g           rid/crs/init/ohasd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/ohasd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ohasd.sles and /opt/oragrid/product           /19/grid/crs/init/ohasd.sles
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/ohasd.sles) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/afd and /opt/oragrid/product/19/gri           d/crs/init/afd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/afd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/afd.sles and /opt/oragrid/product/1           9/grid/crs/init/afd.sles
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/afd.sles) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/olfs and /opt/oragrid/product/19/gr           id/crs/init/olfs
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/olfs) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/oka and /opt/oragrid/product/19/gri           d/crs/init/oka
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/init/oka) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/scrctl and /opt/oragrid/product/19/           grid/bin/scrctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/scrctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/oc4jctl and /opt/oragrid/product/19           /grid/bin/oc4jctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oc4jctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/rhpctl and /opt/oragrid/product/19/           grid/bin/rhpctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/rhpctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/rhprepos and /opt/oragrid/product/1           9/grid/bin/rhprepos
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/rhprepos) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ghappctl and /opt/oragrid/product/1           9/grid/bin/ghappctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ghappctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/dhcpproxy and /opt/oragrid/product/           19/grid/bin/dhcpproxy
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/dhcpproxy) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/qosctl and /opt/oragrid/product/19/           grid/bin/qosctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/qosctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/chactl and /opt/oragrid/product/19/           grid/bin/chactl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/chactl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ochadctl and /opt/oragrid/product/1           9/grid/bin/ochadctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ochadctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/oclumon and /opt/oragrid/product/19           /grid/bin/oclumon
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oclumon) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crfsetenv and /opt/oragrid/product/           19/grid/bin/crfsetenv
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crfsetenv) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ologdbg and /opt/oragrid/product/19           /grid/bin/ologdbg
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ologdbg) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/osysmond
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/osysmond) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crsrename and /opt/oragrid/product/           19/grid/bin/crsrename
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crsrename) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/cdpcfg and /opt/oragrid/product/19/           grid/bin/cdpcfg
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cdpcfg) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/cluvfy and /opt/oragrid/product/19/           grid/bin/cluvfy
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/cluvfy) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/srvctl and /opt/oragrid/product/19/           grid/bin/srvctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/srvctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/clscfg
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/clscfg) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/clsid
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/clsid) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/crsctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crsctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/clsecho
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/clsecho) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/ndfnceca and /opt/oragrid/product/1           9/grid/bin/ndfnceca
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ndfnceca) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oclskd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oclskd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oclsomon
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oclsomon) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/oclsvmon
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/oclsvmon) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ocssd
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ocssd) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/ocssdrim
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/ocssdrim) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crsboot_diags.sh and /opt/oragrid/p           roduct/19/grid/bin/crsboot_diags.sh
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crsboot_diags.sh) already exists with proper contents, skipping the cop           y
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/bin/setasmgid and /etc/oracle/setasmgid
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/etc/oracle/setasmgid) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/setasmgidwrap and /opt/oragrid/prod           uct/19/grid/bin/setasmgidwrap
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/setasmgidwrap) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/onsctl and /opt/oragrid/product/19/           grid/bin/onsctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/onsctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crswrap.sh and /opt/oragrid/product           /19/grid/bin/kfod
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/kfod) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/dropdb and /opt/oragrid/product/19/           grid/crs/install/dropdb
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/install/dropdb) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/rootcrs and /opt/oragrid/product/19           /grid/crs/install/rootcrs.sh
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/install/rootcrs.sh) already exists with proper contents, skipping the c           opy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/roothas and /opt/oragrid/product/19           /grid/crs/install/roothas.sh
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/crs/install/roothas.sh) already exists with proper contents, skipping the c           opy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/jwcctl and /opt/oragrid/product/19/           grid/bin/jwcctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/jwcctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/orajagent and /opt/oragrid/product/           19/grid/bin/orajagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/orajagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/orajagent and /opt/oragrid/product/           19/grid/bin/orajrootagent
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/orajrootagent) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/crskeytoolctl and /opt/oragrid/prod           uct/19/grid/bin/crskeytoolctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/crskeytoolctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/rhpplsnrctl and /opt/oragrid/produc           t/19/grid/bin/rhpplsnrctl
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/rhpplsnrctl) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/rhpplsnr and /opt/oragrid/product/1           9/grid/bin/rhpplsnr
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/bin/rhpplsnr) already exists with proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/catalina.policy and /opt/oragrid/b           ase/crsdata/gbbed23db07v/qos/conf/catalina.policy
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/catalina.policy) already exists with proper contents, sk           ipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/catalina.properties and /opt/oragr           id/base/crsdata/gbbed23db07v/qos/conf/catalina.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/catalina.properties) already exists with proper contents           , skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/context.xml and /opt/oragrid/base/           crsdata/gbbed23db07v/qos/conf/context.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/context.xml) already exists with proper contents, skippi           ng the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/jwc.properties and /opt/oragrid/ba           se/crsdata/gbbed23db07v/qos/conf/jwc.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/jwc.properties) already exists with proper contents, ski           pping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/logging.properties and /opt/oragri           d/base/crsdata/gbbed23db07v/qos/conf/logging.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/logging.properties) already exists with proper contents,            skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/server.xml and /opt/oragrid/base/c           rsdata/gbbed23db07v/qos/conf/server.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/server.xml) already exists with proper contents, skippin           g the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/web.xml and /opt/oragrid/base/crsd           ata/gbbed23db07v/qos/conf/web.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/web.xml) already exists with proper contents, skipping t           he copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/qos/conf/Catalina/localhost/dbwlm.xml and /           opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/Catalina/localhost/dbwlm.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/qos/conf/Catalina/localhost/dbwlm.xml) already exists with proper            contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/rhp.pref and /opt/oragrid/base/crs           data/gbbed23db07v/rhp/conf/rhp.pref
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/rhp.pref) already exists with proper contents, skipping            the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/catalina.policy and /opt/oragrid/b           ase/crsdata/gbbed23db07v/rhp/conf/catalina.policy
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/catalina.policy) already exists with proper contents, sk           ipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/catalina.properties and /opt/oragr           id/base/crsdata/gbbed23db07v/rhp/conf/catalina.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/catalina.properties) already exists with proper contents           , skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/context.xml and /opt/oragrid/base/           crsdata/gbbed23db07v/rhp/conf/context.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/context.xml) already exists with proper contents, skippi           ng the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/jwc.properties and /opt/oragrid/ba           se/crsdata/gbbed23db07v/rhp/conf/jwc.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/jwc.properties) already exists with proper contents, ski           pping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/logging.properties and /opt/oragri           d/base/crsdata/gbbed23db07v/rhp/conf/logging.properties
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/logging.properties) already exists with proper contents,            skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/server.xml and /opt/oragrid/base/c           rsdata/gbbed23db07v/rhp/conf/server.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/server.xml) already exists with proper contents, skippin           g the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/web.xml and /opt/oragrid/base/crsd           ata/gbbed23db07v/rhp/conf/web.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/web.xml) already exists with proper contents, skipping t           he copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/Catalina/localhost/rhp.xml and /op           t/oragrid/base/crsdata/gbbed23db07v/rhp/conf/Catalina/localhost/rhp.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/Catalina/localhost/rhp.xml) already exists with proper c           ontents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/rhp/conf/Catalina/localhost/rhp-restapi.xml            and /opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/Catalina/localhost/rhp-restapi.xml
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/base/crsdata/gbbed23db07v/rhp/conf/Catalina/localhost/rhp-restapi.xml) already exists with            proper contents, skipping the copy
+2021-11-02 10:39:34: Comparing two files by content:  /opt/oragrid/product/19/grid/crs/utl/twinauthpwdmgr and /opt/oragrid/pro           duct/19/grid/rhp/auth/twinauthpwdmgr
+2021-11-02 10:39:34: Two files have identical contents
+2021-11-02 10:39:34: (/opt/oragrid/product/19/grid/rhp/auth/twinauthpwdmgr) already exists with proper contents, skipping the            copy
+2021-11-02 10:39:34: Executing cmd: /usr/sbin/selinuxenabled
+2021-11-02 10:39:34: Processing directory permissions
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/jdk directory
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/perl directory
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/bin directory
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/asmcmdcore
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/asmcmdcore
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extjob
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/cluvfyrac.sh
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extjobo
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extjobo
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/dbstart
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extproc
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/oracle
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/oradism
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/relink
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/oklist0
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/xmlwf
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/asmcmd
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/jssu
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/onsctl
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/okinit0
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/okdstry0
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/lib directory
+2021-11-02 10:39:34: Skipping setting ownership & permissions on file /etc/inittab
+2021-11-02 10:39:34: Checking if OCR is on ASM
+2021-11-02 10:39:34: Retrieving OCR main disk location
+2021-11-02 10:39:34: Opening file /etc/oracle/ocr.loc
+2021-11-02 10:39:34: Value (/opt/oragrid/product/19/grid/cdata/localhost/local.ocr) is set for key=ocrconfig_loc
+2021-11-02 10:39:34: Retrieving OCR mirror disk location
+2021-11-02 10:39:34: Opening file /etc/oracle/ocr.loc
+2021-11-02 10:39:34: Value () is set for key=ocrmirrorconfig_loc
+2021-11-02 10:39:34: Retrieving OCR loc3 disk location
+2021-11-02 10:39:34: Opening file /etc/oracle/ocr.loc
+2021-11-02 10:39:34: Value () is set for key=ocrconfig_loc3
+2021-11-02 10:39:34: Retrieving OCR loc4 disk location
+2021-11-02 10:39:34: Opening file /etc/oracle/ocr.loc
+2021-11-02 10:39:34: Value () is set for key=ocrconfig_loc4
+2021-11-02 10:39:34: Retrieving OCR loc5 disk location
+2021-11-02 10:39:34: Opening file /etc/oracle/ocr.loc
+2021-11-02 10:39:34: Value () is set for key=ocrconfig_loc5
+2021-11-02 10:39:34: OCR is NOT on ASM
+2021-11-02 10:39:34: saving current owner/permisssios of  parent dir of /opt/oragrid/product/19
+
+2021-11-02 10:39:34: saving parent dir ACLs in /opt/oragrid/product/19/grid/crs/install/ParentDirPerm_gbbed23db07v.txt
+
+2021-11-02 10:39:34: loading... /opt/oragrid/product/19/grid/crs/install/ParentDirPerm_gbbed23db07v.txt
+
+2021-11-02 10:39:34: Getting file permissions for /opt/oragrid/product/19
+
+2021-11-02 10:39:34: Getting file permissions for /opt/oragrid/product
+
+2021-11-02 10:39:34: Getting file permissions for /opt/oragrid
+
+2021-11-02 10:39:34: Getting file permissions for /opt
+
+2021-11-02 10:39:34: Processing directory permissions
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/jdk directory
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/perl directory
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/bin directory
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/asmcmdcore
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/asmcmdcore
+2021-11-02 10:39:34: orig perm for orarootagent.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extjob
+2021-11-02 10:39:34: orig perm for diskmon is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for gnsd.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/cluvfyrac.sh
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extjobo
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extjobo
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/dbstart
+2021-11-02 10:39:34: orig perm for cssdagent is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/extproc
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/oracle
+2021-11-02 10:39:34: orig perm for cssdmonitor is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/oradism
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/relink
+2021-11-02 10:39:34: orig perm for gnsd is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for crsd is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/oklist0
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/xmlwf
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/asmcmd
+2021-11-02 10:39:34: orig perm for crsd.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/jssu
+2021-11-02 10:39:34: orig perm for oracsswd.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/onsctl
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/okinit0
+2021-11-02 10:39:34: skip setting perms for exclude file /opt/oragrid/product/19/grid/bin/okdstry0
+2021-11-02 10:39:34: orig perm for octssd.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for ohasd.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for crswrapexece.pl is 0744, setting file perm to 0754
+2021-11-02 10:39:34: orig perm for octssd is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for ohasd is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for dhcpproxy is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for cssdagent.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for cssdmonitor.bin is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for orajrootagent is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for orarootagent is 0740, setting file perm to 0750
+2021-11-02 10:39:34: orig perm for oracsswd is 0740, setting file perm to 0750
+2021-11-02 10:39:34: set the permissions on the /opt/oragrid/product/19/grid/lib directory
+2021-11-02 10:39:34: Update OHASD Service
+2021-11-02 10:39:34: Executing cmd: /opt/oragrid/product/19/grid/bin/afddriverstate installed
+2021-11-02 10:39:35: Command output:
+>  AFD-9204: AFD device driver installed status: 'false'
+>End Command output
+2021-11-02 10:39:35: Failed to open /opt/oracle/extapi/64/asm/orcl/1 for reading: No such file or directory
+2021-11-02 10:39:35: AFD Library is not present
+2021-11-02 10:39:35: AFD is not installed
+2021-11-02 10:39:35: Executing cmd: /bin/rpm -q sles-release
+2021-11-02 10:39:35: Command output:
+>  package sles-release is not installed
+>End Command output
+2021-11-02 10:39:35: Check if the startup mechanism systemd is being used
+2021-11-02 10:39:35: Executing cmd: /bin/rpm -qf /sbin/init
+2021-11-02 10:39:35: Command output:
+>  systemd-219-78.el7_9.3.x86_64
+>End Command output
+2021-11-02 10:39:35: init file = /opt/oragrid/product/19/grid/crs/init/init.ohasd.sles
+2021-11-02 10:39:35: Copying file /opt/oragrid/product/19/grid/crs/init/init.ohasd.sles to /etc/init.d directory
+2021-11-02 10:39:35: Setting init.ohasd permission in /etc/init.d directory
+2021-11-02 10:39:35: init file = /opt/oragrid/product/19/grid/crs/init/ohasd.sles
+2021-11-02 10:39:35: Copying file /opt/oragrid/product/19/grid/crs/init/ohasd.sles to /etc/init.d directory
+2021-11-02 10:39:35: Setting ohasd permission in /etc/init.d directory
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc3.d/S96ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc3.d/S96ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc3.d/S96ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc3.d/S96ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc5.d/S96ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc5.d/S96ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc5.d/S96ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc5.d/S96ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc0.d/K15ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc0.d/K15ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc0.d/K15ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc0.d/K15ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc1.d/K15ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc1.d/K15ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc1.d/K15ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc1.d/K15ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc2.d/K15ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc2.d/K15ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc2.d/K15ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc2.d/K15ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc4.d/K15ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc4.d/K15ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc4.d/K15ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc4.d/K15ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: Removing "/etc/rc.d/rc6.d/K15ohasd"
+2021-11-02 10:39:35: Removing file /etc/rc.d/rc6.d/K15ohasd
+2021-11-02 10:39:35: Successfully removed file: /etc/rc.d/rc6.d/K15ohasd
+2021-11-02 10:39:35: Creating a link "/etc/rc.d/rc6.d/K15ohasd" pointing to /etc/init.d/ohasd
+2021-11-02 10:39:35: The file ohasd has been successfully linked to the RC directories
+2021-11-02 10:39:35: update ohasd service=ohasd
+2021-11-02 10:39:35: Check if the startup mechanism upstart is being used
+2021-11-02 10:39:35: Executing cmd: /bin/rpm -qf /sbin/init
+2021-11-02 10:39:35: Command output:
+>  systemd-219-78.el7_9.3.x86_64
+>End Command output
+2021-11-02 10:39:35: Not using the Linux startup method: upstart
+2021-11-02 10:39:35: This is a Linux Systemd environment
+2021-11-02 10:39:35: include x /var/tmp/.oracle x /tmp/.oracle x /var/lib/oracle into the exclude file /etc/tmpfiles.d/oracleG           I.confused by systemd to avoid cleanup
+2021-11-02 10:39:35: INIT file: oracle-ohasd.service
+2021-11-02 10:39:35: Executing cmd: /opt/oragrid/product/19/grid/bin/clsecho -p has -f clsrsc -m 329 'oracle-ohasd.service'
+2021-11-02 10:39:35: Executing cmd: /opt/oragrid/product/19/grid/bin/clsecho -p has -f clsrsc -m 329 'oracle-ohasd.service'
+2021-11-02 10:39:35: Command output:
+>  CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+>End Command output
+2021-11-02 10:39:35: CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+2021-11-02 10:39:35: itab entries=ohasd
+2021-11-02 10:39:35: attempt to deconfigure oracle-ohasd.service
+2021-11-02 10:39:35: Executing cmd: /usr/bin/systemctl status oracle-ohasd.service
+2021-11-02 10:39:35: Command output:
+>  * oracle-ohasd.service - Oracle High Availability Services
+>     Loaded: loaded (/etc/systemd/system/oracle-ohasd.service; enabled; vendor preset: disabled)
+>    Drop-In: /etc/systemd/system/oracle-ohasd.service.d
+>             `-00_oracle-ohasd.conf
+>     Active: active (running) since Tue 2021-11-02 10:36:44 CDT; 2min 50s ago
+>   Main PID: 96803 (init.ohasd)
+>     CGroup: /system.slice/oracle-ohasd.service
+>             |-96803 /bin/sh /etc/init.d/init.ohasd run >/dev/null 2>&1 </dev/null
+>             `-98235 /bin/sleep 10
+>
+>  Nov 02 10:36:44 gbbed23db07v systemd[1]: Started Oracle High Availability Services.
+>End Command output
+2021-11-02 10:39:35: isRunning: 1; isEnabled: 1
+2021-11-02 10:39:35: Executing cmd: /usr/bin/systemctl stop oracle-ohasd.service
+2021-11-02 10:39:35: Executing cmd: /usr/bin/systemctl disable oracle-ohasd.service
+2021-11-02 10:39:35: Command output:
+>  Removed symlink /etc/systemd/system/multi-user.target.wants/oracle-ohasd.service.
+>  Removed symlink /etc/systemd/system/graphical.target.wants/oracle-ohasd.service.
+>End Command output
+2021-11-02 10:39:35: remove service file: /etc/systemd/system/oracle-ohasd.service
+2021-11-02 10:39:35: Removing file /etc/systemd/system/oracle-ohasd.service
+2021-11-02 10:39:35: Successfully removed file: /etc/systemd/system/oracle-ohasd.service
+2021-11-02 10:39:35: remove conf file: /etc/systemd/system/oracle-ohasd.service.d/00_oracle-ohasd.conf
+2021-11-02 10:39:35: Removing file /etc/systemd/system/oracle-ohasd.service.d/00_oracle-ohasd.conf
+2021-11-02 10:39:35: Successfully removed file: /etc/systemd/system/oracle-ohasd.service.d/00_oracle-ohasd.conf
+2021-11-02 10:39:35: SYSTEMD: Copying /opt/oragrid/product/19/grid/crs/install/00_oracle-ohasd.conf to /etc/systemd/system/ora           cle-ohasd.service.d/00_oracle-ohasd.conf
+2021-11-02 10:39:35: copy /opt/oragrid/product/19/grid/crs/install/00_oracle-ohasd.conf to /etc/systemd/system/oracle-ohasd.se           rvice.d/00_oracle-ohasd.conf without OS buffering
+2021-11-02 10:39:35: SYSTEMD: Copying /opt/oragrid/product/19/grid/crs/install/oracle-ohasd.service to /etc/systemd/system/ora           cle-ohasd.service
+2021-11-02 10:39:35: copy /opt/oragrid/product/19/grid/crs/install/oracle-ohasd.service to /etc/systemd/system/oracle-ohasd.se           rvice without OS buffering
+2021-11-02 10:39:35: Executing cmd: /usr/bin/systemctl daemon-reload
+2021-11-02 10:39:35: Executing cmd: /usr/bin/systemctl enable oracle-ohasd.service
+2021-11-02 10:39:35: Command output:
+>  Created symlink from /etc/systemd/system/multi-user.target.wants/oracle-ohasd.service to /etc/systemd/system/oracle-ohasd.s           ervice.
+>  Created symlink from /etc/systemd/system/graphical.target.wants/oracle-ohasd.service to /etc/systemd/system/oracle-ohasd.se           rvice.
+>End Command output
+2021-11-02 10:39:35: Executing cmd: /usr/bin/systemctl start oracle-ohasd.service
+oragrid@gbbed23db07v:+ASM>crsctl start has
+PROCL-26: Error while accessing the physical storage Operating System error [Permission denied] [13]
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:+ASM>cd /opt/
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>cd /dev/oracleasm/disks/
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>ls -lrth
+total 0
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA03 -> ../../dm-83
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTEGEN_QA_256_TEMP10 -> ../../dm-88
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET227_QA_64_FRA05 -> ../../dm-80
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA04 -> ../../dm-84
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTEGEN_QA_256_TEMP09 -> ../../dm-87
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA05 -> ../../dm-85
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA02 -> ../../dm-82
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA01 -> ../../dm-81
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA06 -> ../../dm-86
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA05 -> ../../dm-23
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA04 -> ../../dm-22
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA02 -> ../../dm-48
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA16 -> ../../dm-34
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA23 -> ../../dm-11
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA18 -> ../../dm-19
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA25 -> ../../dm-13
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA13 -> ../../dm-31
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA29 -> ../../dm-18
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA10 -> ../../dm-28
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA26 -> ../../dm-14
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP05 -> ../../dm-55
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA24 -> ../../dm-12
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA14 -> ../../dm-32
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP08 -> ../../dm-58
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA04 -> ../../dm-71
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA02 -> ../../dm-73
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA09 -> ../../dm-27
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA28 -> ../../dm-17
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA04 -> ../../dm-75
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA02 -> ../../dm-20
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA08 -> ../../dm-26
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA01 -> ../../dm-15
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA01 -> ../../dm-47
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA03 -> ../../dm-49
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA03 -> ../../dm-70
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA07 -> ../../dm-25
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP04 -> ../../dm-54
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP07 -> ../../dm-57
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP01 -> ../../dm-51
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA02 -> ../../dm-69
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA03 -> ../../dm-74
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA15 -> ../../dm-33
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP03 -> ../../dm-53
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA12 -> ../../dm-30
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA03 -> ../../dm-21
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA01 -> ../../dm-68
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA01 -> ../../dm-72
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA17 -> ../../dm-35
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA11 -> ../../dm-29
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA06 -> ../../dm-24
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP02 -> ../../dm-52
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA04 -> ../../dm-50
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP06 -> ../../dm-56
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA27 -> ../../dm-16
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA04 -> ../../dm-46
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO01 -> ../../dm-76
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA02 -> ../../dm-60
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA07 -> ../../dm-42
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA02 -> ../../dm-37
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA01 -> ../../dm-36
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO01 -> ../../dm-64
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA03 -> ../../dm-45
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA02 -> ../../dm-44
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA06 -> ../../dm-41
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO03 -> ../../dm-78
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA03 -> ../../dm-61
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA01 -> ../../dm-59
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA22 -> ../../dm-63
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO03 -> ../../dm-66
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA05 -> ../../dm-40
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA03 -> ../../dm-38
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA04 -> ../../dm-62
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA01 -> ../../dm-43
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO04 -> ../../dm-79
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO02 -> ../../dm-77
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO04 -> ../../dm-67
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO02 -> ../../dm-65
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA04 -> ../../dm-39
+oragrid@gbbed23db07v:+ASM>date
+Tue Nov  2 15:41:18 GMT 2021
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>pwd
+/dev/oracleasm/disks
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>cd /opt/oragrid/product/19/grid/bin/
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>ls -ld has*
+/bin/ls: cannot access has*: No such file or directory
+oragrid@gbbed23db07v:+ASM>ls -ld crs*
+-rwxr-xr-x 1 root dba    3742 Feb 11  2020 crsboot_diags.sh*
+-rwxr-xr-x 1 root dba   11576 Aug 13 09:51 crscdpd*
+-rwxr-xr-x 1 root dba  177096 Jul 20 16:44 crscdpd.bin*
+-rwxr-xr-x 1 root dba   11576 Aug 13 09:51 crsctl*
+-rwxr-xr-x 1 root dba 5487448 Jul 20 16:44 crsctl.bin*
+-rwxr-x--- 1 root dba   11576 Aug 13 09:51 crsd*
+-rwxr-x--- 1 root dba  390664 Jul 20 16:44 crsd.bin*
+-rwxr-xr-x 1 root dba    2989 Aug 20  2012 crsdiag.pl*
+-rwxr-xr-x 1 root dba    3229 Feb 11  2020 crskeytoolctl*
+-rwxr-xr-x 1 root dba     374 Feb 11  2020 crsrename*
+-rwxr-x--- 1 root dba   16865 Jan 16  2021 crsrename.pl*
+-rwxr-xr-x 1 root dba   13438 Sep  9  2005 crstmpl.scr*
+-rwxr-xr-- 1 root dba    7702 Sep 28  2020 crswrapexece.pl*
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>exit
+$ sudo -iu oragrid
+(AD: corp.mmco.int) Password:
+
+Value of TERM has been set to "xterm".
+The SID's on  are:
+The listeners on  are:
+oragrid   99645  99638  0 15:42 pts/4    00:00:00 grep lsnr
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>cd /opt/oragrid/product/19/grid/bin/
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>./crsctl status has
+Parse error:
+  'has' is an invalid argument
+
+Brief usage:
+  crsctl status <resource|type|serverpool|server> [<name>] [options]
+  crsctl status <ip|testdns> <options>
+
+  crsctl status ip -A {<IP_name>|<IP_address>}
+     Check if the IP is alive
+Where
+     IP_name        Name which resolves to an IP. If name is not fully qualified domain name then standard name search will be            used.
+     IP_address     IP address
+
+  crsctl status testdns [-address <IP_address>] [-port <port>] [-v]
+     Check status of DNS server for specified domain
+Where
+     IP_address          DNS server address (defaults to hostname)
+     port                The port on which the DNS server is listening. Default value for the port is 53.
+     -v                  Verbose output
+
+For complete usage, use:
+    crsctl [-h | --help]
+For detailed help on each command and object and its options use:
+    crsctl <command> <object> -h  For example, crsctl relocate resource -h
+oragrid@gbbed23db07v:NOSID>./crscrtl has status
+-ksh: ./crscrtl: not found [No such file or directory]
+oragrid@gbbed23db07v:NOSID>./crsctl has status
+Usage: crsctl <command> <object> [<options>]
+    command: add|check|config|create|debug|delete|disable|discover|enable|eval|export|get|getperm|lsmodules|modify|pin|query|r           elease|relocate|replace|request|set|setperm|start|status|stop|unpin|unset
+For complete usage, use:
+    crsctl [-h | --help]
+For detailed help on each command and object and its options use:
+    crsctl <command> <object> -h  e.g. crsctl relocate resource -h
+oragrid@gbbed23db07v:NOSID>./crsctl has status
+Usage: crsctl <command> <object> [<options>]
+    command: add|check|config|create|debug|delete|disable|discover|enable|eval|export|get|getperm|lsmodules|modify|pin|query|r           elease|relocate|replace|request|set|setperm|start|status|stop|unpin|unset
+For complete usage, use:
+    crsctl [-h | --help]
+For detailed help on each command and object and its options use:
+    crsctl <command> <object> -h  e.g. crsctl relocate resource -h
+oragrid@gbbed23db07v:NOSID>pwd
+/opt/oragrid/product/19/grid/bin
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>./crsctl status crs
+Parse error:
+  'crs' is an invalid argument
+
+Brief usage:
+  crsctl status <resource|type|serverpool|server> [<name>] [options]
+  crsctl status <ip|testdns> <options>
+
+  crsctl status ip -A {<IP_name>|<IP_address>}
+     Check if the IP is alive
+Where
+     IP_name        Name which resolves to an IP. If name is not fully qualified domain name then standard name search will be            used.
+     IP_address     IP address
+
+  crsctl status testdns [-address <IP_address>] [-port <port>] [-v]
+     Check status of DNS server for specified domain
+Where
+     IP_address          DNS server address (defaults to hostname)
+     port                The port on which the DNS server is listening. Default value for the port is 53.
+     -v                  Verbose output
+
+For complete usage, use:
+    crsctl [-h | --help]
+For detailed help on each command and object and its options use:
+    crsctl <command> <object> -h  For example, crsctl relocate resource -h
+oragrid@gbbed23db07v:NOSID>./crsctl status crs
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>./crsctl status has
+Parse error:
+  'has' is an invalid argument
+
+Brief usage:
+  crsctl status <resource|type|serverpool|server> [<name>] [options]
+  crsctl status <ip|testdns> <options>
+
+  crsctl status ip -A {<IP_name>|<IP_address>}
+     Check if the IP is alive
+Where
+     IP_name        Name which resolves to an IP. If name is not fully qualified domain name then standard name search will be            used.
+     IP_address     IP address
+
+  crsctl status testdns [-address <IP_address>] [-port <port>] [-v]
+     Check status of DNS server for specified domain
+Where
+     IP_address          DNS server address (defaults to hostname)
+     port                The port on which the DNS server is listening. Default value for the port is 53.
+     -v                  Verbose output
+
+For complete usage, use:
+    crsctl [-h | --help]
+For detailed help on each command and object and its options use:
+    crsctl <command> <object> -h  For example, crsctl relocate resource -h
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>ps -ef|grep d.bin
+root      11460      1  0 Oct16 ?        00:02:33 /opt/vormetric/DataSecurityExpert/agent/vmd/bin/vmd
+oragrid  100689  99638  0 15:45 pts/4    00:00:00 grep d.bin
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>crsctl start has
+PROCL-26: Error while accessing the physical storage Operating System error [Permission denied] [13]
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+Invalid option -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+rootcrs.sh  [-verbose] [-upgrade ] [-checkcrsentities <yes|no>]
+             [-paramfile <parameter_file>]
+             [-deconfig [-deinstall] [-keepdg] [-lastnode] | -downgrade [-ocrbackupfile <OCR_backup_file>] [-online]] [-force]
+ [-unlock | -lock [-crshome <path_to_CRS_home>]]
+             [[-prepatch [-cleanpids] | -postpatch] [-norestart] [-nonrolling] [-rollback]] [-dstcrshome <destination_patch_ho           me>]
+             [-join -existingnode <node_name>]
+             [-move -dstcrshome <path to CRS home>]
+             [-converttoextended [-first -sites <sites list>] -site <node site>]
+             [-convertcluster <conversion type> -manifestfile <manifest file> [-lastnode]]
+             [-init] [-first -force] [-cleansockets]
+  Options:
+   -verbose    Run this script in verbose mode.
+   -upgrade    Oracle HA is being upgraded from previous version.
+   -lock       Lock CRS home.
+   -paramfile  Complete path of file specifying HA parameter values
+   -lastnode   Force the node this is executing on to be considered the last node of the deconfiguration and perform actions a           ssociated with deconfiguring the last node.
+   -downgrade  Downgrade Oracle Clusterware.
+   -deconfig   Remove Oracle Clusterware to allow it to be uninstalled or reinstalled.
+   -deinstall  Reset the permissions on CRS home during deconfiguration.
+   -keepdg     Keep existing diskgroups during deconfiguration.
+   -force      Force the execution of steps in install or delete that cannot be verified to be safe.
+   -unlock     Unlock CRS home.
+   -crshome    Complete path of CRS home.
+   -prepatch   Perform required steps before the Oracle patching tool (Opatch) is invoked.
+   -cleanpids  Terminate Oracle Clusterware active processes. Must use with -prepatch option.
+   -postpatch  Perform required steps after the Oracle patching tool (Opatch) is invoked.
+   -nonrolling Perform steps for -prepatch and -postpatch in a non-rolling fashion.
+   -norestart  Leave Oracle Clusterware stack stack down after patching.
+   -rollback   Perform steps specific to rollback for -prepatch and -postpatch.
+   -dstcrshome Complete path of CRS home for out-of-place patching only
+   -join       Add the local node to an upgraded cluster.
+   -existingnode An already upgraded cluster node. Must use with join option.
+   -init       Reset the permissions of the files and directories in the GI home that are modified by root.sh.
+   -ocrbackupfile Restore OCR with the given OCR backup file.
+   -first      Force a node other than the installer node as the first node, during install or upgrade. Must use with -force o           ption.
+   -cleansockets Remove socket files created by the Grid Infrastructure processes. Stop the GI stack if not already stopped (O           ption specific to Unix platform only).
+   -online     Downgrade the cluster without bringing the stack down on all nodes. Must be used with -downgrade option.
+   -converttoextended Convert the cluster to an extended cluster.
+   -first -sites      List of sites to add to the cluster configuration on the first node.
+   -site       The site the local node is associated with.
+   -move       Change the Oracle Grid Infrastructure home path. The new home location is specified by the -dstcrshome option.
+   -checkcrsentities If yes, only verify CRS entities before upgrade, do not upgrade. If no, skip verification and proceed to            upgrade.
+  -updateosfiles Restore the GI configuration files stored in OS locations. Includes updating the drivers for ACFS and AFD.
+   -convertcluster  The type of cluster conversion.
+   -manifestfile  The manifest file to import ASM credential.
+   -extractclusterdata  Extract the standalone cluster information.
+   -clusterinfodir  The directory in which to store the cluster information files.
+   -createmc  Create the manifest file for the member cluster on the domain server.
+   -convert  Convert the Standalone Cluster to a Member Cluster.
+   -rollbacksc  Roll back the standalone cluster conversion changes.
+   -rollbackdsc  Roll back the domain services cluster conversion changes.
+   -member  Member cluster name.
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crslock_gbbed23db07v_2021-11-02_10-47-43AM.log
+^CINT at /opt/oragrid/product/19/grid/crs/install/crsutils.pm line 2234, <CMDEXE> line 1.
+^Coragrid@gbbed23db07v:NOSID>vi "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+export ORACLE_HOME=/opt/oragrid/product/19/grid
+/opt/oragrid/product/19/grid/bin/relink all
+
+cd /opt/oragrid/product/19/grid/rdbms/install
+./rootadd_rdbms.sh
+
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 18L, 770C written
+oragrid@gbbed23db07v:NOSID>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+The relink script cannot be run as root.
+Invalid option -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+rootcrs.sh  [-verbose] [-upgrade ] [-checkcrsentities <yes|no>]
+             [-paramfile <parameter_file>]
+             [-deconfig [-deinstall] [-keepdg] [-lastnode] | -downgrade [-ocrbackupfile <OCR_backup_file>] [-online]] [-force]
+ [-unlock | -lock [-crshome <path_to_CRS_home>]]
+             [[-prepatch [-cleanpids] | -postpatch] [-norestart] [-nonrolling] [-rollback]] [-dstcrshome <destination_patch_ho           me>]
+             [-join -existingnode <node_name>]
+             [-move -dstcrshome <path to CRS home>]
+             [-converttoextended [-first -sites <sites list>] -site <node site>]
+             [-convertcluster <conversion type> -manifestfile <manifest file> [-lastnode]]
+             [-init] [-first -force] [-cleansockets]
+  Options:
+   -verbose    Run this script in verbose mode.
+   -upgrade    Oracle HA is being upgraded from previous version.
+   -lock       Lock CRS home.
+   -paramfile  Complete path of file specifying HA parameter values
+   -lastnode   Force the node this is executing on to be considered the last node of the deconfiguration and perform actions a           ssociated with deconfiguring the last node.
+   -downgrade  Downgrade Oracle Clusterware.
+   -deconfig   Remove Oracle Clusterware to allow it to be uninstalled or reinstalled.
+   -deinstall  Reset the permissions on CRS home during deconfiguration.
+   -keepdg     Keep existing diskgroups during deconfiguration.
+   -force      Force the execution of steps in install or delete that cannot be verified to be safe.
+   -unlock     Unlock CRS home.
+   -crshome    Complete path of CRS home.
+   -prepatch   Perform required steps before the Oracle patching tool (Opatch) is invoked.
+   -cleanpids  Terminate Oracle Clusterware active processes. Must use with -prepatch option.
+   -postpatch  Perform required steps after the Oracle patching tool (Opatch) is invoked.
+   -nonrolling Perform steps for -prepatch and -postpatch in a non-rolling fashion.
+   -norestart  Leave Oracle Clusterware stack stack down after patching.
+   -rollback   Perform steps specific to rollback for -prepatch and -postpatch.
+   -dstcrshome Complete path of CRS home for out-of-place patching only
+   -join       Add the local node to an upgraded cluster.
+   -existingnode An already upgraded cluster node. Must use with join option.
+   -init       Reset the permissions of the files and directories in the GI home that are modified by root.sh.
+   -ocrbackupfile Restore OCR with the given OCR backup file.
+   -first      Force a node other than the installer node as the first node, during install or upgrade. Must use with -force o           ption.
+   -cleansockets Remove socket files created by the Grid Infrastructure processes. Stop the GI stack if not already stopped (O           ption specific to Unix platform only).
+   -online     Downgrade the cluster without bringing the stack down on all nodes. Must be used with -downgrade option.
+   -converttoextended Convert the cluster to an extended cluster.
+   -first -sites      List of sites to add to the cluster configuration on the first node.
+   -site       The site the local node is associated with.
+   -move       Change the Oracle Grid Infrastructure home path. The new home location is specified by the -dstcrshome option.
+   -checkcrsentities If yes, only verify CRS entities before upgrade, do not upgrade. If no, skip verification and proceed to            upgrade.
+  -updateosfiles Restore the GI configuration files stored in OS locations. Includes updating the drivers for ACFS and AFD.
+   -convertcluster  The type of cluster conversion.
+   -manifestfile  The manifest file to import ASM credential.
+   -extractclusterdata  Extract the standalone cluster information.
+   -clusterinfodir  The directory in which to store the cluster information files.
+   -createmc  Create the manifest file for the member cluster on the domain server.
+   -convert  Convert the Standalone Cluster to a Member Cluster.
+   -rollbacksc  Roll back the standalone cluster conversion changes.
+   -rollbackdsc  Roll back the domain services cluster conversion changes.
+   -member  Member cluster name.
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crslock_gbbed23db07v_2021-11-02_10-48-40AM.log
+2021/11/02 10:48:43 CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>
+oragrid@gbbed23db07v:NOSID>crsctl start has
+PROCL-26: Error while accessing the physical storage Operating System error [Permission denied] [13]
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:NOSID>vi "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+export ORACLE_HOME=/opt/oragrid/product/19/grid
+/opt/oragrid/product/19/grid/bin/relink all
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 18L, 774C written
+oragrid@gbbed23db07v:NOSID>sudo "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+The relink script cannot be run as root.
+oragrid@gbbed23db07v:NOSID>export ORACLE_HOME=/opt/oragrid/product/19/grid
+oragrid@gbbed23db07v:NOSID>/opt/oragrid/product/19/grid/bin/relink all
+  The Oracle home in which you are running this relinking tool does not
+have proper write permissions. Please run this relink script as the same
+user who owns the Oracle home and ensure that the Oracle home has the
+permissions from the original installation.
+  If this is a Grid Infrastructure home, please refer to the
+documentation for the proper steps to relink and apply oneoff patches.
+oragrid@gbbed23db07v:NOSID>ls -lrt /opt/oragrid/product/19/grid
+total 119380
+-rw-r-----  1 oragrid dba       500 Feb  6  2013 welcome.html
+-rw-r--r--  1 oragrid dba       852 Aug 18  2015 env.ora
+-rwxr-x---  1 oragrid dba       628 Sep  4  2015 runcluvfy.sh*
+-rwxr-x---  1 oragrid dba      3294 Mar  8  2017 gridSetup.sh*
+-rw-r-----  1 oragrid dba        10 Apr 17  2019 root.sh.old.3
+-rw-r-----  1 oragrid dba        10 Apr 17  2019 root.sh.old.1
+drwxr-x---  6 oragrid dba        58 Apr 17  2019 xdk/
+drwxr-xr-x  3 oragrid dba        19 Apr 17  2019 wwg/
+drwxr-xr-x  3 oragrid dba        18 Apr 17  2019 wlm/
+drwxr-xr-x  7 oragrid dba        71 Apr 17  2019 usm/
+drwxr-xr-x  4 oragrid dba        29 Apr 17  2019 tomcat/
+drwxr-xr-x  3 oragrid dba        18 Apr 17  2019 slax/
+drwxr-xr-x  3 oragrid dba        21 Apr 17  2019 relnotes/
+drwxr-xr-x  5 oragrid dba        42 Apr 17  2019 qos/
+drwxr-xr-x  5 oragrid dba        42 Apr 17  2019 precomp/
+drwxr-xr-x  5 root    dba        39 Apr 17  2019 perl/
+drwxr-xr-x  4 oragrid dba        33 Apr 17  2019 owm/
+drwxr-xr-x  3 oragrid dba        19 Apr 17  2019 oss/
+drwxr-xr-x  6 oragrid dba        52 Apr 17  2019 ord/
+drwxr-xr-x  4 oragrid dba        34 Apr 17  2019 oracore/
+drwxr-xr-x  5 oragrid dba        46 Apr 17  2019 nls/
+drwxr-xr-x  5 oragrid dba        42 Apr 17  2019 md/
+drwxr-xr-x 10 oragrid dba       112 Apr 17  2019 ldap/
+drwxr-xr-x  3 oragrid dba        19 Apr 17  2019 hs/
+drwxr-xr-x  4 oragrid dba        32 Apr 17  2019 has/
+drwxr-xr-x  3 oragrid dba        20 Apr 17  2019 diagnostics/
+drwxr-xr-x  3 oragrid dba        20 Apr 17  2019 demo/
+drwxr-xr-x  3 oragrid dba        19 Apr 17  2019 dbjava/
+drwxrwxr-x  7 oragrid dba        71 Apr 17  2019 cv/
+drwxr-xr-x  6 oragrid dba        78 Apr 17  2019 plsql/
+drwxr-xr-x  3 oragrid dba        35 Apr 17  2019 jdbc/
+drwxr-xr-x  2 oragrid dba        33 Apr 17  2019 utl/
+drwxr-xr-x  2 oragrid dba        26 Apr 17  2019 QOpatch/
+drwxr-xr-x  7 oragrid dba       102 Apr 17  2019 rhp/
+drwxr-xr-x  5 oragrid dba       119 Apr 17  2019 sdk/
+drwxr-xr-x  2 oragrid dba        29 Apr 17  2019 instantclient/
+drwxr-xr-x  3 oragrid dba        35 Apr 17  2019 ucp/
+drwxr-xr-x  8 oragrid dba        77 Apr 17  2019 opmn/
+-rwx------  1 oragrid dba       490 Apr 17  2019 root.sh.old*
+drwxr-xr-x 10 oragrid dba       106 Apr 17  2019 network/
+drwxr-xr-x 10 oragrid dba       106 Apr 17  2019 assistants/
+-rwx------  1 oragrid dba       405 Apr 18  2019 root.sh.old.2*
+drwxr-x---  3 oragrid dba        28 Apr 18  2019 .opatchauto_storage/
+drwxr-xr-x  8 oragrid dba        82 Apr 18  2019 javavm/
+-rw-r-----  1 oragrid dba        54 Jan 20  2020 oraInst.loc
+-rwxr-xr-x  1 oragrid dba        61 Feb 10  2020 pwang.Xauthority*
+drwxr-xr-x  6 oragrid dba        53 Feb 10  2020 sqlplus/
+-rwxr-xr-x  1 root    dba       445 Feb 10  2020 root.sh*
+-rwxr-xr-x  1 root    dba       454 Feb 10  2020 rootupgrade.sh*
+drwxr-x--- 14 oragrid dba       233 Feb 10  2020 inventory/
+drwxr-xr-x  8 oragrid dba       226 Feb 10  2020 oui/
+drwxr-xr-x  4 oragrid dba        87 Feb 10  2020 clone/
+drwxr-xr-x  5 oragrid dba       191 Feb 10  2020 deinstall/
+drwxr-xr-x  2 oragrid dba       102 Feb 10  2020 addnode/
+-rwxr-xr-x  1 oragrid dba       122 Feb 11  2020 .Xauthority*
+drwxr-x---  7 oragrid dba        65 Feb 11  2020 evm/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 mdns/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 gnsd/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 gipc/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 ohasd/
+drwx--x--x  5 oragrid dba        41 Feb 11  2020 css/
+drwxrwx---  6 oragrid dba        52 Feb 11  2020 auth/
+drwxr-xr-x  6 oragrid dba        68 Feb 11  2020 racg/
+drwxr-xr-x  3 root    dba        18 Feb 11  2020 ctss/
+drwxr-xr-x 14 root    dba       159 Feb 11  2020 crs/
+drwxr-xr-x  8 oragrid dba        77 Feb 11  2020 srvm/
+drwxr-x---  3 root    dba        19 Feb 11  2020 crf/
+drwxr-xr-x  3 root    dba        18 Feb 11  2020 osysmond/
+drwxr-xr-x  3 root    dba        18 Feb 11  2020 ologgerd/
+drwxr-x---  4 oragrid dba        31 Feb 11  2020 cha/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 cdp/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 advmccb/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 acfsiob/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 acfsrm/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 acfscm/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 acfsccm/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 acfsrd/
+drwxr-x---  3 oragrid dba        18 Feb 11  2020 acfsccreg/
+drwxrwxr-x  3 root    dba        22 Feb 11  2020 acfs/
+drwxrwx--- 11 oragrid dba      4096 Feb 25  2020 install/
+drwxr-xr-x  3 oragrid dba        19 Mar 22  2020 client/
+drwxrwxr-x  6 oragrid dba        72 Sep 28  2020 log/
+drwxrwxr-x  5 oragrid dba        66 Sep 28  2020 cdata/
+drwxr-x---  8 oragrid dba       104 Sep 28  2020 gpnp/
+drwxrwxr-x  3 oragrid dba        16 Nov 19  2020 opatchautocfg/
+drwxr-xr-x 16 oragrid dba       174 Nov 19  2020 rdbms/
+drwxr-xr-x  3 oragrid dba        55 Nov 19  2020 ords/
+drwxr-xr-x  3 oragrid dba        19 Nov 19  2020 olap/
+drwxr-xr-x  3 oragrid dba        19 Nov 19  2020 ctx/
+drwxr-xr-x  3 oragrid dba        18 Nov 19  2020 sdo/
+drwxr-xr-x  5 oragrid dba      4096 Nov 19  2020 xag/
+-rwxrwxrwx  1 oragrid dba 122119435 Feb  3  2021 p6880880_122010_Linux-x86-64.zip*
+drwxr-xr-x  2 oragrid dba        30 Feb  3  2021 pylib/
+drwxr-x--- 15 oragrid dba      4096 Oct 27 15:30 OPatch/
+drwxr-xr-x  2 oragrid dba       120 Nov  2 12:18 dbs/
+drwxr-xr-x 13 oragrid dba      4096 Nov  2 12:47 sqlpatch/
+drwxr-xr-x  2 oragrid dba      8192 Nov  2 12:47 jlib/
+drwxr-xr-x  7 root    dba       247 Nov  2 12:47 jdk/
+drwxr-xr-x  2 oragrid dba       149 Nov  2 12:49 lib32/
+drwxr-xr-x  2 root    dba     12288 Nov  2 12:49 bin/
+drwxr-xr-x  4 root    dba     12288 Nov  2 12:56 lib/
+drwxrwxr-x  8 oragrid dba      4096 Nov  2 14:42 cfgtoollogs/
+drwx------ 31 oragrid dba      4096 Nov  2 14:48 .patch_storage/
+drwxr-x---  4 root    dba        31 Nov  2 15:36 suptools/
+oragrid@gbbed23db07v:NOSID>ls -lrt /opt/oragrid/product/19/grid/bin/relink
+-rwxr-xr-x 1 oragrid dba 6981 Aug 27  2018 /opt/oragrid/product/19/grid/bin/relink*
+oragrid@gbbed23db07v:NOSID>. oraenv
+ORACLE_SID = [NOSID] ? +ASM
+The Oracle base remains unchanged with value /opt/oragrid/base
+oragrid@gbbed23db07v:+ASM>/opt/oragrid/product/19/grid/bin/relink all
+  The Oracle home in which you are running this relinking tool does not
+have proper write permissions. Please run this relink script as the same
+user who owns the Oracle home and ensure that the Oracle home has the
+permissions from the original installation.
+  If this is a Grid Infrastructure home, please refer to the
+documentation for the proper steps to relink and apply oneoff patches.
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>crsctl start has
+PROCL-26: Error while accessing the physical storage Operating System error [Permission denied] [13]
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>cd /dev/oracleasm/disks/
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>ls -lrth
+total 0
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA03 -> ../../dm-83
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTEGEN_QA_256_TEMP10 -> ../../dm-88
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET227_QA_64_FRA05 -> ../../dm-80
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA04 -> ../../dm-84
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTEGEN_QA_256_TEMP09 -> ../../dm-87
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA05 -> ../../dm-85
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA02 -> ../../dm-82
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA01 -> ../../dm-81
+lrwxrwxrwx 1 root root 11 Nov  2 11:49 VTET278_QA_1024_DATA06 -> ../../dm-86
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA05 -> ../../dm-23
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA04 -> ../../dm-22
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA02 -> ../../dm-48
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA16 -> ../../dm-34
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA23 -> ../../dm-11
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA18 -> ../../dm-19
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA25 -> ../../dm-13
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA13 -> ../../dm-31
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA29 -> ../../dm-18
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA10 -> ../../dm-28
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA26 -> ../../dm-14
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP05 -> ../../dm-55
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA24 -> ../../dm-12
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA14 -> ../../dm-32
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP08 -> ../../dm-58
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA04 -> ../../dm-71
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA02 -> ../../dm-73
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA09 -> ../../dm-27
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA28 -> ../../dm-17
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA04 -> ../../dm-75
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA02 -> ../../dm-20
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA08 -> ../../dm-26
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA01 -> ../../dm-15
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA01 -> ../../dm-47
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA03 -> ../../dm-49
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA03 -> ../../dm-70
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA07 -> ../../dm-25
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP04 -> ../../dm-54
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP07 -> ../../dm-57
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP01 -> ../../dm-51
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA02 -> ../../dm-69
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA03 -> ../../dm-74
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA15 -> ../../dm-33
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP03 -> ../../dm-53
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA12 -> ../../dm-30
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA03 -> ../../dm-21
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_256_DATA01 -> ../../dm-68
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_FRA01 -> ../../dm-72
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA17 -> ../../dm-35
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA11 -> ../../dm-29
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_1024_DATA06 -> ../../dm-24
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP02 -> ../../dm-52
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_128_FRA04 -> ../../dm-50
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_256_TEMP06 -> ../../dm-56
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA27 -> ../../dm-16
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA04 -> ../../dm-46
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO01 -> ../../dm-76
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA02 -> ../../dm-60
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA07 -> ../../dm-42
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA02 -> ../../dm-37
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA01 -> ../../dm-36
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO01 -> ../../dm-64
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA03 -> ../../dm-45
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA02 -> ../../dm-44
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA06 -> ../../dm-41
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO03 -> ../../dm-78
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA03 -> ../../dm-61
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA01 -> ../../dm-59
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_512_DATA22 -> ../../dm-63
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO03 -> ../../dm-66
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA05 -> ../../dm-40
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA03 -> ../../dm-38
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_64_FRA04 -> ../../dm-62
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTEGEN_QA_512_DATA01 -> ../../dm-43
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO04 -> ../../dm-79
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET234_QA_16_REDO02 -> ../../dm-77
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO04 -> ../../dm-67
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTET227_QA_32_REDO02 -> ../../dm-65
+lrwxrwxrwx 1 root root 11 Nov  2 12:18 VTED157_QA_1024_DATA04 -> ../../dm-39
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>crscl start has
+-ksh: crscl: not found [No such file or directory]
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>pwd
+/dev/oracleasm/disks
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>cd /opt/oragrid/product/19/grid/bin/
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>./crsctl start has
+PROCL-26: Error while accessing the physical storage Operating System error [Permission denied] [13]
+CRS-4000: Command Start failed, or completed with errors.
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/920/oracm/bin/ocmstart.sh
+oragrid@gbbed23db07v:+ASM>cat /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+chmod -R 775 /opt/oragrid/product/19/grid/bin/relink
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+oragrid@gbbed23db07v:+ASM> vi /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+#chmod -R 775 /opt/oragrid/product/19/grid/bin/relink
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 20L, 909C written
+oragrid@gbbed23db07v:+ASM>cat "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+#chmod -R 775 /opt/oragrid/product/19/grid/bin/relink
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+/opt/oragrid/product/19/grid/OPatch/opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768
+oragrid@gbbed23db07v:+ASM>sudo /opt/oracle/product/920/oracm/bin/ocmstart.sh
+
+OPatchauto session is initiated at Tue Nov  2 16:23:33 2021
+
+System initialization log file is /opt/oragrid/product/19/grid/cfgtoollogs/opatchautodb/systemconfig2021-11-02_04-23-38PM.log.
+
+Clusterware is either not running or not configured. You have the following 2 options:
+ 1. Configure and start the Clusterware on this node and re-run the tool
+ 2. Run the tool with '-oh <GI_HOME>' to first patch the Grid Home, then invoke tool with '-database <oracle database name>' o           r '-oh <RAC_HOME>' to patch the RAC home
+
+OPATCHAUTO-72029: CLusterware home not configured.
+OPATCHAUTO-72029: Clusterware is either not running or not configured or cluster is software only GI
+OPATCHAUTO-72029: If only Grid Infrastructure software is installed, please run opatchauto with '-oh' option . Alternatively c           onfigure and start the Clusterware before running opatchauto.
+
+
+
+OPatchauto session completed at Tue Nov  2 16:23:40 2021
+Time taken to complete the session 0 minute, 7 seconds
+
+Topology creation failed.
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+#chmod -R 775 /opt/oragrid/product/19/grid/bin/relink
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+/opt/oragrid/product/19/grid/OPatch/opatchauto resume
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 20L, 841C written
+oragrid@gbbed23db07v:+ASM>sudo /opt/oracle/product/920/oracm/bin/ocmstart.sh
+
+OPatchauto session is initiated at Tue Nov  2 16:25:52 2021
+Session log file is /opt/oragrid/product/19/grid/cfgtoollogs/opatchauto/opatchauto2021-11-02_04-25-52PM.log
+Resuming existing session with id PTZR
+
+Start applying binary patch on home /opt/oragrid/product/19/grid
+Failed while applying binary patches on home /opt/oragrid/product/19/grid
+
+Execution of [OPatchAutoBinaryAction] patch action failed, check log for more details. Failures:
+Patch Target : gbbed23db07v->/opt/oragrid/product/19/grid Type[siha]
+Details: [
+---------------------------Patching Failed---------------------------------
+Command execution failed during patching in home: /opt/oragrid/product/19/grid, host: gbbed23db07v.
+Command failed:  /opt/oragrid/product/19/grid/OPatch/opatchauto  apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct           _19c/33182768 -oh /opt/oragrid/product/19/grid -target_type has -binary -invPtrLoc /opt/oragrid/product/19/grid/oraInst.loc -j           re /opt/oragrid/product/19/grid/OPatch/jre -persistresult /opt/oragrid/product/19/grid/opatchautocfg/db/sessioninfo/sessionres           ult_gbbed23db07v_siha_2.ser -analyzedresult /opt/oragrid/product/19/grid/opatchautocfg/db/sessioninfo/sessionresult_analyze_gb           bed23db07v_siha_2.ser
+Command failure output:
+==Following patches FAILED in apply:
+
+Patch: /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768/33208123
+Log: /opt/oragrid/product/19/grid/cfgtoollogs/opatchauto/core/opatch/opatch2021-11-02_16-26-12PM_1.log
+Reason: Failed during Analysis: CheckPatchApplicable Failed, [ Prerequisite Status: FAILED, Prerequisite output:
+The details are:
+
+Patch 33208123:
+Copy Action: Destination File "/opt/oragrid/product/19/grid/crs/install/s_crsconfig_defs" is not writeable.
+'oracle.has.common, 19.0.0.0.0': Cannot copy file from 's_crsconfig_defs' to '/opt/oragrid/product/19/grid/crs/install/s_crsco           nfig_defs'
+Copy Action: Destination File "/opt/oragrid/product/19/grid/jlib/gns.jar" is not writeable.
+'oracle.has.common, 19. ...
+
+After fixing the cause of failure Run opatchauto resume
+
+]
+OPATCHAUTO-68061: The orchestration engine failed.
+OPATCHAUTO-68061: The orchestration engine failed with return code 1
+OPATCHAUTO-68061: Check the log for more details.
+OPatchAuto failed.
+
+OPatchauto session completed at Tue Nov  2 16:33:42 2021
+Time taken to complete the session 7 minutes, 50 seconds
+
+ opatchauto failed with error code 42
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/920/oracm/bin/ocmstart.sh"
+>
+oragrid@gbbed23db07v:+ASM>vi /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+cd /opt/oragrid/product/19/grid/crs/install/
+perl rootcrs.pl -unlock
+
+
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+#chmod -R 775 /opt/oragrid/product/19/grid/bin/relink
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+/opt/oragrid/product/19/grid/OPatch/opatchauto resume
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 20L, 839C written
+oragrid@gbbed23db07v:+ASM>sudo /opt/oracle/product/920/oracm/bin/ocmstart.sh
+Using configuration parameter file: ./crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crsunlock_gbbed23db07v_2021-11-02_11-35-36AM.log
+2021/11/02 11:35:37 CLSRSC-357: Failed to stop current Oracle Clusterware stack during upgrade
+2021/11/02 11:35:37 CLSRSC-347: Successfully unlock /opt/oragrid/product/19/grid
+
+OPatchauto session is initiated at Tue Nov  2 16:35:37 2021
+Session log file is /opt/oragrid/product/19/grid/cfgtoollogs/opatchauto/opatchauto2021-11-02_04-35-37PM.log
+Resuming existing session with id PTZR
+
+Start applying binary patch on home /opt/oragrid/product/19/grid
+^C
+OPatchauto session completed at Tue Nov  2 16:44:04 2021
+Time taken to complete the session 8 minutes, 27 seconds
+
+ opatchauto failed with error code 130
+oragrid@gbbed23db07v:+ASM>
+oragrid@gbbed23db07v:+ASM>cat "/opt/oracle/product/920/oracm/bin/ocmstart.sh"
+oragrid@gbbed23db07v:+ASM>which crsctl
+/opt/oragrid/product/19/grid/bin/crsctl
+oragrid@gbbed23db07v:+ASM>
+$ sudo
+usage: sudo -h | -K | -k | -V
+usage: sudo -v [-AknS] [-g group] [-h host] [-p prompt] [-u user]
+usage: sudo -l [-AknS] [-g group] [-h host] [-p prompt] [-U user] [-u user] [command]
+usage: sudo [-AbEHknPS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] [VAR=value] [-i|-s]
+            [<command>]
+usage: sudo -e [-AknS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] file ...
+$ /opt/oragrid/product/19/grid/bin/crsctl
+Usage: crsctl <command> <object> [<options>]
+    command: add|check|config|create|debug|delete|disable|discover|enable|eval|export|get|getperm|lsmodules|modify|pin|query|release|relocate|replace|request|set|setperm|start|status|stop|unpin|unset
+For complete usage, use:
+    crsctl [-h | --help]
+For detailed help on each command and object and its options use:
+    crsctl <command> <object> -h  e.g. crsctl relocate resource -h
+$ sudo /opt/oragrid/product/19/grid/bin/crsctl start has
+CRS-6706: Oracle Clusterware Release patch level ('3666414620') does not match Software patch level ('2868669536'). Oracle Clusterware cannot be started.
+CRS-4000: Command Start failed, or completed with errors.
+$ /opt/oragrid/product/19/grid/crs/install/roothas.sh -prepatch
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/hapatch_2021-11-02_12-04-21AM.log
+Insufficient privileges to execute this script.Cause: The root script was not run by the user named 'root'with UID 0.
+Action: Make sure the root username is 'root' with UID 0 and rerun the script as the root user.The command '/opt/oragrid/product/19/grid/perl/bin/perl -I/opt/oragrid/product/19/grid/perl/lib -I/opt/oragrid/product/19/grid/crs/install -I/opt/oragrid/product/19/grid/xag /opt/oragrid/product/19/grid/crs/install/roothas.pl -prepatch' execution failed
+$ sudo /opt/oragrid/product/19/grid/crs/install/roothas.sh -prepatch
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/hapatch_2021-11-02_12-04-37AM.log
+2021/11/02 12:04:49 CLSRSC-347: Successfully unlock /opt/oragrid/product/19/grid
+2021/11/02 12:04:49 CLSRSC-671: Pre-patch steps for patching GI home successfully completed.
+$ sudo /opt/oragrid/product/19/grid/crs/install/roothas.sh -postpatch
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/hapatch_2021-11-02_12-04-58AM.log
+2021/11/02 12:05:01 CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+2021/11/02 12:06:23 CLSRSC-672: Post-patch steps for patching GI home successfully completed.
+$ ps -ef | grep pmon
+oragrid   22999      1  0 17:06 ?        00:00:00 asm_pmon_+ASM
+u1249892  24146  57980  0 17:06 pts/3    00:00:00 grep pmon
+$ sudo -iu oragrid
+(AD: corp.mmco.int) Password:
+
+Value of TERM has been set to "xterm".
+The SID's on  are:
+oragrid   22999      1  0 17:06 ?        00:00:00 asm_pmon_+ASM
+The listeners on  are:
+oragrid   22743      1  0 17:05 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+oragrid   24996  24990  0 17:09 pts/4    00:00:00 grep lsnr
+oragrid@gbbed23db07v:NOSID>vi /opt/oracle/product/920/oracm/bin/ocmstart.sh
+#mv /opt/oragrid/product/19/grid/jdk /opt/oragrid/product/19/grid/jdk_old
+#cp -r /opt/oracle/product/13/agent/agent_13.4.0.0.0/oracle_common/jdk /opt/oragrid/product/19/grid/
+
+#chmod -R 777 /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c
+#opatchauto apply /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19c/33182768 -oh /opt/oragrid/product/19/grid
+
+#cd /opt/oragrid/product/19/grid/crs/install/
+#perl rootcrs.pl -unlock
+
+
+#export ORACLE_HOME=/opt/oragrid/product/19/grid
+#chmod -R 775 /opt/oragrid/product/19/grid/bin/relink
+
+#cd /opt/oragrid/product/19/grid/rdbms/install
+#./rootadd_rdbms.sh
+
+#/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock/opt/oragrid/product/19/grid/bin/clscfg -localpatch
+/opt/oragrid/product/19/grid/crs/install/rootcrs.sh -lock
+
+#/opt/oragrid/product/19/grid/OPatch/opatchauto resume
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+"/opt/oracle/product/920/oracm/bin/ocmstart.sh" 20L, 841C written
+oragrid@gbbed23db07v:NOSID>sudo /opt/oracle/product/920/oracm/bin/ocmstart.sh
+Using configuration parameter file: /opt/oragrid/product/19/grid/crs/install/crsconfig_params
+The log of current session can be found at:
+  /opt/oragrid/base/crsdata/gbbed23db07v/crsconfig/crslock_gbbed23db07v_2021-11-02_12-11-19AM.log
+2021/11/02 12:11:21 CLSRSC-329: Replacing Clusterware entries in file 'oracle-ohasd.service'
+oragrid@gbbed23db07v:NOSID>ps -ef | grep pmon
+oragrid   22999      1  0 17:06 ?        00:00:00 asm_pmon_+ASM
+oragrid   25783  24990  0 17:11 pts/4    00:00:00 grep pmon
+oragrid@gbbed23db07v:NOSID>exit
+$ sudo -iu oracle
+
+Value of TERM has been set to "xterm".
+The SID's on  are:
+oragrid   22999      1  0 17:06 ?        00:00:00 asm_pmon_+ASM
+The listeners on  are:
+oragrid   22743      1  0 17:05 ?        00:00:00 /opt/oragrid/product/19/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+oracle    25900  25894  0 17:11 pts/4    00:00:00 grep lsnr
+oracle@gbbed23db07v:NOSID>cat /etc/oratab
+#Backup file is  /opt/oragrid/base/crsdata/gbbed23db07v/output/oratab.bak.gbbed23db07v.oragrid line added by Agent
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+#
++ASM:/opt/oragrid/product/19/grid:N             # line added by Agent
+#oltt292:/opt/oracle/product/19/db:N
+#oltd166:/opt/oracle/product/19/db:N            # line added by Agent
+#oltt234:/opt/oracle/product/19/db:N
+
+OLTD160:/opt/oracle/product/19/db:N             # line added by Agent
+oltd157:/opt/oracle/product/19/db:N             # line added by Agent
+oltt234:/opt/oracle/product/19/db:N             # line added by Agent
+oltt227:/opt/oracle/product/19/db:N             # line added by Agent
+agent:/opt/oracle/product/13/agent/agent_13.4.0.0.0:N
+
+oracle@gbbed23db07v:NOSID>. oraenv
+ORACLE_SID = [NOSID] ? oltd157
+The Oracle base remains unchanged with value /opt/oracle/base
+oracle@gbbed23db07v:oltd157>sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Nov 2 17:12:39 2021
+Version 19.13.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup;
+ORA-32004: obsolete or deprecated parameter(s) specified for RDBMS instance
+ORACLE instance started.
+
+Total System Global Area 3036672544 bytes
+Fixed Size                  8901152 bytes
+Variable Size            1946157056 bytes
+Database Buffers         1073741824 bytes
+Redo Buffers                7872512 bytes
+Database mounted.
+Database opened.
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+oracle@gbbed23db07v:oltd157>ps -ef | grep pmon
+oragrid   22999      1  0 17:06 ?        00:00:00 asm_pmon_+ASM
+oracle    26343      1  0 17:12 ?        00:00:00 ora_pmon_oltd157
+oracle    27565  25894  0 17:13 pts/4    00:00:00 grep pmon
+oracle@gbbed23db07v:oltd157>sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Nov 2 17:16:07 2021
+Version 19.13.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+
+SQL> set lin 1000
+col action form a12
+col version form a40
+col description form a85
+col action_date form a20
+select description, action, to_char(action_time,'DD/MM/RR HH24:MI:SS') action_date, ' ' version
+from dba_registry_sqlpatch;SQL> SQL> SQL> SQL> SQL>   2
+
+DESCRIPTION                                                                           ACTION       ACTION_DATE          VERSION
+------------------------------------------------------------------------------------- ------------ -------------------- ----------------------------------------
+Database Release Update : 19.10.0.0.210119 (32218454)                                 APPLY        05/02/21 09:55:47
+Database Release Update : 19.11.0.0.210420 (32545013)                                 APPLY        27/05/21 10:28:24
+OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380)                                      APPLY        02/09/21 11:06:46
+Database Release Update : 19.12.0.0.210720 (32904851)                                 APPLY        02/09/21 11:06:46
+
+SQL> ^C
+
+SQL> !date
+Tue Nov  2 17:17:15 GMT 2021
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+oracle@gbbed23db07v:oltd157>pwd
+/home/oracle
+oracle@gbbed23db07v:oltd157>cat /etc/oratab
+#Backup file is  /opt/oragrid/base/crsdata/gbbed23db07v/output/oratab.bak.gbbed23db07v.oragrid line added by Agent
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+#
++ASM:/opt/oragrid/product/19/grid:N             # line added by Agent
+#oltt292:/opt/oracle/product/19/db:N
+#oltd166:/opt/oracle/product/19/db:N            # line added by Agent
+#oltt234:/opt/oracle/product/19/db:N
+
+OLTD160:/opt/oracle/product/19/db:N             # line added by Agent
+oltd157:/opt/oracle/product/19/db:N             # line added by Agent
+oltt234:/opt/oracle/product/19/db:N             # line added by Agent
+oltt227:/opt/oracle/product/19/db:N             # line added by Agent
+agent:/opt/oracle/product/13/agent/agent_13.4.0.0.0:N
+
+oracle@gbbed23db07v:oltd157>cd /opt/oracle/product/19/db
+oracle@gbbed23db07v:oltd157>ls -lrt
+total 237296
+-rw-r--r--  1 oracle dba       852 Aug 18  2015 env.ora
+-rw-r--r--  1 oracle dba      2927 Oct 14  2016 schagent.conf
+-rwxr-x---  1 oracle dba      1783 Mar  8  2017 runInstaller*
+drwxr-x---  7 oracle dba        69 Apr 17  2019 xdk/
+drwxr-xr-x  3 oracle dba        19 Apr 17  2019 wwg/
+drwxr-xr-x  4 oracle dba        31 Apr 17  2019 usm/
+drwxr-xr-x  6 oracle dba        54 Apr 17  2019 srvm/
+drwxr-xr-x  3 oracle dba        17 Apr 17  2019 sqlj/
+drwxr-xr-x  4 oracle dba        41 Apr 17  2019 sqldeveloper/
+drwxr-xr-x  3 oracle dba        18 Apr 17  2019 slax/
+-rw-r-----  1 oracle dba        10 Apr 17  2019 root.sh.old.3
+-rw-r-----  1 oracle dba        10 Apr 17  2019 root.sh.old.1
+drwxr-xr-x  3 oracle dba        21 Apr 17  2019 relnotes/
+drwxr-xr-x  4 oracle dba        29 Apr 17  2019 racg/
+drwxr-xr-x  5 oracle dba        39 Apr 17  2019 perl/
+drwxr-xr-x  4 oracle dba        33 Apr 17  2019 owm/
+drwxr-xr-x  3 oracle dba        19 Apr 17  2019 oss/
+drwxr-xr-x  6 oracle dba        52 Apr 17  2019 ord/
+drwxr-xr-x  4 oracle dba        34 Apr 17  2019 oracore/
+drwxr-xr-x  7 oracle dba        65 Apr 17  2019 opmn/
+drwxr-xr-x  5 oracle dba        42 Apr 17  2019 olap/
+drwxr-xr-x  5 oracle dba        46 Apr 17  2019 nls/
+drwxr-xr-x  4 oracle dba        31 Apr 17  2019 mgw/
+drwxr-xr-x 10 oracle dba       112 Apr 17  2019 ldap/
+drwxr-xr-x  3 oracle dba        19 Apr 17  2019 dv/
+drwxr-xr-x  3 oracle dba        20 Apr 17  2019 diagnostics/
+drwxr-xr-x  3 oracle dba        20 Apr 17  2019 demo/
+drwxr-xr-x  3 oracle dba        19 Apr 17  2019 dbjava/
+drwxr-xr-x  3 oracle dba        20 Apr 17  2019 data/
+drwxr-xr-x  7 oracle dba        71 Apr 17  2019 cv/
+drwxr-xr-x  3 oracle dba        18 Apr 17  2019 css/
+drwxr-xr-x  6 oracle dba        55 Apr 17  2019 crs/
+drwxr-xr-x  5 oracle dba        52 Apr 17  2019 R/
+drwxr-xr-x  6 oracle dba        78 Apr 17  2019 plsql/
+drwxr-xr-x  2 oracle dba        33 Apr 17  2019 utl/
+drwxr-xr-x  2 oracle dba        29 Apr 17  2019 instantclient/
+drwxr-xr-x  3 oracle dba        35 Apr 17  2019 ucp/
+drwxr-xr-x  3 oracle dba        35 Apr 17  2019 jdbc/
+drwxr-xr-x  2 oracle dba        26 Apr 17  2019 QOpatch/
+drwxr-xr-x  5 oracle dba       119 Apr 17  2019 sdk/
+drwxr-xr-x  8 oracle dba       101 Apr 17  2019 odbc/
+drwxr-xr-x  4 oracle dba        30 Apr 17  2019 drdaas/
+drwxr-xr-x 11 oracle dba       119 Apr 17  2019 ctx/
+-rwx------  1 oracle dba       786 Apr 17  2019 root.sh.old*
+drwxr-xr-x 10 oracle dba       106 Apr 17  2019 network/
+drwxr-xr-x  5 oracle dba        41 Apr 17  2019 hs/
+drwxr-xr-x  9 oracle dba        93 Apr 17  2019 assistants/
+-rwx------  1 oracle dba       638 Apr 18  2019 root.sh.old.2*
+drwxr-x---  3 oracle dba        28 Apr 18  2019 .opatchauto_storage/
+drwxr-xr-x  6 oracle dba        56 Apr 18  2019 precomp/
+drwxr-xr-x  8 oracle dba        82 Apr 18  2019 javavm/
+-rw-r-----  1 oracle dba        54 Jan 20  2020 oraInst.loc
+-rwx------  1 oracle dba       540 Feb 10  2020 root.sh*
+drwxr-x--- 14 oracle dba       233 Feb 10  2020 inventory/
+drwxr-xr-x  8 oracle dba       226 Feb 10  2020 oui/
+drwxr-xr-x  4 oracle dba        87 Feb 10  2020 clone/
+drwxr-xr-x  5 oracle dba       191 Feb 10  2020 deinstall/
+drwxr-xr-x  2 oracle dba       102 Feb 10  2020 addnode/
+drwxr-xr-x  3 oracle dba        19 Mar 22  2020 client/
+drwxr-xr-x  6 oracle dba        53 Sep 28  2020 sqlplus/
+drwxr-x--T  5 oracle dba        61 Sep 30  2020 log/
+-rw-r--r--  1 oracle dba 122119435 Nov 19  2020 p6880880_200000_Linux-x86-64.zip
+drwxr-xr-x  3 oracle dba        16 Nov 19  2020 opatchautocfg/
+drwxr-xr-x 16 oracle dba       174 Nov 19  2020 rdbms/
+drwxr-xr-x  3 oracle dba        55 Nov 19  2020 ords/
+drwxr-xr-x  3 oracle dba        18 Nov 19  2020 sdo/
+drwxr-xr-x 11 oracle dba       140 Dec 21  2020 cfgtoollogs/
+drwxr-xr-x  8 oracle dba        76 Feb  3  2021 md/
+drwxr-xr-x  4 oracle dba        32 Feb  3  2021 has/
+-rw-r--r--  1 oracle dba      8900 Feb  4  2021 pfileoltd160_19c.ora
+drwxr-xr-x  9 oracle dba       108 Feb  6  2021 admin/
+-rw-r--r--  1 oracle dba 120761121 May  5 12:02 p6880880_180000_Linux-x86-64.zip
+drwxr-xr-x  5 oracle dba      4096 May 27 09:54 apex/
+drwxr-xr-x  4 oracle dba        34 May 27 09:54 suptools/
+drwxrwx--- 10 oracle dba      4096 Oct  7 05:46 install/
+drwxr-x--- 15 oracle dba      4096 Oct 27 15:28 OPatch/
+drwxr-xr-x  2 oracle dba      4096 Nov  2 12:28 jlib/
+drwxr-xr-x  7 oracle dba       247 Nov  2 12:28 jdk/
+drwxr-xr-x  2 oracle dba       149 Nov  2 12:31 lib32/
+drwxr-xr-x 16 oracle dba      4096 Nov  2 12:37 sqlpatch/
+drwxr-xr-x  4 oracle dba     12288 Nov  2 12:39 lib/
+drwxr-xr-x  2 oracle dba      8192 Nov  2 12:39 bin/
+drwxr-xr-x  2 oracle dba      4096 Nov  2 17:12 dbs/
+drwx------ 20 oracle dba      4096 Nov  2 17:13 .patch_storage/
+oracle@gbbed23db07v:oltd157>pwd
+/opt/oracle/product/19/db
+oracle@gbbed23db07v:oltd157>cd OPatch/
+oracle@gbbed23db07v:oltd157>ls -lrt
+total 156
+-rw-r----- 1 oracle dba    26 Jul 30 15:31 version.txt
+-rw-r----- 1 oracle dba  3177 Jul 30 15:31 operr_readme.txt
+-rwxr-x--- 1 oracle dba  4218 Jul 30 15:31 operr.bat*
+-rwxr-x--- 1 oracle dba  3159 Jul 30 15:31 operr*
+-rwxr-x--- 1 oracle dba  4290 Jul 30 15:31 opatch_env.sh*
+-rw-r----- 1 oracle dba  2551 Jul 30 15:31 opatch.pl
+-rwxr-x--- 1 oracle dba 16554 Jul 30 15:31 opatch.bat*
+-rwxr-x--- 1 oracle dba 50108 Jul 30 15:31 opatch*
+-rwxr-x--- 1 oracle dba 23550 Jul 30 15:31 emdpatch.pl*
+-rwxr-x--- 1 oracle dba   627 Jul 30 15:31 datapatch.bat*
+-rwxr-x--- 1 oracle dba   589 Jul 30 15:31 datapatch*
+-rw-r----- 1 oracle dba  2980 Jul 30 15:31 README.txt
+-rwxr-x--- 1 oracle dba   393 Jul 30 15:36 opatchauto.cmd*
+-rwxr-x--- 1 oracle dba  1763 Jul 30 15:36 opatchauto*
+drwxr-x--- 7 oracle dba    83 Aug  5 15:34 auto/
+drwxr-x--- 3 oracle dba    21 Aug  5 15:34 oracle_common/
+drwxr-x--- 3 oracle dba    24 Aug  5 15:34 plugins/
+drwxr-x--- 2 oracle dba   170 Oct 27 15:28 scripts/
+drwxr-xr-x 2 oracle dba    72 Oct 27 15:28 private/
+drwxr-x--- 5 oracle dba    58 Oct 27 15:28 ocm/
+drwxr-x--- 2 oracle dba  4096 Oct 27 15:28 jlib/
+drwxr-x--- 4 oracle dba    62 Oct 27 15:28 opatchprereqs/
+drwxr-x--- 2 oracle dba    90 Oct 27 15:28 docs/
+drwxr-xr-x 6 oracle dba   198 Oct 27 15:28 jre/
+drwxr-x--- 2 oracle dba    19 Oct 27 15:28 oplan/
+drwxr-x--- 2 oracle dba    31 Oct 27 15:28 config/
+drwxr-x--- 9 oracle dba  4096 Oct 27 15:28 modules/
+oracle@gbbed23db07v:oltd157>./datapatch -verbose
+SQL Patching tool version 19.13.0.0.0 Production on Tue Nov  2 17:19:24 2021
+Copyright (c) 2012, 2021, Oracle.  All rights reserved.
+
+Log file for this invocation: /opt/oracle/base/cfgtoollogs/sqlpatch/sqlpatch_30210_2021_11_02_17_19_24/sqlpatch_invocation.log
+
+Connecting to database...OK
+Gathering database info...done
+Bootstrapping registry and package to current versions...done
+Determining current state...done
+
+Current state of interim SQL patches:
+Interim patch 32399816 (OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816)):
+  Binary registry: Not installed
+  SQL registry: Not installed
+Interim patch 32876380 (OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380)):
+  Binary registry: Installed
+  SQL registry: Applied successfully on 02-SEP-21 11.06.46.126947 AM
+
+Current state of release update SQL patches:
+  Binary registry:
+    19.13.0.0.0 Release_Update 211004165050: Installed
+  SQL registry:
+    Applied 19.12.0.0.0 Release_Update 210716141810 successfully on 02-SEP-21 11.06.46.121436 AM
+
+Adding patches to installation queue and performing prereq checks...done
+Installation queue:
+  No interim patches need to be rolled back
+  Patch 33192793 (Database Release Update : 19.13.0.0.211019 (33192793)):
+    Apply from 19.12.0.0.0 Release_Update 210716141810 to 19.13.0.0.0 Release_Update 211004165050
+  No interim patches need to be applied
+
+Installing patches...
+Patch installation complete.  Total patches installed: 1
+
+Validating logfiles...done
+Patch 33192793 apply: SUCCESS
+  logfile: /opt/oracle/base/cfgtoollogs/sqlpatch/33192793/24462514/33192793_apply_OLTD157_2021Nov02_17_19_59.log (no errors)
+SQL Patching tool complete on Tue Nov  2 17:21:26 2021
+oracle@gbbed23db07v:oltd157>sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Nov 2 17:21:49 2021
+Version 19.13.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+
+SQL> set lin 1000
+col action form a12
+col version form a40
+col description form a85
+col action_date form a20
+select description, action, to_char(action_time,'DD/MM/RR HH24:MI:SS') action_date, ' ' version
+from dba_registry_sqlpatch;SQL> SQL> SQL> SQL> SQL>   2
+
+DESCRIPTION                                                                           ACTION       ACTION_DATE          VERSION
+------------------------------------------------------------------------------------- ------------ -------------------- ----------------------------------------
+Database Release Update : 19.10.0.0.210119 (32218454)                                 APPLY        05/02/21 09:55:47
+Database Release Update : 19.11.0.0.210420 (32545013)                                 APPLY        27/05/21 10:28:24
+OJVM RELEASE UPDATE: 19.12.0.0.210720 (32876380)                                      APPLY        02/09/21 11:06:46
+Database Release Update : 19.12.0.0.210720 (32904851)                                 APPLY        02/09/21 11:06:46
+Database Release Update : 19.13.0.0.211019 (33192793)                                 APPLY        02/11/21 17:21:26
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+oracle@gbbed23db07v:oltd157>cd /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19
+-ksh: cd: /var/oracle/export/october_2021_patches/GI_DB_combo_Oct_19: [No such file or directory]
+oracle@gbbed23db07v:oltd157>pwd
+/opt/oracle/product/19/db/OPatch
+oracle@gbbed23db07v:oltd157>cd /var/oracle/export/october_2021_patches
+oracle@gbbed23db07v:oltd157>ls -lrt
+total 0
+drwxr-xr-x 2 oracle dba  54 Oct 27 13:09 12c_opatch/
+drwxr-xr-x 2 oracle dba  54 Oct 27 13:09 19c_opatch/
+drwxr-xr-x 2 oracle dba  47 Oct 27 13:09 19c_DB+OJVM/
+drwxr-xr-x 2 oracle dba  47 Oct 27 13:11 19c_DB_only/
+drwxrwxrwx 3 oracle dba  86 Oct 27 15:24 GI_DB_combo_Oct_19c/
+drwxr-xr-x 3 oracle dba 102 Oct 27 15:44 OJVM_OCT_19C/
+oracle@gbbed23db07v:oltd157>ps -ef | grep smon
+oragrid   23093      1  0 17:06 ?        00:00:00 asm_smon_+ASM
+oracle    26458      1  0 17:12 ?        00:00:00 ora_smon_oltd157
+oracle    34622  25894  0 17:29 pts/4    00:00:00 grep smon
+oracle@gbbed23db07v:oltd157>. oraenv
+ORACLE_SID = [oltd157] ?
+The Oracle base remains unchanged with value /opt/oracle/base
+oracle@gbbed23db07v:oltd157>sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Nov 2 17:29:36 2021
+Version 19.13.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+
+SQL> shutdown immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.13.0.0.0
+oracle@gbbed23db07v:oltd157>cd OPatch/

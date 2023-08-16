@@ -1,0 +1,112 @@
+
+
+1. pre-rquist che ks
+
+
+a>  asm lun disk
+b>  IP checks
+
+
+2. Deinstall exisintg grid configration on both the nodes
+
+Ssh set done for oragrid user
+
+now installation 
+
+client>>scan-name>lo/vip
+
+
+FILE_NAME                                                              TABLESPACE_NAME
+---------------------------------------------------------------------- ----------------------------------------------------------------------
++VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.547.990975341                BO_DATA
++VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1001.1018760415              BO_DATA
++VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1002.1018760417              BO_DATA
++VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1003.1018760417              BO_DATA
++VTEGEN_UAT_DATA/OLTT200/DATAFILE/bo_data.1004.1018760417              BO_DATA
+
+oll200
+SQL> select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='BI_AUDIT_OWNER';
+
+Size in GB
+----------
+ 8.8862915
+
+SQL> select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='BI_CMS_OWNER' ;
+
+Size in GB
+----------
+1.26971436
+
+
+
+OLTT196 
+
+
+SQL> select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='BI_AUDIT_OWNER';
+
+Size in GB
+----------
+44.0439453
+
+SQL> select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='BI_CMS_OWNER' ;
+
+Size in GB
+----------
+.726074219
+
+
+
+prod
+
+SQL> select name from v$database;
+
+NAME
+---------
+OLTP131
+
+SQL>  select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='BI_AUDIT_OWNER';
+
+Size in GB
+----------
+129.217712
+
+SQL>
+SQL>
+SQL>  select sum(bytes)/1024/1024/1024 as "Size in GB" from dba_segments where owner='BI_CMS_OWNER' ;
+
+Size in GB
+----------
+2.58331299
+
+
+NAME                      HEADER_STATUS                        PATH                                               OS_MB
+------------------------- ------------------------------------ --------------------------------------------- ----------
+                          CANDIDATE                            /dev/oracleasm/disks/GEN_UAT_32_ACFS01             32768
+DATA_0001                 MEMBER                               /dev/oracleasm/disks/GEN_SAND_72_DATA02            65537
+CLUSTER_DATA01_0000       MEMBER                               /dev/oracleasm/disks/GEN_UAT_16_CLUSTER01          16384
+DATA_0002                 MEMBER                               /dev/oracleasm/disks/GEN_SAND_72_DATA03            65537
+DATA_0000                 MEMBER                               /dev/oracleasm/disks/GEN_SAND_72_DATA01            65537
+
+SQL>
+
+
+NAME                 PATH                                               FAILGROUP            HEADER_STATUS   MOUNT_STATUS               OS_MB
+-------------------- -------------------------------------------------- -------------------- --------------- --------------------- ----------
+DATA_0000            /dev/oracleasm/disks/GEN_SAND_72_DATA01            DATA_0000            MEMBER          CACHED                     65537
+DATA_0001            /dev/oracleasm/disks/GEN_SAND_72_DATA02            DATA_0001            MEMBER          CACHED                     65537
+DATA_0002            /dev/oracleasm/disks/GEN_SAND_72_DATA03            DATA_0002            MEMBER          CACHED                     65537
+CLUSTER_DATA01_0000  /dev/oracleasm/disks/GEN_UAT_16_CLUSTER01          CLUSTER_DATA01_0000  MEMBER          CACHED                     16384
+                     /dev/oracleasm/disks/GEN_UAT_32_ACFS01                                  CANDIDATE       CLOSED                     32768
+
+SQL>
+SQL> ! hostname
+gbbed21db77vcn1
+
+
+
+
+
+
+
+
+

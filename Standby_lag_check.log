@@ -1,3 +1,12 @@
+https://hemantoracledba.blogspot.com/2022/01/most-viewed-blog-posts-of-h1-2021.html
+How to resolve MRP stuck issues on a physical standby database? (Doc ID 1221163.1)
+https://onlinedbalearning.blogspot.com/2020/07/roll-forward-physical-standby-database.html
+Severity 3		SR 3-30316914621 : MRP is too slow
+
+===================================================================================================
+
+
+
 
 [oracle@fih3ex1dbadm01 trace]$ crontab -l
 00,30 * * * * /home/oracle/scripts/lag_monitor.sh
@@ -49,34 +58,1082 @@ WHERE
 ARCH.THREAD# = APPL.THREAD#
 ORDER BY 1;
 
+or
+
+select 'DR is Lagging Behind '||round((sysdate-max(first_time))*24,2)||' Hours' from v$log_history;
+
+'DRISLAGGINGBEHIND'||ROUND((SYSDATE-MAX(FIRST_TIME))*24,2)||'HOURS'
+-------------------------------------------------------------------
+DR is Lagging Behind 3.61 Hours
+
+
+
 
 *************************************************************************
+
+set lines 650
+col DATABASE_HOST for a25;
+col DB_UNIQUE_NAME for a25
+col HOST_NAME for a15;
+col DATABASE_ROLE for a35
+col OPEN_MODE for a10
+col STARTUP_TIME for a35
+SELECT i.HOST_NAME "DATABASE_HOST" ,i.INSTANCE_NAME "DB_NAME",
+            d.db_unique_name "DB_UNIQUE_NAME" , d.DATABASE_ROLE " DATABASE_ROLE", 
+            d.OPEN_MODE " OPEN_MODE ", STARTUP_TIME
+      from GV$DATABASE d, gv$instance i 
+      where i.INST_ID=d.INST_ID;  
+
 
 
 MRP
 ******************
+set lines 450
+col STBY_BEHIND_BY for a20
+select (select sysdate from dual)"TIMESTAMP",s.thread#,s.MAX_SEQ#, a.MAX_APP_SEQ#, ' '||(s.MAX_SEQ#-a.MAX_APP_SEQ#)||' sequences' "STBY_BEHIND_BY" from 
+( select thread#,max(sequence#) "MAX_SEQ#" from v$archived_log where activation#=(select activation# from v$database) group by thread# ) s,
+(select thread#,max(sequence#) "MAX_APP_SEQ#" from v$archived_log where activation#=(select activation# from v$database )and applied='YES' group by thread#) a where a.thread#=s.thread#;
 
-SELECT PROCESS, DELAY_MINS FROM V$MANAGED_STANDBY WHERE PROCESS like 'MRP%';
+
+SELECT PROCESS, DELAY_MINS FROM gv$MANAGED_STANDBY WHERE PROCESS like 'MRP%';
 
 select max(sequence#) from v$archived_log where applied='YES';
 
-select process,status,sequence# from v$managed_standby;
+select process,status,sequence#,thread#,CLIENT_PID from gv$managed_standby;
 
-nohup rman target / cmdfile=RMAN_SCSTGDB_Inc1.rcv>>RMAN_SCSTGDB_Inc_12JUL_2020.log &
+PROCESS   STATUS        SEQUENCE#    THREAD#
+--------- ------------ ---------- ----------
+ARCH      CONNECTED             0          0
+ARCH      CONNECTED             0          0
+ARCH      CONNECTED             0          0
+ARCH      CONNECTED             0          0
+MRP0      WAIT_FOR_LOG      42645          2
+RFS       IDLE              42645          2
+RFS       IDLE              46152          1
+
+PROCESS                            THREAD#   SEQUENCE# STATUS       CLIENT_P CLIENT_PID
+------------------------------ ----------- ----------- ------------ -------- ----------------------------------------
+ARCH                                     0           0 CONNECTED    ARCH     15310
+ARCH                                     0           0 CONNECTED    ARCH     15478
+ARCH                                     0           0 CONNECTED    ARCH     15458
+ARCH                                     0           0 CONNECTED    ARCH     15436
+DGRD                                     0           0 ALLOCATED    N/A      N/A
+DGRD                                     0           0 ALLOCATED    N/A      N/A
+MRP0                                     2        1745 WAIT_FOR_LOG N/A      N/A
+RFS                                      0           0 IDLE         Archival 123047
+RFS                                      0           0 IDLE         Archival 101432
+RFS                                      2        1745 IDLE         LGWR     105349
+RFS                                      1        1749 IDLE         LGWR     112543
+
+
+
+
+
+
+
+nohup rman target / cmdfile=RMAN_SCSTGDB_Inc1.rcv>>RMAN_SCSTGDB_Inc25_FEB_2020.log &
 
 RMAN_SCSTGDB_Inc1.rcv
 
 ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;     stop mrp
 
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING ARCHIVED LOGFILE DISCONNECT;
+
 alter database recover managed standby database disconnect using current logfile;   strt mrp
 
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
+
+log_archie_det reconfigure
+ALTER DATABASE RECOVER managed standby database disconnect from session noparallel;
 
 
 
-https://oracledbwr.com/step-by-step-oracle-11gr2-rac-standby-database-switchover/
 
 
 
 **********************************************************************************
+
+PhyicalToSnapshot_DSDCAN01 SUCCEEDED 
+
+create restore point standby_flashback_testing guarantee flashback database; 
+select name, scn, time from v$restore_point;
+STANDBY_FLASHBACK_TESTING                                                                                                           
+6.7008E+12 04-SEP-21 04.05.08.000000000 AM                                                                                          
+                                                                                                                                    
+alter database activate standby database; 
+alter database open; 
+select open_mode,database_role from gv$database;
+
+MOUNTED              PRIMARY                                                                                                        
+READ WRITE           PRIMARY                                                                                                        
+SQL> spool off;
+ DSDCAN01 : RECOVERY CANCELLED
+ DSDCAN01 : CONVERTED TO SNAPSHOT
+ DSDCAN01 : STOPPED
+ ARCHIVE LOGS ARE REMOVED
+ SNAPSHOT  DSDCAN01 :STARTED in READ/WRITE  
+
+======================================
+
+https://alphaoragroup.com/2021/06/21/falclient-error-fetching-gap-sequence-no-fal-server-specified/
+
+
+
+ select inst_id, process, status, thread#, sequence#, block#, blocks from gv$managed_standby where process in ('RFS','LNS','MRP0');
+
+   INST_ID PROCESS   STATUS          THREAD#  SEQUENCE#     BLOCK#     BLOCKS
+---------- --------- ------------ ---------- ---------- ---------- ----------
+         1 MRP0      WAIT_FOR_LOG          2      18624          0          0
+         1 RFS       IDLE                  0          0          0          0
+         1 RFS       IDLE                  1      18788      23718          1
+
+SQL>
+
+SELECT DESTINATION, STATUS, ERROR FROM V$ARCHIVE_DEST WHERE DEST_ID=2;
+
+
+DESTINATION
+------------------------------------------------------------------------------------------------------------------------------------------------------
+STATUS    ERROR
+--------- -----------------------------------------------------------------
+oltt200
+VALID
+
+
+
+Completed: alter database recover managed standby database disconnect using current logfile
+Wed Sep 15 19:25:36 2021
+Media Recovery Log +VTEGEN_UAT_FRA/OLTT200/ARCHIVELOG/2021_09_15/thread_1_seq_44921.8378.1083347739
+Media Recovery Waiting for thread 2 sequence 41656
+FAL[client]: Error fetching gap sequence, no FAL server specified
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL
+Wed Sep 15 19:30:38 2021
+MRP
+
+
+
+====================================================================
+TRoubleshooting
+
+
+select INST_ID,error,status,dest_name from gv$archive_dest where DEST_NAME='LOG_ARCHIVE_DEST_2';
+
+select name from gv$archived_log where sequence#=17206;----Wait for log 
+
+recover database from service oltt184 noredo using compressed backupset;
+
+RESTORE STANDBY CONTROLFILE FROM SERVICE oltt184 ;
+
+ALTER DATABASE REGISTER LOGFILE '/tmp/thread_1_seq_17206.3971.1097090793';
+
+thread_1_seq_45972.1465.1084550095
+
+
+
+Run this at Primary
+-------------------
+set pages 1000
+set lines 120
+column DEST_NAME format a20
+column DESTINATION format a35
+column ARCHIVER format a10
+column TARGET format a15
+column status format a10
+column error format a15
+select DEST_ID,DEST_NAME,DESTINATION,TARGET,STATUS,ERROR from v$archive_dest
+where DESTINATION is NOT NULL
+/
+select ads.dest_id,max(sequence#) "Current Sequence",
+max(log_sequence) "Last Archived"
+from v$archived_log al, v$archive_dest ad, v$archive_dest_status ads 
+where ad.dest_id=al.dest_id and al.dest_id=ads.dest_id group by ads.dest_id; 
+
+Run this at Standby
+-------------------------
+select max(al.sequence#) "Last Seq Recieved" from v$archived_log al
+/
+select max(al.sequence#) "Last Seq Applied" from v$archived_log al
+where applied ='YES'
+/
+select process,status,sequence# from v$managed_standby
+/
+
+
+set linesize 9000
+column name format a25
+column value format a20
+column time_computed format a25
+SELECT name, value, time_computed FROM v$dataguard_stats;
+
+NAME                      VALUE                TIME_COMPUTED
+------------------------- -------------------- -------------------------
+transport lag             +00 00:00:00         04/06/2017 14:42:23
+apply lag                 +00 00:00:00         04/06/2017 14:42:23
+apply finish time         +00 00:00:00.000     04/06/2017 14:42:23
+estimated startup time    52                   04/06/2017 14:42:23
+
+=====================================
+
+Errors in file /opt/oracle/app/diag/rdbms/drtp184/drtp184n1/trace/drtp184n1_rsm0_18874.trc:
+ORA-00313: open failed for members of log group 18 of thread 2
+ORA-00312: online log 18 thread 2: '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_18.292.1049575629'
+ORA-17503: ksfdopn:2 Failed to open file +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_18.292.1049575629
+ORA-15012: ASM file '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_18.292.1049575629' does not exist
+
+													 
+													 
+    GROUP# TYPE                  MEMBER
+---------- --------------------- -----------------------------------------------------------------
+         9 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_9.283.1049575271
+        10 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_10.284.1049575483
+        11 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_11.285.1049575503
+        12 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_12.286.1049575509
+        13 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_13.287.1049575513
+        14 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_14.288.1049575605
+        15 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_15.289.1049575615
+        16 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_16.290.1049575621
+        17 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_17.291.1049575625
+        18 STANDBY               +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_18.292.1049575629
+
+1. ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+2. ALTER DATABASE CLEAR LOGFILE GROUP 7;
+3. ALTER DATABASE DROP  STANDBY LOGFILE GROUP 7;
+4. ALTER DATABASE ADD STANDBY LOGFILE GROUP 7;  OR ALTER DATABASE ADD STANDBY LOGFILE MEMBER '<PATH TO DELETED LOGFILE>' TO GROUP 7;
+5. START REDO APPLY:  ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT FROM SESSION;
+=============================================================
+
+2021-12-19T18:38:11.330675+11:00
+Completed: alter database recover managed standby database disconnect using current logfile
+2021-12-19T18:38:15.758020+11:00
+Error 1017 received logging on to the standby
+------------------------------------------------------------
+Check that the primary and standby are using a password file
+and remote_login_passwordfile is set to SHARED or EXCLUSIVE,
+and that the SYS password is same in the password files.
+      returning error ORA-16191
+------------------------------------------------------------
+FAL[client, USER]: Error 16191 connecting to oltp184 for fetching gap sequence
+2021-12-19T18:38:15.759561+11:00
+Errors in file /opt/oracle/app/diag/rdbms/drtp184/drtp184n1/trace/drtp184n1_pr00_26399.trc:
+ORA-16191: Primary log shipping client not logged on standby
+
+re-create the orapwd file
+======================================================================
+
+
+https://smarttechways.com/2019/10/17/sync-the-physical-standby-using-recover-from-service-in-oracle-12c/
+
+incremental as service
+
+===========================================================
+
+select dest_name,error,status,process from v$archive_dest where rownum<3;
+
+============================================================
+
+
+DW00 started with pid=195, OS id=67065, wid=1, job SYS.SYS_EXPORT_SCHEMA_01
+2022-02-06T01:03:49.515097-06:00
+TMON (PID:19773): Process (PID:85338) hung on an I/O to LAD:2 after 258 seconds with threshold of 240 at [krsu.c:15053]
+TMON (PID:19773): WARN: Terminating process hung on an operation (PID:85338)
+2022-02-06T01:03:51.735978-06:00
+TMON (PID:19773): Process (PID:55586) hung on an I/O to LAD:2 after 260 seconds with threshold of 240 at [krsu.c:15053]
+TMON (PID:19773): WARN: Terminating process hung on an operation (PID:55586)
+2022-02-06T01:03:56.094433-06:00
+TMON (PID:19773): Killing 1 processes (PIDS:85338) (Process by index) in order to remove hung processes. Requested by OS process 19773 on instance 1
+2022-02-06T01:03:56.094950-06:00
+Process termination requested for pid 85338 [source = rdbms], [info = 2] [request issued by pid: 19773, uid: 600000014]
+2022-02-06T01:04:00.267246-06:00
+TMON (PID:19773): Killing 1 processes (PIDS:55586) (Process by index) in order to remove hung processes. Requested by OS process 19773 on instance 1
+2022-02-06T01:04:00.267803-06:00
+Process termination requested for pid 55586 [source = rdbms], [info = 2] [request issued by pid: 19773, uid: 600000014]
+2022-02-06T01:04:02.274789-06:00
+TMON (PID:19773): Error 16198 due to hung I/O operation to LOG_ARCHIVE_DEST_2
+2022-02-06T01:04:02.315944-06:00
+TT00 (PID:67415): Gap Manager starting
+2022-02-06T01:09:02.921456-06:00
+
+
+====================================================================================================
+
+2022-02-06T01:16:08.953960-06:00
+Errors in file /opt/oracle/product/diag/rdbms/europe/europe/trace/europe_tt02_67419.trc:
+ORA-01033: ORACLE initialization or shutdown in progress
+TT02 (PID:67419): Error 1033 for LNO:3 to 'europeS'
+2022-02-06T01:16:08.960726-06:00
+Errors in file /opt/oracle/product/diag/rdbms/europe/europe/trace/europe_tt02_67419.trc:
+ORA-01033: ORACLE initialization or shutdown in progress
+2022-02-06T01:16:08.961278-06:00
+Errors in file /opt/oracle/product/diag/rdbms/europe/europe/trace/europe_tt02_67419.trc:
+ORA-01033: ORACLE initialization or shutdown in progress
+
+
+select s.sid,s.serial#,p.program,s.username,p.username,p.background,s.program,s.LAST_CALL_ET,s.LOGON_TIME,s.status 
+ from v$process p,v$session s where p.addr=s.paddr and p.spid in(115323,115508,115526,115537);
+
+ ps -ef|grep -v grep|grep LOCAL=NO|wc -l
+
+
+============================================
+
+SQL> show parameter redo
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+redo_transport_user                  string
+
+
+standby
+-------------------------------------------- ------------------------------
+fal_client
+string                                       EUROPES
+fal_server
+string                                       EUROPE
+
+Standby
+SQL> show parameter log_archive_config
+
+NAME
+------------------------------------
+TYPE                                         VALUE
+-------------------------------------------- ------------------------------
+log_archive_config
+string                                       dg_config=(europes,europe)
+
+
+
+==================================
+SQL> show parameter fal
+
+NAME
+------------------------------------
+TYPE                                         VALUE
+-------------------------------------------- ------------------------------
+fal_client
+string                                       EUROPESS
+fal_server
+string                                       EUROPE
+SQL> show parameter log_archive_config
+
+NAME
+------------------------------------
+TYPE                                         VALUE
+-------------------------------------------- ------------------------------
+log_archive_config
+string                                       DG_CONFIG=(SEGES1P,europeSS)
+
+
+=========================
+
+primary
+
+SQL> show parameter fal
+
+NAME                                 TYPE                              VALUE
+------------------------------------ --------------------------------- ------------------------------
+fal_client                           string                            W3PHXC1P1S
+fal_server                           string                            W3PHXC1P
+SQL>  show parameter redo
+
+NAME                                 TYPE                              VALUE
+------------------------------------ --------------------------------- ------------------------------
+redo_transport_user                  string
+SQL> show parameter log_archive_config
+
+NAME                                 TYPE                              VALUE
+------------------------------------ --------------------------------- ------------------------------
+log_archive_config                   string                            DG_CONFIG=(W3PHXC1P,W3PHXC1PS)
+
+
+Standby
+SQL> show parameter fal
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+fal_client                           string
+
+fal_server                           string
+
+SQL> show parameter log_archive_config
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+log_archive_config                   string
+DG_CONFIG=(W3PHXC1P,W3PHXC1PS)
+SQL>
+
+
+VALUE
+------------------------------
+fal_client                           string
+W3PHXC1PS
+fal_server                           string
+W3PHXC1P
+SQL>
+
+
+============================================================
+
+
+
+
+
+primary
+------------------------------
+log_archive_config                   string
+DG_CONFIG=(europes,europe)
+===============================================================
+
+
+SQL> SHOW PARAMETER LOG_ARCHIVE_MAX_PROCESSES
+
+NAME
+------------------------------------
+TYPE                                         VALUE
+-------------------------------------------- ------------------------------
+log_archive_max_processes
+integer                                      4
+
+
+You need to set to parameters in the init file or spfile(sqlplus)
+
+In the Primary database :
+
+FAL_SERVER='standby_database'
+FAL_CLIENT='primary_database'
+
+In the standby database :
+FAL_SERVER='primary_database'
+FAL_CLIENT='standby_database'
+
+=====================================
+
+
+SQL> ALTER SYSTEM SET LOG_ARCHIVE_MAX_PROCESSES=5 scope=both sid='*';
+
+System altered.
+
+SQL>
+SQL>
+SQL>  SHOW PARAMETER LOG_ARCHIVE_MAX_PROCESSES
+
+NAME
+------------------------------------
+TYPE                                         VALUE
+-------------------------------------------- ------------------------------
+log_archive_max_processes
+integer                                      15
+
+
+
+============================================
+
+How to resolve MRP stuck issues on a physical standby database? (Doc ID 1221163.1)
+
+===========================================
+
+PR00 (PID:14623): FAL: Error fetching gap sequence, no FAL server specified
+2022-03-01T16:01:15.070591-06:00
+PR00 (PID:14623): FAL: Error fetching gap sequence, no FAL server specified
+2022-03-01T16:01:25.198523-06:00
+PR00 (PID:14623): FAL: Failed to request gap sequence
+PR00 (PID:14623):  GAP - thread 2 sequence 14117-14117
+PR00 (PID:14623):  DBID 2192980824 branch 1047860995
+PR00 (PID:14623): FAL: All defined FAL servers have been attempted
+PR00 (PID:14623): -------------------------------------------------------------------------
+PR00 (PID:14623): Check that the CONTROL_FILE_RECORD_KEEP_TIME initialization
+PR00 (PID:14623): parameter is defined to a value that's sufficiently large
+PR00 (PID:14623): enough to maintain adequate log switch information to resolve
+PR00 (PID:14623): archived redo log gaps.
+PR00 (PID:14623): -------------------------------------------------------------------------
+2022-03-01T16:06:09.958279-06:00
+
+
+
+===========
+ 
+
+SQL> alter system set redo_transport_user='' scope=both;
+
+System altered.
+
+SQL>
+
+
+ALTER SYSTEM SET log_archive_dest_state_2='ENABLE' SCOPE=BOTH sid='*';
+System altered.
+
+SQL> SQL>
+>
+SQL> set pages 1000
+set lines 120
+column DEST_NAME format a20
+column DESTINATION format a35
+column ARCHIVER format a10
+column TARGET format a15
+column status format a10
+column error format a15
+select DEST_ID,DEST_NAME,DESTINATION,TARGET,STATUS,ERROR from v$archive_dest
+where DESTINATION is NOT NULL
+/SQL> SQL> SQL> SQL> SQL> SQL> SQL> SQL>   2    3
+
+   DEST_ID DEST_NAME            DESTINATION                         TARGET          STATUS     ERROR
+---------- -------------------- ----------------------------------- --------------- ---------- ---------------
+         1 LOG_ARCHIVE_DEST_1   +DG_FRA01                           PRIMARY         VALID
+         2 LOG_ARCHIVE_DEST_2   DOOUS1U_S                           STANDBY         VALID
+
+SQL>
+
+==========================================
+
+switc datafile script
+===========
+
+set linesize 300
+col file_name format a120
+
+select 'switch datafile  ' ||FILE#|| ' to ' 'copy' from v$datafile;
+
+
+RMAN> run {
+switch datafile 'old datafile path and name' to datafilecopy 'new datafile path and name';
+}
+
+
+
+ORA-01017: invalid username/password; logon denied
+2022-03-07T00:02:15.822909-06:00
+PR00 (PID:10785): Error 1033 received logging on to the standby
+PR00 (PID:10785): FAL: Error 1033 connecting to BWPROD11S1 for fetching gap sequence
+2022-03-07T00:02:15.823123-06:00
+Errors in file /opt/oracle/diag/rdbms/bwprod11ss/bwprod11s1/trace/bwprod11s1_pr00_10785.trc:
+ORA-01033: ORACLE initialization or shutdown in progress
+2022-03-07T00:02:28.258048-06:00
+Errors in file /opt/oracle/diag/rdbms/bwprod11ss/bwprod11s1/trace/bwprod11s1_pr00_10785.trc:
+ORA-01017: invalid username/password; logon denied
+2022-03-07T00:02:28.290040-06:00
+PR00 (PID:10785): Error 1033 received logging on to the standby
+PR00 (PID:10785): FAL: Error 1033 connecting to BWPROD11S1 for fetching gap sequence
+2022-03-07T00:02:28.290261-06:00
+Errors in file /opt/oracle/diag/rdbms/bwprod11ss/bwprod11s1/trace/bwprod11s1_pr00_10785.trc:
+ORA-01033: ORACLE initialization or shutdown in progress
+2022-03-07T03:40:27.912811-05:00
+     ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT from session
+===================================================================
+
+Error:
+2022-04-04T19:19:20.436266+10:00
+Errors in file /opt/oracle/product/19/db/log/diag/rdbms/drtp184/drtp184n1/trace/drtp184n1_rfs_24707.trc:
+ORA-00313: open failed for members of log group 10 of thread 1
+ORA-00312: online log 10 thread 1: '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_10.284.1049575483'
+ORA-17503: ksfdopn:2 Failed to open file +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_10.284.1049575483
+ORA-15012: ASM file '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_10.284.1049575483' does not exist
+2022-04-04T19:19:20.438612+10:00
+Errors in file /opt/oracle/product/19/db/log/diag/rdbms/drtp184/drtp184n1/trace/drtp184n1_rfs_24707.trc:
+ORA-00313: open failed for members of log group 11 of thread 1
+ORA-00312: online log 11 thread 1: '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_11.285.1049575503'
+ORA-17503: ksfdopn:2 Failed to open file +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_11.285.1049575503
+ORA-15012: ASM file '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_11.285.1049575503' does not exist
+2022-04-04T19:19:20.439007+10:00
+Errors in file /opt/oracle/product/19/db/log/diag/rdbms/drtp184/drtp184n1/trace/drtp184n1_rfs_24707.trc:
+ORA-00313: open failed for members of log group 11 of thread 1
+ORA-00312: online log 11 thread 1: '+VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_11.285.1049575503
+
+
+solution: drop and add redo standy
+
+
+
+SQL> alter system set standby_file_management=manual;
+
+System altered.
+
+SQL>
+SQL> alter database clear logfile group 9;
+
+Database altered.
+
+SQL> alter database clear logfile group 10;
+
+Database altered.
+
+SQL> alter database clear logfile group 11;
+
+Database altered.
+
+SQL> alter database clear logfile group 12;
+
+Database altered.
+
+SQL> alter database clear logfile group 13;
+
+Database altered.
+
+SQL> alter database clear logfile group 14;
+
+Database altered.
+
+SQL> alter database clear logfile group 15;
+
+Database altered.
+
+SQL> alter database clear logfile group 16;
+
+Database altered.
+
+SQL> alter database clear logfile group 17;
+
+Database altered.
+
+SQL> alter database clear logfile group 18;
+
+Database altered.
+
+col member for a56
+set pagesize 299
+set lines 299
+select l.group#, l.thread#,
+f.member,
+l.archived,
+l.status,
+(bytes/1024/1024) "Size (MB)"
+from
+v$log l, v$logfile f
+where f.group# = l.group#
+order by 1,2
+/
+SQL> SQL> SQL>   2    3    4    5    6    7    8    9   10
+
+    GROUP#    THREAD# MEMBER                                                   ARCHIVED  STATUS                                            Size (MB)
+---------- ---------- -------------------------------------------------------- --------- ------------------------------------------------ ----------
+        19          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_19.298.107343 YES       INACTIVE                                               1024
+                      0941
+
+        19          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_19.272.107343 YES       INACTIVE                                               1024
+                      1701
+
+        20          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_20.276.107343 NO        CURRENT                                                1024
+                      1801
+
+        20          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_20.299.107343 NO        CURRENT                                                1024
+                      0955
+
+        21          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_21.275.107343 YES       INACTIVE                                               1024
+                      1817
+
+        21          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_21.300.107343 YES       INACTIVE                                               1024
+                      0971
+
+        22          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_22.301.107343 YES       INACTIVE                                               1024
+                      0985
+
+        22          1 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_22.278.107343 YES       INACTIVE                                               1024
+                      1827
+
+        23          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_23.302.107343 NO        CURRENT                                                1024
+                      1001
+
+        23          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_23.277.107343 NO        CURRENT                                                1024
+                      1849
+
+        24          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_24.303.107343 YES       INACTIVE                                               1024
+                      1013
+
+        24          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_24.271.107343 YES       INACTIVE                                               1024
+                      1861
+
+        25          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_25.270.107343 YES       INACTIVE                                               1024
+                      1871
+
+        25          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_25.304.107343 YES       INACTIVE                                               1024
+                      1025
+
+        26          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_26.269.107343 YES       INACTIVE                                               1024
+                      1883
+
+        26          2 +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_26.305.107343 YES       INACTIVE                                               1024
+                      1037
+
+
+16 rows selected.
+
+SQL> col member for a70
+SELECT group#, type, member FROM v$logfile WHERE type = 'STANDBY' order by group#;
+SQL>
+    GROUP# TYPE                  MEMBER
+---------- --------------------- ----------------------------------------------------------------------
+         9 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_9.395.1101151579
+        10 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_10.396.1101151585
+        11 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_11.397.1101151591
+        12 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_12.398.1101151597
+        13 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_13.399.1101151603
+        14 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_14.400.1101151611
+        15 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_15.401.1101151621
+        16 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_16.402.1101151631
+        17 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_17.403.1101151637
+        18 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_18.404.1101151645
+
+10 rows selected.
+
+SQL>
+SQL> alter database drop standby logfile group 9;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 10;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 11;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 12;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 13;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 14;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 15;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 16;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 17;
+
+Database altered.
+
+SQL> alter database drop standby logfile group 18;
+
+Database altered.
+
+SQL>
+SQL>
+SQL> SELECT group#, type, member FROM v$logfile WHERE type = 'STANDBY' order by group#;
+
+no rows selected
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 9;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 10;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 11;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 12;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 13;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 14;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 15;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 16;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 17;
+
+Database altered.
+
+SQL> ALTER DATABASE ADD STANDBY LOGFILE group 18;
+
+Database altered.
+
+SQL> SELECT group#, type, member FROM v$logfile WHERE type = 'STANDBY' order by group#;
+
+    GROUP# TYPE                  MEMBER
+---------- --------------------- ----------------------------------------------------------------------
+         9 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_9.404.1101151823
+        10 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_10.403.1101151827
+        11 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_11.402.1101151833
+        12 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_12.401.1101151841
+        13 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_13.400.1101151857
+        14 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_14.399.1101151861
+        15 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_15.398.1101151867
+        16 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_16.397.1101151871
+        17 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_17.396.1101151875
+        18 STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_18.395.1101151885
+
+10 rows selected.
+
+SQL> select  GROUP#,STATUS ,TYPE,MEMBER from v$logfile;
+
+    GROUP# STATUS                TYPE                  MEMBER
+---------- --------------------- --------------------- ----------------------------------------------------------------------
+        19                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_19.272.1073431701
+        20                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_20.276.1073431801
+        21                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_21.275.1073431817
+        22                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_22.278.1073431827
+        23                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_23.277.1073431849
+        24                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_24.271.1073431861
+        25                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_25.270.1073431871
+        26                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_26.269.1073431883
+         9                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_9.404.1101151823
+        10                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_10.403.1101151827
+        11                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_11.402.1101151833
+        12                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_12.401.1101151841
+        13                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_13.400.1101151857
+        14                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_14.399.1101151861
+        15                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_15.398.1101151867
+        16                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_16.397.1101151871
+        17                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_17.396.1101151875
+        18                       STANDBY               +VTEP184_PROD_DATA/DRTP184/ONLINELOG/group_18.395.1101151885
+        19                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_19.298.1073430941
+        20                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_20.299.1073430955
+        21                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_21.300.1073430971
+        22                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_22.301.1073430985
+        23                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_23.302.1073431001
+        24                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_24.303.1073431013
+        25                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_25.304.1073431025
+        26                       ONLINE                +VTEP184_PROD_DATA/OLTP184/ONLINELOG/group_26.305.1073431037
+
+26 rows selected.
+
+SQL> alter system set standby_file_management=auto;
+
+System altered.
+
+SQL> alter database recover managed standby database disconnect;
+
+Database altered.
+
+
+====================================
+alter database create datafile '/u01/app/oracle/mysid/cust02.dbf' as 'myalias';
+
+recover database from service INCCC1PST noredo using compressed backupset;
+
+restore standby controlfile from service INCCC1PST;
+
+switch datafile to copy;
+
+
+restore datafile 107 from service PRIMDB;
+
+
+
+=============================================
+
+
+recover datafile 107 from service marshdb noredo using compressed backupset;
+
+restore datafile 107 from service marshdb noredo using compressed backupset;
+
+
+RMAN> restore datafile 108,109,110,111,112 from service marshdb;
+
+Starting restore at 09-AUG-22
+using channel ORA_DISK_1
+
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: using network backup set from service marshdb
+channel ORA_DISK_1: specifying datafile(s) to restore from backup set
+channel ORA_DISK_1: restoring datafile 00107 to /var/oradata/MARSHDB/data/datafiles/mbox_data55.dbf
+
+
+
+108,109,110,111,112
+
+
+alter database move datafile '/oradata/marshdb/MARSHDB/datafile/marsh_data04.dbf' to '/var/oradata/MARSHDB/data_old/datafiles/' [keep];
+
+
+ alter database move datafile '/var/oradata/MARSHDB/data/datafiles/mbox_data30.dbf' to '/var/oradata/MARSHDB/data_old/mbox_data30.dbf';
+ alter database move datafile '/var/oradata/MARSHDB/data/datafiles/mbox_data31.dbf' to '/var/oradata/MARSHDB/data_old/mbox_data31.dbf';
+
+
+ alter database move datafile '/var/oradata/MARSHDB/data/datafiles/mbox_data58.dbf' to '/var/oradata/MARSHDB/data_new/mbox_data58.dbf';
+
+
+ alter database move datafile '/var/oradata/MARSHDB/data/datafiles/mbox_data57.dbf' to '/var/oradata/MARSHDB/data_new/mbox_data57.dbf';
+
+
+
+
+
+
+
+
+/oradata/marshdb/MARSHDB/datafile/marsh_data04.dbf
+
+
+set line 200
+col SUBSTR(HXFNM,1,40) for a50
+select HXFIL File_num,substr(HXFNM,1,40),fhscn from x$kcvfh;
+
+
+NPRD:oracle@trist25db01:STANDBY2>rman target SYS/Q3_ExHilarAting_2022@standby2
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Mon Aug 8 12:20:27 2022
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: MARSHDB (DBID=1157606403, not open)
+
+RMAN>  recover database from service marshdb noredo using compressed backupset;
+
+Starting recover at 08-AUG-22
+
+
+ALTER DATABASE CREATE STANDBY CONTROLFILE AS '/tmp/MARSHDBDBSTY.ctl';
+
+
+
+
+=====================================
+
+issue: ORA-01111: name for data file 174 is unknown - rename to correct file
+ORA-01110: data file 174: '/opt/oracle/product/19/db/dbs/UNNAMED00174'
+ORA-01157: cannot identify/lock data file 174 - see DBWR trace file
+ORA-01111: name for data file 174 is unknown - rename to correct file
+ORA-01110: data file 174: '/opt/oracle/product/19/db/dbs/UNNAMED00174'
+2022-07-04T09:39:00.145651-04:00
+
+Select file#, name from v$datafile where file#=174;
+
+select file_name, bytes1024/1024/1024 from dba_data_files  where file_name like '%&file%';
+
+alter system set standby_file_management=’manual’;
+show parameter standby_file_management;
+alter database create datafile '/opt/oracle/product/19/db/dbs/UNNAMED00174' as '+OLTP126_PROD_DATA/OLTP126S/DATAFILE' size 32G;
+
+
+SQL> alter database create datafile '/opt/oracle/product/19/db/dbs/UNNAMED00174' as '+OLTP126_PROD_DATA'  size 32G;
+
+Database altered.
+
+SQL>
+SQL>
+SQL>
+SQL
+
+
+https://doyensys.com/blogs/mrp-process-stopped-with-ora-01111ora-01110ora-01157-error/
+============================================
+
+
+NAME                                 TYPE                                         VALUE
+------------------------------------ -------------------------------------------- ------------------------------
+log_archive_config                   string                                       DG_CONFIG=(WRIUS1P, WRIUS1PS)
+SQL>
+
+
+     2 LOG_ARCHIVE_DEST_2   WRIUS1PS                            STANDBY         VALID
+     3 LOG_ARCHIVE_DEST_3   WRIUS1P_S                           STANDBY         ERROR      ORA-16047:
+                                                                                               DGID mismatch
+                                                                                               between
+                                                                                               destination
+                                                                                               setting and
+                                                                                               target database
+
+SOLUTION:
+=====================
+Set the LOG_ARCHIVE_CONFIG parameter in the standby database:
+
+alter system set log_archive_config='DG_CONFIG=(WRIUS1P,WRIUS1P_S)' scope=both sid='*';
+
+
+SQL>
+SQL> alter system set fal_server=WRIUS1P sid='*';
+
+System altered.
+
+SQL> alter system set fal_client=WRIUS1P_S sid='*';
+
+System altered.
+
+SQL> show parameter fal
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+fal_client                           string      WRIUS1P_S
+fal_server                           string      WRIUS1P
+SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+
+Database altered.
+
+SQL> ALTER DATABASE RECOVER managed standby database disconnect from session noparallel;
+
+Database altered.
+
+
+PROCESS                            THREAD#   SEQUENCE# STATUS       CLIENT_P CLIENT_PID
+------------------------------ ----------- ----------- ------------ -------- ----------------------------------------
+ARCH                                     0           0 CONNECTED    ARCH     396919
+ARCH                                     0           0 CONNECTED    ARCH     396931
+ARCH                                     0           0 CONNECTED    ARCH     396928
+ARCH                                     0           0 CONNECTED    ARCH     396925
+DGRD                                     0           0 ALLOCATED    N/A      N/A
+DGRD                                     0           0 ALLOCATED    N/A      N/A
+MRP0                                     1       17233 WAIT_FOR_LOG N/A      N/A
+RFS                                      0           0 IDLE         UNKNOWN  17286
+RFS                                      0           0 IDLE         UNKNOWN  29179
+RFS                                      1           0 IDLE         Archival 19129
+RFS                                      0           0 IDLE         UNKNOWN  17405
+RFS                                      1       17391 RECEIVING    LGWR     26888
+
+
+
+primary:
+
+
+   DEST_ID DEST_NAME            DESTINATION                         TARGET          STATUS     ERROR
+---------- -------------------- ----------------------------------- --------------- ---------- ---------------
+         1 LOG_ARCHIVE_DEST_1   +DG_FRA01                           PRIMARY         VALID
+         2 LOG_ARCHIVE_DEST_2   WRIUS1PS                            STANDBY         VALID
+         3 LOG_ARCHIVE_DEST_3   WRIUS1P_S                           STANDBY         VALID
+
+
+======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

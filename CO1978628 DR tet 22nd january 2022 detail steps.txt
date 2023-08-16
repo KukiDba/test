@@ -1,0 +1,129 @@
+
+Shutdown DR instance of Oracle database online and reconfigure replication - Data Gaurd
+
+- DBA will flash back database to before the recovery and set DR database to read only mode
+- DBA will re enable the Data Gaurd replication
+- DBA will trigger a full sync job cycle and verify success
+- Ensure production DB's are online
+
+BEDFOD
+Servers:
+GBBED21DB64VCN1/VCN2
+
+DB's
+oltp161n1
+oltp161n2
+
+
+Do not proceed until the Oracle Databases are online and accessible. 
+
+
+
+
+***Application Stop**
+
+Status to be captured on Exeter database before shutdown:
+
+srvctl status database -d db_name -v
+srvctl config database -d db_name
+
+Check services in the database
+Check SGA/PGA
+Check TEMP tablespace Size
+
+
+-- check status of sync in standby
+
+    select a.thread#, applied, notappld, notappld-applied delta from
+    (select thread#, max(sequence#) applied  from gv$archived_log where applied='YES' group by thread#) A,
+    (select thread#, max(sequence#) notappld from gv$archived_log group by thread#) B
+    where a.thread# = b.thread# ;
+
+--Switch 3-4 archivelogs in primary: 
+
+alter system switch logfile;  --> primary
+
+
+-- check status of sync in standby if those archives are getting applied
+
+    select a.thread#, applied, notappld, notappld-applied delta from
+    (select thread#, max(sequence#) applied  from gv$archived_log where applied='YES' group by thread#) A,
+    (select thread#, max(sequence#) notappld from gv$archived_log group by thread#) B
+    where a.thread# = b.thread# ;
+
+--defer the log parameter at primary
+
+alter system set log_archive_dest_state_2=DEFER; --> primary
+
+--shutdown primary database once all archives have applied
+
+shut immediate;  --> primary( DR manager will approve at time activity)
+
+
+
+============================================
+DUBLIN
+-> IEDUB26DB02VCN1 / VCN2
+DB's
+oltp161n1
+oltp161n2
+
+TNS String for prod connection: oltp161=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=iedub26db02v-sca.mrshmc.com)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=oltp161)))
+
+
+Bring DR instance of Oracle database online and validate DB  - Oracle Replication
+- DBA brings DR Database online (will stop replication from Prod)
+
+1. check the database is up and running on both nodes
+srvctl status database -d DB_NAME
+srvctl config database -d DB_NAME
+
+2. Check the standby is in sync with the primary database.
+SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last Sequence Received", APPL.SEQUENCE# "Last Sequence Applied", (ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference"
+FROM
+(SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH,
+(SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL
+WHERE
+ARCH.THREAD# = APPL.THREAD#;
+
+3. cancel the MRP0 at standby and defer the log parameter at primary
+recover managed standby database cancel; --> standby
+alter system set log_archive_dest_state_2=DEFER; --> primary
+
+4. check all the tablespace have the flashback enabled and create the RP on the standby database
+select name, flashback_on from gv$tablespace; 
+CREATE RESTORE POINT precheck_upgrade guarantee  FLASHBACK DATABASE;
+
+check its created successfully
+select NAME,SCN,TIME,STORAGE_SIZE/1024/1024/1024 SizeinGB from v$restore_point;
+
+
+5. set the cluster parameter false and start the standby database on one node.
+alter system set cluster_database=FALSE scope=spfile;
+srvctl stop database -d DB_NAME
+startup mount force;
+ALTER DATABASE ACTIVATE STANDBY DATABASE; 
+alter system set cluster_database=TRUE scope=spfile;
+alter database open;
+
+- Turn over to app team
+- Provide assistance to app team as-needed.
+
+
+6. once successful Teseting done confirm by app owner or DR manager.
+Reverting back the to standby
+STARTUP MOUNT FORCE; 
+FLASHBACK DATABASE TO RESTORE POINT PRECHECK_UPGRADE; 
+ALTER DATABASE CONVERT TO PHYSICAL STANDBY;
+
+7. Start MRP
+
+8. Check syc status /RFS
+
+
+
+
+Servers:
+
+Do not proceed until the Oracle Databases are online and accessible. 
+
