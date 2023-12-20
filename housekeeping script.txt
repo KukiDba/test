@@ -1,0 +1,20 @@
+
+
+OS version=SunOS fihecdpd208 5.11 11.3 i86pc i386 i86pc
+Db Version=12.2.0.1.180116
+SHELL=/usr/bin/bash
+
+oracle@fihecdpd208 12.2.0.1.180116 NOLS $ cat /etc/release
+                             Oracle Solaris 11.3 X86
+  Copyright (c) 1983, 2018, Oracle and/or its affiliates.  All rights reserved.
+                              Assembled 09 May 2018
+
+							  
+oracle@fihecdpd208 12.2.0.1.180116 NOLS $ crontab -l
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nols/NOLS;purge -age 129600 -type ALERT"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nols/NOLS;purge -age 43200  -type INCIDENT"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nols/NOLS;purge -age 43200  -type CDUMP"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nols/NOLS;purge -age 43200  -type TRACE"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/rdbms/nols/NOLS;purge -age 43200  -type HM"' >/dev/null 2>&1
+00 06 * * *  'adrci exec="set homepath diag/tnslsnr/fihecdpd208/listener;purge -age 43200"' >/dev/null 2>&1
+00 06 * * *  'find /usr1/apl/oracle/admin/NOLS/adump/ -name '*.aud' -mtime +60 -exec rm -f {} \;'
