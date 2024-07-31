@@ -1,0 +1,345 @@
+Invocare Export/Import Action plan
+==================================
+
+As part of P2T refresh we have some activity where we need a DBA Support. Need your assistance for the same.
+The activity involves 
+
+1) taking backup of certain schemas from STAGE ATP  
+2) export certain schemas from PROD ATP 
+3) Import the exported schemas to STAGE ATP.
+
+Below are the details, please review.
+
+This activity need to be executed tomorrow(13th Apr 23) after 1.00 PM IST and before 7.30 PM IST.
+
+Please find below the details:
+=====================================
+
+Source DB: PRODUCTION (10.10.2.73:6060-- yucosbhfniyxtb2_dbivcprod_high.adb.oraclecloud.com)
+Target DB: STAGE (10.20.2.32: 5050 -- yucosbhfniyxtb2_dbivcdevtest_high.adb.oraclecloud.com)
+Schemas to be exported from Source and Imported into target: INV, xxarpay, XXARCPT and x_dbcc
+Need to take any existing schema export backup on target before import: Yes backup needed for the schemas in Target
+
+0) Pre-Activity
+===============
+
+Goto test ATP ( 4 to 10) and Prod ATP ( 16 to 20) in OCI Console and Increase CPU from 2 to 10 before taking export ( Customer approval required)
+
+1) taking backup of certain schemas from STAGE ATP ( precautionary export target test db) ==> Completed
+===================================================
+
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPnonprd
+
+1. login to GW cg-invocareau-02.acs.oracle-occn.com from JG
+sudo su - oracle 
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPnonprd
+
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare_test_CM539546/x_dbcc.par &
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare_test_CM539546/inv.par &
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare_test_CM539546/xxarpay.par &
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare_test_CM539546/xxarcpt.par &
+
+
+Non prod admin pwd : <non_prod_admin_pwd>
+
+Please take non prod admin pwd from below.
+https://amr.oracle.com/#/ci/credentials/137ee006-8ced-02c3-c473-772ff19de475
+
+2) export certain schemas from PROD ATP 
+========================================
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPprd
+
+Login to the PROD environment
+------------------------------
+
+Login to gateway cg-invocareau-02
+sudo su - oracle
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPprd
+
+sqlplus admin/<admin_pwd>@dbivcprod_high
+
+admin pwd can be taken from below url
+https://amr.oracle.com/#/configuration/cis/cbda068e-c340-3fbb-9409-25e6c5c15b87
+
+sqlplus admin@dbivcprod_high
+
+qz6kA5EUS9nJYvh6
+
+select owner, count(object_name) from dba_objects where owner in ('INV','XXARCPT','X_DBCC','XXARPAY') group by owner;
+
+col owner format a12
+select owner, count(object_name) from dba_objects where owner in ('INV','XXARCPT','X_DBCC','XXARPAY') group by owner;
+
+OWNER        COUNT(OBJECT_NAME)
+------------ ------------------
+XXARCPT                     152
+INV                        1179
+X_DBCC                       38
+XXARPAY                     172
+
+OWNER        COUNT(OBJECT_NAME)
+------------ ------------------
+INV                        1151
+XXARCPT                     151
+X_DBCC                       31
+XXARPAY                     172
+
+SQL> 
+
+
+set linesize 150
+set pagesize 5000
+col owner for a15
+col segment_name for a30
+col segment_type for a20
+col TABLESPACE_NAME for a30
+clear breaks
+clear computes
+compute sum of SIZE_IN_GB on report
+break on report
+select OWNER,sum(bytes)/1024/1024/1000 “SIZE_IN_GB” from dba_segments where owner in ('INV','XXARCPT','X_DBCC','XXARPAY') group by owner order by owner;
+
+SQL> set linesize 150
+set pagesize 5000
+col owner for a15
+col segment_name for a30
+col segment_type for a20
+col TABLESPACE_NAME for a30
+clear breaks
+clear computes
+compute sum of SIZE_IN_GB on report
+break on report
+select OWNER,sum(bytes)/1024/1024/1000 SIZE_IN_GB from dba_segments where owner in ('INV','XXARCPTSQL> ','X_DBCC','XXARPAY') grouSQL> SQL> SQL> SQL> SQL> breaks cleared
+SQL> computes cleared
+SQL> SQL> SQL> p by owner order by owner;
+
+OWNER           ??SIZE_IN_GB??
+--------------- --------------
+INV                 762.210125---Pending
+XXARCPT               .3830625---Completed
+XXARPAY               1.977625---Pending
+X_DBCC                .0008125---Pending
+
+Take production export
+----------------------
+
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPprd 
+sqlplus admin@dbivcprod_high
+
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare/x_dbcc.par &    ==> Completed
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare/xxarpay.par &   ==> Completed
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare/xxarcpt.par &   ==> Completed
+nohup /orahome/Database/db19c/bin/expdp PARFILE=/orabackup/exp_invocare/inv.par &       ==> in progress
+
+Review the nohup and upload related dump files to object storage
+-----------------------------------------------------------------
+
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPprd 
+sqlplus admin@dbivcprod_high
+
+using below select query you can view the export dump files present on DATA_PUMP_DIR
+-------------------------------------------------------------------------------------
+
+SELECT * FROM table(dbms_cloud.list_files('DATA_PUMP_DIR'));
+
+for example "using below plsql block you can upload dump files into object storage of TEST DB"
+----------------------------------------------------------------------------------------------
+
+BEGIN 
+   DBMS_CLOUD.PUT_OBJECT(credential_name => 'DEF_CRED_NAME',
+     object_uri => 'https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarpay_20230413_01.dmp',
+     directory_name => 'DATA_PUMP_DIR',
+     file_name => 'xxarpay_20230413_01.dmp');
+   DBMS_CLOUD.PUT_OBJECT(credential_name => 'DEF_CRED_NAME',
+     object_uri => 'https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarpay_20230413_02.dmp',
+     directory_name => 'DATA_PUMP_DIR',
+     file_name => 'xxarpay_20230413_02.dmp');
+ DBMS_CLOUD.PUT_OBJECT(credential_name => 'DEF_CRED_NAME',
+     object_uri => 'https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarpay_20230413_03.dmp',
+     directory_name => 'DATA_PUMP_DIR',
+     file_name => 'xxarpay_20230413_03.dmp');
+ DBMS_CLOUD.PUT_OBJECT(credential_name => 'DEF_CRED_NAME',
+     object_uri => 'https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarpay_20230413_04.dmp',
+     directory_name => 'DATA_PUMP_DIR',
+     file_name => 'xxarpay_20230413_04.dmp');
+   DBMS_CLOUD.PUT_OBJECT(credential_name => 'DEF_CRED_NAME',
+     object_uri => 'https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarcpt_20230413.log',
+     directory_name => 'DATA_PUMP_DIR',
+     file_name => 'xxarcpt_20230413.log');
+END;
+/
+
+login to OCI console and verify whether dumpfiles got uploaded.
+----------------------------------------------------------------
+
+OCI Console access KA 1038864
+
+Login Password is linked to the ivcpbcs target https://amr.oracle.com/#/configuration/cis/0fa09a48-394d-4d02-88b3-8ba41ab39c7c
+
+Mobile Authenticator setup steps below :- 
+
+
+
+One-time OMA authenticator setup needs to be done on your own Mobile or Laptop.
+
+
+
+Open the Authenticator App, tap Add Account, and then tap Configure Manually.
+Select Oracle as the Account Type.
+Enter your account ID - ivcpbcs and this below key:
+
+OMA Key - https://amr.oracle.com/#/cms/credentials/0fa09a48-394d-4d02-88b3-8ba41ab39c7c/view-account/2262116?vc=true
+
+Customer Tenancy Name: ivcpbcs
+
+OCI Region: Australia East (Sydney)
+
+OCI Console : https://cloud.oracle.com/?region=ap-sydney-1&tenant=ivcpbcs ( you may need to disconnect )
+Login user: oracle-ccsd-delivery-team
+OCI Console pwd : <OCI_console_pwd>
+Login Password is linked to the ivcpbcs target https://amr.oracle.com/#/configuration/cis/0fa09a48-394d-4d02-88b3-8ba41ab39c7c
+4e9ArqPgwFb*467
+
+need to select non-prod compartment and then go to object storage. Verify the dump files exists after uploading.
+
+Take the path for each dump file for the import.
+
+Take the user sql and privileges for dropping schemas
+-----------------------------------------------------
+sqlplus admin@dbivcdevtest_tp
+
+How to Extract DDL for User including Privileges and Roles Using dbms_metadata.get_ddl (Doc ID 2739952.1)
+
+set longchunksize 20000 pagesize 0 feedback off verify off trimspool on
+column Extracted_DDL format a1000
+
+EXEC DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'PRETTY',TRUE);
+EXEC DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',TRUE);
+
+undefine User_in_Uppercase;
+
+set linesize 1000
+set long 2000000000
+select (case
+when ((select count(*)
+from dba_users
+where username = '&&User_in_Uppercase' and profile <> 'DEFAULT') > 0)
+then chr(10)||' -- Note: Profile'||(select dbms_metadata.get_ddl('PROFILE', u.profile) AS ddl from dba_users u where u.username = '&User_in_Uppercase')
+else to_clob (chr(10)||' -- Note: Default profile, no need to create!')
+end ) from dual
+UNION ALL
+select (case
+when ((select count(*)
+from dba_users
+where username = '&User_in_Uppercase') > 0)
+then ' -- Note: Create user statement'||dbms_metadata.get_ddl ('USER', '&User_in_Uppercase')
+else to_clob (chr(10)||' -- Note: User not found!')
+end ) Extracted_DDL from dual
+UNION ALL
+select (case
+when ((select count(*)
+from dba_ts_quotas
+where username = '&User_in_Uppercase') > 0)
+then ' -- Note: TBS quota'||dbms_metadata.get_granted_ddl( 'TABLESPACE_QUOTA', '&User_in_Uppercase')
+else to_clob (chr(10)||' -- Note: No TS Quotas found!')
+end ) from dual
+UNION ALL
+select (case
+when ((select count(*)
+from dba_role_privs
+where grantee = '&User_in_Uppercase') > 0)
+then ' -- Note: Roles'||dbms_metadata.get_granted_ddl ('ROLE_GRANT', '&User_in_Uppercase')
+else to_clob (chr(10)||' -- Note: No granted Roles found!')
+end ) from dual
+UNION ALL
+select (case
+when ((select count(*)
+from V$PWFILE_USERS
+where username = '&User_in_Uppercase' and SYSDBA='TRUE') > 0)
+then ' -- Note: sysdba'||chr(10)||to_clob (' GRANT SYSDBA TO '||'"'||'&User_in_Uppercase'||'"'||';')
+else to_clob (chr(10)||' -- Note: No sysdba administrative Privilege found!')
+end ) from dual
+UNION ALL
+select (case
+when ((select count(*)
+from dba_sys_privs
+where grantee = '&User_in_Uppercase') > 0)
+then ' -- Note: System Privileges'||dbms_metadata.get_granted_ddl ('SYSTEM_GRANT', '&User_in_Uppercase')
+else to_clob (chr(10)||' -- Note: No System Privileges found!')
+end ) from dual
+UNION ALL
+select (case
+when ((select count(*)
+from dba_tab_privs
+where grantee = '&User_in_Uppercase') > 0)
+then ' -- Note: Object Privileges'||dbms_metadata.get_granted_ddl ('OBJECT_GRANT', '&User_in_Uppercase')
+else to_clob (chr(10)||' -- Note: No Object Privileges found!')
+end ) from dual
+/
+
+then login sqlplus admin@dbivcdevtest_tp
+
+Take Invalid objects for the schemas which we are going to drop.
+
+select owner, object_name, object_type from dba_objects where status='INVALID' AND owner in ('INV','XXARCPT','X_DBCC','XXARPAY');
+
+drop the schemas and make sure backup completed.
+
+drop user INV;   
+drop user XXARCPT;
+drop user X_DBCC;
+drop user XXARPAY;
+
+alter usermINV identified by "eOiNh760SmH^VnvX";
+
+then import schemas using prod dump files stored in test db object storage.
+---------------------------------------------------------------------------
+
+Note: dumpfile=url should be taken from object storage in below commands.
+
+1. Run the following command for importing INV to INV
+./impdp admin@dbivcdevtest_tp directory=data_pump_dir credential=def_cred_name dumpfile=https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/x_dbcc_20240608_prod_%U.dmp parallel=4 encryption_pwd_prompt=yes ENCRYPTION_PASSWORD=oracle schemas=INV
+
+2. Run the following command for importing to XXARCPT
+./impdp admin@dbivcdevtest_tp directory=data_pump_dir credential=def_cred_name dumpfile=https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/Database_Backups/o/xxarcpt%u.dmp parallel=4 encryption_pwd_prompt=yes ENCRYPTION_PASSWORD=oracle schemas=XXARCPT
+
+3. Run the following command for importing to XXARPAY
+./impdp admin@dbivcdevtest_tp directory=data_pump_dir credential=def_cred_name dumpfile=https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/Database_Backups/o/xxarpay%u.dmp parallel=4 encryption_pwd_prompt=yes ENCRYPTION_PASSWORD=oracle schemas=XXARPAY
+
+4. Run the following command for importing to XXARPAY
+./impdp admin@dbivcdevtest_tp directory=data_pump_dir credential=def_cred_name dumpfile=https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/Database_Backups/o/x_dbcc%u.dmp parallel=4 encryption_pwd_prompt=yes ENCRYPTION_PASSWORD=oracle schemas=X_DBCC"
+
+https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/x_dbcc_20240608_prod_%U.dmp
+https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarpay_20240608_prod_%U.dmp
+https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarcpt_20240608_prod%U.dmp
+https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/inv_20240608_prod_%U.dmp
+
+
+Validate object count from both prod and test using below query
+---------------------------------------------------------------
+
+select owner, count(object_name) from dba_objects where owner in ('INV','XXARCPT','X_DBCC','XXARPAY') group by owner;
+
+Compare pre and post invalid objects and Compile invalid objects if any.
+
+Note : Finally you need to take password for test schemas ( INV,XXARCPT,X_DBCC,XXARPAY) from customer and alter it.
+
+
+
+select 'alter system kill session ' || '''' || sid || ',' || serial# ||',@'|| inst_id || '''' || ' immediate;' from gv$session where username='XXARCPT';
+
+
+ /orahome/Database/db19c/bin/expdp admin@dbivcdevtest_high attach=SYS_EXPORT_SCHEMA_01
+ 
+ https://objectstorage.ap-sydney-1.oraclecloud.com/n/ivcpbcs/b/ivcATPtst_tracing/o/xxarcpt_20240608_prod01.dmp
+ 
+nohup /orahome/Database/db19c/bin/impdp PARFILE=/orabackup/exp_invocare_test_CM539546/xxarcptIMPDP.par &
+
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPprd  
+sqlplus admin/"qz6kA5EUS9nJYvh6"@dbivcprod_high
+
+
+Test :
+export TNS_ADMIN=/orahome/Database/db19c/network/admin/ivcATPnonprd
+sqlplus admin/"659Mba2cjFn#Qj$zq6T"@dbivcdevtest_high
+
